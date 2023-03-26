@@ -1,0 +1,16 @@
+version: '1'
+
+services:
+  backend:
+    build: ./pong_backend
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./backend:/app
+
+  # frontend:
+  #   build: ./frontend
+  #   ports:
+  #     - "3001:3001"
+  #   volumes:
+  #     - ./frontend:/app
