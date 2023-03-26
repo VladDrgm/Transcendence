@@ -1,4 +1,4 @@
-version: '1'
+version: '3'
 
 services:
   backend:
@@ -6,7 +6,7 @@ services:
     ports:
       - "3000:3000"
     volumes:
-      - ./backend:/app
+      - ./pong_backend:/app
 
   # frontend:
   #   build: ./frontend
