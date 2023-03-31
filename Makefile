@@ -1,6 +1,5 @@
 run:
 	@echo Running Transcendence...
-	@echo OS: $(OS)
 
 ifeq ($(OS),Windows_NT)
 	@echo Running Windows script...
