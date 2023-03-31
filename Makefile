@@ -10,5 +10,7 @@ else
 	@chmod +x scripts/run.sh
 	@touch ./pong_backend/.env
 	@echo PORT=3000 > ./pong_backend/.env
+	@echo PORT=3001 > ./pong_frontend/.env
+	@./scripts/remove_all_images_containers.sh
 	@./scripts/run.sh
 endif

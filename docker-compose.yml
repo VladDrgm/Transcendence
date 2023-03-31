@@ -8,9 +8,9 @@ services:
     volumes:
       - ./pong_backend:/app
 
-  # frontend:
-  #   build: ./frontend
-  #   ports:
-  #     - "3001:3001"
-  #   volumes:
-  #     - ./frontend:/app
+  frontend:
+    build: ./pong_frontend
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./frontend:/app
