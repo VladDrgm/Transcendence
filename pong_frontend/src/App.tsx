@@ -36,7 +36,7 @@ import Hello42 from './components/hello42';
 const App = () => {
   return (
     <div>
-      <h1>Hello World 42, first API</h1>
+      {/* <h1>Hello World 42, first API</h1> */}
       <Hello42 />
     </div>
   );

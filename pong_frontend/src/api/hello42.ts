@@ -5,6 +5,7 @@
 export async function getHello(): Promise<string> {
 	const response = await fetch('http://localhost:3000/hello');
 	const message = await response.text();
+	console.log(message);
 	return message;
   }
   
