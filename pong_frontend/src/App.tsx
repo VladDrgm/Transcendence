@@ -32,11 +32,13 @@
 
 import React from 'react';
 import Hello42 from './components/hello42';
+import { UserList } from './components/UserList';
 
 const App = () => {
   return (
     <div>
       <Hello42 />
+      <UserList />
     </div>
   );
 };

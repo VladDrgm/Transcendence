@@ -2,7 +2,7 @@ export const users = [
   {
     userId: 1,
     nickname: 'Alice',
-    avatar: 'https://example.com/avatar/alice.png',
+    avatar: 'https://picsum.photos/200',
     wins: 10,
     losses: 5,
     ladderLevel: 8,
@@ -13,7 +13,7 @@ export const users = [
   {
     userId: 2,
     nickname: 'Bob',
-    avatar: 'https://example.com/avatar/bob.png',
+    avatar: 'https://picsum.photos/200',
     wins: 12,
     losses: 2,
     ladderLevel: 10,
@@ -24,7 +24,7 @@ export const users = [
   {
     userId: 3,
     nickname: 'Charlie',
-    avatar: 'https://example.com/avatar/charlie.png',
+    avatar: 'https://picsum.photos/200',
     wins: 8,
     losses: 6,
     ladderLevel: 6,
@@ -35,7 +35,7 @@ export const users = [
   {
     userId: 4,
     nickname: 'David',
-    avatar: 'https://example.com/avatar/david.png',
+    avatar: 'https://picsum.photos/200',
     wins: 15,
     losses: 1,
     ladderLevel: 12,
@@ -46,7 +46,7 @@ export const users = [
   {
     userId: 5,
     nickname: 'Eve',
-    avatar: 'https://example.com/avatar/eve.png',
+    avatar: 'https://picsum.photos/200',
     wins: 3,
     losses: 7,
     ladderLevel: 3,
