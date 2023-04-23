@@ -6,7 +6,6 @@ import { config } from 'dotenv';
 
 config();
 
-
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
@@ -17,7 +16,7 @@ async function bootstrap() {
   });
 
   await app.listen(process.env.PORT);
-  console.log("Server is running on port " + process.env.PORT + ".")
-  console.log("Access the app at http://localhost:" + process.env.PORT + "/")
+  console.log('Server is running on port ' + process.env.PORT + '.');
+  console.log('Access the app at http://localhost:' + process.env.PORT + '/');
 }
 bootstrap();
