@@ -18,3 +18,10 @@ To run this, follow these steps:
 
 * Or make sure you have both Docker and Make installed on your machine; (https://www.docker.com/ ;  https://www.gnu.org/software/make/ )
     1) go to the root folder and type 'make'
+
+______________________________________________________________
+
+Backend: the get users endpoint is in the app.controller.ts (data can be seen: http://localhost:3000/api/users)
+Frontend:
+in userApi -> fetching users from backend url
+in components -> userList component to render all the mock users and their data

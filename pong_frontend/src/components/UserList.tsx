@@ -1,23 +1,24 @@
 import { FC, useEffect, useState } from 'react';
 import { IUser } from '../interfaces/interface';
+import { getUsers } from '../api/userApi';
 
 export const UserList: FC = () => {
   const [users, setUsers] = useState<IUser[]>([]);
 
+  const getData = async() => {
+    const users = await getUsers();
+    setUsers(users);
+  }
+
   useEffect(() => {
-     fetch('http://localhost:3000/api/users')
-      .then((response) => response.json())
-      .then((data) => {
-        setUsers(data);
-      });
-      
-  }, []);
+    getData()
+  }, [])
   
   return (
     <div>
       <h1>User List</h1>
       <ul>
-        {users.map((user) => (
+        {users?.map((user) => (
           <li key={user.userId}>
             <img src={user.avatar} alt={user.nickname} />
             <div>
