@@ -1,4 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Post } from '@nestjs/common';
 
 // make sure you have npm installed;
 // use "sudo npm install -g @nestjs/cli" to install nestjs globally
@@ -10,6 +10,9 @@ import { Controller, Get } from '@nestjs/common';
 export class HelloController {
 	@Get()
 	getHello(): string {
+		//create connection to database
+		//query database for requessted info which will be indicated as PARAMETERS to our function from the web
+		// return the result of the query instead of the hello world message
 		return 'Hello, 42 World of Transcendence';
 	}
 }
