@@ -1,46 +1,26 @@
-// import React from 'react';
-// import logo from './logo.svg';
-// import './App.css';
-
-// function App() {
-//   return (
-//     <div className="App">
-//       <header className="App-header">
-//         <img src={logo} className="App-logo" alt="logo" />
-//         <p>
-//           Edit <code>src/App.tsx</code> and save to reload.
-//         </p>
-//         <a
-//           className="App-link"
-//           href="https://reactjs.org"
-//           target="_blank"
-//           rel="noopener noreferrer"
-//         >
-//           Learn React
-//         </a>
-//       </header>
-//     </div>
-//   );
-// }
-
-// export default App;
+import React, {useState} from 'react';
+import LogIn from './components/Login';
+import UserStartPage from './components/UserStartPage';
 
 
-// here we import our Hello42 component
-// and then use it in this very small
-// App
-
-import React from 'react';
-import Hello42 from './components/hello42';
-import { UserList } from './components/UserList';
 
 const App = () => {
-  return (
-    <div>
-      <Hello42 />
-      <UserList />
-    </div>
-  );
+  const [userID, userID_set] = useState<number>(0);
+  const [loged_in, loged_in_set] = useState<boolean>(false);
+ 
+  if (loged_in)
+  {
+    return (
+      <LogIn userID_set={userID_set} />
+    );
+  }
+  else
+  {
+    return (
+      <UserStartPage id={userID} />
+    );
+  }
+  
 };
 
 export default App;
