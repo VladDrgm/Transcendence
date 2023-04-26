@@ -1,4 +1,5 @@
 import { Controller, Get } from '@nestjs/common';
+import { EntityManager } from 'typeorm';
 
 // make sure you have npm installed;
 // use "sudo npm install -g @nestjs/cli" to install nestjs globally
@@ -8,11 +9,15 @@ import { Controller, Get } from '@nestjs/common';
 
 @Controller('hello')
 export class HelloController {
+	constructor(private readonly entityManager: EntityManager) {}
+
+
   @Get()
-  getHello(): string {
-    //create connection to database
-    //query database for requessted info which will be indicated as PARAMETERS to our function from the web
-    // return the result of the query instead of the hello world message
-    return 'Hello, 42 World of Transcendence';
+  async getHello(): Promise<string> {
+    //use the connection to the database to extract the names of the databases;
+	const result =  await this.entityManager.query('SELECT datname FROM pg_database');
+
+	//return the names of the databases
+	return result.map(db => db.datname);
   }
 }
