@@ -1,11 +1,25 @@
 import React, {useRef} from 'react';
 
-function LogIn(userID_set : (id: number) => void) : any{
-  const input_id = useRef();
+interface LogInProps
+{
+  userID_set: React.Dispatch<React.SetStateAction<number>>;
+  loginDone_set: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+const LogIn: React.FC<LogInProps> = ({userID_set, loginDone_set}) => {
+  const input_id = useRef<HTMLInputElement>(null);
 
   function saveUser_id() : void {
-    userID_set(parseInt(input_id.current.value));
-    input_id.current.value = null;
+    if (input_id.current != null)
+    {
+      const parsedInput = parseInt(input_id.current.value);
+      if (!isNaN(parsedInput))
+      {
+        userID_set(parseInt(input_id.current.value));
+        loginDone_set(true);
+      }
+      input_id.current.value = '';
+    }
   };
   return (<div>
             <p>Login or create user.</p>
