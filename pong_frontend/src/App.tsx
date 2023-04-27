@@ -2,16 +2,10 @@ import React, {useState} from 'react';
 import LogIn from './components/LogIn';
 import UserStartPage from './components/UserStartPage';
 
-
-
 const App = () => {
   const [userID, userID_set] = useState<number>(0);
   const [loged_in, loged_in_set] = useState<boolean>(false);
 
-  const userIDSetter = (newValue: number) =>
-  {
-    userID_set(newValue);
-  };
  
   if (!loged_in)
   {

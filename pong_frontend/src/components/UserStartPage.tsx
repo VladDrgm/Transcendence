@@ -1,4 +1,6 @@
-import React from 'react';
+import React, {useState} from 'react';
+import MainDivSelector, {main_div_mode_t} from './MainDivSelector';
+
 
 interface StartPageProps
 {
@@ -6,9 +8,11 @@ interface StartPageProps
 }
 
 const UserStartPage: React.FC<StartPageProps> = ({id}) => {
+  const [mode, mode_set] = useState<main_div_mode_t>(main_div_mode_t.WELCOME_PAGE);
+
   return (<div>
             <header>
-              <button>Profie</button>
+              <button onClick={() => mode_set(main_div_mode_t.PROFILE)}>Profie</button>
               <button>Friends</button>
               <button>Blocked</button>
               <button>Random match</button>
@@ -17,7 +21,7 @@ const UserStartPage: React.FC<StartPageProps> = ({id}) => {
               <button>Setting</button>
             </header>
             <div style={{ width: '100%', height: '500px', backgroundColor: 'lightgray' }}>
-              <p>This is user {id}</p>
+              <MainDivSelector userID={id} mode={mode} mode_set={mode_set} />
             </div>
             
           </div>);
