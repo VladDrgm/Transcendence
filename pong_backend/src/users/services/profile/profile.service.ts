@@ -1,10 +1,17 @@
 import { Injectable } from '@nestjs/common';
-import { PublicProfile } from 'src/shared/interfaces/profiles/public_profile.interface';
-import { FriendProfile } from 'src/shared/interfaces/profiles/friend_profile.interface';
-import { User } from 'src/models/mock_data/local_models';
+import { PublicProfile } from '../../interfaces/profile/public_profile.interface';
+import { FriendProfile } from '../../interfaces/profile/friend_profile.interface';
+import { User, StatusValue } from 'src/models/orm_models/user.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+
 
 @Injectable()
 export class ProfileService {
+    constructor(
+        @InjectRepository(User)
+        private readonly userRepository: Repository<User>
+    ){}
 
     isFriend(myID:number, friendID:number):boolean //todo: Implement this.
     {
@@ -16,13 +23,23 @@ export class ProfileService {
         return "This is your privater profile. But cookies are not implemented yet";
     }
 
-    getFriendProfileByID(userID:number)
+    async getFriendProfileByID(friendID:number)
     {
         if (true)
         {
-            if (this.isFriend(userID, 0))
+            if (true)
             {
-                return "This is friend profile with ID " + userID + ". But cookies are not implemented yet";
+                const friendProf = new FriendProfile;
+                const usrRet = await this.userRepository.findOne({where: { userID: friendID}});
+                friendProf.userId = usrRet.userID;
+                friendProf.nickname = usrRet.username;
+                friendProf.status = usrRet.status;
+                friendProf.achievements = usrRet.achievementsCSV;
+                friendProf.avatar = usrRet.avatarPath;
+                friendProf.ladderLevel = usrRet.ladderLevel;
+                friendProf.losses = usrRet.losses;
+                friendProf.wins = usrRet.wins;
+                return (friendProf);
             }
             else
             {
