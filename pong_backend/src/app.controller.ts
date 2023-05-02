@@ -15,4 +15,10 @@ export class AppController {
   async getUsers(): Promise<User[]> {
     return await this.appService.getUsers();
   }
+
+  @Get('setDB')
+  async setUp() {
+    await this.appService.createDummyDB();
+    return "Added soemthing to DB"
+  }
 }
