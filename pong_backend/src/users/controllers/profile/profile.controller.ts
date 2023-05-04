@@ -11,7 +11,7 @@ export class ProfileController {
         const myID = this.sharedSession.getMyID(session);
         if (isNaN(myID))
             throw new HttpException('Not loged in', HttpStatus.UNAUTHORIZED);
-        return this.profileService.getPrivateProfile();
+        return this.profileService.getPrivateProfile(myID);
     }
     @Get('friend/:id')
     async getFriendProfile(
@@ -21,7 +21,7 @@ export class ProfileController {
         const myID = this.sharedSession.getMyID(session);
         if (isNaN(myID))
             throw new HttpException('Not loged in', HttpStatus.UNAUTHORIZED);
-        const ret = await this.profileService.getFriendProfileByID(userID);
+        const ret = await this.profileService.getFriendProfileByID(userID, myID);
         if (ret === -1)
             throw new HttpException('Not a friend', HttpStatus.UNAUTHORIZED);
         else if (ret === -2)
