@@ -15,6 +15,7 @@ import { User } from './models/orm_models/user.entity';
 import { Blocked } from './models/orm_models/blocked.entity';
 import { Friend } from './models/orm_models/friend.entity';
 import { UsersModule } from './users/users.module';
+import * as session from 'express-session';
 
 @Module({
   imports: [DatabaseModule, TypeOrmModule.forFeature([User, Blocked, Friend]), UsersModule],
