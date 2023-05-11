@@ -1,4 +1,5 @@
 import React, {useRef} from 'react';
+import { login } from '../api/login.api';
 
 interface LogInProps
 {
@@ -9,12 +10,13 @@ interface LogInProps
 const LogIn: React.FC<LogInProps> = ({userID_set, loginDone_set}) => {
   const input_id = useRef<HTMLInputElement>(null);
 
-  function saveUser_id() : void {
+  async function saveUser_id() {
     if (input_id.current != null)
     {
       const parsedInput = parseInt(input_id.current.value);
       if (!isNaN(parsedInput))
       {
+        await login(parsedInput);
         userID_set(parseInt(input_id.current.value));
         loginDone_set(true);
       }
