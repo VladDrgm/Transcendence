@@ -4,6 +4,8 @@ import { config } from 'dotenv';
 import { User } from './models/orm_models/user.entity';
 import { Blocked } from './models/orm_models/blocked.entity';
 import { Friend } from './models/orm_models/friend.entity';
+import { MatchHistory } from './models/orm_models/matchHistory.entity';
+import { Match } from './models/orm_models/match.entity';
 
 config();
 
@@ -19,7 +21,7 @@ config();
       password: process.env.DB_PASSWORD,
       database: 'postgres',
       schema: 'public',
-      entities: [User, Blocked, Friend], // add your entity classes here
+      entities: [User, Blocked, Friend, MatchHistory, Match], // add your entity classes here
       synchronize: true, // set to false in production -> THIS SETS UP THE DATABASE AUTOMATICALLY BASED ON THE ORM MODELS
 	  ssl: true,
 	  extra: {

@@ -8,4 +8,3 @@ export async function getHello(): Promise<string> {
 	console.log(message);
 	return message;
   }
-  
