@@ -6,6 +6,11 @@ import { Blocked } from './models/orm_models/blocked.entity';
 import { Friend } from './models/orm_models/friend.entity';
 import { MatchHistory } from './models/orm_models/matchHistory.entity';
 import { Match } from './models/orm_models/match.entity';
+import { ChannelAdmin } from './models/orm_models/channel_admin.entity';
+import { Channel } from './models/orm_models/channel.entity';
+import { ChannelBlockedUser } from './models/orm_models/channel_blocked_user.entity';
+import { ChannelUser } from './models/orm_models/channel_user.entity';
+
 
 config();
 
@@ -21,7 +26,7 @@ config();
       password: process.env.DB_PASSWORD,
       database: 'postgres',
       schema: 'public',
-      entities: [User, Blocked, Friend, MatchHistory, Match], // add your entity classes here
+      entities: [User, Blocked, Friend, MatchHistory, Match, ChannelAdmin, ChannelBlockedUser, Channel, ChannelUser ], // add your entity classes here
       synchronize: true, // set to false in production -> THIS SETS UP THE DATABASE AUTOMATICALLY BASED ON THE ORM MODELS
 	  ssl: true,
 	  extra: {

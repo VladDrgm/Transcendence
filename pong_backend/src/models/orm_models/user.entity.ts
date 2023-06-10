@@ -1,6 +1,10 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToMany, JoinColumn, JoinTable } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 import { Blocked } from './blocked.entity';
 import { Friend } from './friend.entity';
+import { ChannelAdmin } from './channel_admin.entity';
+import { ChannelBlockedUser } from './channel_blocked_user.entity';
+import { ChannelUser } from './channel_user.entity';
+
 
 export enum StatusValue {
   Available = 'available',
@@ -8,7 +12,7 @@ export enum StatusValue {
   InGame = 'ingame'
 }
 
-@Entity()
+@Entity({ name: 'User'})
 export class User {
   @PrimaryGeneratedColumn({
     type: 'int'
@@ -70,5 +74,14 @@ export class User {
 
   @OneToMany(() => Blocked, block => block.blockedUser)
   blockedBy: User[];
+
+  @OneToMany(() => ChannelAdmin, (channelAdmins) => channelAdmins.user)
+  adminChannels: ChannelAdmin[];
+
+  @OneToMany(() => ChannelBlockedUser, (channelBlockedUsers) => channelBlockedUsers.user)
+  blockedChannels: ChannelBlockedUser[];
+
+  @OneToMany(() => ChannelUser, (channelUsers) => channelUsers.user)
+  channels: ChannelUser[];
 }
 
