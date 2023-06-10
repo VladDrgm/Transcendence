@@ -3,7 +3,7 @@ import { User } from './user.entity';
 import { Match } from './match.entity';
 
 
-@Entity()
+@Entity({ name: 'MatchHistory'})
 export class MatchHistory {
   @PrimaryGeneratedColumn()
   MatchHistoryId: number;
