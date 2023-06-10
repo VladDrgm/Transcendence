@@ -11,7 +11,6 @@ import { Channel } from './models/orm_models/channel.entity';
 import { ChannelBlockedUser } from './models/orm_models/channel_blocked_user.entity';
 import { ChannelUser } from './models/orm_models/channel_user.entity';
 
-
 config();
 
 //!!!!!please check with Vlad for database connection information
@@ -26,17 +25,25 @@ config();
       password: process.env.DB_PASSWORD,
       database: 'postgres',
       schema: 'public',
-      entities: [User, Blocked, Friend, MatchHistory, Match, ChannelAdmin, ChannelBlockedUser, Channel, ChannelUser ], // add your entity classes here
+      entities: [
+        User,
+        Blocked,
+        Friend,
+        MatchHistory,
+        Match,
+        ChannelAdmin,
+        ChannelBlockedUser,
+        Channel,
+        ChannelUser,
+      ], // add your entity classes here
       synchronize: true, // set to false in production -> THIS SETS UP THE DATABASE AUTOMATICALLY BASED ON THE ORM MODELS
-	  ssl: true,
-	  extra: {
-		ssl: {
-			rejectUnauthorized: false,
-		},
-		},
+      ssl: true,
+      extra: {
+        ssl: {
+          rejectUnauthorized: false,
+        },
+      },
     }),
   ],
 })
-
 export class DatabaseModule {}
-

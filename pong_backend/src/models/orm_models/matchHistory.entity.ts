@@ -1,9 +1,14 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  OneToMany,
+} from 'typeorm';
 import { User } from './user.entity';
 import { Match } from './match.entity';
 
-
-@Entity({ name: 'MatchHistory'})
+@Entity({ name: 'MatchHistory' })
 export class MatchHistory {
   @PrimaryGeneratedColumn()
   MatchHistoryId: number;
