@@ -9,15 +9,16 @@ import { EntityManager } from 'typeorm';
 
 @Controller('hello')
 export class HelloController {
-	constructor(private readonly entityManager: EntityManager) {}
-
+  constructor(private readonly entityManager: EntityManager) {}
 
   @Get()
   async getHello(): Promise<string> {
     //use the connection to the database to extract the names of the databases;
-	const result =  await this.entityManager.query('SELECT datname FROM pg_database');
+    const result = await this.entityManager.query(
+      'SELECT datname FROM pg_database',
+    );
 
-	//return the names of the databases
-	return result.map(db => db.datname);
+    //return the names of the databases
+    return result.map((db) => db.datname);
   }
 }

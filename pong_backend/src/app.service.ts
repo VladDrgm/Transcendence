@@ -2,7 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { users } from './models/mock_data/mock_user';
 import { BlockedUser, User } from './models/mock_data/local_models';
-import { User as UserEntitiy, StatusValue } from './models/orm_models/user.entity';
+import {
+  User as UserEntitiy,
+  StatusValue,
+} from './models/orm_models/user.entity';
 import { Repository } from 'typeorm';
 import { Blocked } from './models/orm_models/blocked.entity';
 import { Friend } from './models/orm_models/friend.entity';
@@ -15,14 +18,10 @@ export class AppService {
     @InjectRepository(Blocked)
     private readonly blockedRepository: Repository<Blocked>,
     @InjectRepository(Friend)
-    private readonly friendRepository: Repository<Friend>
+    private readonly friendRepository: Repository<Friend>,
   ) {}
 
-
   private users: User[] = users;
-
-
-
 
   getUsers(): User[] {
     return this.users;
@@ -31,8 +30,7 @@ export class AppService {
     return 'Hello World!';
   }
 
-  async createDummyDB()
-  {
+  async createDummyDB() {
     const users: UserEntitiy[] = [];
 
     for (let i = 0; i < 50; i++) {
@@ -63,8 +61,7 @@ export class AppService {
           block.user = user;
           block.blockedUser = friend;
           await this.blockedRepository.save(block);
-        }
-        else if (Math.random() < 0.4) {
+        } else if (Math.random() < 0.4) {
           const friendU = new Friend();
           friendU.user = user;
           friendU.friendUser = friend;
