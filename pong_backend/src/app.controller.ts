@@ -11,7 +11,7 @@ export class AppController {
     return this.appService.getHello();
   }
 
-  @Get('api/users')
+  @Get('api/mockedUsers')
   async getUsers(): Promise<User[]> {
     return await this.appService.getUsers();
   }
@@ -19,6 +19,6 @@ export class AppController {
   @Get('setDB')
   async setUp() {
     await this.appService.createDummyDB();
-    return "Added soemthing to DB"
+    return 'Added soemthing to DB';
   }
 }
