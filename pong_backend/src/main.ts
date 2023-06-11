@@ -10,8 +10,9 @@ config();
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  const sessionOptions: SessionOptions = { //@Andrej when implementing authetication feel free to change this.
-    secret: process.env.SESSION_SECRET,    //keep in mind that u havet fix shared session services and delete GET login function from users.
+  const sessionOptions: SessionOptions = {
+    //@Andrej when implementing authetication feel free to change this.
+    secret: process.env.SESSION_SECRET, //keep in mind that u havet fix shared session services and delete GET login function from users.
     resave: false,
     saveUninitialized: true,
     cookie: {

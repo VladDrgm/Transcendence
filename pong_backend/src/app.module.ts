@@ -21,11 +21,10 @@ import { ChannelAdmin } from './models/orm_models/channel_admin.entity';
 import { ChannelBlockedUser } from './models/orm_models/channel_blocked_user.entity';
 import { ChannelUser } from './models/orm_models/channel_user.entity';
 import { Channel } from './models/orm_models/channel.entity';
-import { UsersController } from './controllers/user/user.controller';
-import { UserService } from './services/userservice';
 
 @Module({
   imports: [
+    UsersModule,
     DatabaseModule,
     TypeOrmModule.forFeature([
       User,
@@ -39,7 +38,7 @@ import { UserService } from './services/userservice';
       Channel,
     ]),
   ],
-  controllers: [AppController, HelloController, UsersController],
-  providers: [AppService, UserService],
+  controllers: [AppController, HelloController],
+  providers: [AppService],
 })
 export class AppModule {}
