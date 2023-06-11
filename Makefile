@@ -31,7 +31,7 @@ run:
 		echo "PORT=$$PORT" > ./pong_frontend/.env; \
 	fi
 
-	@read -p "Would you like to run the project with Docker? [y/N] " -n 1 -r && \
+	@read -p "Would you like to run the project with Docker? [y/n] " -n 1 -r && \
 	echo && \
 	if [ "$$REPLY" = "y" ]; then \
 		./scripts/remove_all_images_containers.sh && \
