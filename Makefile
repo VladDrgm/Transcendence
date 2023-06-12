@@ -7,6 +7,7 @@ run:
 
 	# backend .env
 	@if [ -z "$$(grep -o '^PORT=[^[:blank:]]*' ./pong_backend/.env)" ] || \
+		[ -z "$$(grep -o '^SESSION_SECRET=[^[:blank:]]*' ./pong_backend/.env)" ] || \
 		[ -z "$$(grep -o '^DB_USERNAME=[^[:blank:]]*' ./pong_backend/.env)" ] || \
 		[ -z "$$(grep -o '^DB_PASSWORD=[^[:blank:]]*' ./pong_backend/.env)" ] || \
 		[ -z "$$(grep -o '^DB_PORT=[^[:blank:]]*' ./pong_backend/.env)" ] || \
@@ -22,6 +23,7 @@ run:
 		echo "DB_PORT=$$DB_PORT" >> ./pong_backend/.env; \
 		read -p "Enter the DB_HOSTNAME for the backend: " DB_HOSTNAME && \
 		echo "DB_HOSTNAME=$$DB_HOSTNAME" >> ./pong_backend/.env; \
+		echo "SESSION_SECRET=whatever" >> ./pong_backend/.env; \
 	fi
 
 	# frontend .env
