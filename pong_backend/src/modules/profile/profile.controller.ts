@@ -7,9 +7,11 @@ import {
   ParseIntPipe,
   Session,
 } from '@nestjs/common';
-import { ProfileService } from '../../services/profile/profile.service';
-import { SharedSession } from 'src/shared/services/session/shared-session.service';
+import { ProfileService } from './profile.service';
+import { SharedSession } from '../session/shared-session.service';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Profile')
 @Controller('profile')
 export class ProfileController {
   constructor(
