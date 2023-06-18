@@ -43,6 +43,7 @@ export class UserService {
 	order: {
 		points: 'DESC',
 	},
+	take: 10,
 	});
 }
 }
