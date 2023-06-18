@@ -22,7 +22,6 @@ export class UserService {
   async findOne(id: number): Promise<User> {
 	return this.userRepository
     .createQueryBuilder('user')
-    .leftJoinAndSelect('user.friends', 'friends')
     .where('user.userID = :id', { id })
     .getOne();
   }
@@ -35,4 +34,15 @@ export class UserService {
     await this.userRepository.delete(id);
   }
 
+  async updatePoints(id: number, points: number): Promise<void> {
+	await this.userRepository.update(id, { points: points });
+  }
+
+  async getUsersOrderedByPoints(): Promise<User[]> {
+	return this.userRepository.find({
+	order: {
+		points: 'DESC',
+	},
+	});
+}
 }

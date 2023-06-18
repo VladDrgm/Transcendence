@@ -36,7 +36,7 @@ export class User {
   @Column({
     type: 'int',
   })
-  ladderLevel: number;
+  points: number;
 
   @Column({
     type: 'text',
