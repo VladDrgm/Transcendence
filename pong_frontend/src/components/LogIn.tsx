@@ -27,11 +27,8 @@ const pageStyle: CSS.Properties = {
 
 const gifStyle: CSS.Properties = {
 	position: 'relative',
-	textAlign: 'center',
-	top: '5rem',
-	padding: '1.5rem',
-	fontFamily: 'sans-serif',
-	fontSize: '1.5rem',
+	top: '40px',
+	padding: '24px',
 	width:'360px',
 	height:'360px', 
   //   boxShadow: '0 0 10px rgba(0, 0, 0, 0.3)'
@@ -41,10 +38,10 @@ const welcomeTitleStyle: CSS.Properties = {
   color: 'rgba(254, 8, 16, 1)',
   position: 'relative',
   textAlign: 'center',
-  top: '2rem',
-  padding: '1.5rem',
+  top: '8px',
+  padding: '4px',
   fontFamily: 'Shlop',
-  fontSize: '5rem',
+  fontSize: '80px',
 };
 
 const loginButtonStyle: CSS.Properties = {
@@ -52,9 +49,8 @@ const loginButtonStyle: CSS.Properties = {
 	position: 'relative',
 	height:'40px',
 	width:'160px',
-	top: '4rem',
 	fontFamily: 'Shlop',
-	fontSize: '1.5rem',
+	fontSize: '24px',
 	alignSelf: 'center',
 	borderRadius: '6px',
 	border: 'none',
