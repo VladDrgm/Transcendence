@@ -36,4 +36,7 @@ export class Match {
 
   @OneToOne(() => User)
   WinnerId: number;
+
+  @Column()
+  WinningCondition: string;
 }
