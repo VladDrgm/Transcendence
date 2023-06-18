@@ -9,6 +9,9 @@ import {
 } from '@nestjs/common';
 import { UserService } from './userservice';
 import { User } from 'src/models/orm_models/user.entity';
+import { Friend } from 'src/models/orm_models/friend.entity';
+
+
 @ApiTags('User')
 @Controller('user')
 export class UserController {
@@ -50,14 +53,4 @@ export class UserController {
     return 'Loged in with id: ' + userID;
   }
 
-  @Get(':id/friends')
-  async getUserFriends(@Param('id') id: number) {
-    const friends = await this.userService.findUserFriends(id);
-    return friends;
-  }
-
-  // @Get(':friendId')
-  // async getFriendById(@Param('friendId') friendId: number): Promise<User> {
-  //   return this.userService.findFriendById(friendId);
-  // }
 }
