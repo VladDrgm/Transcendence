@@ -2,6 +2,8 @@ import { ApiTags } from '@nestjs/swagger';
 import {
   Controller,
   Get,
+  Put,
+  Post,
   Param,
   Request,
   Session,
@@ -52,5 +54,25 @@ export class UserController {
     console.log(userID);
     return 'Loged in with id: ' + userID;
   }
+
+  @Get('user/:id')
+  async getUser(@Param('id', ParseIntPipe) id: number): Promise<User> {
+	return this.userService.findOne(id);
+  }
+
+  @Put(':id/update/points/:points')
+  async updatePoints(
+	@Param('id', ParseIntPipe) id: number,
+	@Param('points', ParseIntPipe) points: number,
+	  ): Promise<void> {
+	await this.userService.updatePoints(id, points);
+	  }
+
+  @Get('users/points')
+  async getUsersOrderedByPoints(): Promise<User[]> {
+	return this.userService.getUsersOrderedByPoints();
+  }
+
+
 
 }
