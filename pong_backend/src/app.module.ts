@@ -22,6 +22,8 @@ import { ChannelUser } from './models/orm_models/channel_user.entity';
 import { Channel } from './models/orm_models/channel.entity';
 import { ChannelController } from './modules/channel/channel.controller';
 import { ChannelService } from './modules/channel/channel.service';
+import { FriendController } from './modules/friend/friend.controller';
+import { FriendService } from './modules/friend/friend.service';
 
 @Module({
   imports: [
@@ -39,7 +41,7 @@ import { ChannelService } from './modules/channel/channel.service';
       Channel,
     ]),
   ],
-  controllers: [AppController, ChannelController],
-  providers: [AppService, ChannelService],
+  controllers: [AppController, ChannelController, FriendController],
+  providers: [AppService, ChannelService, FriendService],
 })
 export class AppModule {}
