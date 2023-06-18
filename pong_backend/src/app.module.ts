@@ -20,6 +20,10 @@ import { ChannelAdmin } from './models/orm_models/channel_admin.entity';
 import { ChannelBlockedUser } from './models/orm_models/channel_blocked_user.entity';
 import { ChannelUser } from './models/orm_models/channel_user.entity';
 import { Channel } from './models/orm_models/channel.entity';
+import { ChannelController } from './modules/channel/channel.controller';
+import { ChannelService } from './modules/channel/channel.service';
+import { FriendController } from './modules/friend/friend.controller';
+import { FriendService } from './modules/friend/friend.service';
 
 @Module({
   imports: [
@@ -37,7 +41,7 @@ import { Channel } from './models/orm_models/channel.entity';
       Channel,
     ]),
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [AppController, ChannelController, FriendController],
+  providers: [AppService, ChannelService, FriendService],
 })
 export class AppModule {}

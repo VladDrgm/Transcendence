@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToOne } from 'typeorm';
 import { User } from './user.entity';
 import { MatchHistory } from './matchHistory.entity';
 
@@ -11,10 +11,10 @@ export class Match {
   matchHistory: MatchHistory;
 
   @ManyToOne(() => User)
-  UserId: User;
+  Player1: User;
 
   @ManyToOne(() => User)
-  OpponentId: User;
+  Player2: User;
 
   @Column()
   Player1Points: number;
@@ -29,5 +29,14 @@ export class Match {
   FinalResultString: string;
 
   @Column()
-  Date: Date;
+  startTime: Date;
+
+  @Column()
+  endTime: Date;
+
+  @OneToOne(() => User)
+  WinnerId: number;
+
+  @Column()
+  WinningCondition: string;
 }

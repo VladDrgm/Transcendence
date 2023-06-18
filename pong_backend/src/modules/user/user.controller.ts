@@ -2,20 +2,27 @@ import { ApiTags } from '@nestjs/swagger';
 import {
   Controller,
   Get,
+  Put,
+  Post,
   Param,
   Request,
   Session,
   ParseIntPipe,
 } from '@nestjs/common';
+import { UserService } from './userservice';
+import { User } from 'src/models/orm_models/user.entity';
+import { Friend } from 'src/models/orm_models/friend.entity';
+
+
 @ApiTags('User')
 @Controller('user')
 export class UserController {
-  // constructor(private readonly userService: UserService) {}
+  constructor(private readonly userService: UserService) {}
 
-  //   @Get()
-  //   async findAll(): Promise<User[]> {
-  //     return this.userService.findAll();
-  //   }
+  @Get()
+  async findAll(): Promise<User[]> {
+    return this.userService.findAll();
+  }
 
   //   @Get(':id')
   //   async findOne(@Param('id') id: number): Promise<User> {
@@ -33,10 +40,10 @@ export class UserController {
   //   }
   // }
 
-  @Get()
-  getUser(): string {
-    return 'This is public prdile of a user ';
-  }
+  // @Get()
+  // getUser(): string {
+  //   return 'This is public prdile of a user ';
+  // }
 
   @Get('login/:id')
   async loginUser(
@@ -47,4 +54,25 @@ export class UserController {
     console.log(userID);
     return 'Loged in with id: ' + userID;
   }
+
+  @Get('user/:id')
+  async getUser(@Param('id', ParseIntPipe) id: number): Promise<User> {
+	return this.userService.findOne(id);
+  }
+
+  @Put(':id/update/points/:points')
+  async updatePoints(
+	@Param('id', ParseIntPipe) id: number,
+	@Param('points', ParseIntPipe) points: number,
+	  ): Promise<void> {
+	await this.userService.updatePoints(id, points);
+	  }
+
+  @Get('users/points')
+  async getUsersOrderedByPoints(): Promise<User[]> {
+	return this.userService.getUsersOrderedByPoints();
+  }
+
+
+
 }
