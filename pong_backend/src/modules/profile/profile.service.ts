@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { FriendProfile } from './interfaces/friend_profile.interface';
-import { User, StatusValue } from 'src/models/orm_models/user.entity';
+import { User } from 'src/models/orm_models/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { PrivateProfile } from './interfaces/private_profile.interface';

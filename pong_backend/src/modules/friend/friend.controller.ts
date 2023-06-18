@@ -44,6 +44,11 @@ export class FriendController {
 	return friend;
   }
 
+  @Get(':id/friend/:friendId/status')
+  async getFriendStatus(@Param('id') id: number, @Param('friendId') friendId: number): Promise<string> {
+	return this.friendService.getFriendStatus(id, friendId);
+	}
+	
 //   @Delete(':id')
 //   async remove(@Param('id') id: number): Promise<void> {
 //     await this.channelService.remove(id);
