@@ -6,6 +6,8 @@ import { Repository } from 'typeorm';
 
 export class UserRepository extends Repository<User> {}
 
+
+
 @Injectable()
 export class UserService {
   constructor(
@@ -18,7 +20,11 @@ export class UserService {
   }
 
   async findOne(id: number): Promise<User> {
-    return this.userRepository.findOneBy({ userID: id });
+	return this.userRepository
+    .createQueryBuilder('user')
+    .leftJoinAndSelect('user.friends', 'friends')
+    .where('user.userID = :id', { id })
+    .getOne();
   }
 
   async create(user: User): Promise<User> {
@@ -29,21 +35,4 @@ export class UserService {
     await this.userRepository.delete(id);
   }
 
-  async findUserFriends(userId: number): Promise<User[]> {
-    const user = await this.userRepository
-      .createQueryBuilder('user')
-      .leftJoinAndSelect('user.friends', 'friend')
-      .where('user.userID = :userId', { userId })
-      .getOne();
-
-    return user.friends;
-  }
-
-  // async findFriendById(friendId: number): Promise<User> {
-  //   return this.userRepository
-  //     .createQueryBuilder('user')
-  //     .leftJoinAndSelect('user.friends', 'friend')
-  //     .where('friend.FId = :userID', { friendId })
-  //     .getOne();
-  // }
 }
