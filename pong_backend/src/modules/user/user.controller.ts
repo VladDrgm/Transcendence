@@ -7,15 +7,17 @@ import {
   Session,
   ParseIntPipe,
 } from '@nestjs/common';
+import { UserService } from './userservice';
+import { User } from 'src/models/orm_models/user.entity';
 @ApiTags('User')
 @Controller('user')
 export class UserController {
-  // constructor(private readonly userService: UserService) {}
+  constructor(private readonly userService: UserService) {}
 
-  //   @Get()
-  //   async findAll(): Promise<User[]> {
-  //     return this.userService.findAll();
-  //   }
+  @Get()
+  async findAll(): Promise<User[]> {
+    return this.userService.findAll();
+  }
 
   //   @Get(':id')
   //   async findOne(@Param('id') id: number): Promise<User> {
@@ -33,10 +35,10 @@ export class UserController {
   //   }
   // }
 
-  @Get()
-  getUser(): string {
-    return 'This is public prdile of a user ';
-  }
+  // @Get()
+  // getUser(): string {
+  //   return 'This is public prdile of a user ';
+  // }
 
   @Get('login/:id')
   async loginUser(
@@ -47,4 +49,15 @@ export class UserController {
     console.log(userID);
     return 'Loged in with id: ' + userID;
   }
+
+  @Get(':id/friends')
+  async getUserFriends(@Param('id') id: number) {
+    const friends = await this.userService.findUserFriends(id);
+    return friends;
+  }
+
+  // @Get(':friendId')
+  // async getFriendById(@Param('friendId') friendId: number): Promise<User> {
+  //   return this.userService.findFriendById(friendId);
+  // }
 }

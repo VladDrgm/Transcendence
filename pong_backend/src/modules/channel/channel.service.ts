@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Channel } from 'src/models/orm_models/channel.entity';
 import { Repository } from 'typeorm';
 
-export class UserRepository extends Repository<Channel> {}
+export class ChannelRepository extends Repository<Channel> {}
 
 @Injectable()
 export class ChannelService {
@@ -20,8 +20,8 @@ export class ChannelService {
     return this.channelRepository.findOneBy({ ChannelId: id });
   }
 
-  async create(user: Channel): Promise<Channel> {
-    return this.channelRepository.save(user);
+  async create(channel: Channel): Promise<Channel> {
+    return this.channelRepository.save(channel);
   }
 
   async remove(id: number): Promise<void> {
