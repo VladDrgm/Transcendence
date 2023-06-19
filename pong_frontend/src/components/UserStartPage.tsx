@@ -16,7 +16,7 @@ const UserStartPage: React.FC<StartPageProps> = ({id}) => {
               <button onClick={() => mode_set(main_div_mode_t.FRIIEND_PROFILE)}>Friends</button>
               <button>Blocked</button>
               <button>Random match</button>
-              <button>Chat</button>
+              <button onClick={() => mode_set(main_div_mode_t.CHAT)}>Chat</button>
               <button>Match History</button>
               <button>Setting</button>
             </header>
