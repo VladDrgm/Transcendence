@@ -49,7 +49,7 @@ function Arena_Chat_MainDiv(): JSX.Element {
 	let [playerTwo, setPlayerTwo] = useState<string>("");
 	let [audience, setAudience] = useState<string>("");
 
-	const socketRef = useRef<Socket | null>(null);
+	const socketRef = useRef<Socket | null>(null!);
 
 	function handleMessageChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
 		setMessage(e.target.value);
@@ -239,14 +239,20 @@ function joinRoom(chatName: ChatName) {
 	}
 
 	let gameBody, gameBodyForm;
-	gameBody = (
-	<Game
-		canvasRef={canvasRef}
-		socket={socketRef.current}
-		/* gameState={gameState} */
-		updateGameStatus={updateGameStatus}
-	/>
-	);
+	if (socketRef.current?.id) {
+			gameBody = (
+		<Game
+			canvasRef={canvasRef}
+			socket={socketRef.current}
+			/* gameState={gameState} */
+			updateGameStatus={updateGameStatus}
+		/>
+		);
+	} else {
+		gameBody = (
+			<canvas width={800} height={400} style={{ backgroundColor: 'black' }} />
+		);
+	}
 
 	gameBodyForm = (
 	<GameForm

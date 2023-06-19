@@ -39,9 +39,15 @@ io.on('connection', (socket: Socket) => {
 			username: playerName,
 			id: socket.id
 		};
-		users.push(user);
-		io.emit('new user', users);
-		userNr++;
+		console.log("Will this be triggered when the 2nd user joins?");
+		if (user !== null) {
+			users.push(user);
+			io.emit('new user', users);
+			io.sockets.emit('playerConnected', users[userNr]);
+			userNr++;
+		} else {
+			console.log("Cannot join -> user variable is null")
+		}
 	});
 
 	socket.on('join room', (roomName: string, cb: (messages: any[]) => void) => {
@@ -84,7 +90,6 @@ io.on('connection', (socket: Socket) => {
 // 
 
 
-	io.sockets.emit('playerConnected', users[userNr]);
 
 	/* Joining game */
 	socket.on('playerOneJoined', (playerOneId: string) => {
@@ -153,12 +158,12 @@ io.on('connection', (socket: Socket) => {
 
 		socket.on('disconnect', () => {
 			console.log('A user disconnected');
+			io.sockets.emit('playerDisconnected', users[userNr]);
 			userCount--;
 			users = users.filter(u => u.id !== socket.id);
-			io.emit('new user', users);
-			if (users.length === 0) {
+			if (users.length !== 0) {
+				io.emit('new user', users);
 			}
-			io.sockets.emit('playerDisconnected', users[userNr]);
 		});
 });
 

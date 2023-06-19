@@ -259,9 +259,9 @@ const Game: FC<GameProps> = (props) => {
 					requestAnimationFrame(callback);
 				};
 
-				while (gameState.gameStatus !== 1) { //STOPS PROGRESS UNTIL GAMESTATUS IS 1
+				//while (gameState.gameStatus !== 1) { //STOPS PROGRESS UNTIL GAMESTATUS IS 1
 					//gameStatus changes with clicking button and IF game start conditions are met.
-				}
+				//}
 				if (gameState.gameStatus === 1) {
 					this.start();
 					callback(Date.now());
