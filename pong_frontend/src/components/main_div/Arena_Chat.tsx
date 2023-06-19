@@ -29,7 +29,7 @@ type CurrentChat = {
 	receiverId: string;
 };
 
-function Arena() {
+function Arena_Chat_MainDiv(): JSX.Element {
 	/* chat utilities */
 	const [username, setUsername] = useState("");
 	const [connected, setConnected] = useState(false);
@@ -266,4 +266,4 @@ function joinRoom(chatName: ChatName) {
 	);
 }
 
-export default Arena;
+export default Arena_Chat_MainDiv;
