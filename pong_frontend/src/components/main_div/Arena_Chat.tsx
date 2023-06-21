@@ -40,6 +40,7 @@ function Arena_Chat_MainDiv(): JSX.Element {
 	});
 	const [connectedRooms, setConnectedRooms] = useState<string[]>(["general"]);
 	const [allUsers, setAllUsers] = useState<any[]>([]);
+	const [allChannels, setAllChannels] = useState<any[]>([]);
 	const [messages, setMessages] = useState<{
 		[key in ChatName]: { sender: string; content: string }[];
 	}>(initialMessagesState);
@@ -220,6 +221,7 @@ function joinRoom(chatName: ChatName) {
 			sendMessage={sendMessage}
 			yourId={socketRef.current ? socketRef.current.id : ""}
 			allUsers={allUsers}
+			allChannels={allChannels}
 			joinRoom={joinRoom}
 			connectedRooms={connectedRooms}
 			currentChat={currentChat}
