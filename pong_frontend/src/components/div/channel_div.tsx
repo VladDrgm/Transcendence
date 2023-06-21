@@ -16,9 +16,33 @@ function mapChannel(item: any) {
     };
 }
 
+
 const Row = styled.div`
   cursor: pointer;
 `;
+
+export async function fetchChannels(): Promise<Channel[]> {
+    try{
+        const response = await getChannels();
+        const channelList = Array.isArray(response) ? response.map(mapChannel) : [];
+        return channelList;
+    } catch (error){
+        console.error('Error fetching channels:', error);
+        return [];
+    }
+};
+
+export async function fetchChannelNames(): Promise<string[]> {
+    try{
+        const response = await getChannels();
+        const channelList = Array.isArray(response) ? response.map(mapChannel) : [];
+        const channelNames = channelList.map(channel => channel.Name)
+        return channelNames;
+    } catch (error){
+        console.error('Error fetching channel names:', error);
+        return [];
+    }
+};
 
 const Channel_Div: React.FC<ChatProps> = (props) => {
     const [allChannels, setAllChannels] = useState<Channel[]>([]);

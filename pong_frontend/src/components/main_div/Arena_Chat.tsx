@@ -6,8 +6,11 @@ import GameForm from "./GameForm";
 import { io, Socket } from "socket.io-client";
 import immer, { Draft } from "immer";
 import "../../App.css";
+import {fetchChannelNames} from "../div/channel_div"
 
 type WritableDraft<T> = Draft<T>;
+
+
 
 let initialMessagesState: {
 	[key: string]: { sender: string; content: string }[];
@@ -19,7 +22,17 @@ let initialMessagesState: {
 	javascript: []
 };
 
-// let playerOne:string = "", playerTwo:string = "", audience:string = "";
+// async function initialMessagesState(): Promise<{[key: string]: { sender: string; content: string }[]}> {
+// const channelNames = await fetchChannelNames();
+//   const initialMessagesState: { [key: string]: { sender: string; content: string }[] } = {};
+  
+//   channelNames.forEach(channelName => {
+//     initialMessagesState[channelName] = [];
+//   });
+
+//   return initialMessagesState;
+// }
+
 
 export type ChatName = keyof typeof initialMessagesState;
 
