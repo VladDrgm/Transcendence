@@ -120,12 +120,14 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 		console.log("Props id is: " + props.yourId);
 		console.log("Props username is: " + props.username);
 		if (user.id === props.yourId) {
+			// console.log("Reached here");
 		return (
 			<Row key={user.id}>
 			You: {props.username}
 			</Row>
 		);
 		}
+		console.log("Reached here");
 		const currentChat: ChatData = {
 		chatName: user.username,
 		isChannel: false,
@@ -151,10 +153,11 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 	}
 
 	let body;
+	const messages = props.messages || [];
 	if (!props.currentChat.isChannel || props.connectedRooms.includes(props.currentChat.chatName.toString())) {
 		body = (
 		<Messages>
-			{props.messages.map(renderMessages)}
+			{messages.map(renderMessages)}
 		</Messages>
 		);
 	} else {

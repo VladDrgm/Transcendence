@@ -17,22 +17,18 @@ let initialMessagesState: {
 	//[key: number]: { sender: string; content: string }[];
 } = {
 	general: [],
-	random: [],
-	jokes: [],
-	javascript: []
+	// random: [],
+	// jokes: [],
+	// javascript: []
 };
 
-// async function initialMessagesState(): Promise<{[key: string]: { sender: string; content: string }[]}> {
-// const channelNames = await fetchChannelNames();
-//   const initialMessagesState: { [key: string]: { sender: string; content: string }[] } = {};
-  
-//   channelNames.forEach(channelName => {
-//     initialMessagesState[channelName] = [];
-//   });
-
-//   return initialMessagesState;
-// }
-
+//Using fetched Cahhnel Names to add as keys to the initialMessageState object
+async function initializeMessagesState() {
+	const channelNames = await fetchChannelNames();
+	channelNames.forEach((channelName) => {
+		initialMessagesState[channelName] = [];
+	});
+}
 
 export type ChatName = keyof typeof initialMessagesState;
 
@@ -54,9 +50,12 @@ function Arena_Chat_MainDiv(): JSX.Element {
 	const [connectedRooms, setConnectedRooms] = useState<string[]>(["general"]);
 	const [allUsers, setAllUsers] = useState<any[]>([]);
 	const [allChannels, setAllChannels] = useState<any[]>([]);
+	useEffect(() => {initializeMessagesState();});
 	const [messages, setMessages] = useState<{
 		[key in ChatName]: { sender: string; content: string }[];
 	}>(initialMessagesState);
+	console.log('ititialMessageState:', initialMessagesState);
+
 	const [message, setMessage] = useState("");
 
 	let [playerOne, setPlayerOne] = useState<string>("");
@@ -83,6 +82,10 @@ function Arena_Chat_MainDiv(): JSX.Element {
 		};
 		socketRef.current?.emit("send message", payload);
 		const newMessages = immer(messages, (draft: WritableDraft<typeof messages>) => {
+		//if the element doesn't exist, an empty one will be added
+		if(!draft[currentChat.chatName]) {
+			draft[currentChat.chatName] = [];
+		}
 		draft[currentChat.chatName].push({
 			sender: username,
 			content: message
@@ -92,21 +95,21 @@ function Arena_Chat_MainDiv(): JSX.Element {
 		setMessage("");
 	}
 
-function roomJoinCallback(incomingMessages: any, room: keyof typeof messages) {
+	function roomJoinCallback(incomingMessages: any, room: keyof typeof messages) {
 	const newMessages = immer(messages, (draft: WritableDraft<typeof messages>) => {
 		draft[room] = incomingMessages;
 	});
 	setMessages(newMessages);
-}
+	}
 
-function joinRoom(chatName: ChatName) {
+	function joinRoom(chatName: ChatName) {
 	const newConnectedRooms = immer(connectedRooms, (draft: WritableDraft<typeof connectedRooms>) => {
 		const chatNameString = String(chatName); // Convert chatName to string
 		draft.push(chatNameString);
 	});
 	socketRef.current?.emit("join room", chatName, (messages: any) => roomJoinCallback(messages, chatName));
 	setConnectedRooms(newConnectedRooms);
-}
+	}
 
 	function toggleChat(currentChat: CurrentChat) {
 		if (!messages[currentChat.chatName]) {
