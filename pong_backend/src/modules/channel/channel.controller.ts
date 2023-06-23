@@ -10,6 +10,7 @@ import {
 import { ApiTags } from '@nestjs/swagger';
 import { Channel } from 'src/models/orm_models/channel.entity';
 import { ChannelService } from './channel.service';
+import { ApiBody } from '@nestjs/swagger';
 
 @ApiTags('Channel')
 @Controller('channel')
