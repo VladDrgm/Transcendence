@@ -1,23 +1,8 @@
-# cd ./pong_backend
-# npm install
-# npm start &
-# cd ..
-# cd ./pong_frontend
-# npm install
-# npm start
-# cd ..
-
-read -p "Do you want to run the backend? (y/n): " runBackend
-read -p "Do you want to run the frontend? (y/n): " runFrontend
-
-if [ "$runBackend" == "y" ]; then
-  cd ./pong_backend
-  npm install
-  npm start
-fi &
-
-if [ "$runFrontend" == "y" ]; then
-  cd ./pong_frontend
-  npm install
-  npm start
-fi
+cd ./pong_backend
+echo "Installing backend dependencies"
+npm install
+cd ..
+cd ./pong_frontend
+echo "Installing frontend dependencies"
+npm install
+cd ..

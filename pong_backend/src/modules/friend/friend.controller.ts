@@ -36,7 +36,7 @@ export class FriendController {
 	return friends;
   }
 
-  @Get(':id/friends/:friendId')
+  @Get(':id/friend/:friendId')
   async getFriendById(@Param('id') id: number, @Param('friendId') friendId: number): Promise<User> {
 
 	const friend = await this.friendService.findFriendById(id, friendId);
@@ -46,8 +46,15 @@ export class FriendController {
 
   @Get(':id/friend/:friendId/status')
   async getFriendStatus(@Param('id') id: number, @Param('friendId') friendId: number): Promise<string> {
+
 	return this.friendService.getFriendStatus(id, friendId);
 	}
+
+  @Get(':id/friends/status')
+  async getFriendsStatuses(@Param('id') id: number): Promise<string[]> {
+
+	return this.friendService.getFriendsStatuses(id);
+  }
 	
 //   @Delete(':id')
 //   async remove(@Param('id') id: number): Promise<void> {

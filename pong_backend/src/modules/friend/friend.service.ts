@@ -54,4 +54,15 @@ async findUserFriends(userId: number): Promise<Friend[]> {
 	const result = (await this.findFriendById(userId, friendId)).status;
 	return result;
   }
+
+  async getFriendsStatuses(userId: number): Promise<string[]> {
+	const result = [];
+	const friends = await this.findUserFriends(userId);
+
+	for (const friend of friends) {
+		result.push(friend.friendUser.status);
+	}
+
+	return result;
+  }
 }
