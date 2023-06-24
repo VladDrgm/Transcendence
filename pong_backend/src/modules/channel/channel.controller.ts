@@ -50,6 +50,16 @@ export class ChannelController {
 	return this.channelService.getChannelAdmins(channelId);
   }
 
+  @Get(':userId/:channelId/admin')
+  async getChannelAdminByUserId(@Param('userId') userId: number, @Param('channelId') channelId: number): Promise<ChannelAdmin> {
+	return this.channelService.getChannelAdminByUserId(userId, channelId);
+	  }
+
+  @Delete(':userId/:channelId/admin')
+  async removeChannelAdmin(@Param('userId') userId: number, @Param('channelId') channelId: number): Promise<void> {
+	await this.channelService.removeChannelAdmin(userId, channelId);
+	  }
+
   @Put(':userId/:channelId/user')
   async addChannelUser(@Param('userId') userId: number, @Param('channelId') channelId: number): Promise<ChannelUser> {
 	return this.channelService.addChannelUser(userId, channelId);
@@ -63,5 +73,10 @@ export class ChannelController {
   @Get(':userId/:channelId/user')
   async getChannelUserByUserId(@Param('userId') userId: number, @Param('channelId') channelId: number): Promise<ChannelUser> {
 	return this.channelService.getChannelUserByUserId(userId, channelId);
+  }
+
+  @Delete(':userId/:channelId/user')
+  async removeChannelUser(@Param('userId') userId: number, @Param('channelId') channelId: number): Promise<void> {
+	await this.channelService.removeChannelUser(userId, channelId);
   }
 }

@@ -45,6 +45,10 @@ export class ChannelService {
 	return this.channelAdminRepository.findBy({ ChannelId: channelId });
   }
 
+  async getChannelAdminByUserId(userId: number, channelId: number): Promise<ChannelAdmin> {
+	return this.channelAdminRepository.findOneBy({ UserId: userId, ChannelId: channelId });
+  }
+
   async addChannelUser(userId: number, channelId: number): Promise<ChannelUser> {
 	const channelUser = new ChannelUser();
 	channelUser.UserId = userId;
@@ -58,5 +62,15 @@ export class ChannelService {
 
   async getChannelUserByUserId(userId: number, channelId: number): Promise<ChannelUser> {
 	return this.channelUserRepository.findOneBy({ UserId: userId, ChannelId: channelId });
+  }
+
+  async removeChannelUser(userId: number, channelId: number): Promise<void> {
+	const channelUser = await this.getChannelUserByUserId(userId, channelId);
+	await this.channelUserRepository.delete(channelUser.CUserId);
+  }
+
+  async removeChannelAdmin(userId: number, channelId: number): Promise<void> {
+	const channelAdmin = await this.getChannelAdminByUserId(userId, channelId);
+	await this.channelAdminRepository.delete(channelAdmin.ChannelAdminId);
   }
 }
