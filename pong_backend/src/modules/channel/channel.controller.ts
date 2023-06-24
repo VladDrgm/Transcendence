@@ -14,6 +14,7 @@ import { ApiBody } from '@nestjs/swagger';
 import { ChannelAdmin } from 'src/models/orm_models/channel_admin.entity';
 import { channel } from 'diagnostics_channel';
 import { ChannelUser } from 'src/models/orm_models/channel_user.entity';
+import { ChannelBlockedUser } from 'src/models/orm_models/channel_blocked_user.entity';
 
 @ApiTags('Channel')
 @Controller('channel')
@@ -79,4 +80,25 @@ export class ChannelController {
   async removeChannelUser(@Param('userId') userId: number, @Param('channelId') channelId: number): Promise<void> {
 	await this.channelService.removeChannelUser(userId, channelId);
   }
+
+  @Post(':userId/:channelId/blocked')
+  async addChannelBlockedUser(@Param('userId') userId: number, @Param('channelId') channelId: number): Promise<ChannelBlockedUser> {
+	return this.channelService.addChannelBlockedUser(userId, channelId);
+  }
+
+  @Get(':channelId/blockedUsers')
+  async getChannelBlockedUsers(@Param('channelId') channelId: number): Promise<ChannelBlockedUser[]> {
+	return this.channelService.getChannelBlockedUsers(channelId);
+  }
+
+  @Get(':userId/:channelId/blocked')
+  async getChannelBlockedUserByUserId(@Param('userId') userId: number, @Param('channelId') channelId: number): Promise<ChannelBlockedUser> {
+	return this.channelService.getChannelBlockedUserByUserId(userId, channelId);
+  }
+
+  @Delete(':userId/:channelId/blocked')
+  async removeChannelBlockedUser(@Param('userId') userId: number, @Param('channelId') channelId: number): Promise<void> {
+	await this.channelService.removeChannelBlockedUser(userId, channelId);
+  }
+
 }
