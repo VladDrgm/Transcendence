@@ -40,7 +40,7 @@ export class ChannelController {
     await this.channelService.remove(id);
   }
 
-  @Put(':userId/:channelId/admin')
+  @Post(':userId/:channelId/admin')
   async addChannelAdmin(@Param('userId') userId: number, @Param('channelId') channelId: number): Promise<ChannelAdmin>{
 	return this.channelService.addAdmin(userId, channelId);
   }
@@ -60,7 +60,7 @@ export class ChannelController {
 	await this.channelService.removeChannelAdmin(userId, channelId);
 	  }
 
-  @Put(':userId/:channelId/user')
+  @Post(':userId/:channelId/user')
   async addChannelUser(@Param('userId') userId: number, @Param('channelId') channelId: number): Promise<ChannelUser> {
 	return this.channelService.addChannelUser(userId, channelId);
   }
