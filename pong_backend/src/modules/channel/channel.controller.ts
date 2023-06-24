@@ -13,6 +13,7 @@ import { ChannelService } from './channel.service';
 import { ApiBody } from '@nestjs/swagger';
 import { ChannelAdmin } from 'src/models/orm_models/channel_admin.entity';
 import { channel } from 'diagnostics_channel';
+import { ChannelUser } from 'src/models/orm_models/channel_user.entity';
 
 @ApiTags('Channel')
 @Controller('channel')
@@ -47,5 +48,20 @@ export class ChannelController {
   @Get(':channelId/admins')
   async getChannelAdmins(@Param('channelId') channelId: number): Promise<ChannelAdmin[]> {
 	return this.channelService.getChannelAdmins(channelId);
+  }
+
+  @Put(':userId/:channelId/user')
+  async addChannelUser(@Param('userId') userId: number, @Param('channelId') channelId: number): Promise<ChannelUser> {
+	return this.channelService.addChannelUser(userId, channelId);
+  }
+
+  @Get(':channelId/users')
+  async getChannelUsers(@Param('channelId') channelId: number): Promise<ChannelUser[]> {
+	return this.channelService.getChannelUsers(channelId);
+  }
+
+  @Get(':userId/:channelId/user')
+  async getChannelUserByUserId(@Param('userId') userId: number, @Param('channelId') channelId: number): Promise<ChannelUser> {
+	return this.channelService.getChannelUserByUserId(userId, channelId);
   }
 }

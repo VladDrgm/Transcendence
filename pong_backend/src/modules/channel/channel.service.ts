@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Channel } from 'src/models/orm_models/channel.entity';
 import { ChannelAdmin } from 'src/models/orm_models/channel_admin.entity';
 import { Repository } from 'typeorm';
+import { ChannelUser } from 'src/models/orm_models/channel_user.entity';
 
 export class ChannelRepository extends Repository<Channel> {}
 
@@ -13,6 +14,8 @@ export class ChannelService {
     private readonly channelRepository: Repository<Channel>,
 	@InjectRepository(ChannelAdmin)
 	private readonly channelAdminRepository: Repository<ChannelAdmin>,
+	@InjectRepository(ChannelUser)
+	private readonly channelUserRepository: Repository<ChannelUser>,
   ) {}
 
   async findAll(): Promise<Channel[]> {
@@ -40,5 +43,20 @@ export class ChannelService {
 
   async getChannelAdmins(channelId: number): Promise<ChannelAdmin[]> {
 	return this.channelAdminRepository.findBy({ ChannelId: channelId });
+  }
+
+  async addChannelUser(userId: number, channelId: number): Promise<ChannelUser> {
+	const channelUser = new ChannelUser();
+	channelUser.UserId = userId;
+	channelUser.ChannelId = channelId;
+	return this.channelUserRepository.save(channelUser);
+  }
+
+  async getChannelUsers(channelId: number): Promise<ChannelUser[]> {
+	return this.channelUserRepository.findBy({ ChannelId: channelId });
+  }
+
+  async getChannelUserByUserId(userId: number, channelId: number): Promise<ChannelUser> {
+	return this.channelUserRepository.findOneBy({ UserId: userId, ChannelId: channelId });
   }
 }
