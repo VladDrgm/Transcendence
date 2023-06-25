@@ -41,9 +41,9 @@ export class ChannelController {
     await this.channelService.remove(id);
   }
 
-  @Post(':userId/:channelId/admin')
-  async addChannelAdmin(@Param('userId') userId: number, @Param('channelId') channelId: number): Promise<ChannelAdmin>{
-	return this.channelService.addAdmin(userId, channelId);
+  @Post(':userId/:targetId/:channelId/admin')
+  async addChannelAdmin(@Param('userId') userId: number,@Param('targetId') targetId: number, @Param('channelId') channelId: number): Promise<ChannelAdmin>{
+	return this.channelService.addAdmin(userId, targetId, channelId);
   }
 
   @Get(':channelId/admins')

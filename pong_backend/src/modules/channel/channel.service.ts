@@ -38,11 +38,18 @@ export class ChannelService {
     await this.channelRepository.delete(id);
   }
 
-  async addAdmin(userId: number, channelId: number): Promise<ChannelAdmin> {
-	const channelAdmin = new ChannelAdmin();
-	channelAdmin.UserId = userId;
-	channelAdmin.ChannelId = channelId;
-	return this.channelAdminRepository.save(channelAdmin);
+  async addAdmin(userId: number, targetId: number, channelId: number): Promise<ChannelAdmin> {
+	if (userId === targetId) {
+	  throw new Error('Cannot add yourself as admin');
+	}
+	const channel = await this.findOne(channelId);
+	if ( channel.OwnerId === userId ) {
+		const channelAdmin = new ChannelAdmin();
+		channelAdmin.UserId = userId;
+		channelAdmin.ChannelId = channelId;
+		return this.channelAdminRepository.save(channelAdmin);
+	}
+	throw new Error('Only channel owner can add admins');
   }
 
   async getChannelAdmins(channelId: number): Promise<ChannelAdmin[]> {
