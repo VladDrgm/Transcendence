@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Channel } from '../../interfaces/channel.interface';
-import { getChannels } from '../../api/channel.api';
+import { getChannels, postChannel } from '../../api/channel.api';
 import  {ChatProps, ChatData, Message, User} from '../../interfaces/channel.interface';
 import styled from "styled-components";
 
@@ -67,27 +67,16 @@ const Channel_Div: React.FC<ChatProps> = (props) => {
         else
             var channelType = "private";
         const ChannelData = {
-            "OwnerId": 1,
             "Name": channelName,
+            "OwnerId": 2,
             "Type": channelType,
             "Password": password
         }
 
-        const jsonData = JSON.stringify(ChannelData);
-        fetch(fetchAddress + 'channel', {credentials: "include",
-            method:"POST",
-            headers: {
-                "Container-Type": "application/json"
-            },
-            body:jsonData
-        })
-        .then(response => response.json())
-        .then(data => {
-            console.log("Channel created:", data);
-        })
-        .catch(error => {
-            console.log("Error creating channel:", error);
-        })
+        // const jsonData = JSON.stringify(ChannelData);
+        // console.log("jsonData", jsonData);
+        console.log("ChannelData", ChannelData);
+        postChannel(ChannelData);
     }
 
     function popUpCreateChannel(){
