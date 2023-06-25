@@ -4,6 +4,7 @@ import { getChannels } from '../../api/channel.api';
 import  {ChatProps, ChatData, Message, User} from '../../interfaces/channel.interface';
 import styled from "styled-components";
 
+var fetchAddress = 'http://localhost:3000/';
 
 function mapChannel(item: any) {
     const { ChannelId, OwnerId, Name, Type, Password } = item;
@@ -59,6 +60,70 @@ const Channel_Div: React.FC<ChatProps> = (props) => {
 		</Row>
 		);
 	}
+
+    function CreateChannel(channelName: String, password: String){
+        if(password == "")
+            var channelType = "public";
+        else
+            var channelType = "private";
+        const ChannelData = {
+            "OwnerId": 1,
+            "Name": channelName,
+            "Type": channelType,
+            "Password": password
+        }
+
+        const jsonData = JSON.stringify(ChannelData);
+        fetch(fetchAddress + 'channel', {credentials: "include",
+            method:"POST",
+            headers: {
+                "Container-Type": "application/json"
+            },
+            body:jsonData
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log("Channel created:", data);
+        })
+        .catch(error => {
+            console.log("Error creating channel:", error);
+        })
+    }
+
+    function popUpCreateChannel(){
+        // Open Window
+        var popup = window.open('', '_blank', 'width=500,height=300,menubar=no,toolbar=no');
+
+        const channelNameLabel = document.createElement("h1");
+        channelNameLabel.textContent = "Channel Name:";
+        popup?.document.body.appendChild(channelNameLabel);
+
+        var channelNameInput = document.createElement('input');
+        channelNameInput.type = 'text';
+        channelNameInput.placeholder = "Enter new Channel Name";
+        popup?.document.body.appendChild(channelNameInput);
+
+        const channelPasswordLabel = document.createElement("h1");
+        channelPasswordLabel.textContent = "Channel Password:";
+        popup?.document.body.appendChild(channelPasswordLabel);
+
+        var channelPasswordInput = document.createElement('input');
+        channelPasswordInput.type = 'text';
+        channelPasswordInput.placeholder = "for public channels leave empty";
+        popup?.document.body.appendChild(channelPasswordInput);
+
+        var createButton = document.createElement('button');
+        createButton.innerHTML = 'Create';
+        createButton.addEventListener('click', function() {
+            var channelName = channelNameInput.value;
+            var password = channelPasswordInput.value;
+
+            CreateChannel(channelName, password);
+            popup?.close();
+        });
+        popup?.document.body.appendChild(createButton);
+    }
+
     async function fetchChannels(){
 		try{
 			const response = await getChannels();
@@ -79,6 +144,12 @@ const Channel_Div: React.FC<ChatProps> = (props) => {
     return (
         <div>
             <h3>Channels</h3>
+            <button onClick={() => popUpCreateChannel()}>
+			Create Channel
+		    </button>
+            {/* <button onClick={() => props.joinRoom(props.currentChat.chatName)}>
+			Join private Channel
+		    </button> */}
             {allChannels.length > 0 ? allChannels.map(renderRooms) : 'noChannels'}
             </div>
     );
