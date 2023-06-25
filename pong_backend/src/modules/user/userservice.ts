@@ -46,4 +46,7 @@ export class UserService {
 	take: 10,
 	});
 }
+	// async create(user: User): Promise<User> {
+	// 	return this.userRepository.save(user);
+	// }
 }
