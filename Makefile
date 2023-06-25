@@ -27,10 +27,16 @@ run:
 	fi
 
 	# frontend .env
-	@if [ -z "$$(grep -o '^PORT=[^[:blank:]]*' ./pong_frontend/.env)" ]; then \
+	@if [ -z "$$(grep -o '^PORT=[^[:blank:]]*' ./pong_frontend/.env)" ] || \
+		[ -z "$$(grep -o '^AUTH_UID=[^[:blank:]]*' ./pong_frontend/.env)" ] || \
+		[ -z "$$(grep -o '^AUTH_SECRET=[^[:blank:]]*' ./pong_frontend/.env)" ]; then \
 		echo "Frontend .env file is missing required values. Please insert all values as required."; \
 		read -p "Enter the PORT for the frontend: " PORT && \
 		echo "PORT=$$PORT" > ./pong_frontend/.env; \
+		read -p "Enter the AUTH_UID for the backend: " AUTH_UID && \
+		echo "AUTH_UID=$$AUTH_UID" >> ./pong_frontend/.env; \
+		read -p "Enter the AUTH_SECRET for the backend: " AUTH_SECRET && \
+		echo "AUTH_SECRET=$$AUTH_SECRET" >> ./pong_frontend/.env; \
 	fi
 
 	@read -p "Would you like to run the project with Docker? [y/n] " -n 1 -r && \
