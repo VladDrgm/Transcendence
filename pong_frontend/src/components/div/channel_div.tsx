@@ -62,15 +62,19 @@ const Channel_Div: React.FC<ChatProps> = (props) => {
 	}
 
     function CreateChannel(channelName: String, password: String){
+        if(password == "")
+            var channelType = "public";
+        else
+            var channelType = "private";
         const ChannelData = {
             "OwnerId": 1,
             "Name": channelName,
-            "Type": "public",
+            "Type": channelType,
             "Password": password
         }
 
         const jsonData = JSON.stringify(ChannelData);
-        fetch(fetchAddress + 'channel', {
+        fetch(fetchAddress + 'channel', {credentials: "include",
             method:"POST",
             headers: {
                 "Container-Type": "application/json"
