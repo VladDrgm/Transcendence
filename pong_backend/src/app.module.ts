@@ -4,7 +4,7 @@
 // import { HelloController } from './hello/hello.controller';
 // import { DatabaseModule } from './database.module';
 
-import { Module } from '@nestjs/common';
+import { Module, Redirect } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { DatabaseModule } from './modules/database/database.module';
@@ -24,6 +24,7 @@ import { ChannelController } from './modules/channel/channel.controller';
 import { ChannelService } from './modules/channel/channel.service';
 import { FriendController } from './modules/friend/friend.controller';
 import { FriendService } from './modules/friend/friend.service';
+import { RedirectController } from './modules/redirect/redirect.controller';
 
 @Module({
   imports: [
@@ -41,7 +42,7 @@ import { FriendService } from './modules/friend/friend.service';
       Channel,
     ]),
   ],
-  controllers: [AppController, ChannelController, FriendController],
+  controllers: [AppController, ChannelController, FriendController, RedirectController],
   providers: [AppService, ChannelService, FriendService],
 })
 export class AppModule {}
