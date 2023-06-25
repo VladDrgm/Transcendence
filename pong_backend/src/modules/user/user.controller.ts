@@ -5,6 +5,7 @@ import {
   Put,
   Post,
   Param,
+  Body,
   Request,
   Session,
   ParseIntPipe,
@@ -29,10 +30,10 @@ export class UserController {
   //     return this.userService.findOne(id);
   //   }
 
-  //   @Post()
-  //   async create(@Body() user: User): Promise<User> {
-  //     return this.userService.create(user);
-  //   }
+    @Post()
+    async create(@Body() user: User): Promise<User> {
+      return this.userService.create(user);
+    }
 
   //   @Delete(':id')
   //   async remove(@Param('id') id: number): Promise<void> {
@@ -72,7 +73,5 @@ export class UserController {
   async getUsersOrderedByPoints(): Promise<User[]> {
 	return this.userService.getUsersOrderedByPoints();
   }
-
-
 
 }
