@@ -68,9 +68,9 @@ const Channel_Div: React.FC<ChatProps> = (props) => {
             var channelType = "private";
         const ChannelData = {
             "Name": channelName,
-            "OwnerId": 2,
             "Type": channelType,
-            "Password": password
+            "Password": password,
+            "OwnerId": 1
         }
 
         // const jsonData = JSON.stringify(ChannelData);
