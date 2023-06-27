@@ -84,11 +84,21 @@ const Channel_Div: React.FC<ChatProps> = (props) => {
             "OwnerId": 1
         }
 
-        // const jsonData = JSON.stringify(ChannelData);
-        // console.log("jsonData", jsonData);
-        console.log("ChannelData", ChannelData);
-        postChannel(ChannelData);
-    
+        const jsonData = JSON.stringify(ChannelData);
+        fetch(fetchAddress + 'channel', {credentials: "include",
+            method:"POST",
+			headers: {
+				"Content-Type": "application/json"
+			  },
+            body:jsonData
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log("Channel created:", data);
+        })
+        .catch(error => {
+            console.log("Error creating channel:", error);
+        })
     }
 
     function popUpCreateChannel(){
