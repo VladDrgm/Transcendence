@@ -1,12 +1,12 @@
 import React, { FC, ChangeEvent, KeyboardEvent } from "react";
 
 export interface Channel {
-    ChannelId: number;
-  OwnerId: number;
-  Name: string;
-  Type: string;
-  Password: string;
-  }
+	ChannelId: number;
+ 	OwnerId: number;
+  	Name: string;
+  	Type: string;
+  	Password: string;
+}
 
 export interface ChatProps {
 	toggleChat: (currentChat: ChatData) => void;
@@ -27,6 +27,7 @@ export interface ChatProps {
 	isChannel: boolean;
 	chatName: ChatName;
 	receiverId: string;
+	Channel: Channel;
 };
 
 export interface Message {

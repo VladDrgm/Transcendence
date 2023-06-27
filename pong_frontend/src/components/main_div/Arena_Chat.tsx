@@ -6,7 +6,10 @@ import GameForm from "./GameForm";
 import { io, Socket } from "socket.io-client";
 import immer, { Draft } from "immer";
 import "../../App.css";
-import {fetchChannelNames} from "../div/channel_div"
+import {fetchChannelNames, copyChannelByName} from "../div/channel_div"
+import {postChannelUser} from "../../api/channel.api"
+import { Channel } from '../../interfaces/channel.interface';
+// import { Channel } from 'diagnostics_channel';
 
 type WritableDraft<T> = Draft<T>;
 
@@ -22,7 +25,7 @@ let initialMessagesState: {
 	// javascript: []
 };
 
-//Using fetched Cahhnel Names to add as keys to the initialMessageState object
+//Using fetched Channel Names to add as keys to the initialMessageState object
 async function initializeMessagesState() {
 	const channelNames = await fetchChannelNames();
 	channelNames.forEach((channelName) => {
@@ -36,6 +39,7 @@ type CurrentChat = {
 	isChannel: boolean;
 	chatName: ChatName;
 	receiverId: string;
+	Channel: Channel;
 };
 
 function Arena_Chat_MainDiv(): JSX.Element {
@@ -45,8 +49,27 @@ function Arena_Chat_MainDiv(): JSX.Element {
 	const [currentChat, setCurrentChat] = useState<CurrentChat>({
 		isChannel: true,
 		chatName: "general",
-		receiverId: ""
+		receiverId: "",
+		Channel: {} as Channel,
 	});
+
+	useEffect(() => {
+		const fetchAndCopyChannel = async () => {
+		  const copiedChannel = await copyChannelByName(currentChat.chatName.toString());
+		  if (copiedChannel) {
+			setCurrentChat(prevState => ({
+			  ...prevState,
+			  Channel: copiedChannel,
+			}));
+		  }
+		};
+		fetchAndCopyChannel();
+  	}, [setCurrentChat, currentChat.chatName]); //this calls fetchAndCopyCahnnel whenever setCurrentChat is called with a new Chatname
+	
+	useEffect(() => {
+		console.log("Updating Channelobject in currentChat to:", currentChat.Channel.Name);
+	  }, [currentChat.Channel.Name]);
+
 	const [connectedRooms, setConnectedRooms] = useState<string[]>(["general"]);
 	const [allUsers, setAllUsers] = useState<any[]>([]);
 	const [allChannels, setAllChannels] = useState<any[]>([]);
@@ -98,6 +121,7 @@ function Arena_Chat_MainDiv(): JSX.Element {
 	function roomJoinCallback(incomingMessages: any, room: keyof typeof messages) {
 	const newMessages = immer(messages, (draft: WritableDraft<typeof messages>) => {
 		draft[room] = incomingMessages;
+		console.log("Callback");
 	});
 	setMessages(newMessages);
 	}
@@ -106,7 +130,13 @@ function Arena_Chat_MainDiv(): JSX.Element {
 	const newConnectedRooms = immer(connectedRooms, (draft: WritableDraft<typeof connectedRooms>) => {
 		const chatNameString = String(chatName); // Convert chatName to string
 		draft.push(chatNameString);
+
+		//adding User to channel
+		// console.log("Posting User 1 in Channel", currentChat.Channel.ChannelId);
+		// postChannelUser(1, currentChat.Channel.ChannelId);
 	});
+	console.log("Posting User 1 in Channel:", currentChat.Channel.ChannelId);
+	postChannelUser(1, currentChat.Channel.ChannelId);
 	socketRef.current?.emit("join room", chatName, (messages: any) => roomJoinCallback(messages, chatName));
 	setConnectedRooms(newConnectedRooms);
 	}
@@ -118,6 +148,7 @@ function Arena_Chat_MainDiv(): JSX.Element {
 		});
 		setMessages(newMessages);
 		}
+		console.log("Updating in toggle currenChatName", currentChat.chatName)
 		setCurrentChat(currentChat);
 	}
 

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Channel } from '../../interfaces/channel.interface';
-import { getChannels } from '../../api/channel.api';
+import { getChannels, postAdmin, postChannel } from '../../api/channel.api';
 import  {ChatProps, ChatData, Message, User} from '../../interfaces/channel.interface';
 import styled from "styled-components";
 
@@ -33,6 +33,16 @@ export async function fetchChannels(): Promise<Channel[]> {
     }
 };
 
+export async function copyChannelByName(channelName: string): Promise<Channel | undefined> {
+    const channelList = await fetchChannels();
+    const originalChannel = channelList.find(channel => channel.Name === channelName)
+    if (originalChannel) {
+        const copiedChannel: Channel = { ...originalChannel};
+        return copiedChannel;
+    }
+    return undefined;
+}
+
 export async function fetchChannelNames(): Promise<string[]> {
     try{
         const response = await getChannels();
@@ -53,6 +63,7 @@ const Channel_Div: React.FC<ChatProps> = (props) => {
 		chatName: room.Name,
 		isChannel: true,
 		receiverId: "",
+        Channel: {} as Channel,
 		};
 		return (
 		<Row onClick={() => props.toggleChat(currentChat)} key={room.Name}>
@@ -67,27 +78,17 @@ const Channel_Div: React.FC<ChatProps> = (props) => {
         else
             var channelType = "private";
         const ChannelData = {
-            "OwnerId": 1,
             "Name": channelName,
             "Type": channelType,
-            "Password": password
+            "Password": password,
+            "OwnerId": 1
         }
 
-        const jsonData = JSON.stringify(ChannelData);
-        fetch(fetchAddress + 'channel', {credentials: "include",
-            method:"POST",
-            headers: {
-                "Container-Type": "application/json"
-            },
-            body:jsonData
-        })
-        .then(response => response.json())
-        .then(data => {
-            console.log("Channel created:", data);
-        })
-        .catch(error => {
-            console.log("Error creating channel:", error);
-        })
+        // const jsonData = JSON.stringify(ChannelData);
+        // console.log("jsonData", jsonData);
+        console.log("ChannelData", ChannelData);
+        postChannel(ChannelData);
+    
     }
 
     function popUpCreateChannel(){
