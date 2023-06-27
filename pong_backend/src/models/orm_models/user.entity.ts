@@ -5,12 +5,6 @@ import { ChannelAdmin } from './channel_admin.entity';
 import { ChannelBlockedUser } from './channel_blocked_user.entity';
 import { ChannelUser } from './channel_user.entity';
 
-export enum StatusValue {
-  Available = 'available',
-  Offline = 'offline',
-  InGame = 'ingame',
-}
-
 @Entity({ name: 'User' })
 export class User {
   @PrimaryGeneratedColumn({
@@ -31,34 +25,38 @@ export class User {
 
   @Column({
     type: 'int',
+	default: 0,
   })
   wins: number;
 
   @Column({
     type: 'int',
+	default: 0,
   })
   losses: number;
 
   @Column({
     type: 'int',
+	default: 0,
   })
-  ladderLevel: number;
+  points: number;
 
   @Column({
-    type: 'enum',
-    enum: StatusValue,
-    default: StatusValue.Offline,
+    type: 'text',
+    default: 'offline',
   })
-  status: StatusValue;
+  status: string;
 
   @Column({
     type: 'text',
     name: 'achievements',
+	default: '',
   })
   achievementsCSV: string;
 
   @Column({
     type: 'text',
+	default: null
   })
   passwordHash: string;
 

@@ -2,13 +2,19 @@ import { ApiTags } from '@nestjs/swagger';
 import {
   Controller,
   Get,
+  Put,
+  Post,
   Param,
+  Body,
   Request,
   Session,
   ParseIntPipe,
 } from '@nestjs/common';
 import { UserService } from './userservice';
 import { User } from 'src/models/orm_models/user.entity';
+import { Friend } from 'src/models/orm_models/friend.entity';
+
+
 @ApiTags('User')
 @Controller('user')
 export class UserController {
@@ -24,10 +30,10 @@ export class UserController {
   //     return this.userService.findOne(id);
   //   }
 
-  //   @Post()
-  //   async create(@Body() user: User): Promise<User> {
-  //     return this.userService.create(user);
-  //   }
+    @Post()
+    async create(@Body() user: User): Promise<User> {
+      return this.userService.create(user);
+    }
 
   //   @Delete(':id')
   //   async remove(@Param('id') id: number): Promise<void> {
@@ -50,14 +56,22 @@ export class UserController {
     return 'Loged in with id: ' + userID;
   }
 
-  @Get(':id/friends')
-  async getUserFriends(@Param('id') id: number) {
-    const friends = await this.userService.findUserFriends(id);
-    return friends;
+  @Get('user/:id')
+  async getUser(@Param('id', ParseIntPipe) id: number): Promise<User> {
+	return this.userService.findOne(id);
   }
 
-  // @Get(':friendId')
-  // async getFriendById(@Param('friendId') friendId: number): Promise<User> {
-  //   return this.userService.findFriendById(friendId);
-  // }
+  @Put(':id/update/points/:points')
+  async updatePoints(
+	@Param('id', ParseIntPipe) id: number,
+	@Param('points', ParseIntPipe) points: number,
+	  ): Promise<void> {
+	await this.userService.updatePoints(id, points);
+	  }
+
+  @Get('users/points')
+  async getUsersOrderedByPoints(): Promise<User[]> {
+	return this.userService.getUsersOrderedByPoints();
+  }
+
 }

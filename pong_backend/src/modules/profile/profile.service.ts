@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { FriendProfile } from './interfaces/friend_profile.interface';
-import { User, StatusValue } from 'src/models/orm_models/user.entity';
+import { User } from 'src/models/orm_models/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { PrivateProfile } from './interfaces/private_profile.interface';
@@ -28,7 +28,7 @@ export class ProfileService {
     myProf.status = usrRet.status;
     myProf.achievements = usrRet.achievementsCSV;
     myProf.avatar = usrRet.avatarPath;
-    myProf.ladderLevel = usrRet.ladderLevel;
+    myProf.points = usrRet.points;
     myProf.losses = usrRet.losses;
     myProf.wins = usrRet.wins;
     return myProf;
@@ -46,7 +46,7 @@ export class ProfileService {
         friendProf.status = usrRet.status;
         friendProf.achievements = usrRet.achievementsCSV;
         friendProf.avatar = usrRet.avatarPath;
-        friendProf.ladderLevel = usrRet.ladderLevel;
+        friendProf.points = usrRet.points;
         friendProf.losses = usrRet.losses;
         friendProf.wins = usrRet.wins;
         return friendProf;
@@ -67,7 +67,7 @@ export class ProfileService {
       publicProf.nickname = usrRet.username;
       publicProf.achievements = usrRet.achievementsCSV;
       publicProf.avatar = usrRet.avatarPath;
-      publicProf.ladderLevel = usrRet.ladderLevel;
+      publicProf.points = usrRet.points;
       return publicProf;
     } else return -2;
   }

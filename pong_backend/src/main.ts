@@ -4,6 +4,7 @@ import { config } from 'dotenv';
 import * as session from 'express-session';
 import { SessionOptions } from 'express-session';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import './socket-server';
 
 config();
 

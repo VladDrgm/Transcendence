@@ -13,5 +13,6 @@ import { UserService } from './userservice';
   imports: [TypeOrmModule.forFeature([User, Blocked, Friend])],
   controllers: [ProfileController, UserController],
   providers: [ProfileService, SharedSession, UserService],
+  exports: [UserService],
 })
 export class UsersModule {}
