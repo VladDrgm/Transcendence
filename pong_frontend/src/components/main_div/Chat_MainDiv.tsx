@@ -132,6 +132,7 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 		chatName: user.username,
 		isChannel: false,
 		receiverId: user.id,
+		Channel: {} as Channel,
 		};
 		console.log("Reached here");
 		return (

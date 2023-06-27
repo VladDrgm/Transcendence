@@ -33,6 +33,16 @@ export async function fetchChannels(): Promise<Channel[]> {
     }
 };
 
+export async function copyChannelByName(channelName: string): Promise<Channel | undefined> {
+    const channelList = await fetchChannels();
+    const originalChannel = channelList.find(channel => channel.Name === channelName)
+    if (originalChannel) {
+        const copiedChannel: Channel = { ...originalChannel};
+        return copiedChannel;
+    }
+    return undefined;
+}
+
 export async function fetchChannelNames(): Promise<string[]> {
     try{
         const response = await getChannels();
@@ -53,6 +63,7 @@ const Channel_Div: React.FC<ChatProps> = (props) => {
 		chatName: room.Name,
 		isChannel: true,
 		receiverId: "",
+        Channel: {} as Channel,
 		};
 		return (
 		<Row onClick={() => props.toggleChat(currentChat)} key={room.Name}>
