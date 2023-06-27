@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Channel } from '../../interfaces/channel.interface';
-import { getChannels, postChannel } from '../../api/channel.api';
+import { getChannels, postAdmin, postChannel } from '../../api/channel.api';
 import  {ChatProps, ChatData, Message, User} from '../../interfaces/channel.interface';
 import styled from "styled-components";
 
@@ -88,6 +88,7 @@ const Channel_Div: React.FC<ChatProps> = (props) => {
         // console.log("jsonData", jsonData);
         console.log("ChannelData", ChannelData);
         postChannel(ChannelData);
+    
     }
 
     function popUpCreateChannel(){
