@@ -14,6 +14,7 @@ const UserStartPage: React.FC<StartPageProps> = ({id}) => {
             <header>
               <button onClick={() => mode_set(main_div_mode_t.PROFILE)}>Profie</button>
               <button onClick={() => mode_set(main_div_mode_t.FRIIEND_PROFILE)}>Friends</button>
+              <button onClick={() => mode_set(main_div_mode_t.LEADERBORAD)}>Leaderboard</button>
               <button>Blocked</button>
               <button>Random match</button>
               <button>Chat</button>

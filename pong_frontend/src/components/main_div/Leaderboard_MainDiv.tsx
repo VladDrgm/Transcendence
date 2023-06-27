@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { ILeaderboard } from '../../interfaces/leaderboard_user.interface';
+import { IUser } from '../../interfaces/interface';
 import { getLeaderboard } from '../../api/leaderboard.api';
 
 const Leaderboard_MainDiv = () => {
-  const [leaderboard, setLeaderboard] = useState<ILeaderboard[]>([]);
+  const [leaderboard, setLeaderboard] = useState<IUser[]>([]);
   const [spot, setSpot] = useState<number>(0);
   const [score, setScore] = useState<number>(0);
 
@@ -25,14 +25,14 @@ const Leaderboard_MainDiv = () => {
 
     // Update the score state
     setScore(leaderboard[0].points);
-  }, [leaderboard]);
+  }, [leaderboard, score]);
 
   return (
     <div>
       <h1>Leaderboard:</h1>
       <ol>
         {leaderboard.map((user, index) => (
-          <li key={user.userId}>
+          <li key={user.nickname}>
             <div>
               <h2>{spot}</h2>
               <p>Name: {user.nickname}</p>

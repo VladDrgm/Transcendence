@@ -8,5 +8,6 @@ export interface IUser {
     status: string;
     achievements: string;
     passwordHash: string;
+    points: number;
   }
   
