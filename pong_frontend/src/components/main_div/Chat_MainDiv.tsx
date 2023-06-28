@@ -1,7 +1,8 @@
-import React, { FC, ChangeEvent, KeyboardEvent } from "react";
+import React, { FC, ChangeEvent, KeyboardEvent, useEffect } from "react";
 import styled from "styled-components";
 import { Channel } from '../../interfaces/channel.interface';
 import Channel_Div from '../div/channel_div';
+import {isChannelUser} from '../div/channel_div';
 
 import { ChatName } from "./Arena_Chat";
 import { getChannels } from '../../api/channel.api';
@@ -155,19 +156,31 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 
 	let body;
 	const messages = props.messages || [];
-	if (!props.currentChat.isChannel || props.connectedRooms.includes(props.currentChat.chatName.toString())) {
-		body = (
-		<Messages>
-			{messages.map(renderMessages)}
-		</Messages>
-		);
-	} else {
-		body = (
-		<button onClick={() => props.joinRoom(props.currentChat.chatName)}>
-			Join {props.currentChat.chatName}
-		</button>
-		);
-	}
+	const handleUserInChannelCheck = async () => {
+		try {
+			//replacing the user here with the real user when login finished
+			const userIsChannel = await isChannelUser(1, props.currentChat.Channel.ChannelId);
+			if (userIsChannel || !props.currentChat.isChannel || props.connectedRooms.includes(props.currentChat.chatName.toString())) {
+				body = (
+				<Messages>
+					{messages.map(renderMessages)}
+				</Messages>
+				);
+			} else {
+				body = (
+				<button onClick={() => props.joinRoom(props.currentChat.chatName)}>
+					Join {props.currentChat.chatName}
+				</button>
+				);
+			}
+		}catch (error){
+			console.error('Error occured in handleUserChannelCheck:', error);
+		}
+	};
+
+	useEffect(() => {
+		handleUserInChannelCheck();
+	}, [props.currentChat, props.connectedRooms]);
 
 	function handleKeyPress(e: KeyboardEvent<HTMLTextAreaElement>) {
 		if (e.key === "Enter") {

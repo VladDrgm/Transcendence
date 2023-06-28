@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Channel } from '../../interfaces/channel.interface';
-import { getChannels, postAdmin, postChannel } from '../../api/channel.api';
+import { getChannels, postAdmin, postChannel, getChannelUser } from '../../api/channel.api';
 import  {ChatProps, ChatData, Message, User} from '../../interfaces/channel.interface';
 import styled from "styled-components";
 
@@ -54,6 +54,16 @@ export async function fetchChannelNames(): Promise<string[]> {
         return [];
     }
 };
+
+export async function isChannelUser(userId: number, channelId: number): Promise<boolean> {
+    try {
+        const channelUser = await getChannelUser(userId, channelId);
+        return !!channelUser; // Converts channelUser to boolean 
+    } catch (error){
+        console.error('Error occured in isUserChannel:', error);
+		return false;
+    }
+}
 
 const Channel_Div: React.FC<ChatProps> = (props) => {
     const [allChannels, setAllChannels] = useState<Channel[]>([]);
