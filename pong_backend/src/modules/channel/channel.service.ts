@@ -5,6 +5,8 @@ import { ChannelAdmin } from 'src/models/orm_models/channel_admin.entity';
 import { Repository } from 'typeorm';
 import { ChannelUser } from 'src/models/orm_models/channel_user.entity';
 import { ChannelBlockedUser } from 'src/models/orm_models/channel_blocked_user.entity';
+import { HttpException, HttpStatus } from '@nestjs/common';
+
 
 
 export class ChannelRepository extends Repository<Channel> {}
@@ -26,11 +28,18 @@ export class ChannelService {
     return this.channelRepository.find();
   }
 
+  async GetChannelOwner(channelId: number) : Promise<number>
+  {
+	  const channel = await this.findOne(channelId);
+	  return channel.OwnerId;
+  }
+
   async findOne(id: number): Promise<Channel> {
     return this.channelRepository.findOneBy({ ChannelId: id });
   }
 
   async create(channel: Channel): Promise<Channel> {
+	this.channelAdminRepository.save({ UserId: channel.OwnerId, ChannelId: channel.ChannelId });
     return this.channelRepository.save(channel);
   }
 
@@ -40,7 +49,11 @@ export class ChannelService {
 
   async addAdmin(userId: number, targetId: number, channelId: number): Promise<ChannelAdmin> {
 	if (userId === targetId) {
-	  throw new Error('Cannot add yourself as admin');
+	  throw new Error('Cannot add yourself as admin.');
+	}
+
+	if (await this.getChannelAdminByUserId(targetId, channelId)) {
+		throw new HttpException('User is already admin.', HttpStatus.BAD_REQUEST);
 	}
 
 	const channel = await this.findOne(channelId);
@@ -50,7 +63,7 @@ export class ChannelService {
 	}
 	if ( channel.OwnerId == userId ) {
 		const channelAdmin = new ChannelAdmin();
-		channelAdmin.UserId = userId;
+		channelAdmin.UserId = targetId;
 		channelAdmin.ChannelId = channelId;
 		return this.channelAdminRepository.save(channelAdmin);
 	}
@@ -87,9 +100,33 @@ export class ChannelService {
 	await this.channelUserRepository.delete(channelUser.CUserId);
   }
 
-  async removeChannelAdmin(userId: number, channelId: number): Promise<void> {
-	const channelAdmin = await this.getChannelAdminByUserId(userId, channelId);
-	await this.channelAdminRepository.delete(channelAdmin.ChannelAdminId);
+  async removeChannelAdmin(userId: number, targetId: number, channelId: number): Promise<string> {
+
+	const CallerAdmin = await this.getChannelAdminByUserId(userId, channelId);
+	const isCallerAdmin = CallerAdmin ? true : false;
+	if (!isCallerAdmin) {
+		throw new HttpException('You do not have the credentials to remove and admin.', HttpStatus.BAD_REQUEST);
+	}
+
+	const TargetAdmin = await this.getChannelAdminByUserId(targetId, channelId);
+	const isTargetAdmin = TargetAdmin ? true : false;
+	const ownerId = await this.GetChannelOwner(channelId);
+
+	if (TargetAdmin == null) {
+		throw new HttpException('The target is not an admin.', HttpStatus.BAD_REQUEST);
+	}
+
+	if (isCallerAdmin && isTargetAdmin && (CallerAdmin.UserId != ownerId)) {
+		throw new HttpException('Only the owner can remove an administrator.', HttpStatus.BAD_REQUEST);
+	}
+
+	if (CallerAdmin.UserId == ownerId) {
+		if (targetId == ownerId) {
+			throw new HttpException('You are the Owner. You cannot remove yourself as Admin.', HttpStatus.BAD_REQUEST);
+		}
+		await this.channelAdminRepository.delete(TargetAdmin.ChannelAdminId);
+		return `Admin has been deleted successfully.`;
+	}
   }
 
   async addChannelBlockedUser(userId: number, channelId: number): Promise<ChannelBlockedUser> {
