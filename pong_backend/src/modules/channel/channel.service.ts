@@ -6,6 +6,8 @@ import { Repository } from 'typeorm';
 import { ChannelUser } from 'src/models/orm_models/channel_user.entity';
 import { ChannelBlockedUser } from 'src/models/orm_models/channel_blocked_user.entity';
 import { HttpException, HttpStatus } from '@nestjs/common';
+import { CreateChannelDto } from './channelDTO';
+import { plainToClass } from 'class-transformer';
 
 
 
@@ -38,9 +40,14 @@ export class ChannelService {
     return this.channelRepository.findOneBy({ ChannelId: id });
   }
 
-  async create(channel: Channel): Promise<Channel> {
-	this.channelAdminRepository.save({ UserId: channel.OwnerId, ChannelId: channel.ChannelId });
-    return this.channelRepository.save(channel);
+  async create(channel: CreateChannelDto): Promise<Channel> {
+
+    const channelDb: Channel = plainToClass(Channel, channel);
+
+	this.channelAdminRepository.save({ UserId: channel.OwnerId, ChannelId: channelDb.ChannelId });
+
+
+	return this.channelRepository.save(channelDb);
   }
 
   async remove(id: number): Promise<void> {

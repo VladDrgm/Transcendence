@@ -15,6 +15,7 @@ import { ChannelAdmin } from 'src/models/orm_models/channel_admin.entity';
 import { channel } from 'diagnostics_channel';
 import { ChannelUser } from 'src/models/orm_models/channel_user.entity';
 import { ChannelBlockedUser } from 'src/models/orm_models/channel_blocked_user.entity';
+import { CreateChannelDto } from './channelDTO';
 
 @ApiTags('Channel')
 @Controller('channel')
@@ -32,7 +33,7 @@ export class ChannelController {
   }
 
   @Post()
-  async create(@Body() channel: Channel): Promise<Channel> {
+  async create(@Body() channel: CreateChannelDto): Promise<Channel> {
     return this.channelService.create(channel);
   }
 
