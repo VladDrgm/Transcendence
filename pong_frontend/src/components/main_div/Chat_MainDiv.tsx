@@ -5,7 +5,7 @@ import Channel_Div from '../div/channel_div';
 import {isChannelUser} from '../div/channel_div';
 
 import { ChatName } from "./Arena_Chat";
-import { getChannels } from '../../api/channel.api';
+import { deleteChannel, getChannels } from '../../api/channel.api';
 import  {ChatProps, ChatData, Message, User} from '../../interfaces/channel.interface';
 
 
@@ -162,9 +162,14 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 			const userIsChannel = await isChannelUser(1, props.currentChat.Channel.ChannelId);
 			if (userIsChannel || !props.currentChat.isChannel || props.connectedRooms.includes(props.currentChat.chatName.toString())) {
 				body = (
-				<Messages>
-					{messages.map(renderMessages)}
-				</Messages>
+					// <div>
+					// 	<button onClick={() => deleteChannel(props.currentChat.Channel.ChannelId)}>
+					// 	Delete Channel
+					// 	</button>
+						<Messages>
+							{messages.map(renderMessages)}
+						</Messages>
+					// </div>
 				);
 			} else {
 				body = (
@@ -180,7 +185,7 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 
 	useEffect(() => {
 		handleUserInChannelCheck();
-	}, [props.currentChat, props.connectedRooms]);
+	}, [props.currentChat]);
 
 	function handleKeyPress(e: KeyboardEvent<HTMLTextAreaElement>) {
 		if (e.key === "Enter") {
@@ -198,6 +203,10 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 		<ChatPanel>
 			<ChannelInfo>
 			{props.currentChat.chatName}
+			<button
+			onClick={() => deleteChannel(props.currentChat.Channel.ChannelId)}>
+			Delete Channel
+		    </button>
 			</ChannelInfo>
 			<BodyContainer>
 			{body}

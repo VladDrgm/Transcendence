@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Channel } from '../../interfaces/channel.interface';
-import { getChannels, postAdmin, postChannel, getChannelUser } from '../../api/channel.api';
+import { getChannels, postAdmin, postChannel, getChannelUser, postChannelUser, deleteChannel } from '../../api/channel.api';
 import  {ChatProps, ChatData, Message, User} from '../../interfaces/channel.interface';
 import styled from "styled-components";
 
@@ -60,7 +60,7 @@ export async function isChannelUser(userId: number, channelId: number): Promise<
         const channelUser = await getChannelUser(userId, channelId);
         return !!channelUser; // Converts channelUser to boolean 
     } catch (error){
-        console.error('Error occured in isUserChannel:', error);
+        console.error('Error occured, or empty JSON resposne from getChannelUser, in isUserChannel:', error);
 		return false;
     }
 }
@@ -105,6 +105,9 @@ const Channel_Div: React.FC<ChatProps> = (props) => {
         .then(response => response.json())
         .then(data => {
             console.log("Channel created:", data);
+            //User needs to be changed based on the real user after login is finished
+	        console.log("Posting User 1 in Channel:", props.currentChat.Channel.ChannelId);
+	        postChannelUser(1, props.currentChat.Channel.ChannelId);
         })
         .catch(error => {
             console.log("Error creating channel:", error);
@@ -168,8 +171,8 @@ const Channel_Div: React.FC<ChatProps> = (props) => {
             <button onClick={() => popUpCreateChannel()}>
 			Create Channel
 		    </button>
-            {/* <button onClick={() => props.joinRoom(props.currentChat.chatName)}>
-			Join private Channel
+            {/* <button onClick={() => deleteChannel(props.currentChat.Channel.ChannelId)}>
+			Delete Channel
 		    </button> */}
             {allChannels.length > 0 ? allChannels.map(renderRooms) : 'noChannels'}
             </div>
