@@ -1,10 +1,11 @@
-import React, { FC, ChangeEvent, KeyboardEvent } from "react";
+import React, { FC, ChangeEvent, KeyboardEvent, useEffect, useLayoutEffect, useState , Suspense} from "react";
 import styled from "styled-components";
 import { Channel } from '../../interfaces/channel.interface';
 import Channel_Div from '../div/channel_div';
+import {isChannelUser} from '../div/channel_div';
 
 import { ChatName } from "./Arena_Chat";
-import { getChannels } from '../../api/channel.api';
+import { deleteChannel, getChannels, getIsAdmin } from '../../api/channel.api';
 import  {ChatProps, ChatData, Message, User} from '../../interfaces/channel.interface';
 
 
@@ -114,6 +115,8 @@ const Messages = styled.div`
 `;
 
 const Chat_MainDiv: FC<ChatProps> = (props) => {
+	const [isAdmin, setIsAdmin] = useState(false);
+	const [isAdminResolved, setIsAdminResolved] = useState(false);
 	function renderUser(user: User) {
 		console.log("User id is: " + user.id);
 		console.log("User.username is: " + user.username);
@@ -155,19 +158,48 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 
 	let body;
 	const messages = props.messages || [];
-	if (!props.currentChat.isChannel || props.connectedRooms.includes(props.currentChat.chatName.toString())) {
-		body = (
-		<Messages>
-			{messages.map(renderMessages)}
-		</Messages>
-		);
-	} else {
-		body = (
-		<button onClick={() => props.joinRoom(props.currentChat.chatName)}>
-			Join {props.currentChat.chatName}
-		</button>
-		);
-	}
+	const handleUserInChannelCheck = async () => {
+		try {
+			//replacing the user here with the real user when login finished
+			const userIsChannel = await isChannelUser(1, props.currentChat.Channel.ChannelId);
+			if (userIsChannel || !props.currentChat.isChannel || props.connectedRooms.includes(props.currentChat.chatName.toString())) {
+				body =
+						<Messages>
+							{messages.map(renderMessages)}
+						</Messages>;
+			} else {
+				body = (
+				<button onClick={() => props.joinRoom(props.currentChat.chatName)}>
+					Join {props.currentChat.chatName}
+				</button>
+				);
+			}
+		}catch (error){
+			console.error('Error occured in handleUserChannelCheck:', error);
+		}
+	};
+
+	useEffect(() => {
+		handleUserInChannelCheck();
+		// setIsAdminResolved(false);
+	}, [props.currentChat]);
+
+	//checks if a user is Admin and sets the isAdmin to true or false
+	//using yourID as UserId here, maybe neede to be updated later
+	useEffect(() => {
+		setIsAdminResolved(false);
+		getIsAdmin(props.currentChat.Channel.ChannelId, 1)
+		.then(isAdmin => {
+			setIsAdmin(isAdmin);
+			setIsAdminResolved(true);
+		})
+		.catch(error => {
+			console.log("Error checking admin status:", error)
+			setIsAdminResolved(true);
+		});
+		// handleUserInChannelCheck();
+		// setIsAdminResolved(false);
+	}, [props.currentChat.Channel.ChannelId, props.yourId]);
 
 	function handleKeyPress(e: KeyboardEvent<HTMLTextAreaElement>) {
 		if (e.key === "Enter") {
@@ -185,6 +217,12 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 		<ChatPanel>
 			<ChannelInfo>
 			{props.currentChat.chatName}
+			{isAdminResolved && isAdmin && (
+			<button
+			onClick={() => deleteChannel(props.currentChat.Channel.ChannelId)}>
+			Delete Channel
+		    </button>
+			)}
 			</ChannelInfo>
 			<BodyContainer>
 			{body}

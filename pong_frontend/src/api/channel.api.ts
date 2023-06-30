@@ -59,18 +59,18 @@ export function getAdmins(channelId: number){
 }
 
 //to be tested
-export function getIsAdmin(channelId: number, userId: number){
-  fetch(fetchAddress + 'channel/' + userId + '/' + channelId + '/admin', {credentials: "include",})
-    .then(response => response.json())
-    .then(data => {
-      console.log("User " + userId + " is Admin of channlId " + channelId + ":", data);
+export async function getIsAdmin(channelId: number, userId: number): Promise<any> {
+  try {
+    const response = await fetch(fetchAddress + 'channel/' + userId + '/' + channelId + '/admin', {credentials: "include",})
+    const data = await response.json();
+    console.log("User " + userId + " is Admin of channlId " + channelId + ":", data);
       return data;
-    })
-    .catch(error => {
+  } catch (error) {
       console.log("Error returning Admins of channelId " + channelId + ":", error);
-      return [];
-    });
+      return false;
+  }
 }
+
 
 export function deleteAdmin(channelId: number, userId: number) {
   fetch(fetchAddress + 'channel/' + userId + '/' + channelId + '/admin', {method: 'DELETE'})

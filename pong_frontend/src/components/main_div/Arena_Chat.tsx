@@ -135,6 +135,7 @@ function Arena_Chat_MainDiv(): JSX.Element {
 		// console.log("Posting User 1 in Channel", currentChat.Channel.ChannelId);
 		// postChannelUser(1, currentChat.Channel.ChannelId);
 	});
+	//User needs to be changed based on the real user after login is finished
 	console.log("Posting User 1 in Channel:", currentChat.Channel.ChannelId);
 	postChannelUser(1, currentChat.Channel.ChannelId);
 	socketRef.current?.emit("join room", chatName, (messages: any) => roomJoinCallback(messages, chatName));
@@ -148,7 +149,7 @@ function Arena_Chat_MainDiv(): JSX.Element {
 		});
 		setMessages(newMessages);
 		}
-		console.log("Updating in toggle currenChatName", currentChat.chatName)
+		// console.log("Updating in toggle currenChatName", currentChat.chatName)
 		setCurrentChat(currentChat);
 	}
 
