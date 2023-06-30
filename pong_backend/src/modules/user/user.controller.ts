@@ -6,6 +6,7 @@ import {
   Post,
   Param,
   Body,
+  Delete,
   Request,
   Session,
   ParseIntPipe,
@@ -35,16 +36,11 @@ export class UserController {
       return this.userService.create(user);
     }
 
-  //   @Delete(':id')
-  //   async remove(@Param('id') id: number): Promise<void> {
-  //     await this.userService.remove(id);
-  //   }
-  // }
+    @Delete(':id')
+    async remove(@Param('id') id: number): Promise<void> {
+      await this.userService.remove(id);
+    }
 
-  // @Get()
-  // getUser(): string {
-  //   return 'This is public prdile of a user ';
-  // }
 
   @Get('login/:id')
   async loginUser(
