@@ -2,10 +2,10 @@ import React, { FC, ChangeEvent, KeyboardEvent, useEffect, useLayoutEffect, useS
 import styled from "styled-components";
 import { Channel } from '../../interfaces/channel.interface';
 import Channel_Div from '../div/channel_div';
-import {isChannelUser} from '../div/channel_div';
+import {isChannelUser, addAdminPopUp, blockUserPopUp, banUserPopUp, kickUserPopUp} from '../div/channel_div';
 
 import { ChatName } from "./Arena_Chat";
-import { deleteChannel, getChannels, getIsAdmin } from '../../api/channel.api';
+import { deleteChannel, getChannels, getIsAdmin, postAdmin } from '../../api/channel.api';
 import  {ChatProps, ChatData, Message, User} from '../../interfaces/channel.interface';
 
 
@@ -218,10 +218,28 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 			<ChannelInfo>
 			{props.currentChat.chatName}
 			{isAdminResolved && isAdmin && (
-			<button
-			onClick={() => deleteChannel(props.currentChat.Channel.ChannelId)}>
-			Delete Channel
-		    </button>
+			<div>
+				<button
+				onClick={() => deleteChannel(props.currentChat.Channel.ChannelId)}>
+				Delete Channel
+				</button>
+				<button
+				onClick={() => addAdminPopUp(props)}>
+				Add Admin
+				</button>
+				<button
+				onClick={() => banUserPopUp(props)}>
+				Ban User
+				</button>
+				<button
+				onClick={() => kickUserPopUp(props)}>
+				Kick User
+				</button>
+				{/* <button
+				onClick={() => blockUserPopUp(props)}>
+				Block/Unblock User
+				</button> */}
+			</div>
 			)}
 			</ChannelInfo>
 			<BodyContainer>
