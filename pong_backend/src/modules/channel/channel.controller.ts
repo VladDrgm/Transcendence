@@ -7,7 +7,7 @@ import {
   Body,
   Param,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 import { Channel } from 'src/models/orm_models/channel.entity';
 import { ChannelService } from './channel.service';
 import { ApiBody } from '@nestjs/swagger';
@@ -15,6 +15,7 @@ import { ChannelAdmin } from 'src/models/orm_models/channel_admin.entity';
 import { channel } from 'diagnostics_channel';
 import { ChannelUser } from 'src/models/orm_models/channel_user.entity';
 import { ChannelBlockedUser } from 'src/models/orm_models/channel_blocked_user.entity';
+import { CreateChannelDto } from './channelDTO';
 
 @ApiTags('Channel')
 @Controller('channel')
@@ -32,7 +33,7 @@ export class ChannelController {
   }
 
   @Post()
-  async create(@Body() channel: Channel): Promise<Channel> {
+  async create(@Body() channel: CreateChannelDto): Promise<Channel> {
     return this.channelService.create(channel);
   }
 
@@ -52,13 +53,17 @@ export class ChannelController {
   }
 
   @Get(':userId/:channelId/admin')
-  async getChannelAdminByUserId(@Param('userId') userId: number, @Param('channelId') channelId: number): Promise<ChannelAdmin> {
+  async getChannelAdmin(@Param('userId') userId: number, @Param('channelId') channelId: number): Promise<ChannelAdmin> {
 	return this.channelService.getChannelAdminByUserId(userId, channelId);
 	  }
 
-  @Delete(':userId/:channelId/admin')
-  async removeChannelAdmin(@Param('userId') userId: number, @Param('channelId') channelId: number): Promise<void> {
-	await this.channelService.removeChannelAdmin(userId, channelId);
+  @Delete(':userId/:targetId/:channelId/admin')
+  @ApiOperation({ summary: 'Delete an Admin by his userId. Only Owner can delete an Admin. The checks are made in the service method. ' })
+  @ApiParam({ name: 'userId', description: 'Caller ID' })
+  @ApiParam({ name: 'targetId', description: 'Target ID' })
+  @ApiParam({ name: 'channelId', description: 'Channel ID' })
+  async removeChannelAdmin(@Param('userId') userId: number,@Param('targetId') targetId: number, @Param('channelId') channelId: number): Promise<void> {
+	await this.channelService.removeChannelAdmin(userId, targetId, channelId);
 	  }
 
   @Post(':userId/:channelId/user')
