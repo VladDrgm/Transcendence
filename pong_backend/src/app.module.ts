@@ -25,6 +25,8 @@ import { ChannelService } from './modules/channel/channel.service';
 import { FriendController } from './modules/friend/friend.controller';
 import { FriendService } from './modules/friend/friend.service';
 import { RedirectController } from './modules/redirect/redirect.controller';
+import { BlockedService } from './modules/blocked/blocked.service';
+import { BlockedController } from './modules/blocked/blocked.controller';
 
 @Module({
   imports: [
@@ -42,7 +44,7 @@ import { RedirectController } from './modules/redirect/redirect.controller';
       Channel,
     ]),
   ],
-  controllers: [AppController, ChannelController, FriendController, RedirectController],
-  providers: [AppService, ChannelService, FriendService],
+  controllers: [AppController, ChannelController, FriendController, RedirectController, BlockedController],
+  providers: [AppService, ChannelService, FriendService, BlockedService],
 })
 export class AppModule {}

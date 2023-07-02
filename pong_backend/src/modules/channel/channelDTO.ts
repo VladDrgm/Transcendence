@@ -2,10 +2,6 @@ import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateChannelDto {
-	@ApiProperty({ example: 1, description: 'The ID of the channel' })
-	@IsNumber()
-	@IsNotEmpty()
-	ChannelId: number;
 
   @ApiProperty({ example: 1, description: 'The owner ID of the channel' })
   @IsNumber()
