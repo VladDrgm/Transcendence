@@ -4,12 +4,11 @@ import { getLeaderboard } from '../../api/leaderboard.api';
 
 const Leaderboard_MainDiv = () => {
   const [leaderboard, setLeaderboard] = useState<IUser[]>([]);
-  const [spot, setSpot] = useState<number>(0);
-  const [score, setScore] = useState<number>(0);
+  const [scoreMap, setScoreMap] = useState<Map<number, number>>(new Map());
 
   const getData = async () => {
-    const leaderboard_temp = await getLeaderboard();
-    setLeaderboard(leaderboard_temp);
+    const leaderboardData = await getLeaderboard();
+    setLeaderboard(leaderboardData);
   };
 
   useEffect(() => {
@@ -19,30 +18,39 @@ const Leaderboard_MainDiv = () => {
   useEffect(() => {
     if (leaderboard.length === 0) return;
 
-    // Find the spot based on score
-    const spot = leaderboard.findIndex(user => user.points === score) + 1;
-    setSpot(spot);
+    const sortedLeaderboard = [...leaderboard].sort((a, b) => b.points - a.points);
 
-    // Update the score state
-    setScore(leaderboard[0].points);
-  }, [leaderboard, score]);
+    // Calculate spot for each user
+    const scoreMap = new Map<number, number>();
+    let spot = 1;
+    let prevScore = sortedLeaderboard[0].points;
+    for (let i = 0; i < sortedLeaderboard.length; i++) {
+      const user = sortedLeaderboard[i];
+      if (user.points < prevScore) {
+        spot = i + 1;
+        prevScore = user.points;
+      }
+      scoreMap.set(user.points, spot);
+    }
+    setScoreMap(scoreMap);
+  }, [leaderboard]);
 
   return (
     <div>
       <h1>Leaderboard:</h1>
-      <ol>
+      <ul>
         {leaderboard.map((user, index) => (
-          <li key={user.nickname}>
+          <li key={user.username}>
             <div>
-              <h2>{spot}</h2>
-              <p>Name: {user.nickname}</p>
+              <h2>Place: {scoreMap.get(user.points)}</h2>
+              <p>Name: {user.username}</p>
               <p>Wins: {user.wins}</p>
               <p>Losses: {user.losses}</p>
               <p>Points: {user.points}</p>
             </div>
           </li>
         ))}
-      </ol>
+      </ul>
     </div>
   );
 };
