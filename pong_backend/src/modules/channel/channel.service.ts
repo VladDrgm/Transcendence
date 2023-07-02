@@ -92,7 +92,26 @@ export class ChannelService {
 	return this.channelAdminRepository.findOneBy({ UserId: userId, ChannelId: channelId });
   }
 
+  //this needs refactoring; we need the callerId, the targetId and the channelId;
+  //we need to check if the caller is an admin, if the target is already a user, if the target is an admin, if the caller is the owner
   async addChannelUser(userId: number, channelId: number): Promise<ChannelUser> {
+
+	const channel = await this.findOne(channelId);
+	if (!channel) {
+		throw new HttpException('Channel not found', 400);
+	}
+
+	const channel_user = await this.getChannelUserByUserId(userId, channelId);
+	if (channel_user) {
+		throw new HttpException('User is already in channel.', HttpStatus.BAD_REQUEST);
+	}
+
+	const isAdmin = await this.getChannelAdminByUserId(userId, channelId) ? true : false;
+
+	if (!isAdmin) {
+		throw new HttpException('You do not have the credentials to add a user.', HttpStatus.BAD_REQUEST);
+	}
+
 	const channelUser = new ChannelUser();
 	channelUser.UserId = userId;
 	channelUser.ChannelId = channelId;
@@ -107,10 +126,13 @@ export class ChannelService {
 	return this.channelUserRepository.findOneBy({ UserId: userId, ChannelId: channelId });
   }
 
+  //this needs refactoring; we need the callerId, the targetId and the channelId;
+  //we need to check if the caller is an admin, if the target is already a user, if the target is an admin, if the caller is the owner
   async removeChannelUser(userId: number, channelId: number): Promise<void> {
 	const channelUser = await this.getChannelUserByUserId(userId, channelId);
 	await this.channelUserRepository.delete(channelUser.CUserId);
   }
+
 
   async removeChannelAdmin(userId: number, targetId: number, channelId: number): Promise<string> {
 
