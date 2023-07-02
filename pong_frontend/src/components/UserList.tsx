@@ -20,9 +20,9 @@ export const UserList: FC = () => {
       <ul>
         {users?.map((user) => (
           <li key={user.userId}>
-            <img src={user.avatar} alt={user.nickname} />
+            <img src={user.avatar} alt={user.username} />
             <div>
-              <h2>{user.nickname}</h2>
+              <h2>{user.username}</h2>
               <p>Wins: {user.wins}</p>
               <p>Losses: {user.losses}</p>
               <p>Ladder Level: {user.ladderLevel}</p>

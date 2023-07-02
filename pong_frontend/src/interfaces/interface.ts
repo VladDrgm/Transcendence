@@ -1,6 +1,6 @@
 export interface IUser {
     userId: number;
-    nickname: string;
+    username: string;
     avatar: string;
     wins: number;
     losses: number;
@@ -8,5 +8,6 @@ export interface IUser {
     status: string;
     achievements: string;
     passwordHash: string;
+    points: number;
   }
   
