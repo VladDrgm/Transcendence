@@ -1,5 +1,5 @@
 import { channel } from "diagnostics_channel";
-import { Channel } from "../interfaces/channel.interface";
+import { Channel, User } from "../interfaces/channel.interface";
 
 var fetchAddress = 'http://localhost:3000/';
 
@@ -7,6 +7,17 @@ export async function getChannels():  Promise<any[]> {
 	const response = await fetch(fetchAddress + 'channel', {credentials: "include",});
   const json = await response.json();
 	return json as any[];
+}
+
+export async function getUsers():  Promise<User[]> {
+	try { 
+    const response = await fetch(fetchAddress + 'user', {credentials: "include",});
+    const json = await response.json();
+	  return json as any[];
+  } catch (error) {
+    console.error('Error fetching Users:, error');
+    return [];
+  }
 }
 
 //to be tested
