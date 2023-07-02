@@ -40,12 +40,16 @@ export class ChannelService {
     return this.channelRepository.findOneBy({ ChannelId: id });
   }
 
-  async create(channel: CreateChannelDto): Promise<Channel> {
+  async create(channelDTO: CreateChannelDto): Promise<Channel> {
+	const { Name, OwnerId, Password, Type } = channelDTO;
 
-    const channelDb: Channel = plainToClass(Channel, channel);
+	const channelDb = new Channel();
+	channelDb.Name = Name;
+	channelDb.OwnerId = OwnerId;
+	channelDb.Password = Password;
+	channelDb.Type = Type;
 
-	this.channelAdminRepository.save({ UserId: channel.OwnerId, ChannelId: channelDb.ChannelId });
-
+	this.channelAdminRepository.save({ UserId: channelDTO.OwnerId, ChannelId: channelDb.ChannelId });
 
 	return this.channelRepository.save(channelDb);
   }
@@ -56,7 +60,7 @@ export class ChannelService {
 
   async addAdmin(userId: number, targetId: number, channelId: number): Promise<ChannelAdmin> {
 	if (userId === targetId) {
-	  throw new Error('Cannot add yourself as admin.');
+	  throw new HttpException('Cannot add yourself as admin.', 400);
 	}
 
 	if (await this.getChannelAdminByUserId(targetId, channelId)) {
@@ -66,8 +70,9 @@ export class ChannelService {
 	const channel = await this.findOne(channelId);
 
 	if (!channel) {
-		throw new Error('Channel not found');
+		throw new HttpException('Channel not found', 400);
 	}
+
 	if ( channel.OwnerId == userId ) {
 		const channelAdmin = new ChannelAdmin();
 		channelAdmin.UserId = targetId;
@@ -75,7 +80,7 @@ export class ChannelService {
 		return this.channelAdminRepository.save(channelAdmin);
 	}
 	else {
-		throw new Error('Only channel owner can add admins');
+		throw new HttpException('Only channel owner can add admins', 400);
 	}
   }
 
