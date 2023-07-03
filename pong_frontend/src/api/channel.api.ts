@@ -129,6 +129,9 @@ export async function getChannelUsers(channelId: number):  Promise<any[]> {
 
 //to be tested
 export async function getChannelUser(userId: number, channelId: number): Promise<any> {
+  if (userId === undefined || channelId === undefined) {
+    throw new Error("Invalid userId or channelId");
+  }
   const response = await fetch(fetchAddress + 'channel/' + userId + '/' + channelId + '/user', {credentials: "include",});
   const json = await response.json();
   return json; 

@@ -2,7 +2,7 @@ import React, { FC, ChangeEvent, KeyboardEvent, useEffect, useLayoutEffect, useS
 import styled from "styled-components";
 import { Channel } from '../../interfaces/channel.interface';
 import Channel_Div from '../div/channel_div';
-import {isChannelUser, addAdminPopUp, blockUserPopUp, banUserPopUp, kickUserPopUp} from '../div/channel_div';
+import {isChannelUser, addAdminPopUp, blockUserPopUp, banUserPopUp } from '../div/channel_div';
 
 import { ChatName } from "./Arena_Chat";
 import { deleteChannel, getChannels, getIsAdmin, postAdmin } from '../../api/channel.api';
@@ -20,52 +20,6 @@ function mapChannel(item: any) {
     };
 }
 
-// export async function getChannelsAndRender() {
-//     try{
-// 		const response = await getChannels();
-	
-// 		const channelList = Array.isArray(response) ? response.map(mapChannel) : [];
-// 		if (channelList) {
-// 			channelList.map(renderRooms);
-// 		}
-// 	} catch (error){
-// 		console.error('Error fetching channels:', error);
-// 	}
-
-// }
-
-// interface ChatProps {
-// 	toggleChat: (currentChat: ChatData) => void;
-// 	yourId: string | number;
-// 	username: string;
-// 	currentChat: ChatData;
-// 	connectedRooms: string[];
-// 	messages: Message[];
-// 	joinRoom: (chatName: ChatName) => void;
-// 	sendMessage: () => void;
-// 	handleMessageChange: (e: ChangeEvent<HTMLTextAreaElement>) => void;
-// 	message: string;
-// 	allUsers: User[];
-// }
-
-// type ChatData = {
-// 	isChannel: boolean;
-// 	chatName: ChatName;
-// 	receiverId: string;
-// };
-
-// interface Message {
-// 	sender: string;
-// 	content: string;
-// }
-
-// interface User {
-// 	id: string;
-// 	username: string;
-// }
-
-// let rooms = ["general", "random", "jokes", "javascript"];
-// const channels = await getChannelList();
 
 const Container = styled.div`
   height: 100vh;

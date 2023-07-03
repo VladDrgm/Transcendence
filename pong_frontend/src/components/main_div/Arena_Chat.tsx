@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import Form from "./UsernameForm";
 import Chat from "./Chat_MainDiv";
 import Game from './Game';
@@ -52,6 +52,20 @@ function Arena_Chat_MainDiv(): JSX.Element {
 		receiverId: "",
 		Channel: {} as Channel,
 	});
+
+	// const fetchAndCopyChannel = useCallback(async () => {
+	// 	const copiedChannel = await copyChannelByName(currentChat.chatName.toString());
+	// 	if (copiedChannel) {
+	// 	  setCurrentChat(prevState => ({
+	// 		...prevState,
+	// 		Channel: copiedChannel,
+	// 	  }));
+	// 	}
+	//   }, [setCurrentChat, currentChat]);
+
+	// useEffect(() => {
+	// 	fetchAndCopyChannel();
+	// }, [fetchAndCopyChannel]);
 
 	useEffect(() => {
 		const fetchAndCopyChannel = async () => {
@@ -121,7 +135,7 @@ function Arena_Chat_MainDiv(): JSX.Element {
 	function roomJoinCallback(incomingMessages: any, room: keyof typeof messages) {
 	const newMessages = immer(messages, (draft: WritableDraft<typeof messages>) => {
 		draft[room] = incomingMessages;
-		console.log("Callback");
+		// console.log("Callback");
 	});
 	setMessages(newMessages);
 	}

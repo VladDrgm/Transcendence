@@ -157,30 +157,6 @@ export function banUserPopUp(props: &ChatProps) {
 
 }
 
-export function kickUserPopUp(props:  &ChatProps) {
-    // Open Window
-    var popup = window.open('', '_blank', 'width=500,height=300,menubar=no,toolbar=no');
-
-    const newAdminLabel = document.createElement("h1");
-    newAdminLabel.textContent = "User to be kicked from Channel for 5min:";
-    popup?.document.body.appendChild(newAdminLabel);
-
-    var newAdminUserNameInput = document.createElement('input');
-    newAdminUserNameInput.type = 'text';
-    newAdminUserNameInput.placeholder = "Enter the UserName to be kicked";
-    popup?.document.body.appendChild(newAdminUserNameInput);
-
-    var addAdminButton = document.createElement('button');
-    addAdminButton.innerHTML = 'Kick';
-    addAdminButton.addEventListener('click', function() {
-        var newAdminUserName = newAdminUserNameInput.value;
-
-        //addAdmin(newAdminUserName, props);
-        popup?.close();
-    });
-    popup?.document.body.appendChild(addAdminButton);
-}
-
 //opens the window for adding Usersnames as Admins and passes the input to addAdmin()
 export function addAdminPopUp(props:  &ChatProps) {
     // Open Window
