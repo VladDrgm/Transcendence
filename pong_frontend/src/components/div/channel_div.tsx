@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Channel } from '../../interfaces/channel.interface';
 import { getChannels, postAdmin, postChannel, getChannelUser, postChannelUser, deleteChannel, postChannelUserBlocked, deleteChannelUserBlocked, getUsers } from '../../api/channel.api';
 import  {ChatProps, ChatData, Message, User} from '../../interfaces/channel.interface';
+import {IUser} from '../../interfaces/interface';
 import styled from "styled-components";
 
 var fetchAddress = 'http://localhost:3000/';
@@ -45,10 +46,15 @@ export async function copyChannelByName(channelName: string): Promise<Channel | 
 
 export async function getUserIDByUserName(UserName: string): Promise<number | undefined> {
     const UserList = await getUsers();
-    const TargetUser = UserList.find(user => user.username === UserName)
+    // console.log('getUserIdByUserNAme Userlist:', UserList);
+    const TargetUser = UserList.find((user: IUser) => user.username === UserName)
+    // console.log('getUserIdByUserNAme TargetUser:', TargetUser);
     if (TargetUser) {
-        return Number(TargetUser.id);
+        // console.log('returned UserID from getUserIDbyUSerNAme:', TargetUser?.userId);
+        return Number(TargetUser.userId);
+
     }
+    // console.log('returned undefined UserID from getUserIDbyUSerNAme:');
     return undefined;
 }
 
@@ -66,7 +72,7 @@ export async function fetchChannelNames(): Promise<string[]> {
 
 export async function addAdmin(newAdminUsername: string, props: &ChatProps){
     //finding right UserId to the Username input from addAdminPopUp
-    var targetID = getUserIDByUserName(newAdminUsername);
+    var targetID = await getUserIDByUserName(newAdminUsername);
     // retrieving UserID from getUserID(UserName) from backend maybe
     if (targetID)//changing the 1 to props.yourId or the real UserID of the caller
         {

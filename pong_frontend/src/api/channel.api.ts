@@ -1,5 +1,6 @@
 import { channel } from "diagnostics_channel";
 import { Channel, User } from "../interfaces/channel.interface";
+import {IUser} from '../interfaces/interface';
 
 var fetchAddress = 'http://localhost:3000/';
 
@@ -9,7 +10,7 @@ export async function getChannels():  Promise<any[]> {
 	return json as any[];
 }
 
-export async function getUsers():  Promise<User[]> {
+export async function getUsers():  Promise<IUser[]> {
 	try { 
     const response = await fetch(fetchAddress + 'user', {credentials: "include",});
     const json = await response.json();
