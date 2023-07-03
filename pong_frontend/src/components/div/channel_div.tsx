@@ -46,15 +46,16 @@ export async function copyChannelByName(channelName: string): Promise<Channel | 
 
 export async function getUserIDByUserName(UserName: string): Promise<number | undefined> {
     const UserList = await getUsers();
-    // console.log('getUserIdByUserNAme Userlist:', UserList);
+    console.log('getUserIdByUserNAme Userlist:', UserList);
     const TargetUser = UserList.find((user: IUser) => user.username === UserName)
-    // console.log('getUserIdByUserNAme TargetUser:', TargetUser);
+    console.log('getUserIdByUserNAme TargetUser:', TargetUser);
     if (TargetUser) {
-        // console.log('returned UserID from getUserIDbyUSerNAme:', TargetUser?.userId);
-        return Number(TargetUser.userId);
+        console.log('TargetUser in if:', TargetUser);
+        console.log('returned UserID from getUserIDbyUSerNAme:', TargetUser?.userID);
+        return TargetUser.userID;
 
     }
-    // console.log('returned undefined UserID from getUserIDbyUSerNAme:');
+    console.log('returned undefined UserID from getUserIDbyUSerNAme:');
     return undefined;
 }
 
@@ -82,13 +83,28 @@ export async function addAdmin(newAdminUsername: string, props: &ChatProps){
     console.error('Error adding Admin with Username:' , newAdminUsername);
 }
 
+export async function modBannedUser(add: boolean, newBlockedUsername: string, props: &ChatProps){
+    //finding right UserId to the Username input from banUserPopUp
+    var targetID = await getUserIDByUserName(newBlockedUsername);
+    // console.log('TargetId:', targetID);
+    if (targetID)//changing the 1 to props.yourId or the real UserID of the caller
+        {
+            // console.log('User banned with UserId:', targetID);
+            if (add === true)
+                postChannelUserBlocked(targetID, props.currentChat.Channel.ChannelId);
+            else
+                deleteChannelUserBlocked(targetID, props.currentChat.Channel.ChannelId);
+    } else 
+    console.error('Error banning/allowing User with Username:' , newBlockedUsername);
+}
+
 export function banUserPopUp(props: &ChatProps) {
     
     // Open Window
     var popup = window.open('', '_blank', 'width=500,height=300,menubar=no,toolbar=no');
 
     const newBlockedLabel = document.createElement("h1");
-    newBlockedLabel.textContent = "User to be Banned/Unbanned";
+    newBlockedLabel.textContent = "User to be Banned / Unbanned / Kicked from the Channel";
     popup?.document.body.appendChild(newBlockedLabel);
 
     var newBlockedUserNameInput = document.createElement('input');
@@ -100,20 +116,45 @@ export function banUserPopUp(props: &ChatProps) {
     addBlockButton.innerHTML = 'Ban';
     addBlockButton.addEventListener('click', function() {
         var newBlockedUserName = newBlockedUserNameInput.value;
-        //waiting for getUSerID by Username
-        // postChannelUserBlocked(getUserID(newBlockedUserName), props.currentChat.Channel.ChannelId);
+        var newBlockedUserName = newBlockedUserNameInput.value;
+        modBannedUser(true, newBlockedUserName, props);
         popup?.close();
     });
+    popup?.document.body.appendChild(addBlockButton);
     var addUnblockButton = document.createElement('button');
     addUnblockButton.innerHTML = 'Unban';
     addUnblockButton.addEventListener('click', function() {
         var newUnblockedUserName = newBlockedUserNameInput.value;
-        //waiting for getUSerID by Username
-        // deleteChannelUserBlocked(getUserID(newBlockedUserName), props.currentChat.Channel.ChannelId);
+        modBannedUser(false, newUnblockedUserName, props);
         popup?.close();
     });
-    popup?.document.body.appendChild(addBlockButton);
     popup?.document.body.appendChild(addUnblockButton);
+    var addKickFiveButton = document.createElement('button');
+    addKickFiveButton.innerHTML = 'Kick 5min';
+    addKickFiveButton.addEventListener('click', function() {
+        var newUnblockedUserName = newBlockedUserNameInput.value;
+        modBannedUser(true, newUnblockedUserName, props);
+        popup?.close();
+        const fiveMin = 5 * 60 * 1000;
+        setTimeout(() => {
+            modBannedUser(false, newUnblockedUserName, props);
+        }, fiveMin);
+    });
+    popup?.document.body.appendChild(addKickFiveButton);
+
+    var addKickFifteenButton = document.createElement('button');
+    addKickFifteenButton.innerHTML = 'Kick 15min';
+    addKickFifteenButton.addEventListener('click', function() {
+        var newUnblockedUserName = newBlockedUserNameInput.value;
+        modBannedUser(true, newUnblockedUserName, props);
+        popup?.close();
+        const fifteenMin = 15 * 60 * 1000;
+        setTimeout(() => {
+            modBannedUser(false, newUnblockedUserName, props);
+        }, fifteenMin);
+    });
+    popup?.document.body.appendChild(addKickFifteenButton);
+
 }
 
 export function kickUserPopUp(props:  &ChatProps) {

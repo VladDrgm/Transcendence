@@ -57,12 +57,23 @@ export function postChannel(ChannelData: any) {
 //Channel Admins
 
 //to be tested
-export function getAdmins(channelId: number){
-  fetch(fetchAddress + 'channel/' + channelId + '/admin', {credentials: "include",})
-    .then(response => response.json())
+export function getAdmins(channelId: number): Promise<any[]>{
+  return fetch(fetchAddress + 'channel/' + channelId + '/admin', {credentials: "include",})
+  .then(response => {
+    if (response.ok) {
+      return response.json();
+    } else {
+      throw new Error("Error retrieving admins for channelId " + channelId + ": " + response.status);
+    }
+  })
     .then(data => {
-      console.log("Admins of channlId " + channelId + ":", data);
-      return data;
+      if (data && data.lenght > 0) {
+        console.log("Admins of channlId " + channelId + ":", data);
+        return data;
+      } else {
+        console.log("No Admins for channelId " + channelId);
+        return [];
+      }
     })
     .catch(error => {
       console.log("Error returning Admins of channelId " + channelId + ":", error);
@@ -75,7 +86,7 @@ export async function getIsAdmin(channelId: number, userId: number): Promise<any
   try {
     const response = await fetch(fetchAddress + 'channel/' + userId + '/' + channelId + '/admin', {credentials: "include",})
     const data = await response.json();
-    console.log("User " + userId + " is Admin of channlId " + channelId + ":", data);
+    // console.log("User " + userId + " is Admin of channlId " + channelId + ":", data);
       return data;
   } catch (error) {
       console.log("Error returning Admins of channelId " + channelId + ":", error);
@@ -163,12 +174,21 @@ export async function getChannelUserBlocked(userId: number, channelId: number): 
   return json; 
 }
 
-//to be tested
+//works fine
 export function deleteChannelUserBlocked(userId: number, channelId: number) {
   fetch(fetchAddress + 'channel/' + userId + '/' + channelId + '/blocked', {method: 'DELETE'})
-    .then(response => response.json())
-    .then(data => {console.log("ChannelUser" + userId + " blocked:", data);})
-    .catch(error => {console.log("Error blocking ChannelUser " + userId + ":" , error);})
+  .then(response => {
+    if (!response.ok) {
+      throw new Error('Request failed with status: ' + response.status);
+    }
+    return response.text();
+  })
+  .then(data => {
+    console.log("ChannelUser " + userId + " unblocked from Channel");
+  })
+  .catch(error => {
+    console.log("Error allowing ChannelUser " + userId + ":", error);
+  });
 }
 
 //to be tested

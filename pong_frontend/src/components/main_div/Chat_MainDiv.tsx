@@ -118,10 +118,10 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 	const [isAdmin, setIsAdmin] = useState(false);
 	const [isAdminResolved, setIsAdminResolved] = useState(false);
 	function renderUser(user: User) {
-		console.log("User id is: " + user.id);
-		console.log("User.username is: " + user.username);
-		console.log("Props id is: " + props.yourId);
-		console.log("Props username is: " + props.username);
+		// console.log("User id is: " + user.id);
+		// console.log("User.username is: " + user.username);
+		// console.log("Props id is: " + props.yourId);
+		// console.log("Props username is: " + props.username);
 		if (user.id === props.yourId) {
 			// console.log("Reached here");
 		return (
@@ -130,14 +130,14 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 			</Row>
 		);
 		}
-		console.log("Reached here");
+		// console.log("Reached here");
 		const currentChat: ChatData = {
 		chatName: user.username,
 		isChannel: false,
 		receiverId: user.id,
 		Channel: {} as Channel,
 		};
-		console.log("Reached here");
+		// console.log("Reached here");
 		return (
 		<Row onClick={() => {
 			props.toggleChat(currentChat);
@@ -229,12 +229,12 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 				</button>
 				<button
 				onClick={() => banUserPopUp(props)}>
-				Ban User
+				Ban/Unban/Kick User
 				</button>
-				<button
+				{/* <button
 				onClick={() => kickUserPopUp(props)}>
 				Kick User
-				</button>
+				</button> */}
 				{/* <button
 				onClick={() => blockUserPopUp(props)}>
 				Block/Unblock User

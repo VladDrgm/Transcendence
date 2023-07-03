@@ -77,7 +77,7 @@ function Arena_Chat_MainDiv(): JSX.Element {
 	const [messages, setMessages] = useState<{
 		[key in ChatName]: { sender: string; content: string }[];
 	}>(initialMessagesState);
-	console.log('ititialMessageState:', initialMessagesState);
+	// console.log('initialMessageState:', initialMessagesState);
 
 	const [message, setMessage] = useState("");
 
