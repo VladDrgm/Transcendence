@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Friend } from 'src/models/orm_models/friend.entity';
 import { In, Repository } from 'typeorm';
@@ -23,8 +23,29 @@ export class FriendService {
     return this.friendRepository.findOneBy({ FId: id });
   }
 
-  async remove(id: number): Promise<void> {
-    await this.friendRepository.delete(id);
+  async remove(userId: number, friendId: number): Promise<string> {
+	if (userId === friendId) {
+		throw new HttpException('Cannot remove yourself', 400);
+	}
+
+	if (!userId || !friendId) {
+		throw new HttpException('Invalid user ID or friend ID', 400);
+	}
+
+	const friend = await this.friendRepository
+		.createQueryBuilder('friend')
+		.leftJoinAndSelect('friend.friendUser', 'friendUser')
+		.where('friend.user.userID = :userId', { userId })
+		.andWhere('friendUser.userID = :friendId', { friendId })
+		.getOne();
+
+	if (!friend) {
+		throw new HttpException('Friend not found', 404);
+	}
+
+	await this.friendRepository.delete(friend.FId);
+	return 'Friend removed';
+
   }
 
 
