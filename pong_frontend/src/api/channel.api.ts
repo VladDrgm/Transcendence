@@ -30,10 +30,15 @@ export async function getChannel(channelId: number): Promise<Channel> {
 
 //to be tested
 export function deleteChannel(channelId: number) {
+  if (channelId === 41)
+  {
+    console.error("Error: Don't delete general Channel");
+    return;
+  }
   fetch(fetchAddress + 'channel/' + channelId, {method: 'DELETE'})
     .then(response => response.json())
     .then(data => {console.log("Channel deleted:", data);})
-    .catch(error => {console.log("Error deleting Channel:", error);})
+    .catch(error => {console.error("Error deleting Channel:", error);})
 }
 
 //when using gives a internal server error for OwnerId = null, while i give some not null OwnerId

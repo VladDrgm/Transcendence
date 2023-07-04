@@ -193,14 +193,6 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 				onClick={() => banUserPopUp(props)}>
 				Ban/Unban/Kick User
 				</button>
-				{/* <button
-				onClick={() => kickUserPopUp(props)}>
-				Kick User
-				</button> */}
-				{/* <button
-				onClick={() => blockUserPopUp(props)}>
-				Block/Unblock User
-				</button> */}
 			</div>
 			)}
 			</ChannelInfo>
