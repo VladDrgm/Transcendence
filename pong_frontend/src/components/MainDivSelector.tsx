@@ -22,17 +22,16 @@ export enum main_div_mode_t {
 
 interface MainDivProps
 {
-//   userID: number;
-  user: User;
+  userID: number;
   mode: main_div_mode_t;
   mode_set: React.Dispatch<React.SetStateAction<main_div_mode_t>>;
 }
 
-const MainDivSelector: React.FC<MainDivProps> = ({/*userID, */mode, mode_set}) => {
+const MainDivSelector: React.FC<MainDivProps> = ({userID, mode, mode_set}) => {
 	var userID = 1;
   switch (mode){
     case main_div_mode_t.HOME_PAGE:
-      return (<Welcome_MainDiv />);
+      return (<Welcome_MainDiv userID={userID}/>);
 	case main_div_mode_t.FRIEND_PROFILE:
 		return (<Friend_Profile_MainDiv userID={userID} mode_set={mode_set} />);
 	case main_div_mode_t.CHAT:
