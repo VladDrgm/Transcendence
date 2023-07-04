@@ -31,7 +31,7 @@ const Profile_MainDiv: React.FC<ProfileProps> = ({userID, mode_set}) => {
                 <p>Welcome {userID}. This is your profile on server {idTxt}. </p> 
                 <br/> 
                 <p>Search for our friends here:</p>
-                <button onClick={() => mode_set(main_div_mode_t.FRIIEND_PROFILE)}>Search friends</button>
+                <button onClick={() => mode_set(main_div_mode_t.FRIEND_PROFILE)}>Search friends</button>
               </div>
               <Private_Div/>
             </div>)
