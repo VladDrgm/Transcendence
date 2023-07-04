@@ -171,7 +171,8 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 		<ChatPanel>
 			<ChannelInfo>
 			{props.currentChat.chatName}
-			{isAdminResolved && isAdmin && (
+			{/* {isAdminResolved && isAdmin && ( */}
+			{(
 			<div>
 				<button
 				onClick={() => deleteChannel(props.currentChat.Channel.ChannelId)}>
