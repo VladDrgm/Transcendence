@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import Form from "./UsernameForm";
 import Chat from "./Chat_MainDiv";
 import Game from './Game';
@@ -39,6 +39,7 @@ type CurrentChat = {
 	isChannel: boolean;
 	chatName: ChatName;
 	receiverId: string;
+	isResolved: boolean;
 	Channel: Channel;
 };
 
@@ -50,11 +51,13 @@ function Arena_Chat_MainDiv(): JSX.Element {
 		isChannel: true,
 		chatName: "general",
 		receiverId: "",
+		isResolved: false,
 		Channel: {} as Channel,
 	});
 
 	useEffect(() => {
 		const fetchAndCopyChannel = async () => {
+		  currentChat.isResolved = false;
 		  const copiedChannel = await copyChannelByName(currentChat.chatName.toString());
 		  if (copiedChannel) {
 			setCurrentChat(prevState => ({
@@ -67,7 +70,10 @@ function Arena_Chat_MainDiv(): JSX.Element {
   	}, [setCurrentChat, currentChat.chatName]); //this calls fetchAndCopyCahnnel whenever setCurrentChat is called with a new Chatname
 	
 	useEffect(() => {
-		console.log("Updating Channelobject in currentChat to:", currentChat.Channel.Name);
+		if(currentChat.Channel && currentChat.Channel.ChannelId){
+			currentChat.isResolved = true;
+			console.log("Updating Channelobject in currentChat to:", currentChat.Channel.Name);
+		}
 	  }, [currentChat.Channel.Name]);
 
 	const [connectedRooms, setConnectedRooms] = useState<string[]>(["general"]);
@@ -77,7 +83,7 @@ function Arena_Chat_MainDiv(): JSX.Element {
 	const [messages, setMessages] = useState<{
 		[key in ChatName]: { sender: string; content: string }[];
 	}>(initialMessagesState);
-	console.log('ititialMessageState:', initialMessagesState);
+	// console.log('initialMessageState:', initialMessagesState);
 
 	const [message, setMessage] = useState("");
 
@@ -121,7 +127,7 @@ function Arena_Chat_MainDiv(): JSX.Element {
 	function roomJoinCallback(incomingMessages: any, room: keyof typeof messages) {
 	const newMessages = immer(messages, (draft: WritableDraft<typeof messages>) => {
 		draft[room] = incomingMessages;
-		console.log("Callback");
+		// console.log("Callback");
 	});
 	setMessages(newMessages);
 	}
