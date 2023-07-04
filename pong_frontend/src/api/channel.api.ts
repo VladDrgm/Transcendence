@@ -89,7 +89,7 @@ export async function getIsAdmin(channelId: number, userId: number): Promise<any
     // console.log("User " + userId + " is Admin of channlId " + channelId + ":", data);
       return data;
   } catch (error) {
-      console.log("Error returning Admins of channelId " + channelId + ":", error);
+      console.log("Error returning Admin of channelId " + channelId + ":", error);
       return false;
   }
 }

@@ -89,6 +89,7 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 		chatName: user.username,
 		isChannel: false,
 		receiverId: user.id,
+		isResolved: true,
 		Channel: {} as Channel,
 		};
 		// console.log("Reached here");
@@ -114,6 +115,9 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 	const messages = props.messages || [];
 	const handleUserInChannelCheck = async () => {
 		try {
+			if (!props.currentChat.isResolved){
+				return; //Exits early if currentChat is not properly resolved
+			}
 			//replacing the user here with the real user when login finished
 			const userIsChannel = await isChannelUser(1, props.currentChat.Channel.ChannelId);
 			if (userIsChannel || !props.currentChat.isChannel || props.connectedRooms.includes(props.currentChat.chatName.toString())) {
@@ -136,12 +140,15 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 	useEffect(() => {
 		handleUserInChannelCheck();
 		// setIsAdminResolved(false);
-	}, [props.currentChat]);
+	}, [props.currentChat, props.currentChat.isResolved]);
 
 	//checks if a user is Admin and sets the isAdmin to true or false
 	//using yourID as UserId here, maybe neede to be updated later
 	useEffect(() => {
 		setIsAdminResolved(false);
+		if (!props.currentChat.isResolved)
+			return;
+		
 		getIsAdmin(props.currentChat.Channel.ChannelId, 1)
 		.then(isAdmin => {
 			setIsAdmin(isAdmin);
@@ -153,7 +160,7 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 		});
 		// handleUserInChannelCheck();
 		// setIsAdminResolved(false);
-	}, [props.currentChat.Channel.ChannelId, props.yourId]);
+	}, [props.currentChat.Channel.ChannelId, props.yourId, props.currentChat.isResolved]);
 
 	function handleKeyPress(e: KeyboardEvent<HTMLTextAreaElement>) {
 		if (e.key === "Enter") {

@@ -217,13 +217,17 @@ export function blockUserPopUp(props: &ChatProps) {
     popup?.document.body.appendChild(addUnblockButton);
 }
 
-export async function isChannelUser(userId: number, channelId: number): Promise<boolean> {
+export async function isChannelUser(userId: number, channelId: number): Promise<any> {
     try {
-        const channelUser = await getChannelUser(userId, channelId);
-        return !!channelUser; // Converts channelUser to boolean 
+        const response = await getChannelUser(userId, channelId);
+        if (!response.ok) {
+            throw new Error("Error retrieving ChannelUser");
+        }
+        const json = await response.json();
+        return json; // Converts channelUser to boolean 
     } catch (error){
         console.error('Error occured, or empty JSON resposne from getChannelUser, in isUserChannel:', error);
-		return false;
+		return null;
     }
 }
 
@@ -235,6 +239,7 @@ const Channel_Div: React.FC<ChatProps> = (props) => {
 		chatName: room.Name,
 		isChannel: true,
 		receiverId: "",
+        isResolved: false,
         Channel: {} as Channel,
 		};
 		return (
