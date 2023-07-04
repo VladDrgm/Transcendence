@@ -19,7 +19,7 @@ export const UserList: FC = () => {
       <h1>User List</h1>
       <ul>
         {users?.map((user) => (
-          <li key={user.userId}>
+          <li key={user.userID}>
             <img src={user.avatar} alt={user.username} />
             <div>
               <h2>{user.username}</h2>

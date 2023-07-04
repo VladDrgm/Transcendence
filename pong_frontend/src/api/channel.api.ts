@@ -1,5 +1,6 @@
 import { channel } from "diagnostics_channel";
 import { Channel, User } from "../interfaces/channel.interface";
+import {IUser} from '../interfaces/interface';
 
 var fetchAddress = 'http://localhost:3000/';
 
@@ -9,7 +10,7 @@ export async function getChannels():  Promise<any[]> {
 	return json as any[];
 }
 
-export async function getUsers():  Promise<User[]> {
+export async function getUsers():  Promise<IUser[]> {
 	try { 
     const response = await fetch(fetchAddress + 'user', {credentials: "include",});
     const json = await response.json();
@@ -29,10 +30,15 @@ export async function getChannel(channelId: number): Promise<Channel> {
 
 //to be tested
 export function deleteChannel(channelId: number) {
+  if (channelId === 41)
+  {
+    console.error("Error: Don't delete general Channel");
+    return;
+  }
   fetch(fetchAddress + 'channel/' + channelId, {method: 'DELETE'})
     .then(response => response.json())
     .then(data => {console.log("Channel deleted:", data);})
-    .catch(error => {console.log("Error deleting Channel:", error);})
+    .catch(error => {console.error("Error deleting Channel:", error);})
 }
 
 //when using gives a internal server error for OwnerId = null, while i give some not null OwnerId
@@ -56,12 +62,23 @@ export function postChannel(ChannelData: any) {
 //Channel Admins
 
 //to be tested
-export function getAdmins(channelId: number){
-  fetch(fetchAddress + 'channel/' + channelId + '/admin', {credentials: "include",})
-    .then(response => response.json())
+export function getAdmins(channelId: number): Promise<any[]>{
+  return fetch(fetchAddress + 'channel/' + channelId + '/admin', {credentials: "include",})
+  .then(response => {
+    if (response.ok) {
+      return response.json();
+    } else {
+      throw new Error("Error retrieving admins for channelId " + channelId + ": " + response.status);
+    }
+  })
     .then(data => {
-      console.log("Admins of channlId " + channelId + ":", data);
-      return data;
+      if (data && data.lenght > 0) {
+        console.log("Admins of channlId " + channelId + ":", data);
+        return data;
+      } else {
+        console.log("No Admins for channelId " + channelId);
+        return [];
+      }
     })
     .catch(error => {
       console.log("Error returning Admins of channelId " + channelId + ":", error);
@@ -74,10 +91,10 @@ export async function getIsAdmin(channelId: number, userId: number): Promise<any
   try {
     const response = await fetch(fetchAddress + 'channel/' + userId + '/' + channelId + '/admin', {credentials: "include",})
     const data = await response.json();
-    console.log("User " + userId + " is Admin of channlId " + channelId + ":", data);
+    // console.log("User " + userId + " is Admin of channlId " + channelId + ":", data);
       return data;
   } catch (error) {
-      console.log("Error returning Admins of channelId " + channelId + ":", error);
+      console.log("Error returning Admin of channelId " + channelId + ":", error);
       return false;
   }
 }
@@ -117,6 +134,9 @@ export async function getChannelUsers(channelId: number):  Promise<any[]> {
 
 //to be tested
 export async function getChannelUser(userId: number, channelId: number): Promise<any> {
+  if (userId === undefined || channelId === undefined) {
+    throw new Error("Invalid userId or channelId");
+  }
   const response = await fetch(fetchAddress + 'channel/' + userId + '/' + channelId + '/user', {credentials: "include",});
   const json = await response.json();
   return json; 
@@ -162,12 +182,21 @@ export async function getChannelUserBlocked(userId: number, channelId: number): 
   return json; 
 }
 
-//to be tested
+//works fine
 export function deleteChannelUserBlocked(userId: number, channelId: number) {
   fetch(fetchAddress + 'channel/' + userId + '/' + channelId + '/blocked', {method: 'DELETE'})
-    .then(response => response.json())
-    .then(data => {console.log("ChannelUser" + userId + " blocked:", data);})
-    .catch(error => {console.log("Error blocking ChannelUser " + userId + ":" , error);})
+  .then(response => {
+    if (!response.ok) {
+      throw new Error('Request failed with status: ' + response.status);
+    }
+    return response.text();
+  })
+  .then(data => {
+    console.log("ChannelUser " + userId + " unblocked from Channel");
+  })
+  .catch(error => {
+    console.log("Error allowing ChannelUser " + userId + ":", error);
+  });
 }
 
 //to be tested
