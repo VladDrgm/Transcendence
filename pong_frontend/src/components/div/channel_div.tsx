@@ -4,6 +4,8 @@ import { getChannels, postAdmin, postChannel, getChannelUser, postChannelUser, d
 import  {ChatProps, ChatData, Message, User} from '../../interfaces/channel.interface';
 import {IUser} from '../../interfaces/interface';
 import styled from "styled-components";
+import { ConsoleLogger } from '@nestjs/common';
+import { error } from 'console';
 
 var fetchAddress = 'http://localhost:3000/';
 
@@ -217,19 +219,25 @@ export function blockUserPopUp(props: &ChatProps) {
     popup?.document.body.appendChild(addUnblockButton);
 }
 
-export async function isChannelUser(userId: number, channelId: number): Promise<any> {
-    try {
-        const response = await getChannelUser(userId, channelId);
-        if (!response.ok) {
-            throw new Error("Error retrieving ChannelUser");
-        }
-        const json = await response.json();
-        return json; // Converts channelUser to boolean 
-    } catch (error){
-        console.error('Error occured, or empty JSON resposne from getChannelUser, in isUserChannel:', error);
-		return null;
-    }
-}
+// export async function isChannelUser(userId: number, channelId: number): Promise<boolean> {
+//     try {
+//         console.log('userId:', userId);
+//         console.log('channelId:', channelId);
+//         const response = await getChannelUser(userId, channelId);
+//         if (!response.headers.has("content-length")) {
+//             return false;
+//         }
+//         if (!response.ok) {
+//             console.error("Error retrieving ChannelUser: ", error);
+//             return false;
+//         }
+//         const json = await response.json();
+//         return !!json; // Converts channelUser to boolean 
+//     } catch (error){
+//         console.log('Error occured, or empty JSON response from getChannelUser, in isUserChannel:', error);
+// 		return false;
+//     }
+// }
 
 const Channel_Div: React.FC<ChatProps> = (props) => {
     const [allChannels, setAllChannels] = useState<Channel[]>([]);
