@@ -6,7 +6,7 @@ import Friend_Profile_MainDiv from './main_div/Friend_Profile_MainDiv';
 import Leaderboard_MainDiv from './main_div/Leaderboard_MainDiv';
 // import Chat_MainDiv from './main_div/Chat_MainDiv';
 import Arena_Chat_MainDiv from './main_div/Arena_Chat';
-import Settings_MainDiv from './main_div/Settings_MainDiv';
+// import Settings_MainDiv from './main_div/Settings_MainDiv';
 import { User } from '../interfaces/user.interface';
 
 export enum main_div_mode_t {
@@ -40,8 +40,8 @@ const MainDivSelector: React.FC<MainDivProps> = ({userID, mode, mode_set}) => {
 		return (<Profile_MainDiv userID={userID} mode_set={mode_set} />);
 	case main_div_mode_t.LEADERBORAD:
       	return (<Leaderboard_MainDiv/>);
-	case main_div_mode_t.SETTINGS:
-		return (<Settings_MainDiv userID={userID} mode_set={mode_set} />);
+	// case main_div_mode_t.SETTINGS:
+	// 	return (<Settings_MainDiv userID={userID} mode_set={mode_set} />);
     default:
       mode_set(main_div_mode_t.ERROR_PAGE);
       return (<Error_MainDiv />);
