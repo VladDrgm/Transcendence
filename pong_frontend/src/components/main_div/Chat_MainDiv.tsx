@@ -71,6 +71,8 @@ const Messages = styled.div`
 const Chat_MainDiv: FC<ChatProps> = (props) => {
 	const [isAdmin, setIsAdmin] = useState(false);
 	const [isAdminResolved, setIsAdminResolved] = useState(false);
+	const [isUserInChannel, setIsUserInChannel] = useState(false);
+	const [body, setBody] = useState<JSX.Element | null>(null);
 	function renderUser(user: User) {
 		// console.log("User id is: " + user.id);
 		// console.log("User.username is: " + user.username);
@@ -111,49 +113,57 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 		);
 	}
 
-	let body;
+	// let body: JSX.Element | null = null;
 	const messages = props.messages || [];
-	if (!props.currentChat.isChannel || props.connectedRooms.includes(props.currentChat.chatName.toString())) {
-		body = (
-		<Messages>
-			{messages.map(renderMessages)}
-		</Messages>
-		);
-	} else {
-		body = (
-		<button onClick={() => props.joinRoom(props.currentChat.chatName)}>
-			Join {props.currentChat.chatName}
-		</button>
-		);
-	}
-	// const handleUserInChannelCheck = async () => {
-	// 	try {
-	// 		if (!props.currentChat.isResolved){
-	// 			return; //Exits early if currentChat is not properly resolved
-	// 		}
-	// 		//replacing the user here with the real user when login finished
-	// 		const userIsChannel = await isChannelUser(1, props.currentChat.Channel.ChannelId);
-	// 		if (userIsChannel || !props.currentChat.isChannel || props.connectedRooms.includes(props.currentChat.chatName.toString())) {
-	// 			body =
-	// 					<Messages>
-	// 						{messages.map(renderMessages)}
-	// 					</Messages>;
-	// 		} else {
-	// 			body = (
-	// 			<button onClick={() => props.joinRoom(props.currentChat.chatName)}>
-	// 				Join {props.currentChat.chatName}
-	// 			</button>
-	// 			);
-	// 		}
-	// 	}catch (error){
-	// 		console.error('Error occured in handleUserChannelCheck:', error);
-	// 	}
-	// };
+	// if (!props.currentChat.isChannel || props.connectedRooms.includes(props.currentChat.chatName.toString())) {
+	// 	body = (
+	// 	<Messages>
+	// 		{messages.map(renderMessages)}
+	// 	</Messages>
+	// 	);
+	// } else {
+	// 	body = (
+	// 	<button onClick={() => props.joinRoom(props.currentChat.chatName)}>
+	// 		Join {props.currentChat.chatName}
+	// 	</button>
+	// 	);
+	// }
+	const handleUserInChannelCheck = async () => {
+		try {
+			if (!props.currentChat.isResolved){
+				return; //Exits early if currentChat is not properly resolved
+			}
+			//replacing the user here with the real user when login finished
+			const userIsChannel = await isChannelUser(1, props.currentChat.Channel.ChannelId);
+			if (userIsChannel)
+				setIsUserInChannel (true);
+			else
+				setIsUserInChannel (false);
+		}catch (error){
+			console.error('Error occured in handleUserChannelCheck:', error);
+		}
+	};
 
-	// useEffect(() => {
-	// 	handleUserInChannelCheck();
-	// 	// setIsAdminResolved(false);
-	// }, [props.currentChat, props.currentChat.isResolved]);
+	const handleBody = async () =>{
+		if (isUserInChannel || !props.currentChat.isChannel || props.connectedRooms.includes(props.currentChat.chatName.toString())) {
+				setBody (
+						<Messages>
+							{messages.map(renderMessages)}
+						</Messages>);
+			} else {
+				setBody (
+				<button onClick={() => props.joinRoom(props.currentChat.chatName)}>
+					Join {props.currentChat.chatName}
+				</button>
+				);
+			}
+	};
+
+	useEffect(() => {
+		handleUserInChannelCheck();
+		handleBody();
+		// setIsAdminResolved(false);
+	}, [props.currentChat, props.currentChat.isResolved, isUserInChannel, props.messages]);
 
 	//checks if a user is Admin and sets the isAdmin to true or false
 	//using yourID as UserId here, maybe neede to be updated later
