@@ -146,17 +146,17 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 
 	const handleBody = async () =>{
 		if (isUserInChannel || !props.currentChat.isChannel || props.connectedRooms.includes(props.currentChat.chatName.toString())) {
-				setBody (
-						<Messages>
-							{messages.map(renderMessages)}
-						</Messages>);
-			} else {
-				setBody (
-				<button onClick={() => props.joinRoom(props.currentChat.chatName)}>
-					Join {props.currentChat.chatName}
-				</button>
-				);
-			}
+			setBody (
+				<Messages>
+					{messages.map(renderMessages)}
+				</Messages>);
+		} else {
+			setBody (
+			<button onClick={() => props.joinRoom(props.currentChat.chatName)}>
+				Join {props.currentChat.chatName}
+			</button>
+			);
+		}
 	};
 
 	useEffect(() => {
