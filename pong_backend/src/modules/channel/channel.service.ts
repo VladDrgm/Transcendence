@@ -41,15 +41,22 @@ export class ChannelService {
   }
 
   async create(channelDTO: CreateChannelDto): Promise<Channel> {
-	const { Name, OwnerId, Password, Type } = channelDTO;
 
 	const channelDb = new Channel();
-	channelDb.Name = Name;
-	channelDb.OwnerId = OwnerId;
-	channelDb.Password = Password;
-	channelDb.Type = Type;
 
-	this.channelAdminRepository.save({ UserId: channelDTO.OwnerId, ChannelId: channelDb.ChannelId });
+	channelDb.Name = channelDTO.Name;
+	channelDb.OwnerId = channelDTO.OwnerId;
+	channelDb.Password = channelDTO.Password;
+	channelDb.Type = channelDTO.Type;
+
+	const ChannelId = await this.channelRepository.save(channelDb).then((channel) => channel.ChannelId);
+
+	const adminCreate = new ChannelAdmin();
+	adminCreate.UserId = channelDb.OwnerId;
+	adminCreate.ChannelId = ChannelId;
+
+
+	this.channelAdminRepository.save(adminCreate);
 
 	return this.channelRepository.save(channelDb);
   }
