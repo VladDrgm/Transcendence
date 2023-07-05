@@ -2,10 +2,10 @@ import React, { FC, ChangeEvent, KeyboardEvent, useEffect, useLayoutEffect, useS
 import styled from "styled-components";
 import { Channel } from '../../interfaces/channel.interface';
 import Channel_Div from '../div/channel_div';
-import {isChannelUser, addAdminPopUp, blockUserPopUp, banUserPopUp } from '../div/channel_div';
+import {addAdminPopUp, blockUserPopUp, banUserPopUp } from '../div/channel_div';
 
 import { ChatName } from "./Arena_Chat";
-import { deleteChannel, getChannels, getIsAdmin, postAdmin } from '../../api/channel.api';
+import { deleteChannel, getChannels, getIsAdmin, postAdmin, getChannelUser } from '../../api/channel.api';
 import  {ChatProps, ChatData, Message, User} from '../../interfaces/channel.interface';
 
 
@@ -131,14 +131,10 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 	const handleUserInChannelCheck = async () => {
 		try {
 			if (!props.currentChat.isResolved){
-				return; //Exits early if currentChat is not properly resolved
+				return;
 			}
 			//replacing the user here with the real user when login finished
-			const userIsChannel = await isChannelUser(1, props.currentChat.Channel.ChannelId);
-			if (userIsChannel)
-				setIsUserInChannel (true);
-			else
-				setIsUserInChannel (false);
+			setIsUserInChannel(await getChannelUser(1, props.currentChat.Channel.ChannelId));
 		}catch (error){
 			console.error('Error occured in handleUserChannelCheck:', error);
 		}
@@ -172,7 +168,7 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 		if (!props.currentChat.isResolved)
 			return;
 		
-		getIsAdmin(props.currentChat.Channel.ChannelId, 1)
+		getIsAdmin(props.currentChat.Channel.ChannelId, 2)
 		.then(isAdmin => {
 			setIsAdmin(isAdmin);
 			setIsAdminResolved(true);

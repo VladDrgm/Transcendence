@@ -86,13 +86,22 @@ export function getAdmins(channelId: number): Promise<any[]>{
     });
 }
 
-//to be tested
-export async function getIsAdmin(channelId: number, userId: number): Promise<any> {
+//tested
+export async function getIsAdmin(channelId: number, userId: number): Promise<boolean> {
   try {
     const response = await fetch(fetchAddress + 'channel/' + userId + '/' + channelId + '/admin', {credentials: "include",})
+    if (!response.ok) {
+      console.error("Error retrieving ChannelUser");
+      return false;
+    }
+    if (!response.headers.has("content-length")) {
+      return false;
+    }
     const data = await response.json();
-    // console.log("User " + userId + " is Admin of channlId " + channelId + ":", data);
-      return data;
+    if(!data) {
+      return false;
+    }
+    return true
   } catch (error) {
       console.log("Error returning Admin of channelId " + channelId + ":", error);
       return false;
@@ -137,9 +146,25 @@ export async function getChannelUser(userId: number, channelId: number): Promise
   if (userId === undefined || channelId === undefined) {
     throw new Error("Invalid userId or channelId");
   }
-  const response = await fetch(fetchAddress + 'channel/' + userId + '/' + channelId + '/user', {credentials: "include",});
-  const json = await response.json();
-  return json; 
+  try {
+    const response = await fetch(fetchAddress + 'channel/' + userId + '/' + channelId + '/user', {credentials: "include",});
+
+    if (!response.ok) {
+      console.error("Error retrieving ChannelUser");
+      return false;
+    }
+    if (!response.headers.has("content-length")) {
+      return false;
+    }
+    const json = await response.json();
+    if(!json) {
+      return false;
+    }
+    return json;
+  } catch (error) {
+      console.log("Error returning ChannelUser "+ userId + " of Channel "+ channelId + ":", error);
+      return false;
+  } 
 }
 
 //to be tested
