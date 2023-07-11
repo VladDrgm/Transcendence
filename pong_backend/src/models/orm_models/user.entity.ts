@@ -25,19 +25,19 @@ export class User {
 
   @Column({
     type: 'int',
-	default: 0,
+    default: 0,
   })
   wins: number;
 
   @Column({
     type: 'int',
-	default: 0,
+    default: 0,
   })
   losses: number;
 
   @Column({
     type: 'int',
-	default: 0,
+    default: 0,
   })
   points: number;
 
@@ -50,13 +50,13 @@ export class User {
   @Column({
     type: 'text',
     name: 'achievements',
-	default: '',
+    default: '',
   })
   achievementsCSV: string;
 
   @Column({
     type: 'text',
-	default: null
+    default: null,
   })
   passwordHash: string;
 

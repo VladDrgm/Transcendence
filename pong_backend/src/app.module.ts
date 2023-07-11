@@ -23,10 +23,12 @@ import { Channel } from './models/orm_models/channel.entity';
 import { ChannelController } from './modules/channel/channel.controller';
 import { ChannelService } from './modules/channel/channel.service';
 import { FriendController } from './modules/friend/friend.controller';
+import { MatchController } from './modules/match/match.controller';
 import { FriendService } from './modules/friend/friend.service';
 import { RedirectController } from './modules/redirect/redirect.controller';
 import { BlockedService } from './modules/blocked/blocked.service';
 import { BlockedController } from './modules/blocked/blocked.controller';
+import { MatchService } from './modules/match/match.service';
 
 @Module({
   imports: [
@@ -44,7 +46,20 @@ import { BlockedController } from './modules/blocked/blocked.controller';
       Channel,
     ]),
   ],
-  controllers: [AppController, ChannelController, FriendController, RedirectController, BlockedController],
-  providers: [AppService, ChannelService, FriendService, BlockedService],
+  controllers: [
+    AppController,
+    ChannelController,
+    FriendController,
+    RedirectController,
+    BlockedController,
+    MatchController,
+  ],
+  providers: [
+    AppService,
+    ChannelService,
+    FriendService,
+    BlockedService,
+    MatchService,
+  ],
 })
 export class AppModule {}
