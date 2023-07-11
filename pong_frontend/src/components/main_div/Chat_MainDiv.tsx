@@ -74,6 +74,8 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 	const [isUserInChannel, setIsUserInChannel] = useState(false);
 	const [isUserInChannelBlocked, setIsUserInChannelBlocked] = useState(false);
 	const [body, setBody] = useState<JSX.Element | null>(null);
+	const [channelpanel, setChannelpanel] = useState<JSX.Element | null>(null);
+	const [loadingChannelpanel, setLoadingChannelpanel] = useState(true);
 	function renderUser(user: User) {
 		// console.log("User id is: " + user.id);
 		// console.log("User.username is: " + user.username);
@@ -174,11 +176,50 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 		}
 	};
 
+	const handleChannelPanel = async () =>{
+		setChannelpanel(
+			loadingChannelpanel ? (
+			  <div>Loading Channel Name...</div> // Show a loading spinner or placeholder
+			) : (
+			  <ChannelInfo>
+				{props.currentChat.chatName}
+			  </ChannelInfo>
+			)
+		  );
+		if (isUserInChannel && isAdmin && isAdminResolved && !isUserInChannelBlocked) {
+			setChannelpanel(
+				loadingChannelpanel ? (
+					<div>Loading Channel Name and Buttons...</div> // Show a loading spinner or placeholder
+				) : (
+					<ChannelInfo>
+						{props.currentChat.chatName}
+						<div>
+							<button
+							onClick={() => deleteChannel(props.currentChat.Channel.ChannelId)}>
+							Delete Channel
+							</button>
+							<button
+							onClick={() => addAdminPopUp(props)}>
+							Add Admin
+							</button>
+							<button
+							onClick={() => banUserPopUp(props)}>
+							Ban/Unban/Kick User
+							</button>
+						</div>
+					</ChannelInfo>
+				)
+			);
+		}
+	};
+
 	useEffect(() => {
 		handleUserInChannelCheck();
 		handleUserInChannelBlockedCheck();
+		handleChannelPanel();
 		handleBody();
 		// setIsAdminResolved(false);
+		setLoadingChannelpanel(false);
 	}, [props.currentChat, props.currentChat.isResolved, isUserInChannel, isUserInChannelBlocked, props.messages]);
 
 	//checks if a user is Admin and sets the isAdmin to true or false
@@ -216,8 +257,13 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 		</SideBar>
 		<ChatPanel>
 			<ChannelInfo>
+				{channelpanel}
+			</ChannelInfo>
+			{/* <ChannelInfo>
+				{channelpanel}
+
 			{props.currentChat.chatName}
-			{/* {isAdminResolved && isAdmin && ( */}
+			//{isAdminResolved && isAdmin && ( 
 			{(
 			<div>
 				<button
@@ -234,7 +280,8 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 				</button>
 			</div>
 			)}
-			</ChannelInfo>
+			
+			</ChannelInfo> */}
 			<BodyContainer>
 			{body}
 			</BodyContainer>

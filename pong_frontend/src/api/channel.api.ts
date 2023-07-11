@@ -204,6 +204,7 @@ export function deleteChannelUser(userId: number, channelId: number) {
 }
 
 //to be tested
+// adds a user to the Channeluser table of a channel with channelId
 export function postChannelUser(userId: number, channelId: number) {
   const requestOptions = {
     method: 'POST',
@@ -221,7 +222,7 @@ export function postChannelUser(userId: number, channelId: number) {
 
 
 //Channel blocked Users
-
+// fetches all blocked users from Channel with ChannelId
 export async function getChannelUsersBlocked(channelId: number):  Promise<any[]> {
 	const response = await fetch(fetchAddress + 'channel/' + channelId + '/blockedUsers', {credentials: "include",});
   const json = await response.json();
@@ -229,6 +230,7 @@ export async function getChannelUsersBlocked(channelId: number):  Promise<any[]>
 }
 
 //to be tested
+// fetches a specific User with UserId from blcoked list of Channel with ChannelId
 export async function getChannelUserBlocked(userId: number, channelId: number): Promise<any> {
   const response = await fetch(fetchAddress + 'channel/' + userId + '/' + channelId + '/blocked', {credentials: "include",});
   const json = await response.json();
