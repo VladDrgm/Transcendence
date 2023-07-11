@@ -5,7 +5,7 @@ import Channel_Div from '../div/channel_div';
 import {addAdminPopUp, blockUserPopUp, banUserPopUp } from '../div/channel_div';
 
 import { ChatName } from "./Arena_Chat";
-import { deleteChannel, getChannels, getIsAdmin, postAdmin, getChannelUser } from '../../api/channel.api';
+import { deleteChannel, getChannels, getIsAdmin, postAdmin, getChannelUser, getChannelBlockedUser } from '../../api/channel.api';
 import  {ChatProps, ChatData, Message, User} from '../../interfaces/channel.interface';
 
 
@@ -72,6 +72,7 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 	const [isAdmin, setIsAdmin] = useState(false);
 	const [isAdminResolved, setIsAdminResolved] = useState(false);
 	const [isUserInChannel, setIsUserInChannel] = useState(false);
+	const [isUserInChannelBlocked, setIsUserInChannelBlocked] = useState(false);
 	const [body, setBody] = useState<JSX.Element | null>(null);
 	function renderUser(user: User) {
 		// console.log("User id is: " + user.id);
@@ -139,9 +140,27 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 			console.error('Error occured in handleUserChannelCheck:', error);
 		}
 	};
+	// sets the state IsUserInChannelBlocked to true if the user is blocked
+	const handleUserInChannelBlockedCheck = async () => {
+		try {
+			if (!props.currentChat.isResolved){
+				return;
+			}
+			//replacing the user here with the real user when login finished
+			setIsUserInChannelBlocked(await getChannelBlockedUser(1, props.currentChat.Channel.ChannelId));
+		}catch (error){
+			console.error('Error occured in handleUserChannelBlockedCheck:', error);
+		}
+	};
 
 	const handleBody = async () =>{
-		if (isUserInChannel || !props.currentChat.isChannel || props.connectedRooms.includes(props.currentChat.chatName.toString())) {
+		if (isUserInChannelBlocked) {
+			setBody (
+				<TextBox>
+					You are blocked from using this Channel.
+				</TextBox>
+			)
+		} else if (isUserInChannel || !props.currentChat.isChannel || props.connectedRooms.includes(props.currentChat.chatName.toString())) {
 			setBody (
 				<Messages>
 					{messages.map(renderMessages)}
@@ -157,9 +176,10 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 
 	useEffect(() => {
 		handleUserInChannelCheck();
+		handleUserInChannelBlockedCheck();
 		handleBody();
 		// setIsAdminResolved(false);
-	}, [props.currentChat, props.currentChat.isResolved, isUserInChannel, props.messages]);
+	}, [props.currentChat, props.currentChat.isResolved, isUserInChannel, isUserInChannelBlocked, props.messages]);
 
 	//checks if a user is Admin and sets the isAdmin to true or false
 	//using yourID as UserId here, maybe neede to be updated later
