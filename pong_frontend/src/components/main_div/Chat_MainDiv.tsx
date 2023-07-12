@@ -1,4 +1,4 @@
-import React, { FC, ChangeEvent, KeyboardEvent, useEffect, useLayoutEffect, useState , Suspense} from "react";
+import React, { FC, ChangeEvent, KeyboardEvent, useEffect, useLayoutEffect, useState , Suspense, useCallback, useMemo} from "react";
 import styled from "styled-components";
 import { Channel } from '../../interfaces/channel.interface';
 import Channel_Div from '../div/channel_div';
@@ -76,6 +76,7 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 	const [body, setBody] = useState<JSX.Element | null>(null);
 	const [channelpanel, setChannelpanel] = useState<JSX.Element | null>(null);
 	const [loadingChannelpanel, setLoadingChannelpanel] = useState(true);
+	const [loadingChatBody, setLoadingChatBody] = useState(true);
 	function renderUser(user: User) {
 		// console.log("User id is: " + user.id);
 		// console.log("User.username is: " + user.username);
@@ -117,7 +118,8 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 	}
 
 	// let body: JSX.Element | null = null;
-	const messages = props.messages || [];
+	const messages = useMemo(() =>
+		props.messages || [], [props.messages])
 	// if (!props.currentChat.isChannel || props.connectedRooms.includes(props.currentChat.chatName.toString())) {
 	// 	body = (
 	// 	<Messages>
@@ -131,7 +133,7 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 	// 	</button>
 	// 	);
 	// }
-	const handleUserInChannelCheck = async () => {
+	const handleUserInChannelCheck = useCallback (async () => {
 		try {
 			if (!props.currentChat.isResolved){
 				return;
@@ -141,9 +143,9 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 		}catch (error){
 			console.error('Error occured in handleUserChannelCheck:', error);
 		}
-	};
+	}, [props.currentChat.isResolved, props.currentChat.Channel.ChannelId]);
 	// sets the state IsUserInChannelBlocked to true if the user is blocked
-	const handleUserInChannelBlockedCheck = async () => {
+	const handleUserInChannelBlockedCheck = useCallback (async () => {
 		try {
 			if (!props.currentChat.isResolved){
 				return;
@@ -153,30 +155,45 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 		}catch (error){
 			console.error('Error occured in handleUserChannelBlockedCheck:', error);
 		}
-	};
+	}, [props.currentChat.isResolved, props.currentChat.Channel.ChannelId]);
 
-	const handleBody = async () =>{
+	const handleBody = useCallback (() =>{
 		if (isUserInChannelBlocked) {
-			setBody (
-				<TextBox>
-					You are blocked from using this Channel.
-				</TextBox>
-			)
+			setBody ( 
+				loadingChatBody ? (
+				<div>Loading Chat...</div> // Show a loading spinner or placeholder
+				) : (
+					<TextBox>
+						You are blocked from using this Channel.
+					</TextBox>
+					// setLoadingChatBody(true);
+				)
+			);
 		} else if (isUserInChannel || !props.currentChat.isChannel || props.connectedRooms.includes(props.currentChat.chatName.toString())) {
 			setBody (
-				<Messages>
-					{messages.map(renderMessages)}
-				</Messages>);
+				loadingChatBody ? (
+					<div>Loading Chat...</div> // Show a loading spinner or placeholder
+					) : (
+					<Messages>
+						{messages.map(renderMessages)}
+					</Messages>)
+				);
 		} else {
 			setBody (
-			<button onClick={() => props.joinRoom(props.currentChat.chatName)}>
-				Join {props.currentChat.chatName}
-			</button>
+				loadingChatBody ? (
+					<div>Loading Chat...</div> // Show a loading spinner or placeholder
+					) : (
+					<button onClick={() => props.joinRoom(props.currentChat.chatName)}>
+						Join {props.currentChat.chatName}
+					</button>
+					)
 			);
 		}
-	};
+	}, [isUserInChannel, isUserInChannelBlocked, loadingChatBody, messages, props]);
 
-	const handleChannelPanel = async () =>{
+	const handleChannelPanel = useCallback(() =>{
+		// setLoadingChannelpanel(false);
+    	// setLoadingChatBody(false);
 		setChannelpanel(
 			loadingChannelpanel ? (
 			  <div>Loading Channel Name...</div> // Show a loading spinner or placeholder
@@ -211,16 +228,23 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 				)
 			);
 		}
-	};
+	}, [props, loadingChannelpanel, isUserInChannel, isAdmin, isAdminResolved, isUserInChannelBlocked])
 
 	useEffect(() => {
 		handleUserInChannelCheck();
 		handleUserInChannelBlockedCheck();
+		setLoadingChannelpanel(false);
+		setLoadingChatBody(false);
+		// handleChannelPanel();
+		// handleBody();
+		// setIsAdminResolved(false);
+	}, [props.currentChat, props.currentChat.isResolved, props.messages, handleUserInChannelBlockedCheck, handleUserInChannelCheck]);
+
+	useEffect(() => {
 		handleChannelPanel();
 		handleBody();
-		// setIsAdminResolved(false);
-		setLoadingChannelpanel(false);
-	}, [props.currentChat, props.currentChat.isResolved, isUserInChannel, isUserInChannelBlocked, props.messages]);
+	}, [props.currentChat, handleBody, handleChannelPanel]);
+
 
 	//checks if a user is Admin and sets the isAdmin to true or false
 	//using yourID as UserId here, maybe neede to be updated later
