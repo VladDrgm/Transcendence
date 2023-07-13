@@ -12,7 +12,7 @@ export class FriendService {
   constructor(
     @InjectRepository(Friend)
     private readonly friendRepository: Repository<Friend>,
-	private readonly userService: UserService,
+    private readonly userService: UserService,
   ) {}
 
   async findAll(): Promise<Friend[]> {
@@ -24,66 +24,63 @@ export class FriendService {
   }
 
   async remove(userId: number, friendId: number): Promise<string> {
-	if (userId === friendId) {
-		throw new HttpException('Cannot remove yourself', 400);
-	}
+    if (userId === friendId) {
+      throw new HttpException('Cannot remove yourself', 400);
+    }
 
-	if (!userId || !friendId) {
-		throw new HttpException('Invalid user ID or friend ID', 400);
-	}
+    if (!userId || !friendId) {
+      throw new HttpException('Invalid user ID or friend ID', 400);
+    }
 
-	const friend = await this.friendRepository
-		.createQueryBuilder('friend')
-		.leftJoinAndSelect('friend.friendUser', 'friendUser')
-		.where('friend.user.userID = :userId', { userId })
-		.andWhere('friendUser.userID = :friendId', { friendId })
-		.getOne();
+    const friend = await this.friendRepository
+      .createQueryBuilder('friend')
+      .leftJoinAndSelect('friend.friendUser', 'friendUser')
+      .where('friend.user.userID = :userId', { userId })
+      .andWhere('friendUser.userID = :friendId', { friendId })
+      .getOne();
 
-	if (!friend) {
-		throw new HttpException('Friend not found', 404);
-	}
+    if (!friend) {
+      throw new HttpException('Friend not found', 404);
+    }
 
-	await this.friendRepository.delete(friend.FId);
-	return 'Friend removed';
-
+    await this.friendRepository.delete(friend.FId);
+    return 'Friend removed';
   }
 
+  async findUserFriends(userId: number): Promise<Friend[]> {
+    const result = await this.friendRepository
+      .createQueryBuilder('friend')
+      .leftJoinAndSelect('friend.friendUser', 'friendUser')
+      .where('friend.user.userID = :userId', { userId })
+      .getMany();
 
-async findUserFriends(userId: number): Promise<Friend[]> {
-	const result = await this.friendRepository
-	  .createQueryBuilder('friend')
-	  .leftJoinAndSelect('friend.friendUser', 'friendUser')
-	  .where('friend.user.userID = :userId', { userId })
-	  .getMany();
-
-	return result;
+    return result;
   }
-  
 
   async findFriendById(userId: number, friendId: number): Promise<User> {
-	const result = await this.friendRepository
-		.createQueryBuilder('friend')
-		.leftJoinAndSelect('friend.friendUser', 'friendUser')
-		.where('friend.user.userID = :userId', { userId })
-		.andWhere('friendUser.userID = :friendId', { friendId })
-		.getMany();
+    const result = await this.friendRepository
+      .createQueryBuilder('friend')
+      .leftJoinAndSelect('friend.friendUser', 'friendUser')
+      .where('friend.user.userID = :userId', { userId })
+      .andWhere('friendUser.userID = :friendId', { friendId })
+      .getMany();
 
-	return result[0].friendUser;
+    return result[0].friendUser;
   }
 
   async getFriendStatus(userId: number, friendId: number): Promise<string> {
-	const result = (await this.findFriendById(userId, friendId)).status;
-	return result;
+    const result = (await this.findFriendById(userId, friendId)).status;
+    return result;
   }
 
   async getFriendsStatuses(userId: number): Promise<string[]> {
-	const result = [];
-	const friends = await this.findUserFriends(userId);
+    const result = [];
+    const friends = await this.findUserFriends(userId);
 
-	for (const friend of friends) {
-		result.push(friend.friendUser.status);
-	}
+    for (const friend of friends) {
+      result.push(friend.friendUser.status);
+    }
 
-	return result;
+    return result;
   }
 }

@@ -15,7 +15,6 @@ import { UserService } from './userservice';
 import { User } from 'src/models/orm_models/user.entity';
 import { Friend } from 'src/models/orm_models/friend.entity';
 
-
 @ApiTags('User')
 @Controller('user')
 export class UserController {
@@ -31,18 +30,17 @@ export class UserController {
   //     return this.userService.findOne(id);
   //   }
 
-    @Post()
-	@ApiOperation({ summary: 'Create a new user' })
-    async create(@Body() user: User): Promise<User> {
-      return this.userService.create(user);
-    }
+  @Post()
+  @ApiOperation({ summary: 'Create a new user' })
+  async create(@Body() user: User): Promise<User> {
+    return this.userService.create(user);
+  }
 
-    @Delete(':id')
-	@ApiOperation({ summary: 'Delete a user' })
-    async remove(@Param('id') id: number): Promise<void> {
-      await this.userService.remove(id);
-    }
-
+  @Delete(':id')
+  @ApiOperation({ summary: 'Delete a user' })
+  async remove(@Param('id') id: number): Promise<void> {
+    await this.userService.remove(id);
+  }
 
   @Get('login/:id')
   @ApiOperation({ summary: 'Login a user' })
@@ -58,22 +56,21 @@ export class UserController {
   @Get('user/:id')
   @ApiOperation({ summary: 'Get a user by his id' })
   async getUser(@Param('id', ParseIntPipe) id: number): Promise<User> {
-	return this.userService.findOne(id);
+    return this.userService.findOne(id);
   }
 
   @Put(':id/update/points/:points')
   @ApiOperation({ summary: 'Update the points of a user' })
   async updatePoints(
-	@Param('id', ParseIntPipe) id: number,
-	@Param('points', ParseIntPipe) points: number,
-	  ): Promise<void> {
-	await this.userService.updatePoints(id, points);
-	  }
+    @Param('id', ParseIntPipe) id: number,
+    @Param('points', ParseIntPipe) points: number,
+  ): Promise<void> {
+    await this.userService.updatePoints(id, points);
+  }
 
   @Get('users/points')
   @ApiOperation({ summary: 'Get top 10 users ordered by points' })
   async getUsersOrderedByPoints(): Promise<User[]> {
-	return this.userService.getUsersOrderedByPoints();
+    return this.userService.getUsersOrderedByPoints();
   }
-
 }
