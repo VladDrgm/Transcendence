@@ -77,6 +77,8 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 	const [channelpanel, setChannelpanel] = useState<JSX.Element | null>(null);
 	const [loadingChannelpanel, setLoadingChannelpanel] = useState(true);
 	const [loadingChatBody, setLoadingChatBody] = useState(true);
+	const [channelPanelLoaded, setChannelPanelLoaded] = useState(false);
+  	const [chatBodyLoaded, setChatBodyLoaded] = useState(false);
 	function renderUser(user: User) {
 		// console.log("User id is: " + user.id);
 		// console.log("User.username is: " + user.username);
@@ -144,6 +146,7 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 			console.error('Error occured in handleUserChannelCheck:', error);
 		}
 	}, [props.currentChat.isResolved, props.currentChat.Channel.ChannelId]);
+	
 	// sets the state IsUserInChannelBlocked to true if the user is blocked
 	const handleUserInChannelBlockedCheck = useCallback (async () => {
 		try {
@@ -189,6 +192,7 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 					)
 			);
 		}
+		setChatBodyLoaded(true);
 	}, [isUserInChannel, isUserInChannelBlocked, loadingChatBody, messages, props]);
 
 	const handleChannelPanel = useCallback(() =>{
@@ -228,11 +232,23 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 				)
 			);
 		}
-	}, [props, loadingChannelpanel, isUserInChannel, isAdmin, isAdminResolved, isUserInChannelBlocked])
+		setChannelPanelLoaded(true);
+	}, [
+		props,
+		/*props.currentChat.chatName,
+		props.currentChat.Channel.ChannelId,*/
+		loadingChannelpanel,
+		isUserInChannel,
+		isAdmin,
+		isAdminResolved,
+		isUserInChannelBlocked,
+	]);
 
 	useEffect(() => {
 		handleUserInChannelCheck();
 		handleUserInChannelBlockedCheck();
+		// setLoadingChannelpanel(true);
+    	// setLoadingChatBody(true);
 		setLoadingChannelpanel(false);
 		setLoadingChatBody(false);
 		// handleChannelPanel();
@@ -241,9 +257,23 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 	}, [props.currentChat, props.currentChat.isResolved, props.messages, handleUserInChannelBlockedCheck, handleUserInChannelCheck]);
 
 	useEffect(() => {
+		if (channelPanelLoaded) {
+		  setLoadingChannelpanel(false);
+		}
+	}, [channelPanelLoaded]);
+	
+	useEffect(() => {
+		if (chatBodyLoaded) {
+		  setLoadingChatBody(false);
+		}
+	}, [chatBodyLoaded]);
+	
+	useEffect(() => {
 		handleChannelPanel();
 		handleBody();
-	}, [props.currentChat, handleBody, handleChannelPanel]);
+		// setLoadingChannelpanel(true);
+		// setLoadingChatBody(true);
+	}, [props.currentChat, handleBody, handleChannelPanel, loadingChannelpanel, loadingChatBody]);
 
 
 	//checks if a user is Admin and sets the isAdmin to true or false
