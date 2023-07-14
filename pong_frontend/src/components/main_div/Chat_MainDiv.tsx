@@ -2,7 +2,7 @@ import React, { FC, ChangeEvent, KeyboardEvent, useEffect, useLayoutEffect, useS
 import styled from "styled-components";
 import { Channel } from '../../interfaces/channel.interface';
 import Channel_Div from '../div/channel_div';
-import {addAdminPopUp, blockUserPopUp, banUserPopUp } from '../div/channel_div';
+import {addAdminPopUp, /*blockUserPopUp, */ banUserPopUp } from '../div/channel_div';
 
 import { ChatName } from "./Arena_Chat";
 import { deleteChannel, getChannels, getIsAdmin, postAdmin, getChannelUser, getChannelBlockedUser } from '../../api/channel.api';

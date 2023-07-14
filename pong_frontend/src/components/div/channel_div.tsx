@@ -6,6 +6,7 @@ import {IUser} from '../../interfaces/interface';
 import styled from "styled-components";
 import { ConsoleLogger } from '@nestjs/common';
 import { error } from 'console';
+import { channel } from 'diagnostics_channel';
 
 var fetchAddress = 'http://localhost:3000/';
 
@@ -59,6 +60,25 @@ export async function getUserIDByUserName(UserName: string): Promise<number | un
     }
     console.log('returned undefined UserID from getUserIDbyUSerNAme:');
     return undefined;
+}
+
+export async function getChannelIdByChannelName(ChannelName: string): Promise<number | undefined> {
+    const ChannelList = await getChannels();
+    console.log('getChannelIdByChannelName Channnellist:', ChannelList);
+    const TargetChannel = ChannelList.find((channel: Channel) => channel.Name === ChannelName)
+    console.log('getChannelIdByChannelName TargetChannel:', TargetChannel);
+    if (TargetChannel) {
+        console.log('TargetChannel in if:', TargetChannel);
+        console.log('returned ChannelId from getChannelIdByChannelName:', TargetChannel?.ChannelId);
+        return TargetChannel.ChannelId;
+
+    }
+    console.log('returned undefined ChannelId from getChannelIdByChannelName:');
+    return undefined;
+}
+
+export async function joinPrivateChannel(ChannelName: String, ChannelPassword: String) {
+    return;
 }
 
 export async function fetchChannelNames(): Promise<string[]> {
@@ -185,39 +205,39 @@ export function addAdminPopUp(props:  &ChatProps) {
 
 }
 
-export function blockUserPopUp(props: &ChatProps) {
+// export function blockUserPopUp(props: &ChatProps) {
     
-    // Open Window
-    var popup = window.open('', '_blank', 'width=500,height=300,menubar=no,toolbar=no');
+//     // Open Window
+//     var popup = window.open('', '_blank', 'width=500,height=300,menubar=no,toolbar=no');
 
-    const newBlockedLabel = document.createElement("h1");
-    newBlockedLabel.textContent = "User to be Blocked/Unblocked";
-    popup?.document.body.appendChild(newBlockedLabel);
+//     const newBlockedLabel = document.createElement("h1");
+//     newBlockedLabel.textContent = "User to be Blocked/Unblocked";
+//     popup?.document.body.appendChild(newBlockedLabel);
 
-    var newBlockedUserNameInput = document.createElement('input');
-    newBlockedUserNameInput.type = 'text';
-    newBlockedUserNameInput.placeholder = "Enter new Admin Username";
-    popup?.document.body.appendChild(newBlockedUserNameInput);
+//     var newBlockedUserNameInput = document.createElement('input');
+//     newBlockedUserNameInput.type = 'text';
+//     newBlockedUserNameInput.placeholder = "Enter new Admin Username";
+//     popup?.document.body.appendChild(newBlockedUserNameInput);
 
-    var addBlockButton = document.createElement('button');
-    addBlockButton.innerHTML = 'Block';
-    addBlockButton.addEventListener('click', function() {
-        var newBlockedUserName = newBlockedUserNameInput.value;
-        //waiting for getUSerID by Username
-        // postChannelUserBlocked(getUserID(newBlockedUserName), props.currentChat.Channel.ChannelId);
-        popup?.close();
-    });
-    var addUnblockButton = document.createElement('button');
-    addUnblockButton.innerHTML = 'Unblock';
-    addUnblockButton.addEventListener('click', function() {
-        var newUnblockedUserName = newBlockedUserNameInput.value;
-        //waiting for getUSerID by Username
-        // deleteChannelUserBlocked(getUserID(newBlockedUserName), props.currentChat.Channel.ChannelId);
-        popup?.close();
-    });
-    popup?.document.body.appendChild(addBlockButton);
-    popup?.document.body.appendChild(addUnblockButton);
-}
+//     var addBlockButton = document.createElement('button');
+//     addBlockButton.innerHTML = 'Block';
+//     addBlockButton.addEventListener('click', function() {
+//         var newBlockedUserName = newBlockedUserNameInput.value;
+//         //waiting for getUSerID by Username
+//         // postChannelUserBlocked(getUserID(newBlockedUserName), props.currentChat.Channel.ChannelId);
+//         popup?.close();
+//     });
+//     var addUnblockButton = document.createElement('button');
+//     addUnblockButton.innerHTML = 'Unblock';
+//     addUnblockButton.addEventListener('click', function() {
+//         var newUnblockedUserName = newBlockedUserNameInput.value;
+//         //waiting for getUSerID by Username
+//         // deleteChannelUserBlocked(getUserID(newBlockedUserName), props.currentChat.Channel.ChannelId);
+//         popup?.close();
+//     });
+//     popup?.document.body.appendChild(addBlockButton);
+//     popup?.document.body.appendChild(addUnblockButton);
+// }
 
 // export async function isChannelUser(userId: number, channelId: number): Promise<boolean> {
 //     try {
@@ -258,10 +278,10 @@ const Channel_Div: React.FC<ChatProps> = (props) => {
 	}
 
     function CreateChannel(channelName: String, password: String){
-        if(password == "")
+        if(password === "")
             var channelType = "public";
         else
-            var channelType = "private";
+            channelType = "private";
         const ChannelData = {
             "Name": channelName,
             "Type": channelType,
@@ -323,11 +343,45 @@ const Channel_Div: React.FC<ChatProps> = (props) => {
         popup?.document.body.appendChild(createButton);
     }
 
+    function popUpJoinChannel(){
+        // Open Window
+        var popup = window.open('', '_blank', 'width=500,height=300,menubar=no,toolbar=no');
+
+        const channelNameLabel = document.createElement("h1");
+        channelNameLabel.textContent = "Channel Name:";
+        popup?.document.body.appendChild(channelNameLabel);
+
+        var channelNameInput = document.createElement('input');
+        channelNameInput.type = 'text';
+        channelNameInput.placeholder = "Enter Channel Name you wnat to join";
+        popup?.document.body.appendChild(channelNameInput);
+
+        const channelPasswordLabel = document.createElement("h1");
+        channelPasswordLabel.textContent = "Channel Password:";
+        popup?.document.body.appendChild(channelPasswordLabel);
+
+        var channelPasswordInput = document.createElement('input');
+        channelPasswordInput.type = 'text';
+        channelPasswordInput.placeholder = "Password";
+        popup?.document.body.appendChild(channelPasswordInput);
+
+        var createButton = document.createElement('button');
+        createButton.innerHTML = 'Join';
+        createButton.addEventListener('click', function() {
+            var channelName = channelNameInput.value;
+            var password = channelPasswordInput.value;
+            joinPrivateChannel(channelName, password);
+            popup?.close();
+        });
+        popup?.document.body.appendChild(createButton);
+    }
+
     async function fetchChannels(){
 		try{
 			const response = await getChannels();
 			const channelList = Array.isArray(response) ? response.map(mapChannel) : [];
-			setAllChannels(channelList);
+            const channelListPublic = channelList.filter(channel => channel.Type === "public");
+			setAllChannels(channelListPublic);
             setLoading(false);
 		} catch (error){
 			console.error('Error fetching channels:', error);
@@ -346,9 +400,9 @@ const Channel_Div: React.FC<ChatProps> = (props) => {
             <button onClick={() => popUpCreateChannel()}>
 			Create Channel
 		    </button>
-            {/* <button onClick={() => deleteChannel(props.currentChat.Channel.ChannelId)}>
-			Delete Channel
-		    </button> */}
+            <button onClick={() => popUpJoinChannel()}>
+			Join private Channel
+		    </button>
             {allChannels.length > 0 ? allChannels.map(renderRooms) : 'noChannels'}
             </div>
     );

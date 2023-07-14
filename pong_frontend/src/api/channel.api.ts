@@ -4,7 +4,7 @@ import {IUser} from '../interfaces/interface';
 
 var fetchAddress = 'http://localhost:3000/';
 
-export async function getChannels():  Promise<any[]> {
+export async function getChannels():  Promise<Channel[]> {
 	const response = await fetch(fetchAddress + 'channel', {credentials: "include",});
   const json = await response.json();
 	return json as any[];
