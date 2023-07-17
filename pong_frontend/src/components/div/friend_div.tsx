@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { FriendProfile } from '../../interfaces/friend_profile.interface';
 import { getFriendProfile } from '../../api/profile.api';
+import defaultProfile from '../../default_profiile.jpg';
 
 interface FriendProps {
   userID: number;
@@ -15,7 +16,6 @@ const Friend_Div: React.FC<FriendProps> = ({ userID, friendID }) => {
     {
       try{
         const friend = await getFriendProfile(userID, friendID);
-        console.log(friendID + " a" + userID);
         setFriend(friend);
       }
       catch (error) {
@@ -34,7 +34,12 @@ const Friend_Div: React.FC<FriendProps> = ({ userID, friendID }) => {
       <div>
         <div>
           <h2>{user.username}</h2>
-          <img src={user.avatarPath} alt={user.username} />
+          {(user.avatarPath.substring(0, 5) != "https") && (
+            <img src={defaultProfile} alt="default profile" width="400" height="300"/>
+          )}
+          {(user.avatarPath.substring(0, 5) === "https")  && (
+            <img src={user.avatarPath} alt={user.username} width="400" height="300"/>
+          )}
           <p>Wins: {user.wins}</p>
           <p>Losses: {user.losses}</p>
           <p>Points: {user.points}</p>
