@@ -1,7 +1,9 @@
 import React, {useState, useEffect} from 'react';
 import {main_div_mode_t} from '../MainDivSelector'
 import Private_Div from '../div/private_div';
+import FriendList from '../div/friend_list_div';
 import { getMyID } from '../../api/profile.api';
+import Friend_Div from '../div/friend_div';
 
 interface ProfileProps
 {
@@ -11,6 +13,7 @@ interface ProfileProps
 
 const Profile_MainDiv: React.FC<ProfileProps> = ({userID, mode_set}) => {
   const [idTxt, setid] = useState<string>();
+  const [idfriend, setFid] = useState<number>(-1);
   const getData = async () => {
     try{
       const myProf = await getMyID();
@@ -22,19 +25,35 @@ const Profile_MainDiv: React.FC<ProfileProps> = ({userID, mode_set}) => {
     }
   };
 
+  const set_ownProfile = () => {
+    setFid(-1);
+  };
+
   useEffect(() => {
     getData();
   }, []);
 
-    return (<div>
-              <div>
-                <p>Welcome {userID}. This is your profile on server {idTxt}. </p> 
-                <br/> 
-                <p>Search for our friends here:</p>
-                <button onClick={() => mode_set(main_div_mode_t.FRIEND_PROFILE)}>Search friends</button>
-              </div>
-              <Private_Div/>
-            </div>)
+    switch (idfriend){
+      case (-1):
+        return (<div>
+                  <div>
+                  <p>Welcome {userID}. This is your profile on server {idTxt}. </p> 
+                  </div>
+                  <Private_Div/>
+                  <hr/>
+                  <FriendList userID={userID} friend_set={setFid}/>
+                </div>)
+      default :
+        return (<div>
+          <div>
+            <p>This is friends porfile </p> 
+            <br/> 
+          </div>
+          <Friend_Div userID={userID} friendID={idfriend}/>
+          <hr/>
+          <button onClick={set_ownProfile}>Back to your profile</button>
+        </div>)
+    };
 };
 
 export default Profile_MainDiv;

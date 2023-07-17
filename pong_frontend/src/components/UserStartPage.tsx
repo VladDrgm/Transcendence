@@ -42,7 +42,6 @@ const UserStartPage: React.FC<StartPageProps> = () => {
   return (<div style={pageStyle}>
             <header>
               <button style={buttonStyle} onClick={() => mode_set(main_div_mode_t.HOME_PAGE)}>Home</button>
-              <button style={buttonStyle} onClick={() => mode_set(main_div_mode_t.FRIEND_PROFILE)}>Friends</button>
               <button style={buttonStyle} onClick={() => mode_set(main_div_mode_t.CHAT)}>Chat</button>
               <button style={buttonStyle}>Play</button>
               <button style={buttonStyle} onClick={() => mode_set(main_div_mode_t.PROFILE)}>Profile</button>
