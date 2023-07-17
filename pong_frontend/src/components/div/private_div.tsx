@@ -1,11 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, ChangeEvent  } from 'react';
 import { PrivateProfile } from '../../interfaces/private_profile.interface';
 import { getPrivateProfile } from '../../api/profile.api';
+import defaultProfile from '../../default_profiile.jpg';
+import { serialize } from 'v8';
 
-interface PrivateProps {
-}
 
-const Private_Div: React.FC<PrivateProps> = () => {
+
+const Private_Div = () => {
   const [user, setUser] = useState<PrivateProfile>();
 
   const getData = async () => {
@@ -18,6 +19,43 @@ const Private_Div: React.FC<PrivateProps> = () => {
     // handle the error appropriately or ignore it
     }
   };
+  const [image, setImage] = useState<File | null>(null);
+  const [imageUrl, setImageUrl] = useState<string>('');
+
+  const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files && e.target.files[0];
+    setImage(file || null);
+  };
+  const uploadImage = async () => {
+    if (!image) return;
+
+    const formData = new FormData();
+    formData.append('image', image);
+
+    try {
+      const response = await fetch('https://api.imgbb.com/1/upload?key=6e1ea064ae12a72d44cf9fa845c2c6f6', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (data && data.data && data.data.image && data.data.image.url) {
+        setImageUrl(data.data.image.url);
+        /* Insert API method for image change (POST image link to our database) */
+      }
+      if (user != undefined)
+      {
+        var temp:PrivateProfile = user;
+        temp.avatar = imageUrl;
+        setUser(temp);
+      }
+      
+    }
+    catch (error) {
+      console.error('Error uploading image:', error);
+    }
+  };
 
   useEffect(() => {
     getData();
@@ -28,9 +66,20 @@ const Private_Div: React.FC<PrivateProps> = () => {
       <div>
         <div>
           <h2>{user.nickname}</h2>
+          {(user.avatar.substring(0, 5) != "https") && (
+            <img src={defaultProfile} alt="default profile" width="400" height="300"/>
+          )}
+          {(user.avatar.substring(0, 5) === "https") && (
+            <img src={user.avatar} alt={user.nickname} width="400" height="300"/>
+          )}
+          <div>
+            <input type="file" accept="image/*" onChange={handleImageChange} />
+            <button onClick={uploadImage}>Upload</button>
+            {imageUrl && <img src={imageUrl} alt="Uploaded" />}
+          </div>
           <p>Wins: {user.wins}</p>
           <p>Losses: {user.losses}</p>
-          <p>Ladder Level: {user.ladderLevel}</p>
+          <p>Points: {user.points}</p>
           <p>Status: {user.status}</p>
           <p>Achievements: {user.achievements}</p>
         </div>

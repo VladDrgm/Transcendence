@@ -1,5 +1,5 @@
-export async function getFriendProfile(friendID:number)  {
-	const response = await fetch('http://localhost:3000/profile/friend/' + friendID, {credentials: "include",});
+export async function getFriendProfile(userID:number, friendID:number)  {
+	const response = await fetch('http://localhost:3000/friend/' + userID + '/friend/' + friendID);
     const json = (await response.json());
 	return json;
   }

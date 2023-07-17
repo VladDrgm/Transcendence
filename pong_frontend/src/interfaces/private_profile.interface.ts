@@ -4,7 +4,7 @@ export interface PrivateProfile {
     avatar: string;
     wins: number;
     losses: number;
-    ladderLevel: number;
+    points: number;
     status: string;
     achievements: string;
   }
