@@ -87,10 +87,6 @@ function Arena_Chat_MainDiv(): JSX.Element {
 
 	const [message, setMessage] = useState("");
 
-	let [playerOne, setPlayerOne] = useState<string>("");
-	let [playerTwo, setPlayerTwo] = useState<string>("");
-	let [audience, setAudience] = useState<string>("");
-
 	const socketRef = useRef<Socket | null>(null!);
 
 	function handleMessageChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
@@ -189,77 +185,117 @@ function Arena_Chat_MainDiv(): JSX.Element {
 	});
 }
 
+
 	/* game utilities */
 	const canvasRef = useRef<HTMLCanvasElement | null>(null);
+	const [gameStatus, setGameStatus] = useState(0); // Initial game status is 0
+	const [isGameStarting, setIsGameStarting] = useState(false);
+
 	//const [gameReady, setGameState] = useState(false);
+	//let [playerOne, setPlayerOne] = useState<string>("");
+	//let [playerTwo, setPlayerTwo] = useState<string>("");
+
+	const [gameSession, setGameSession] = useState<{
+		sessionId: string | null;
+		player: number | null;
+		playerOne: string | null;
+		playerTwo: string | null;
+	}>({
+		sessionId: null,
+		player: null,
+		playerOne: null,
+		playerTwo: null,
+	});
 
 	type RegisterHandler = () => void;
 
-	/* Update player states */
-	socketRef.current?.on('playerOneAssignArena', playerOneIdInputAr);
-	socketRef.current?.on('playerTwoAssignArena', playerTwoIdInputAr);
-	socketRef.current?.on('audienceAssignArena', audienceIdInputAr);
+	useEffect(() => {
+		socketRef.current?.on('session joined', ({ sessionId, player }: { sessionId: string; player: number }) => {
+		if (player === 1) {
+				setGameSession((prevSession) => ({
+				...prevSession,
+				sessionId: sessionId,
+				player: player,
+				playerOne: socketRef.current?.id || '',
+			}));
+			console.log("Set as player 1");
+		} else if (player === 2 && gameSession.playerOne) {
+				setGameSession((prevSession) => ({
+				...prevSession,
+				sessionId: sessionId,
+				player: player,
+				playerTwo: socketRef.current?.id || '',
+			}));
+			console.log("Set as player 2");
 
-	const [gameStatus, setGameStatus] = useState(0); // Initial game status is 0
+			// Notify player 1 about player 2's socket ID
+			socketRef.current?.emit('playerTwoAssignArena', socketRef.current?.id || '');
+		}
+		});
+	}, [gameSession.playerOne]);
+	
+	useEffect(() => {
+		socketRef.current?.on('opponent joined', (opponentSocketId: string) => {
+			console.log('Opponent joined with socketId:', opponentSocketId);
+		
+			// If player 2, send its socket ID to player 1
+			if (gameSession.player === 2) {
+				socketRef.current?.emit('playerOneAssignArena', gameSession.playerOne || '');
+			}
+		});
+	}, [gameSession.player, gameSession.playerOne]);
+
 	let updateGameStatus = (newStatus:number) => {
 		setGameStatus(newStatus);
 	};
 
-	function playerOneIdInputAr(playerOneIdIn:string) {
-		console.log("Reached playerOneIdInputArena");
-		setPlayerOne(playerOneIdIn);
-	}
-
-	function playerTwoIdInputAr(playerTwoIdIn:string) {
-		console.log("Reached playerTwoIdInputArena");
-		setPlayerTwo(playerTwoIdIn);
-	}
-
-	function audienceIdInputAr(audienceIdIn:string) {
-		console.log("Reached setAudienceArena");
-		setAudience(audienceIdIn);
-	}
-
-	function registerPlayerOne(event: React.FormEvent) {
+	function joinQueue(event: React.FormEvent) {
 		event.preventDefault(); // Prevent the default form submission behavior
-		
+	
 		if (socketRef.current?.id) {
-			playerOne = socketRef.current.id;
-			socketRef.current.emit("playerOneJoined", playerOne);
+			socketRef.current.emit('join queue');
 		}
-		console.log("playerOne is: " + playerOne);
-		console.log("playerTwo is: " + playerTwo);
-	}
-
-	function registerPlayerTwo(event: React.FormEvent) {
-		event.preventDefault(); // Prevent the default form submission behavior
-		
-		if (socketRef.current?.id) {
-			playerTwo = socketRef.current.id;
-			socketRef.current.emit("playerTwoJoined", playerTwo);
-		}
-		console.log("playerOne is: " + playerOne);
-		console.log("playerTwo is: " + playerTwo);
-	}
-
-	function registerAudience(event: React.FormEvent) {
-		event.preventDefault(); // Prevent the default form submission behavior
-		
-		if (socketRef.current?.id) {
-			audience = socketRef.current.id;
-			socketRef.current.emit("audienceJoined", socketRef.current.id);
-			console.log("You joined as audience/viewer");
-		}
-		console.log("playerOne is: " + playerOne);
-		console.log("playerTwo is: " + playerTwo);
 	}
 
 	function startGame(event: React.FormEvent) {
 		event.preventDefault(); // Prevent the default form submission behavior
-
-
+		//function startGame() {
+			// Check if both player 1 and player 2 are assigned
+			if (gameSession.playerOne && gameSession.playerTwo) {
+				// Check if the current browser is player 1
+				if (socketRef.current?.id === gameSession.playerOne) {
+					// Send an update to the server to start the game
+					socketRef.current?.emit("start game");
+				} else {
+					// Display message for player 2 if they try to start the game
+					alert("Please wait for Player One to start the game.");
+				}
+			}
 	}
 
+	// Game Starting Listener
+	useEffect(() => {
+		socketRef.current?.on('game starting', () => {
+			// Change the gameStatus from 0 to 1
+			setGameStatus(1);
+		});
+	}, []);
+
+	useEffect(() => {
+		if (gameStatus === 1) {
+			// Game is starting, set isGameStarting to true
+			setIsGameStarting(true);
+			// Wait for 5 seconds
+			const timer = setTimeout(() => {
+				// After 5 seconds, set isGameStarting to false to render the actual game
+				setIsGameStarting(false);
+			}, 5000);
+		
+			// Clean up the timer when the component unmounts or when gameStatus changes
+			return () => clearTimeout(timer);
+		}
+	}, [gameStatus]);
+	
 	function handleGameChange(e: React.ChangeEvent<HTMLInputElement>) {
 	 //does nothing
 	}
@@ -296,27 +332,30 @@ function Arena_Chat_MainDiv(): JSX.Element {
 
 	let gameBody, gameBodyForm;
 	if (socketRef.current?.id) {
+		// Check if the game is starting (waiting for 5 seconds) or has started (isGameStarting is false)
+		if (isGameStarting) {
+			gameBody = <div>Game is starting...</div>;
+		} else {
 			gameBody = (
-		<Game
-			canvasRef={canvasRef}
-			socket={socketRef.current}
-			/* gameState={gameState} */
-			updateGameStatus={updateGameStatus}
-		/>
-		);
+			<Game
+				canvasRef={canvasRef}
+				socket={socketRef.current}
+				updateGameStatus={updateGameStatus}
+				gameSession={gameSession}
+			/>
+			);
+		}
 	} else {
-		gameBody = (
-			<canvas width={800} height={400} style={{ backgroundColor: 'black' }} />
-		);
+	  gameBody = <canvas width={800} height={400} style={{ backgroundColor: 'black' }} />;
 	}
 
 	gameBodyForm = (
-	<GameForm
-		registerPlayerOne={registerPlayerOne as RegisterHandler}
-		registerPlayerTwo={registerPlayerTwo as RegisterHandler}
-		registerAudience={registerAudience as RegisterHandler}
-		startGame={startGame as RegisterHandler}
-	/>
+		<GameForm
+			joinQueue={joinQueue as RegisterHandler}
+			startGame={startGame as RegisterHandler}
+			gameSession={gameSession}
+			isConnected={connected}
+		/>
 	);
 
 	return (

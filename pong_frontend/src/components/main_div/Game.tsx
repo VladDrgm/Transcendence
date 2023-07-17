@@ -4,12 +4,13 @@ interface GameProps {
 	canvasRef: React.RefObject<HTMLCanvasElement | null>;
 	socket: any;
 	updateGameStatus:any;
+	gameSession: { sessionId: string | null; player: number | null, playerOne: string | null, playerTwo: string | null };
 }
 
 let gamePixel = 10;
 
 let userCount = 0;
-let playerOneId:string, playerTwoId:string, audienceId: string;
+let playerOneId:string, playerTwoId:string;
 
 interface User {
 	username: string;
@@ -26,23 +27,25 @@ interface GameState {
 	gameStatus: number;
 	playerOne: { id: string | null; socket: any; position: { x: number; y: number }; score: number };
 	playerTwo: { id: string | null; socket: any; position: { x: number; y: number }; score: number };
-	audience: { id: string | null; socket: any };
 	ball: Ball //{ position: { x: number; y: number }; vel: { x: number; y: number; len: number } };
 	timestamps: { start: number | null; end: number | null };
 }
 
 const Game: FC<GameProps> = (props) => {
-		const { canvasRef, socket, updateGameStatus } = props;
+		const { canvasRef, socket, updateGameStatus, gameSession } = props;
 		const contextRef = useRef<CanvasRenderingContext2D | null>(null);
 		let [gameState, setGameStatus] = useState<GameState>({
 			sessionId: null,
 			gameStatus: 0,
 			playerOne: { id: null, socket: null, position: { x: 0, y: 0 }, score: 0 },
 			playerTwo: { id: null, socket: null, position: { x: 0, y: 0 }, score: 0 },
-			audience: { id: null, socket: null },
 			ball: { position: { x: 0, y: 0 }, vel: { x: 0, y: 0, len: 0 } },
 			timestamps: { start: null, end: null },
 		});
+		/* const [sessionId, setSessionId] = useState<string | null>(gameSession.sessionId);
+		const [playerOneId, setPlayerOneId] = useState<string | null>(null);
+		const [playerTwoId, setPlayerTwoId] = useState<string | null>(null);
+		const [isGameStarted, setIsGameStarted] = useState(false); */
 
 		gameState.gameStatus = updateGameStatus;
 
@@ -50,26 +53,21 @@ const Game: FC<GameProps> = (props) => {
 		socket.on('playerConnected', playerConnected);
 		socket.on('playerDisconnected', playerDisconnected);
 
-		socket.on('playerOneAssign', playerOneIdInput);
-		socket.on('playerTwoAssign', playerTwoIdInput);
-		socket.on('audienceAssign', audienceIdInput);
+		/* socket.on('playerOneAssign', playerOneIdInput);
+		socket.on('playerTwoAssign', playerTwoIdInput); */
 
 		socket.on('ballStateUpdateStart', ballStateUpdate)
 		socket.on('updateGameState', updateGameState);
 
-		function playerOneIdInput(playerOneIdIn:string) {
+		/* function playerOneIdInput(playerOneIdIn: string) {
 			console.log("Reached playerOneIdInput");
-			playerOneId = playerOneIdIn;
+			setPlayerOneId(playerOneIdIn);
 		}
-
-		function playerTwoIdInput(playerTwoIdIn:string) {
+		
+		function playerTwoIdInput(playerTwoIdIn: string) {
 			console.log("Reached playerTwoIdInput");
-			playerTwoId = playerTwoIdIn;
-		}
-
-		function audienceIdInput(audienceIdIn:string) {
-			audienceId = audienceIdIn;
-		}
+			setPlayerTwoId(playerTwoIdIn);
+		} */
 
 		function handleInit(msg:string) {
 			console.log(msg);
@@ -80,8 +78,8 @@ const Game: FC<GameProps> = (props) => {
 			userCount++;
 		}
 
-		function playerDisconnected(user:User) {
-			console.log("Player " + user.username + " disconnected");
+		function playerDisconnected() {
+			console.log("A player disconnected");
 			userCount--;
 		}
 
@@ -89,9 +87,10 @@ const Game: FC<GameProps> = (props) => {
 			gameState.ball = ballState;
 		}
 
-	/* Most important: */
+		/* Most important: */
 		function updateGameState(gameStateUpdated:GameState) {
-			gameState = gameStateUpdated;
+			// Update the gameState whenever it changes
+			setGameStatus(gameStateUpdated);
 		}
 
 	useEffect(() => 
@@ -320,8 +319,8 @@ const Game: FC<GameProps> = (props) => {
 			/* Starts the game */
 			start() {
 				console.log("This player is " + socket.id);
-				if (canvas)
-					console.log("Canvas exists in start()");
+/* 				if (canvas)
+					console.log("Canvas exists in start()"); */
 				if (canvas) {
 					this.ball.pos.x = canvas.width / 2;
 					this.ball.pos.y = canvas.height / 2;
@@ -390,20 +389,17 @@ const Game: FC<GameProps> = (props) => {
 
 			/* new version for multiplayer mouse movement */
 			if (canvas) {
-				canvas.addEventListener('mousemove', event => {
+				canvas.addEventListener('mousemove', (event) => {
 					const rect = canvas.getBoundingClientRect();
 					const scaleY = canvas.height / rect.height;
 					const mouseY = (event.clientY - rect.top) * scaleY;
 
-					if (socket.id === playerOneId) {
-						//console.log("Reached mouse movemenet 1");
+					if (socket.id === gameSession.playerOne) {
 						pong.players[0].pos.y = mouseY;
 						gameState.playerOne.position.y = pong.players[0].pos.y;
 						socket.emit('updateGameState', gameState);
 					}
-
-					if (socket.id === playerTwoId) {
-						//console.log("Reached mouse movemenet 2");
+					if (socket.id === gameSession.playerTwo) {
 						pong.players[1].pos.y = mouseY;
 						gameState.playerTwo.position.y = pong.players[1].pos.y;
 						socket.emit('updateGameState', gameState);
@@ -416,7 +412,7 @@ const Game: FC<GameProps> = (props) => {
 				};
 			}
 		
-	}, []);
+	}, [canvasRef, socket, gameSession]);
 	return <canvas ref={canvasRef as React.RefObject<HTMLCanvasElement>} width={800} height={400} />;
 };
 
