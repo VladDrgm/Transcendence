@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useRef, useState } from 'react';
+import React, { FC, useEffect, useRef, useState, useCallback } from 'react';
 
 interface GameProps {
 	canvasRef: React.RefObject<HTMLCanvasElement | null>;
@@ -10,7 +10,6 @@ interface GameProps {
 let gamePixel = 10;
 
 let userCount = 0;
-let playerOneId:string, playerTwoId:string;
 
 interface User {
 	username: string;
@@ -48,6 +47,11 @@ const Game: FC<GameProps> = (props) => {
 		const [isGameStarted, setIsGameStarted] = useState(false); */
 
 		gameState.gameStatus = updateGameStatus;
+		gameState.sessionId = gameSession.sessionId;
+		gameState.playerOne.id = gameSession.playerOne;
+		gameState.playerTwo.id = gameSession.playerTwo;
+		gameState.playerOne.socket = gameSession.playerOne;
+		gameState.playerTwo.socket = gameSession.playerTwo;
 
 		socket.on('init', handleInit);
 		socket.on('playerConnected', playerConnected);
@@ -57,7 +61,6 @@ const Game: FC<GameProps> = (props) => {
 		socket.on('playerTwoAssign', playerTwoIdInput); */
 
 		socket.on('ballStateUpdateStart', ballStateUpdate)
-		socket.on('updateGameState', updateGameState);
 
 		/* function playerOneIdInput(playerOneIdIn: string) {
 			console.log("Reached playerOneIdInput");
@@ -88,10 +91,45 @@ const Game: FC<GameProps> = (props) => {
 		}
 
 		/* Most important: */
-		function updateGameState(gameStateUpdated:GameState) {
+		/* function updateGameState(gameStateUpdated:GameState) {
 			// Update the gameState whenever it changes
-			setGameStatus(gameStateUpdated);
-		}
+			console.log("\n\n\n UPDATE GAME STATE TRIGGERED: \nData is - \n PlayerOne Position: " + gameStateUpdated.playerOne.position.y + "\nPlayer Two position: " + gameStateUpdated.playerTwo.position.y + " \n\n");
+
+			// Create a copy of the current gameState
+			const updatedGameState = { ...gameState };
+
+			// Update the specific properties from gameStateUpdated
+			updatedGameState.sessionId = gameStateUpdated.sessionId;
+			updatedGameState.gameStatus = gameStateUpdated.gameStatus;
+			updatedGameState.playerOne = { ...gameStateUpdated.playerOne };
+			updatedGameState.playerTwo = { ...gameStateUpdated.playerTwo };
+			updatedGameState.ball = { ...gameStateUpdated.ball };
+			updatedGameState.timestamps = { ...gameStateUpdated.timestamps };
+
+			// Update the state with the new gameState
+			setGameStatus(updatedGameState);
+		} */
+
+		const updateGameState = useCallback((gameStateUpdated: GameState) => {
+			// Update the gameState whenever it changes
+			console.log("\n\n\n UPDATE GAME STATE TRIGGERED: \nData is - \n PlayerOne Position: " + gameStateUpdated.playerOne.position.y + "\nPlayer Two position: " + gameStateUpdated.playerTwo.position.y + " \n\n");
+		
+			// Create a copy of the current gameState
+			const updatedGameState = { ...gameState };
+		
+			// Update the specific properties from gameStateUpdated
+			updatedGameState.sessionId = gameStateUpdated.sessionId;
+			updatedGameState.gameStatus = gameStateUpdated.gameStatus;
+			updatedGameState.playerOne = { ...gameStateUpdated.playerOne };
+			updatedGameState.playerTwo = { ...gameStateUpdated.playerTwo };
+			updatedGameState.ball = { ...gameStateUpdated.ball };
+			updatedGameState.timestamps = { ...gameStateUpdated.timestamps };
+		
+			// Update the state with the new gameState
+			setGameStatus(updatedGameState);
+		}, [gameState]);
+
+		socket.on('updateGameState', updateGameState);
 
 	useEffect(() => 
 	{
@@ -206,7 +244,7 @@ const Game: FC<GameProps> = (props) => {
 			lines:any;
 			players:any[];
 
-			constructor() {
+			constructor(startImmediately:boolean) {
 				this._context = contextRef.current;
 				this.players = [];
 				this.ball = new Ball();
@@ -249,6 +287,7 @@ const Game: FC<GameProps> = (props) => {
 				gameState.playerTwo.position.y = this.players[1].pos.y;
 				socket.emit('updateGameState', gameState);
 
+
 				let lastTime:any;
 				const callback = (millis:any) => {
 					if (lastTime) {
@@ -261,7 +300,7 @@ const Game: FC<GameProps> = (props) => {
 				//while (gameState.gameStatus !== 1) { //STOPS PROGRESS UNTIL GAMESTATUS IS 1
 					//gameStatus changes with clicking button and IF game start conditions are met.
 				//}
-				if (gameState.gameStatus === 1) {
+				if (gameState.gameStatus === 1 && startImmediately) {
 					this.start();
 					callback(Date.now());
 				}
@@ -326,7 +365,7 @@ const Game: FC<GameProps> = (props) => {
 					this.ball.pos.y = canvas.height / 2;
 					gameState.ball.position.x = this.ball.pos.x;
 					gameState.ball.position.y = this.ball.pos.y;
-					socket.emit('updateBallPositionStart', gameState);
+					socket.emit('updateBallPositionStart', gameState.ball);
 				}
 			}
 
@@ -354,6 +393,12 @@ const Game: FC<GameProps> = (props) => {
 				// Ball Movement
 				this.ball.pos.x += this.ball.vel.x * dt;
 				this.ball.pos.y += this.ball.vel.y * dt;
+				gameState.ball.position.x = this.ball.pos.x;
+				gameState.ball.position.y = this.ball.pos.y;
+
+				// Player Movement
+				this.players[0].pos.y = gameState.playerOne.position.y;
+				this.players[1].pos.y = gameState.playerTwo.position.y;
 
 				/* Check if scores are correct; deal with scoring */
 				this.players[0].score = gameState.playerOne.score;
@@ -385,7 +430,7 @@ const Game: FC<GameProps> = (props) => {
 				}
 			}
 
-			const pong = new Pong();
+			const pong = new Pong(true);
 
 			/* new version for multiplayer mouse movement */
 			if (canvas) {
@@ -395,11 +440,13 @@ const Game: FC<GameProps> = (props) => {
 					const mouseY = (event.clientY - rect.top) * scaleY;
 
 					if (socket.id === gameSession.playerOne) {
+						pong.players[1].pos.y = gameState.playerTwo.position.y;
 						pong.players[0].pos.y = mouseY;
 						gameState.playerOne.position.y = pong.players[0].pos.y;
 						socket.emit('updateGameState', gameState);
 					}
 					if (socket.id === gameSession.playerTwo) {
+						pong.players[0].pos.y = gameState.playerOne.position.y;
 						pong.players[1].pos.y = mouseY;
 						gameState.playerTwo.position.y = pong.players[1].pos.y;
 						socket.emit('updateGameState', gameState);

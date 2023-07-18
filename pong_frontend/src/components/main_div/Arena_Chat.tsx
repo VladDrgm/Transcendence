@@ -190,12 +190,12 @@ function Arena_Chat_MainDiv(): JSX.Element {
 	const canvasRef = useRef<HTMLCanvasElement | null>(null);
 	const [gameStatus, setGameStatus] = useState(0); // Initial game status is 0
 	const [isGameStarting, setIsGameStarting] = useState(false);
-
+	
 	//const [gameReady, setGameState] = useState(false);
 	//let [playerOne, setPlayerOne] = useState<string>("");
 	//let [playerTwo, setPlayerTwo] = useState<string>("");
-
-	const [gameSession, setGameSession] = useState<{
+	
+	let [gameSession, setGameSession] = useState<{
 		sessionId: string | null;
 		player: number | null;
 		playerOne: string | null;
@@ -206,95 +206,99 @@ function Arena_Chat_MainDiv(): JSX.Element {
 		playerOne: null,
 		playerTwo: null,
 	});
-
-	type RegisterHandler = () => void;
-
-	useEffect(() => {
-		socketRef.current?.on('session joined', ({ sessionId, player }: { sessionId: string; player: number }) => {
-		if (player === 1) {
-				setGameSession((prevSession) => ({
-				...prevSession,
-				sessionId: sessionId,
-				player: player,
-				playerOne: socketRef.current?.id || '',
-			}));
-			console.log("Set as player 1");
-		} else if (player === 2 && gameSession.playerOne) {
-				setGameSession((prevSession) => ({
-				...prevSession,
-				sessionId: sessionId,
-				player: player,
-				playerTwo: socketRef.current?.id || '',
-			}));
-			console.log("Set as player 2");
-
-			// Notify player 1 about player 2's socket ID
-			socketRef.current?.emit('playerTwoAssignArena', socketRef.current?.id || '');
-		}
-		});
-	}, [gameSession.playerOne]);
 	
-	useEffect(() => {
-		socketRef.current?.on('opponent joined', (opponentSocketId: string) => {
-			console.log('Opponent joined with socketId:', opponentSocketId);
-		
-			// If player 2, send its socket ID to player 1
-			if (gameSession.player === 2) {
-				socketRef.current?.emit('playerOneAssignArena', gameSession.playerOne || '');
-			}
-		});
-	}, [gameSession.player, gameSession.playerOne]);
-
-	let updateGameStatus = (newStatus:number) => {
-		setGameStatus(newStatus);
-	};
+	type RegisterHandler = () => void;
 
 	function joinQueue(event: React.FormEvent) {
 		event.preventDefault(); // Prevent the default form submission behavior
 	
 		if (socketRef.current?.id) {
+			console.log("Joining que emitting from Arena Chat, socketRef is: " + socketRef.current.id);
 			socketRef.current.emit('join queue');
 		}
 	}
+	
+	/* useEffect(() => { */
+		socketRef.current?.on('session joined', ({ sessionIdInput, playerInput }) => {
+			console.log("reached Session Joined");
+			if (playerInput === 1) {
+				setGameSession((prevSession) => ({
+					...prevSession,
+					sessionId: sessionIdInput,
+					player: playerInput,
+					playerOne: socketRef.current?.id || '',
+				}));
+				console.log("Player 1 set");
+			} else if (playerInput === 2) {
+				setGameSession((prevSession) => ({
+					...prevSession,
+					sessionId: sessionIdInput,
+					player: playerInput,
+					playerTwo: socketRef.current?.id || '',
+				}));
+				console.log("Player 2 set");
+				//socketRef.current?.emit('playerOneAssignArena', gameSession.playerOne || '');
+			}
+		});
+	/* }, []); */
+
+	/* useEffect(() => { */
+		socketRef.current?.on('opponent joined', (opponentSocketId: string) => {
+			console.log('Opponent joined with socketId:', opponentSocketId);
+		
+			// If player 2, save its socket ID for player 1 and vice versa
+			if (gameSession.player === 2) {
+				//socketRef.current?.emit('playerOneAssignArena', gameSession.playerOne || '');
+				gameSession.playerOne = opponentSocketId;
+			}
+			if (gameSession.player === 1) {
+				gameSession.playerTwo = opponentSocketId;
+			}
+		});
+	/* }, []); */
+
+	let updateGameStatus = (newStatus:number) => {
+		setGameStatus(newStatus);
+	};
 
 	function startGame(event: React.FormEvent) {
-		event.preventDefault(); // Prevent the default form submission behavior
-		//function startGame() {
-			// Check if both player 1 and player 2 are assigned
-			if (gameSession.playerOne && gameSession.playerTwo) {
-				// Check if the current browser is player 1
-				if (socketRef.current?.id === gameSession.playerOne) {
-					// Send an update to the server to start the game
-					socketRef.current?.emit("start game");
-				} else {
-					// Display message for player 2 if they try to start the game
-					alert("Please wait for Player One to start the game.");
-				}
+		//event.preventDefault(); // Prevent the default form submission behavior
+		console.log("Reached startGame, data is - playerOne: " + gameSession.playerOne + " and playerTwo: " + gameSession.playerTwo);
+		// Check if both player 1 and player 2 are assigned
+		if (gameSession.playerOne && gameSession.playerTwo) {
+			// Check if the current browser is player 1
+			if (socketRef.current?.id === gameSession.playerOne) {
+				// Emit an event to the server to start the game
+				socketRef.current?.emit('start game', gameSession.sessionId);
+			} else {
+				// Display message for player 2 if they try to start the game
+				alert("Please wait for Player One to start the game.");
 			}
+		}
 	}
 
+	socketRef.current?.on('waiting for opponent', () => {
+		console.log('Waiting for opponent...');
+	});
+	
+	socketRef.current?.on('invalid session', () => {
+		console.log('Invalid session. Unable to start the game.');
+	});
+
 	// Game Starting Listener
-	useEffect(() => {
+	/* useEffect(() => { */
 		socketRef.current?.on('game starting', () => {
 			// Change the gameStatus from 0 to 1
 			setGameStatus(1);
-		});
-	}, []);
-
-	useEffect(() => {
-		if (gameStatus === 1) {
-			// Game is starting, set isGameStarting to true
-			setIsGameStarting(true);
-			// Wait for 5 seconds
-			const timer = setTimeout(() => {
-				// After 5 seconds, set isGameStarting to false to render the actual game
+			setIsGameStarting(true); // Set isGameStarting to true immediately
+			// Wait for 5 seconds before setting isGameStarting to false
+			/* const timer = setTimeout(() => {
 				setIsGameStarting(false);
-			}, 5000);
-		
+			}, 5000); */
 			// Clean up the timer when the component unmounts or when gameStatus changes
-			return () => clearTimeout(timer);
-		}
-	}, [gameStatus]);
+			/* return () => clearTimeout(timer); */
+		});
+	/* }, []); */
 	
 	function handleGameChange(e: React.ChangeEvent<HTMLInputElement>) {
 	 //does nothing
@@ -331,22 +335,23 @@ function Arena_Chat_MainDiv(): JSX.Element {
 	}
 
 	let gameBody, gameBodyForm;
-	if (socketRef.current?.id) {
+	if (gameStatus === 1) {
 		// Check if the game is starting (waiting for 5 seconds) or has started (isGameStarting is false)
 		if (isGameStarting) {
-			gameBody = <div>Game is starting...</div>;
-		} else {
+			/* gameBody = <div>Game is starting...</div>;
+		} else { */
+			console.log("Game data is: \nCurrent socket: " + socketRef.current?.id + "\ngameStatus: " + gameStatus + "\ngameSession: " + JSON.stringify(gameSession) );
 			gameBody = (
 			<Game
 				canvasRef={canvasRef}
 				socket={socketRef.current}
-				updateGameStatus={updateGameStatus}
+				updateGameStatus={gameStatus}
 				gameSession={gameSession}
 			/>
 			);
 		}
 	} else {
-	  gameBody = <canvas width={800} height={400} style={{ backgroundColor: 'black' }} />;
+		gameBody = <canvas width={800} height={400} style={{ backgroundColor: 'black' }} />;
 	}
 
 	gameBodyForm = (

@@ -11,6 +11,24 @@ app.use(cors());
 /* Change port for backend port switch */
 const port = 4000;
 
+/* Game utilities */
+interface GameState {
+	sessionId: string | null;
+	gameStatus: number;
+	playerOne: { id: string | null; socket: any; position: { x: number; y: number }; score: number };
+	playerTwo: { id: string | null; socket: any; position: { x: number; y: number }; score: number };
+	ball: { position: { x: number; y: number }; vel: { x: number; y: number; len: number } };
+	timestamps: { start: number | null; end: number | null };
+};
+
+interface Ball {
+	position: { x:number, y:number };
+	vel: {x:number, y:number, len:number };
+};
+
+let gameSessions: { sessionId: string; playerIds: string[]; gameState?: GameState}[] = [];
+let playerQueue: string[] = [];
+
 /* Overall utilities */
 let users: { username: string; id: string }[] = []; // Array to store connected users
 
@@ -30,7 +48,7 @@ io.on('connection', (socket: Socket) => {
 	userCount++;
 	console.log('Users online: ' + userCount);
 	socket.emit('init', { 
-		data: 'hello!' 
+		data: 'hello!'
 	});
 
 	socket.on('join server', (playerName) => {
@@ -39,7 +57,7 @@ io.on('connection', (socket: Socket) => {
 			username: playerName,
 			id: socket.id
 		};
-		console.log("Will this be triggered when the 2nd user joins?");
+		//console.log("Will this be triggered when the 2nd user joins?");
 		if (user !== null) {
 			users.push(user);
 			io.emit('new user', users);
@@ -88,22 +106,9 @@ io.on('connection', (socket: Socket) => {
 
 
 
-				/*              */
-				// GAME PART //
-				/*              */
-
-	/* Game utilities */
-	interface GameState {
-		sessionId: string | null;
-		gameStatus: number;
-		playerOne: { id: string | null; socket: any; position: { x: number; y: number }; score: number };
-		playerTwo: { id: string | null; socket: any; position: { x: number; y: number }; score: number };
-		ball: { position: { x: number; y: number }; vel: { x: number; y: number; len: number } };
-		timestamps: { start: number | null; end: number | null };
-	}
-
-	let gameSessions: { sessionId: string; playerIds: string[]; gameState?: GameState} [];
-	let playerQueue: string[] = [];
+			/*              */
+			// GAME PART //
+			/*              */
 
 
 	/* Joining game */
@@ -123,70 +128,74 @@ io.on('connection', (socket: Socket) => {
 		};
 	}
 
+
+
 	socket.on('join queue', () => {
+		console.log("Join Queue was triggered");
+		let availableSession:any;
+
 		// Check if any available session exists
-		const availableSession = gameSessions.find(
-			(session) => session.playerIds.length === 1
-		);
-	
-		// If an available session exists, join as Player 2
-		if (availableSession) {
-			availableSession.playerIds.push(socket.id);
-	
-		// Notify both players (Player 1 and Player 2) about the session details
-		gameSessions.forEach((session) => {
-			if (session.sessionId === availableSession.sessionId) {
-				// Notify Player 1
-				const playerOneSocketId = session.playerIds[0];
-				io.to(playerOneSocketId).emit('session joined', {
-					sessionId: session.sessionId,
-					player: 1
-			});
-	
-			// Notify Player 2
-			io.to(socket.id).emit('session joined', {
-				sessionId: session.sessionId,
-				player: 2
-			});
-	
-			// Notify Player 1 about the opponent joining
-			io.to(playerOneSocketId).emit('opponent joined', socket.id);
-			}
-		});
-		} else {
+		if (gameSessions.length !== 0) {
+			availableSession = gameSessions.find(
+				(session) => session.playerIds.length === 1
+			);
+		}
+
+		if (gameSessions.length === 0 || !availableSession) {
 			// If no available session, create a new session and join as Player 1
+			console.log("New session created for Player 1");
 			const newSessionId = generateNewSessionId();
+			const newGameState = createNewGameState(); // Initialize the gameState
 			gameSessions.push({
 				sessionId: newSessionId,
 				playerIds: [socket.id],
-				gameState: createNewGameState()
+				gameState: newGameState,
 			});
-	
+
 			// Notify the player that they are Player 1 and provide the new sessionId
-			io.to(socket.id).emit('session joined', {
-				sessionId: newSessionId,
-				player: 1
+			console.log("Emitting joining answer back to Player 1, for socketID " + socket.id);
+			socket.emit('session joined', {
+				sessionIdInput: newSessionId,
+				playerInput: 1
 			});
 			playerQueue.push(socket.id);
-		}
-	});
-	
-	// Handle playerTwoAssignArena event
-	socket.on('playerTwoAssignArena', (playerTwoSocketId: string) => {
-		// Find the session where player 1 and player 2 are matched
-		const session = gameSessions.find(
-			(session) => session.playerIds.includes(playerTwoSocketId) && session.playerIds.includes(socket.id)
-		);
-		if (session) {
-			const playerOneSocketId = session.playerIds.find((playerId) => playerId !== playerTwoSocketId);
+			console.log("Game sessions after joining as Player 1:", gameSessions);
+		} else {
+			// If an available session exists, join as Player 2
+			console.log("Joining as Player 2 has been triggered");
+			availableSession.playerIds.push(socket.id);
 
-			// Notify player 1 about player 2 joining
-			io.to(playerOneSocketId).emit('opponent joined', playerTwoSocketId);
+			// Notify both players (Player 1 and Player 2) about the session details
+			gameSessions.forEach((session) => {
+				if (session.sessionId === availableSession.sessionId) {
+					// Notify Player 2
+					console.log("Notifying Player 2 that he is player 2, his socketId is " + socket.id);
+					socket.emit('session joined', {
+						sessionIdInput: session.sessionId,
+						playerInput: 2
+					});
+			
+					// Notify each player of opponents
+					let playerOneSocketId = session.playerIds[0];
+					/* console.log("Notifying Player 1 of Player 2 joining, playerOneSocket being " + playerOneSocketId);
+					socket.to(playerOneSocketId).emit('session joined', {
+						sessionIdInput: session.sessionId,
+						player: 1
+					}); */
+					
+					console.log("Notifying Player 2 - " + socket.id + " who is player 1 - " + playerOneSocketId);
+					socket.emit('opponent joined', playerOneSocketId);
+					console.log("Notifying player 1 - " + playerOneSocketId + " who is Player 2 - " + socket.id);
+					io.to(playerOneSocketId).emit('opponent joined', socket.id);
+				}
+			});
+			console.log("Game sessions after joining as Player 2:", gameSessions);
 		}
 	});
-	
+
+
 	// Handle playerOneAssignArena event
-	socket.on('playerOneAssignArena', (playerOneSocketId: string) => {
+	/* socket.on('playerOneAssignArena', (playerOneSocketId: string) => {
 		// Find the session where player 1 and player 2 are matched
 		const session = gameSessions.find(
 			(session) => session.playerIds.includes(playerOneSocketId) && session.playerIds.includes(socket.id)
@@ -196,9 +205,9 @@ io.on('connection', (socket: Socket) => {
 			const playerTwoSocketId = session.playerIds.find((playerId) => playerId !== playerOneSocketId);
 
 			// Notify player 2 about player 1 joining
-			io.to(playerTwoSocketId).emit('opponent joined', playerOneSocketId);
+			socket.to(playerTwoSocketId).emit('opponent joined', playerOneSocketId);
 		}
-	});
+	}); */
 
 
 	/* STARTING GAME */
@@ -217,20 +226,24 @@ io.on('connection', (socket: Socket) => {
 				io.to(session.playerIds[1]).emit('game starting', sessionId, 2);
 			} else {
 				// There's only one player in the session, wait for the second player
-				io.to(session.playerIds[0]).emit('waiting for opponent');
+				socket.to(session.playerIds[0]).emit('waiting for opponent');
 			}
 		} else {
 			// Invalid sessionId, notify the sender that the game session doesn't exist
-			io.to(socket.id).emit('invalid session');
+			socket.to(socket.id).emit('invalid session');
 		}
 	});
 
 
 	/* Updating Gameplay Sessions */
 
-
 	socket.on('updateGameState', (gameState) => {
 		const { sessionId } = gameState;
+
+		if (!gameSessions) {
+			console.error('Game sessions not initialized or empty.');
+			return;
+		}
 	
 		// Find the game session with the specified sessionId
 		const session = gameSessions.find((session) => session.sessionId === sessionId);
@@ -241,38 +254,48 @@ io.on('connection', (socket: Socket) => {
 		
 			// Emit the updated game state to all players in the session
 			session.playerIds.forEach((playerId) => {
-				io.to(playerId).emit('game state updated', session.gameState); // Sending the updated gameState to each player in the session
+				console.log("\nPlayerID for updating GameState is: \n" + playerId + " in the session:\n " + JSON.stringify(session)+ "\n\n");
+				io.to(playerId).emit('updateGameState', session.gameState); // Sending the updated gameState to each player in the session
 			});
 		}
 	});
 
-	interface Ball {
-		position: { x:number, y:number };
-		vel: {x:number, y:number, len:number };
-	};
-
 	function updateBallPositionInSession(session: any, ballData: Ball) {
-		const ballState = {
-			position: { x: ballData.position, y: ballData.position.y },
-			vel: {
-				x: 150 * (Math.random() > 0.5 ? 1 : -1),
-				y: 150 * (Math.random() * 2 - 1),
-				len: 150
-			}
-		};
-		// Emit the updated ball state to all players in the session
-		session.playerIds.forEach((playerId:any) => {
-			io.to(playerId).emit('ballStateUpdateStart', ballState);
-		});
+		let ballState:any;
+		if (ballData && ballData.position) {
+			ballState = {
+					position: { x: ballData.position.x, y: ballData.position.y },
+					vel: {
+						x: 150 * (Math.random() > 0.5 ? 1 : -1),
+						y: 150 * (Math.random() * 2 - 1),
+						len: 150
+					}
+				};
+		} else {
+			ballState = {
+				position: { x: 400, y: 200 },
+				vel: {
+					x: 150 * (Math.random() > 0.5 ? 1 : -1),
+					y: 150 * (Math.random() * 2 - 1),
+					len: 150
+				}
+			};
+		}
+			// Emit the updated ball state to all players in the session
+			console.log("Before emitting, kick-off ballState is: " + JSON.stringify(ballState));
+			session.playerIds.forEach((playerId:any) => {
+				io.to(playerId).emit('ballStateUpdateStart', ballState);
+			});
 	}
 
 	socket.on('updateBallPositionStart', (ballData: Ball) => {
 		// Find the game session with the specified sessionId
 		const session = gameSessions.find((session) =>
-			session.playerIds.includes(socket.id)
+		session.playerIds.includes(socket.id)
 		);
-
-		if (session) {
+		
+		console.log("Reached Ball Initialization, ballData is: " + JSON.stringify(ballData) + "\nand sessionData is: " + JSON.stringify(session));
+		if (session && socket.id === session.playerIds[0]) {
 			updateBallPositionInSession(session, ballData);
 		}
 	});

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 
 interface FormProps {
 	joinQueue: () => void;
@@ -11,26 +11,36 @@ interface FormProps {
 }
 
 const GameForm: React.FC<FormProps> = (props) => {
+	const [gameSession, setGameSession] = useState<{
+		playerOne: string | null;
+		playerTwo: string | null;
+	}>(props.gameSession);
+
+	useEffect(() => {
+		// Update the gameSession state whenever props.gameSession changes
+		setGameSession(props.gameSession);
+	}, [props.gameSession]);
+
 	const handleStartGameClick = (event: React.MouseEvent<HTMLButtonElement>) => {
 		event.preventDefault();
-		if (props.gameSession.playerTwo) {
-			if (props.gameSession.playerOne === props.gameSession.playerTwo) {
-				// Both players are assigned and the current browser is player 1
-				props.startGame();
-			} else {
-				// Player 2 clicked "Start Game"
-				alert("Please wait for Player One to start the game.");
-			}
-			} else {
-				// Player 1 clicked "Start Game" but player 2 hasn't joined yet
-				alert("Player 2 has not joined yet. Please wait.");
-		}
-};
+		let { playerOne, playerTwo } = props.gameSession;
 
-return (
+		if (playerOne && playerTwo) {
+			// Both Player 1 and Player 2 are assigned and valid
+			props.startGame();
+		} else if (!playerTwo) {
+				// Player 2 has not joined yet
+				alert("Player 2 has not joined yet. Please wait.");
+		} else {
+			// A user who is not a player tries to start the game
+			alert("Join a game first");
+		}
+	};
+
+	return (
 		<form>
-		<button onClick={props.joinQueue}>Join Game</button>
-		<button onClick={handleStartGameClick}>Start the Game!</button>
+			<button onClick={props.joinQueue}>Join Game</button>
+			<button onClick={handleStartGameClick}>Start the Game!</button>
 		</form>
 	);
 };
