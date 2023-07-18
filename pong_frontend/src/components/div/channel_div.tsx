@@ -5,8 +5,10 @@ import  {ChatProps, ChatData, Message, User} from '../../interfaces/channel.inte
 import {IUser} from '../../interfaces/interface';
 import styled from "styled-components";
 import { ConsoleLogger } from '@nestjs/common';
-import { error } from 'console';
 import { channel } from 'diagnostics_channel';
+// import { error } from 'console';
+// import { error } from 'console';
+// import { error } from 'console';
 
 var fetchAddress = 'http://localhost:3000/';
 
@@ -77,8 +79,23 @@ export async function getChannelIdByChannelName(ChannelName: string): Promise<nu
     return undefined;
 }
 
-export async function joinPrivateChannel(ChannelName: String, ChannelPassword: String) {
-    return;
+export async function joinPrivateChannel(ChannelName: string, ChannelPassword: string) : Promise<Channel | undefined>{
+    //fetching Channel with ChannelName
+    try {
+        // const ChannelId = getChannelIdByChannelName(ChannelName);
+        const TargetChannel = await copyChannelByName(ChannelName);
+        // if (TargetChannel?.Password === ChannelPassword)
+
+        // sending Password to backend to check if its the same
+        // new method for joining private channels?
+        return TargetChannel;
+
+    } catch {
+        console.error("Error joining private Channel: ", error);
+    }
+    //Checking if Channel PW is equal to parameter ChannelPassword
+    //AddChannelUser
+    // return;
 }
 
 export async function fetchChannelNames(): Promise<string[]> {
@@ -177,6 +194,26 @@ export function banUserPopUp(props: &ChatProps) {
     });
     popup?.document.body.appendChild(addKickFifteenButton);
 
+    var addMuteButton = document.createElement('button');
+    addMuteButton.innerHTML = 'Mute';
+    addMuteButton.addEventListener('click', function() {
+        // var newBlockedUserName = newBlockedUserNameInput.value;
+        // var newBlockedUserName = newBlockedUserNameInput.value;
+        // modBannedUser(true, newBlockedUserName, props);
+        popup?.close();
+    });
+    popup?.document.body.appendChild(addMuteButton)
+
+    var addUnmuteButton = document.createElement('button');
+    addUnmuteButton.innerHTML = 'Unmute';
+    addUnmuteButton.addEventListener('click', function() {
+        // var newBlockedUserName = newBlockedUserNameInput.value;
+        // var newBlockedUserName = newBlockedUserNameInput.value;
+        // modBannedUser(true, newBlockedUserName, props);
+        popup?.close();
+    });
+    popup?.document.body.appendChild(addUnmuteButton)
+
 }
 
 //opens the window for adding Usersnames as Admins and passes the input to addAdmin()
@@ -260,7 +297,8 @@ export function addAdminPopUp(props:  &ChatProps) {
 // }
 
 const Channel_Div: React.FC<ChatProps> = (props) => {
-    const [allChannels, setAllChannels] = useState<Channel[]>([]);
+    const [publicChannels, setPublicChannels] = useState<Channel[]>([]);
+    const [privateChannels, setPrivateChannels] = useState<Channel[]>([]);
     const [loading, setLoading] = useState(true);
     function renderRooms(room: Channel) {
 		let currentChat: ChatData = {
@@ -343,7 +381,7 @@ const Channel_Div: React.FC<ChatProps> = (props) => {
         popup?.document.body.appendChild(createButton);
     }
 
-    function popUpJoinChannel(){
+    async function popUpJoinPrivateChannel(){
         // Open Window
         var popup = window.open('', '_blank', 'width=500,height=300,menubar=no,toolbar=no');
 
@@ -367,11 +405,17 @@ const Channel_Div: React.FC<ChatProps> = (props) => {
 
         var createButton = document.createElement('button');
         createButton.innerHTML = 'Join';
-        createButton.addEventListener('click', function() {
+        createButton.addEventListener('click', async function() {
             var channelName = channelNameInput.value;
             var password = channelPasswordInput.value;
-            joinPrivateChannel(channelName, password);
+            const TargetChannel = await joinPrivateChannel(channelName, password);
+            if (TargetChannel){
+                //adding a channel to the list of shown channels
+                setPrivateChannels((prevChannels) => [...prevChannels, TargetChannel]);
+                //does Channel creation adds an element to the channelarray of the chatsurface?
+            }
             popup?.close();
+            // return TargetChannel;
         });
         popup?.document.body.appendChild(createButton);
     }
@@ -381,7 +425,7 @@ const Channel_Div: React.FC<ChatProps> = (props) => {
 			const response = await getChannels();
 			const channelList = Array.isArray(response) ? response.map(mapChannel) : [];
             const channelListPublic = channelList.filter(channel => channel.Type === "public");
-			setAllChannels(channelListPublic);
+			setPublicChannels(channelListPublic);
             setLoading(false);
 		} catch (error){
 			console.error('Error fetching channels:', error);
@@ -400,10 +444,13 @@ const Channel_Div: React.FC<ChatProps> = (props) => {
             <button onClick={() => popUpCreateChannel()}>
 			Create Channel
 		    </button>
-            <button onClick={() => popUpJoinChannel()}>
+            <button onClick={() => popUpJoinPrivateChannel()}>
 			Join private Channel
 		    </button>
-            {allChannels.length > 0 ? allChannels.map(renderRooms) : 'noChannels'}
+            <h3>Public Channels</h3>
+            {publicChannels.length > 0 ? publicChannels.map(renderRooms) : 'no public Channels'}
+            <h3>Private Channels</h3>
+            {privateChannels.length > 0 ? privateChannels.map(renderRooms) : 'no privat Channels joined'}
             </div>
     );
 

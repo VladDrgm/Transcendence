@@ -204,7 +204,11 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 			) : (
 			  <ChannelInfo>
 				{props.currentChat.chatName}
+				{/* <button onClick={() => props.leaveRoom(props.currentChat.chatName)}>
+						Leave {props.currentChat.chatName}
+					</button> */}
 			  </ChannelInfo>
+			  
 			)
 		  );
 		if (isUserInChannel && isAdmin && isAdminResolved && !isUserInChannelBlocked) {
