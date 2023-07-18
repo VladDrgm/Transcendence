@@ -1,10 +1,10 @@
 export interface FriendProfile {
-    userId: number;
-    nickname: string;
-    avatar: string;
+    userID: number;
+    username: string;
+    avatarPath: string;
     wins: number;
     losses: number;
-    ladderLevel: number;
+    points: number;
     status: string;
-    achievements: string;
+    achievementsCSV: string;
   }
