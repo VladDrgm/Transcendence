@@ -6,8 +6,8 @@ import GameForm from "./GameForm";
 import { io, Socket } from "socket.io-client";
 import immer, { Draft } from "immer";
 import "../../App.css";
-import {fetchChannelNames, copyChannelByName} from "../div/channel_div"
-import {postChannelUser} from "../../api/channel.api"
+import {fetchChannelNames, copyChannelByName} from "../div/channel_utils"
+import {postChannelUser, deleteChannelUser} from "../../api/channel.api"
 import { Channel } from '../../interfaces/channel.interface';
 // import { Channel } from 'diagnostics_channel';
 
@@ -148,6 +148,22 @@ function Arena_Chat_MainDiv(): JSX.Element {
 	setConnectedRooms(newConnectedRooms);
 	}
 
+	function leaveRoom(chatName: ChatName) {
+		const newConnectedRooms = immer(connectedRooms, (draft: WritableDraft<typeof connectedRooms>) => {
+			const chatNameString = String(chatName); // Convert chatName to string
+			draft = draft.filter((room) => room !== chatNameString);
+	
+			//adding User to channel
+			// console.log("Posting User 1 in Channel", currentChat.Channel.ChannelId);
+			// postChannelUser(1, currentChat.Channel.ChannelId);
+		});
+		//User needs to be changed based on the real user after login is finished
+		console.log("Removing User 1 from Channel:", currentChat.Channel.ChannelId);
+		deleteChannelUser(1, currentChat.Channel.ChannelId);
+		// socketRef.current?.emit("join room", chatName, (messages: any) => roomJoinCallback(messages, chatName));
+		setConnectedRooms(newConnectedRooms);
+		}
+
 	function toggleChat(currentChat: CurrentChat) {
 		if (!messages[currentChat.chatName]) {
 		const newMessages = immer(messages, (draft: WritableDraft<typeof messages>) => {
@@ -277,6 +293,7 @@ function Arena_Chat_MainDiv(): JSX.Element {
 			allUsers={allUsers}
 			allChannels={allChannels}
 			joinRoom={joinRoom}
+			leaveRoom={leaveRoom}
 			connectedRooms={connectedRooms}
 			currentChat={currentChat}
 			messages={messages[currentChat.chatName]}

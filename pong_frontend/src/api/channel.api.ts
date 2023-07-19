@@ -4,7 +4,7 @@ import {IUser} from '../interfaces/interface';
 
 var fetchAddress = 'http://localhost:3000/';
 
-export async function getChannels():  Promise<any[]> {
+export async function getChannels():  Promise<Channel[]> {
 	const response = await fetch(fetchAddress + 'channel', {credentials: "include",});
   const json = await response.json();
 	return json as any[];
@@ -167,6 +167,34 @@ export async function getChannelUser(userId: number, channelId: number): Promise
   } 
 }
 
+//to be tested#
+// checks if userId is on the list of blocked Users in Channel with ChannelId
+// returns the User json, if blocked and false if not or an error occured
+export async function getChannelBlockedUser(userId: number, channelId: number): Promise<any> {
+  if (userId === undefined || channelId === undefined) {
+    throw new Error("Invalid userId or channelId");
+  }
+  try {
+    const response = await fetch(fetchAddress + 'channel/' + userId + '/' + channelId + '/blocked', {credentials: "include",});
+
+    if (!response.ok) {
+      console.error("Error retrieving blocked ChannelUser");
+      return false;
+    }
+    if (!response.headers.has("content-length")) {
+      return false;
+    }
+    const json = await response.json();
+    if(!json) {
+      return false;
+    }
+    return json;
+  } catch (error) {
+      console.log("Error returning blocked ChannelUser "+ userId + " of Channel "+ channelId + ":", error);
+      return false;
+  } 
+}
+
 //to be tested
 export function deleteChannelUser(userId: number, channelId: number) {
   fetch(fetchAddress + 'channel/' + userId + '/' + channelId + '/user', {method: 'DELETE'})
@@ -176,12 +204,13 @@ export function deleteChannelUser(userId: number, channelId: number) {
 }
 
 //to be tested
+// adds a user to the Channeluser table of a channel with channelId
 export function postChannelUser(userId: number, channelId: number) {
   const requestOptions = {
     method: 'POST',
     headers: { 
       "Accept": "*/*",
-      "Container-Type": "application/json"
+      "Content-Type": "application/json"
     },
     body:  ''
   };
@@ -193,7 +222,7 @@ export function postChannelUser(userId: number, channelId: number) {
 
 
 //Channel blocked Users
-
+// fetches all blocked users from Channel with ChannelId
 export async function getChannelUsersBlocked(channelId: number):  Promise<any[]> {
 	const response = await fetch(fetchAddress + 'channel/' + channelId + '/blockedUsers', {credentials: "include",});
   const json = await response.json();
@@ -201,6 +230,7 @@ export async function getChannelUsersBlocked(channelId: number):  Promise<any[]>
 }
 
 //to be tested
+// fetches a specific User with UserId from blcoked list of Channel with ChannelId
 export async function getChannelUserBlocked(userId: number, channelId: number): Promise<any> {
   const response = await fetch(fetchAddress + 'channel/' + userId + '/' + channelId + '/blocked', {credentials: "include",});
   const json = await response.json();
