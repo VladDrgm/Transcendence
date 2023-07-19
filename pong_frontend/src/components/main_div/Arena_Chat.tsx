@@ -38,7 +38,7 @@ export type ChatName = keyof typeof initialMessagesState;
 type CurrentChat = {
 	isChannel: boolean;
 	chatName: ChatName;
-	receiverId: string;
+	receiverId: string | number;
 	isResolved: boolean;
 	Channel: Channel;
 };

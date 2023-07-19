@@ -4,10 +4,7 @@ import { getChannels, postAdmin, postChannelUserBlocked, deleteChannelUserBlocke
 import styled from "styled-components";
 import {IUser} from '../../interfaces/interface';
 import { fetchAddress } from './channel_div';
-
-const Row = styled.div`
-  cursor: pointer;
-`;
+import { Row } from '../main_div/Chat_MainDiv';
 
 export function mapChannel(item: any) {
     const { ChannelId, OwnerId, Name, Type, Password } = item;

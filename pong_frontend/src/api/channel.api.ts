@@ -1,5 +1,6 @@
 import { channel } from "diagnostics_channel";
-import { Channel, User } from "../interfaces/channel.interface";
+import { Channel } from "../interfaces/channel.interface";
+import { User } from "../interfaces/user.interface";
 import {IUser} from '../interfaces/interface';
 
 var fetchAddress = 'http://localhost:3000/';

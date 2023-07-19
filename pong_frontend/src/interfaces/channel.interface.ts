@@ -1,4 +1,5 @@
 import React, { FC, ChangeEvent, KeyboardEvent } from "react";
+import { User } from "./user.interface";
 
 export interface Channel {
 	ChannelId: number;
@@ -27,7 +28,7 @@ export interface ChatProps {
  export type ChatData = {
 	isChannel: boolean;
 	chatName: ChatName;
-	receiverId: string;
+	receiverId: string | number;
 	isResolved: boolean;
 	Channel: Channel;
 };
@@ -37,10 +38,10 @@ export interface Message {
 	content: string;
 }
 
-export interface User {
-	id: string;
-	username: string;
-}
+// export interface User {
+// 	id: string;
+// 	username: string;
+// }
 
 let initialMessagesState: {
 	[key: string]: { sender: string; content: string }[];

@@ -6,14 +6,11 @@ import {renderRooms, fetchPublicChannels} from './channel_utils';
 import { popUpJoinPrivateChannel, popUpCreateChannel } from './channel_popups';
 // import {IUser} from '../../interfaces/interface';
 import styled from "styled-components";
+import { Row } from '../main_div/Chat_MainDiv';
 // import { ConsoleLogger } from '@nestjs/common';
 // import { channel } from 'diagnostics_channel';
 
 export var fetchAddress = 'http://localhost:3000/';
-
-const Row = styled.div`
-  cursor: pointer;
-`;
 
 // export async function isChannelUser(userId: number, channelId: number): Promise<boolean> {
 //     try {

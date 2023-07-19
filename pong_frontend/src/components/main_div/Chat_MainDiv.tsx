@@ -2,24 +2,14 @@ import React, { FC,KeyboardEvent, useEffect, useState, useCallback, useMemo} fro
 import styled from "styled-components";
 import { Channel } from '../../interfaces/channel.interface';
 import Channel_Div from '../div/channel_div';
+import { mapChannel } from "../div/channel_utils";
 import {addAdminPopUp, /*blockUserPopUp, */ banUserPopUp } from '../div/channel_popups';
+import { renderUser, renderMessages } from "../div/chat_utils"; 
 
 // import { ChatName } from "./Arena_Chat";
 import { deleteChannel, getIsAdmin, getChannelUser, getChannelBlockedUser } from '../../api/channel.api';
-import  {ChatProps, ChatData, Message, User} from '../../interfaces/channel.interface';
-
-
-function mapChannel(item: any) {
-    const { ChannelId, OwnerId, Name, Type, Password } = item;
-    return {
-        ChannelId,
-        OwnerId,
-        Name,
-        Type,
-        Password
-    };
-}
-
+import  {ChatProps, Message} from '../../interfaces/channel.interface';
+import { User } from "../../interfaces/user.interface";
 
 const Container = styled.div`
   height: 100vh;
@@ -58,7 +48,7 @@ const ChannelInfo = styled.div`
   border-bottom: 1px solid black;
 `;
 
-const Row = styled.div`
+export const Row = styled.div`
   cursor: pointer;
 `;
 
@@ -79,45 +69,6 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 	const [loadingChatBody, setLoadingChatBody] = useState(true);
 	const [channelPanelLoaded, setChannelPanelLoaded] = useState(false);
   	const [chatBodyLoaded, setChatBodyLoaded] = useState(false);
-	function renderUser(user: User) {
-		// console.log("User id is: " + user.id);
-		// console.log("User.username is: " + user.username);
-		// console.log("Props id is: " + props.yourId);
-		// console.log("Props username is: " + props.username);
-		if (user.id === props.yourId) {
-			// console.log("Reached here");
-		return (
-			<Row key={user.id}>
-			You: {props.username}
-			</Row>
-		);
-		}
-		// console.log("Reached here");
-		const currentChat: ChatData = {
-		chatName: user.username,
-		isChannel: false,
-		receiverId: user.id,
-		isResolved: true,
-		Channel: {} as Channel,
-		};
-		// console.log("Reached here");
-		return (
-		<Row onClick={() => {
-			props.toggleChat(currentChat);
-		}} key={user.id}>
-			{user.username}
-		</Row>
-		);
-	}
-
-	function renderMessages(message: Message, index: number) {
-		return (
-		<div key={index}>
-			<h3>{message.sender}</h3>
-			<p>{message.content}</p>
-		</div>
-		);
-	}
 
 	// let body: JSX.Element | null = null;
 	const messages = useMemo(() =>
@@ -311,35 +262,12 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 		<SideBar>
 			<Channel_Div{...props}/>
 			<h3>All Users</h3>
-			{props.allUsers.map(renderUser)}
+			{props.allUsers.map((user) => renderUser(user, props))}
 		</SideBar>
 		<ChatPanel>
 			<ChannelInfo>
 				{channelpanel}
 			</ChannelInfo>
-			{/* <ChannelInfo>
-				{channelpanel}
-
-			{props.currentChat.chatName}
-			//{isAdminResolved && isAdmin && ( 
-			{(
-			<div>
-				<button
-				onClick={() => deleteChannel(props.currentChat.Channel.ChannelId)}>
-				Delete Channel
-				</button>
-				<button
-				onClick={() => addAdminPopUp(props)}>
-				Add Admin
-				</button>
-				<button
-				onClick={() => banUserPopUp(props)}>
-				Ban/Unban/Kick User
-				</button>
-			</div>
-			)}
-			
-			</ChannelInfo> */}
 			<BodyContainer>
 			{body}
 			</BodyContainer>
