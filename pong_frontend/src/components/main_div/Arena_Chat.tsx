@@ -6,7 +6,7 @@ import GameForm from "./GameForm";
 import { io, Socket } from "socket.io-client";
 import immer, { Draft } from "immer";
 import "../../App.css";
-import {fetchChannelNames, copyChannelByName} from "../div/channel_div"
+import {fetchChannelNames, copyChannelByName} from "../div/channel_utils"
 import {postChannelUser, deleteChannelUser} from "../../api/channel.api"
 import { Channel } from '../../interfaces/channel.interface';
 // import { Channel } from 'diagnostics_channel';
