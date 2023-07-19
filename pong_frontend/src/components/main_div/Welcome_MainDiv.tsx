@@ -1,13 +1,24 @@
 import React from 'react';
+import { User } from '../../interfaces/user.interface';
+import CSS from 'csstype';
 
-interface WelcomeProps
-{
-  userID: number;
+type WelcomeMainDivProps = {
+	user: User;
 }
 
-const Welcome_MainDiv: React.FC<WelcomeProps> = ({userID}) => {
+const welcomeTitleStyle: CSS.Properties = {
+	color: 'rgba(254, 8, 16, 1)',
+	position: 'relative',
+	textAlign: 'center',
+	top: '8px',
+	padding: '4px',
+	fontFamily: 'Shlop',
+	fontSize: '40px',
+  };
+
+const Welcome_MainDiv: React.FC<WelcomeMainDivProps> = ({ user }) => {
     return (<div>
-                <p>Welcome {userID} to the Pong Palace, where the paddles are quick and the competition is fierce! Whether you're a seasoned pro or a newcomer to the game, you're sure to have a ball (or two) playing our addictive version of this classic game. So grab your paddle, put on your game face, and get ready to smash some balls and make some friends. Let's play some Pong!</p>
+                <p style={welcomeTitleStyle}>Welcome {user.username} to the Horror Ping Pong</p>
             </div>)
 };
 
