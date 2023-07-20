@@ -68,6 +68,15 @@ export class UserController {
     await this.userService.updatePoints(id, points);
   }
 
+  @Put(':id/update/avatar/:avatar')
+  @ApiOperation({ summary: 'Update the profile avatar of a user' })
+  async updateAvatar(
+    @Param('id', ParseIntPipe) id: number,
+    @Param('avatar') newAvatar: string,
+  ): Promise<void> {
+    await this.userService.updateAvatar(id, newAvatar);
+  }
+
   @Get('users/points')
   @ApiOperation({ summary: 'Get top 10 users ordered by points' })
   async getUsersOrderedByPoints(): Promise<User[]> {
