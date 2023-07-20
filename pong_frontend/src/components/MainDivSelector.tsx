@@ -32,7 +32,7 @@ const MainDivSelector: React.FC<MainDivProps> = ({userID, user, mode, mode_set})
     case main_div_mode_t.HOME_PAGE:
       return (<Welcome_MainDiv user={user}/>);
 	case main_div_mode_t.CHAT:
-		return (<Arena_Chat_MainDiv/>)
+		return (<Arena_Chat_MainDiv userID={userID} user={user}/>)
 	case main_div_mode_t.PROFILE:
 		return (<Profile_MainDiv userID={userID} mode_set={mode_set} />);
 	case main_div_mode_t.LEADERBORAD:

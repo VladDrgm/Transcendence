@@ -91,8 +91,7 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 			if (!props.currentChat.isResolved){
 				return;
 			}
-			//replacing the user here with the real user when login finished
-			setIsUserInChannel(await getChannelUser(1, props.currentChat.Channel.ChannelId));
+			setIsUserInChannel(await getChannelUser(props.userID, props.currentChat.Channel.ChannelId));
 		}catch (error){
 			console.error('Error occured in handleUserChannelCheck:', error);
 		}
@@ -105,7 +104,7 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 				return;
 			}
 			//replacing the user here with the real user when login finished
-			setIsUserInChannelBlocked(await getChannelBlockedUser(1, props.currentChat.Channel.ChannelId));
+			setIsUserInChannelBlocked(await getChannelBlockedUser(props.userID, props.currentChat.Channel.ChannelId));
 		}catch (error){
 			console.error('Error occured in handleUserChannelBlockedCheck:', error);
 		}
@@ -238,7 +237,7 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 		if (!props.currentChat.isResolved)
 			return;
 		
-		getIsAdmin(props.currentChat.Channel.ChannelId, 2)
+		getIsAdmin(props.currentChat.Channel.ChannelId, props.userID)
 		.then(isAdmin => {
 			setIsAdmin(isAdmin);
 			setIsAdminResolved(true);

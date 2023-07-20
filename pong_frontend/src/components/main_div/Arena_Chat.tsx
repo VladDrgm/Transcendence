@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import Form from "./UsernameForm";
-import Chat from "./Chat_MainDiv";
+import Chat_MainDiv from "./Chat_MainDiv";
 import Game from './Game';
 import GameForm from "./GameForm";
 import { io, Socket } from "socket.io-client";
@@ -9,7 +9,14 @@ import "../../App.css";
 import {fetchChannelNames, copyChannelByName} from "../div/channel_utils"
 import {postChannelUser, deleteChannelUser} from "../../api/channel.api"
 import { Channel } from '../../interfaces/channel.interface';
+import { User } from '../../interfaces/user.interface';
 // import { Channel } from 'diagnostics_channel';
+
+interface ArenaDivProps
+{
+  userID: number;
+  user: User;
+}
 
 type WritableDraft<T> = Draft<T>;
 
@@ -43,7 +50,7 @@ type CurrentChat = {
 	Channel: Channel;
 };
 
-function Arena_Chat_MainDiv(): JSX.Element {
+const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID, user}) => {
 	/* chat utilities */
 	const [username, setUsername] = useState("");
 	const [connected, setConnected] = useState(false);
@@ -133,36 +140,25 @@ function Arena_Chat_MainDiv(): JSX.Element {
 	}
 
 	function joinRoom(chatName: ChatName) {
-	const newConnectedRooms = immer(connectedRooms, (draft: WritableDraft<typeof connectedRooms>) => {
-		const chatNameString = String(chatName); // Convert chatName to string
-		draft.push(chatNameString);
-
-		//adding User to channel
-		// console.log("Posting User 1 in Channel", currentChat.Channel.ChannelId);
-		// postChannelUser(1, currentChat.Channel.ChannelId);
-	});
-	//User needs to be changed based on the real user after login is finished
-	console.log("Posting User 1 in Channel:", currentChat.Channel.ChannelId);
-	postChannelUser(1, currentChat.Channel.ChannelId);
-	socketRef.current?.emit("join room", chatName, (messages: any) => roomJoinCallback(messages, chatName));
-	setConnectedRooms(newConnectedRooms);
+		const newConnectedRooms = immer(connectedRooms, (draft: WritableDraft<typeof connectedRooms>) => {
+			const chatNameString = String(chatName); // Convert chatName to string
+			draft.push(chatNameString);
+		});
+		console.log("Posting User ", userID, " in Channel:", currentChat.Channel.ChannelId);
+		postChannelUser(userID, currentChat.Channel.ChannelId);
+		socketRef.current?.emit("join room", chatName, (messages: any) => roomJoinCallback(messages, chatName));
+		setConnectedRooms(newConnectedRooms);
 	}
 
 	function leaveRoom(chatName: ChatName) {
 		const newConnectedRooms = immer(connectedRooms, (draft: WritableDraft<typeof connectedRooms>) => {
 			const chatNameString = String(chatName); // Convert chatName to string
 			draft = draft.filter((room) => room !== chatNameString);
-	
-			//adding User to channel
-			// console.log("Posting User 1 in Channel", currentChat.Channel.ChannelId);
-			// postChannelUser(1, currentChat.Channel.ChannelId);
 		});
-		//User needs to be changed based on the real user after login is finished
-		console.log("Removing User 1 from Channel:", currentChat.Channel.ChannelId);
-		deleteChannelUser(1, currentChat.Channel.ChannelId);
-		// socketRef.current?.emit("join room", chatName, (messages: any) => roomJoinCallback(messages, chatName));
+		console.log("Removing User ", userID, " from Channel:", currentChat.Channel.ChannelId);
+		deleteChannelUser(userID, currentChat.Channel.ChannelId);
 		setConnectedRooms(newConnectedRooms);
-		}
+	}
 
 	function toggleChat(currentChat: CurrentChat) {
 		if (!messages[currentChat.chatName]) {
@@ -285,7 +281,9 @@ function Arena_Chat_MainDiv(): JSX.Element {
 	let body;
 	if (connected) {
 		body = (
-		<Chat
+		<Chat_MainDiv
+			user={user}
+			userID={userID}
 			message={message}
 			handleMessageChange={handleMessageChange}
 			sendMessage={sendMessage}

@@ -10,9 +10,11 @@ export interface Channel {
 }
 
 export interface ChatProps {
+	userID: number; //userID from login process
+	user: User; //USer from login process
 	toggleChat: (currentChat: ChatData) => void;
-	yourId: string | number;
-	username: string;
+	yourId: string | number;  //socketId from joining the game
+	username: string; //name given in the game startpage
 	currentChat: ChatData;
 	connectedRooms: string[];
 	messages: Message[];

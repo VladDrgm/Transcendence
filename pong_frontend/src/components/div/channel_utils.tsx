@@ -135,7 +135,7 @@ export async function addAdmin(newAdminUsername: string, props: &ChatProps){
     // retrieving UserID from getUserID(UserName) from backend maybe
     if (targetID)//changing the 1 to props.yourId or the real UserID of the caller
         {
-            postAdmin(props.currentChat.Channel.ChannelId, Number(targetID), 1);
+            postAdmin(props.currentChat.Channel.ChannelId, Number(targetID), props.userID);
             console.log('Admin added with UserId:', targetID);
     } else 
     console.error('Error adding Admin with Username:' , newAdminUsername);
