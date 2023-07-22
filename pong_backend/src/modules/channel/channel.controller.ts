@@ -174,4 +174,38 @@ export class ChannelController {
   ): Promise<void> {
     await this.channelService.removeChannelBlockedUser(userId, channelId);
   }
+
+  @Put(':userId/:channelId/type')
+  @ApiOperation({
+	summary: 'Change the type of a channel to public/private. Only Owner can change the type of a channel.',
+	  })
+  async changeChannelType(
+	@Param('userId') userId: number,
+	@Param('channelId') channelId: number,
+  ): Promise<void> {
+	await this.channelService.changeChannelType(userId, channelId);
+  }
+
+  @Delete(':userId/:channelId/password')
+  @ApiOperation({
+	summary: 'Delete a channel password.'
+  })
+  async deleteChannelPassword(
+	@Param('userId') userId: number,
+	@Param('channelId') channelId: number,
+	  ): Promise<void> {
+	await this.channelService.deleteChannelPassword(userId, channelId);
+	  }
+
+  @Put(':userId/:channelId/:password/password')
+  @ApiOperation({
+	summary: 'Change the password of a channel. Only Owner can change the password of a channel.',
+	  })
+	async changeChannelPassword(
+	@Param('userId') userId: number,
+	@Param('channelId') channelId: number,
+	@Param('password') password: string,
+	  ): Promise<void> {
+	await this.channelService.changeChannelPassword(userId, channelId, password);
+	  }
 }

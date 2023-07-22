@@ -244,4 +244,53 @@ export class ChannelService {
       channelBlockedUser.BlockedUserId,
     );
   }
+
+  async changeChannelType(
+	userId: number,
+	channelId: number
+  ): Promise<void> {
+	const channel = await this.findOne(channelId);
+	if (!channel) {
+	  throw new HttpException('Channel not found', 400);
+	}
+	const isOwner = channel.OwnerId == userId;
+	if (!isOwner) {
+	  throw new HttpException('You are not the owner of this channel', 400);
+	}
+	channel.Type = channel.Type == 'public' ? 'private' : 'public';
+	await this.channelRepository.save(channel);
+  }
+
+  async deleteChannelPassword(
+	userId: number,
+	channelId: number
+  ): Promise<void> {
+	const channel = await this.findOne(channelId);
+	if (!channel) {
+	  throw new HttpException('Channel not found', 400);
+	}
+	const isOwner = channel.OwnerId == userId;
+	if (!isOwner) {
+	  throw new HttpException('You are not the owner of this channel', 400);
+	}
+	channel.Password = '';
+	await this.channelRepository.save(channel);
+  }
+
+  async changeChannelPassword(
+	userId: number,
+	channelId: number,
+	password: string
+	  ): Promise<void> {
+	const channel = await this.findOne(channelId);
+	if (!channel) {
+	  throw new HttpException('Channel not found', 400);
+	}
+	const isOwner = channel.OwnerId == userId;
+	if (!isOwner) {
+	  throw new HttpException('You are not the owner of this channel', 400);
+	}
+	channel.Password = password;
+	await this.channelRepository.save(channel);
+  }
 }
