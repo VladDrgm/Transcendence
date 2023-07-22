@@ -2,8 +2,10 @@ import { Controller, Post, Body, Get } from '@nestjs/common';
 import { MatchService } from './match.service';
 import { Match } from 'src/models/orm_models/match.entity';
 import { matchDTO } from './matchDTO';
+import { ApiTags } from '@nestjs/swagger';
 
-@Controller('matches')
+@ApiTags('Match')
+@Controller('match')
 export class MatchController {
   constructor(private readonly matchService: MatchService) {}
 

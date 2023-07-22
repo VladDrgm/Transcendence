@@ -7,7 +7,6 @@ import { ChannelUser } from 'src/models/orm_models/channel_user.entity';
 import { ChannelBlockedUser } from 'src/models/orm_models/channel_blocked_user.entity';
 import { HttpException, HttpStatus } from '@nestjs/common';
 import { CreateChannelDto } from './channelDTO';
-import { plainToClass } from 'class-transformer';
 
 export class ChannelRepository extends Repository<Channel> {}
 
@@ -37,11 +36,14 @@ export class ChannelService {
     return this.channelRepository.findOneBy({ ChannelId: id });
   }
 
-  async create(channelDTO: CreateChannelDto): Promise<Channel> {
+  async create(
+    channelDTO: CreateChannelDto,
+    callerId: number,
+  ): Promise<Channel> {
     const channelDb = new Channel();
 
     channelDb.Name = channelDTO.Name;
-    channelDb.OwnerId = channelDTO.OwnerId;
+    channelDb.OwnerId = callerId;
     channelDb.Password = channelDTO.Password;
     channelDb.Type = channelDTO.Type;
 
@@ -63,11 +65,11 @@ export class ChannelService {
   }
 
   async addAdmin(
-    userId: number,
+    callerId: number,
     targetId: number,
     channelId: number,
   ): Promise<ChannelAdmin> {
-    if (userId === targetId) {
+    if (callerId === targetId) {
       throw new HttpException('Cannot add yourself as admin.', 400);
     }
 
@@ -81,7 +83,7 @@ export class ChannelService {
       throw new HttpException('Channel not found', 400);
     }
 
-    if (channel.OwnerId == userId) {
+    if (channel.OwnerId == callerId) {
       const channelAdmin = new ChannelAdmin();
       channelAdmin.UserId = targetId;
       channelAdmin.ChannelId = channelId;
@@ -105,10 +107,10 @@ export class ChannelService {
     });
   }
 
-  //this needs refactoring; we need the callerId, the targetId and the channelId;
   //we need to check if the caller is an admin, if the target is already a user, if the target is an admin, if the caller is the owner
   async addChannelUser(
-    userId: number,
+    callerId: number,
+    targetId: number,
     channelId: number,
   ): Promise<ChannelUser> {
     const channel = await this.findOne(channelId);
@@ -116,7 +118,7 @@ export class ChannelService {
       throw new HttpException('Channel not found', 400);
     }
 
-    const channel_user = await this.getChannelUserByUserId(userId, channelId);
+    const channel_user = await this.getChannelUserByUserId(targetId, channelId);
     if (channel_user) {
       throw new HttpException(
         'User is already in channel.',
@@ -124,7 +126,7 @@ export class ChannelService {
       );
     }
 
-    const isAdmin = (await this.getChannelAdminByUserId(userId, channelId))
+    const isAdmin = (await this.getChannelAdminByUserId(callerId, channelId))
       ? true
       : false;
 
@@ -136,29 +138,70 @@ export class ChannelService {
     }
 
     const channelUser = new ChannelUser();
-    channelUser.UserId = userId;
+    channelUser.UserId = targetId;
     channelUser.ChannelId = channelId;
     return this.channelUserRepository.save(channelUser);
   }
 
   async getChannelUsers(channelId: number): Promise<ChannelUser[]> {
-    return this.channelUserRepository.findBy({ ChannelId: channelId });
+    const users = await this.channelUserRepository.findBy({
+      ChannelId: channelId,
+    });
+
+    const currentTimestamp = new Date();
+    users.forEach((user) => {
+      if (user.MutedUntil && user.MutedUntil <= currentTimestamp) {
+        user.MutedUntil = null;
+      }
+    });
+
+    return this.channelUserRepository.save(users);
   }
 
   async getChannelUserByUserId(
     userId: number,
     channelId: number,
   ): Promise<ChannelUser> {
-    return this.channelUserRepository.findOneBy({
+    const user = await this.channelUserRepository.findOneBy({
       UserId: userId,
       ChannelId: channelId,
     });
+
+    const currentTimestamp = new Date();
+    if (user.MutedUntil && user.MutedUntil <= currentTimestamp) {
+      user.MutedUntil = null;
+      await this.channelUserRepository.save(user);
+    }
+
+    return user;
   }
 
-  //this needs refactoring; we need the callerId, the targetId and the channelId;
-  //we need to check if the caller is an admin, if the target is already a user, if the target is an admin, if the caller is the owner
-  async removeChannelUser(userId: number, channelId: number): Promise<void> {
-    const channelUser = await this.getChannelUserByUserId(userId, channelId);
+  async removeChannelUser(
+    callerId: number,
+    targetId: number,
+    channelId: number,
+  ): Promise<void> {
+    const channel = await this.findOne(channelId);
+    if (!channel) {
+      throw new HttpException('Channel not found', 400);
+    }
+    const channelUser = await this.getChannelUserByUserId(targetId, channelId);
+    if (!channelUser) {
+      throw new HttpException(
+        'User is not part of this channel.',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    const isAdmin = (await this.getChannelAdminByUserId(callerId, channelId))
+      ? true
+      : false;
+
+    if (!isAdmin) {
+      throw new HttpException(
+        'You do not have the credentials to remove a user.',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
     await this.channelUserRepository.delete(channelUser.CUserId);
   }
 
@@ -171,7 +214,7 @@ export class ChannelService {
     const isCallerAdmin = CallerAdmin ? true : false;
     if (!isCallerAdmin) {
       throw new HttpException(
-        'You do not have the credentials to remove and admin.',
+        'You do not have the credentials to remove an admin.',
         HttpStatus.BAD_REQUEST,
       );
     }
@@ -245,85 +288,132 @@ export class ChannelService {
     );
   }
 
-  async changeChannelType(
-	userId: number,
-	channelId: number
-  ): Promise<void> {
-	const channel = await this.findOne(channelId);
-	if (!channel) {
-	  throw new HttpException('Channel not found', 400);
-	}
-	const isOwner = channel.OwnerId == userId;
-	if (!isOwner) {
-	  throw new HttpException('You are not the owner of this channel', 400);
-	}
-	channel.Type = channel.Type == 'public' ? 'private' : 'public';
-	await this.channelRepository.save(channel);
+  async changeChannelType(userId: number, channelId: number): Promise<void> {
+    const channel = await this.findOne(channelId);
+    if (!channel) {
+      throw new HttpException('Channel not found', 400);
+    }
+    const isOwner = channel.OwnerId == userId;
+    if (!isOwner) {
+      throw new HttpException('You are not the owner of this channel', 400);
+    }
+    channel.Type = channel.Type == 'public' ? 'private' : 'public';
+    await this.channelRepository.save(channel);
   }
 
   async deleteChannelPassword(
-	userId: number,
-	channelId: number
+    userId: number,
+    channelId: number,
   ): Promise<void> {
-	const channel = await this.findOne(channelId);
-	if (!channel) {
-	  throw new HttpException('Channel not found', 400);
-	}
-	const isOwner = channel.OwnerId == userId;
-	if (!isOwner) {
-	  throw new HttpException('You are not the owner of this channel', 400);
-	}
-	channel.Password = '';
-	await this.channelRepository.save(channel);
+    const channel = await this.findOne(channelId);
+    if (!channel) {
+      throw new HttpException('Channel not found', 400);
+    }
+    const isOwner = channel.OwnerId == userId;
+    if (!isOwner) {
+      throw new HttpException('You are not the owner of this channel', 400);
+    }
+    channel.Password = '';
+    await this.channelRepository.save(channel);
   }
 
   async changeChannelPassword(
-	userId: number,
-	channelId: number,
-	password: string
-	  ): Promise<void> {
-	const channel = await this.findOne(channelId);
-	if (!channel) {
-	  throw new HttpException('Channel not found', 400);
-	}
-	const isOwner = channel.OwnerId == userId;
-	if (!isOwner) {
-	  throw new HttpException('You are not the owner of this channel', 400);
-	}
-	channel.Password = password;
-	await this.channelRepository.save(channel);
+    userId: number,
+    channelId: number,
+    password: string,
+  ): Promise<void> {
+    const channel = await this.findOne(channelId);
+    if (!channel) {
+      throw new HttpException('Channel not found', 400);
+    }
+    const isOwner = channel.OwnerId == userId;
+    if (!isOwner) {
+      throw new HttpException('You are not the owner of this channel', 400);
+    }
+    channel.Password = password;
+    await this.channelRepository.save(channel);
   }
 
   async addUserToPrivateChannel(
-	userId: number,
-	channelId: number,
-	password: string
-  ): Promise<void> 
-  {
-	const channel = await this.findOne(channelId);
-	if (!channel) {
-	  throw new HttpException('Channel not found', 400);
-	}
-	if (channel.Password != password) {
-	  throw new HttpException('Wrong password', 400);
-	}
-	const channelUser = await this.getChannelUserByUserId(userId, channelId);
-	if (channelUser) {
-	  throw new HttpException('User is already in channel.', HttpStatus.BAD_REQUEST);
-	}
-	const channelBlockedUser = await this.getChannelBlockedUserByUserId(userId, channelId);
-	if (channelBlockedUser) {
-	  throw new HttpException('User is blocked from channel.', HttpStatus.BAD_REQUEST);
-	}
-	const channelAdmin = await this.getChannelAdminByUserId(userId, channelId);
-	if (channelAdmin) {
-	  throw new HttpException('User is already an admin.', HttpStatus.BAD_REQUEST);
-	}
+    userId: number,
+    channelId: number,
+    password: string,
+  ): Promise<void> {
+    const channel = await this.findOne(channelId);
+    if (!channel) {
+      throw new HttpException('Channel not found', 400);
+    }
+    if (channel.Password != password) {
+      throw new HttpException('Wrong password', 400);
+    }
+    const channelUser = await this.getChannelUserByUserId(userId, channelId);
+    if (channelUser) {
+      throw new HttpException(
+        'User is already in channel.',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    const channelBlockedUser = await this.getChannelBlockedUserByUserId(
+      userId,
+      channelId,
+    );
+    if (channelBlockedUser) {
+      throw new HttpException(
+        'User is blocked from channel.',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    const channelAdmin = await this.getChannelAdminByUserId(userId, channelId);
+    if (channelAdmin) {
+      throw new HttpException(
+        'User is already an admin.',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
 
-	const channelUserCreate = new ChannelUser();
-	channelUserCreate.UserId = userId;
-	channelUserCreate.ChannelId = channelId;
-	await this.channelUserRepository.save(channelUserCreate);
+    const channelUserCreate = new ChannelUser();
+    channelUserCreate.UserId = userId;
+    channelUserCreate.ChannelId = channelId;
+    await this.channelUserRepository.save(channelUserCreate);
+  }
 
+  async muteUserForDuration(
+    callerId: number,
+    targetId: number,
+    channelId: number,
+    durationInMinutes: number,
+  ): Promise<void> {
+    const channel = await this.findOne(channelId);
+
+    if (!channel) {
+      throw new HttpException('Channel not found', 400);
+    }
+
+    const channelUser = await this.getChannelUserByUserId(targetId, channelId);
+    if (!channelUser) {
+      throw new HttpException(
+        'User is not part of this channel.',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    const isAdmin = (await this.getChannelAdminByUserId(callerId, channelId))
+      ? true
+      : false;
+
+    if (!isAdmin) {
+      throw new HttpException(
+        'Insufficient permissions to mute users',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    const currentTimestamp = new Date();
+    const futureTimestamp = new Date(
+      currentTimestamp.getTime() + durationInMinutes * 60000,
+    ); // 60000 milliseconds = 1 minute
+
+    channelUser.MutedUntil = futureTimestamp;
+    await this.channelUserRepository.save(channelUser);
   }
 }
