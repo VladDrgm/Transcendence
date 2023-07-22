@@ -3,7 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Match } from 'src/models/orm_models/match.entity';
 import { matchDTO } from './matchDTO';
-import { async } from 'rxjs';
 import { MatchHistory } from 'src/models/orm_models/matchHistory.entity';
 
 @Injectable()

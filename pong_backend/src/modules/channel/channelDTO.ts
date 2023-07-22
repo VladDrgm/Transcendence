@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateChannelDto {
@@ -28,6 +28,6 @@ export class CreateChannelDto {
     description: 'The password of the channel',
   })
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   Password: string;
 }
