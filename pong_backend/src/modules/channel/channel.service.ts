@@ -293,4 +293,37 @@ export class ChannelService {
 	channel.Password = password;
 	await this.channelRepository.save(channel);
   }
+
+  async addUserToPrivateChannel(
+	userId: number,
+	channelId: number,
+	password: string
+  ): Promise<void> 
+  {
+	const channel = await this.findOne(channelId);
+	if (!channel) {
+	  throw new HttpException('Channel not found', 400);
+	}
+	if (channel.Password != password) {
+	  throw new HttpException('Wrong password', 400);
+	}
+	const channelUser = await this.getChannelUserByUserId(userId, channelId);
+	if (channelUser) {
+	  throw new HttpException('User is already in channel.', HttpStatus.BAD_REQUEST);
+	}
+	const channelBlockedUser = await this.getChannelBlockedUserByUserId(userId, channelId);
+	if (channelBlockedUser) {
+	  throw new HttpException('User is blocked from channel.', HttpStatus.BAD_REQUEST);
+	}
+	const channelAdmin = await this.getChannelAdminByUserId(userId, channelId);
+	if (channelAdmin) {
+	  throw new HttpException('User is already an admin.', HttpStatus.BAD_REQUEST);
+	}
+
+	const channelUserCreate = new ChannelUser();
+	channelUserCreate.UserId = userId;
+	channelUserCreate.ChannelId = channelId;
+	await this.channelUserRepository.save(channelUserCreate);
+
+  }
 }
