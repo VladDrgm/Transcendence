@@ -208,4 +208,17 @@ export class ChannelController {
 	  ): Promise<void> {
 	await this.channelService.changeChannelPassword(userId, channelId, password);
 	  }
+
+	@Post(':userId/:channelId/:password/password')
+	@ApiOperation({
+	  summary: 'Add an user to a  private channel.',
+	})
+	async addUserToPrivateChannel(
+	  @Param('userId') userId: number,
+	  @Param('channelId') channelId: number,
+	  @Param('password') password: string,
+	): Promise<ChannelUser> {
+	  return this.channelService.addUserToPrivateChannel(userId, channelId, password);
+	}
+
 }
