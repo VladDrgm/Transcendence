@@ -6,13 +6,13 @@ import {
   Delete,
   Body,
   Param,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 import { Channel } from 'src/models/orm_models/channel.entity';
 import { ChannelService } from './channel.service';
-import { ApiBody } from '@nestjs/swagger';
 import { ChannelAdmin } from 'src/models/orm_models/channel_admin.entity';
-import { channel } from 'diagnostics_channel';
 import { ChannelUser } from 'src/models/orm_models/channel_user.entity';
 import { ChannelBlockedUser } from 'src/models/orm_models/channel_blocked_user.entity';
 import { CreateChannelDto } from './channelDTO';
@@ -34,14 +34,18 @@ export class ChannelController {
     return this.channelService.findOne(id);
   }
 
-  @Post()
+  @Post(':callerId')
   @ApiOperation({
     summary: 'Create a Channel',
     description:
       'The channel will be created if you send a json body with the request',
   })
-  async create(@Body() channel: CreateChannelDto): Promise<Channel> {
-    return this.channelService.create(channel);
+  @UsePipes(new ValidationPipe())
+  async create(
+    @Body() channel: CreateChannelDto,
+    @Param('callerId') callerId: number,
+  ): Promise<Channel> {
+    return this.channelService.create(channel, callerId);
   }
 
   @Delete(':id')
@@ -50,16 +54,16 @@ export class ChannelController {
     await this.channelService.remove(id);
   }
 
-  @Post(':userId/:targetId/:channelId/admin')
+  @Post(':callerId/:targetId/:channelId')
   @ApiOperation({
     summary: 'Add an Admin by his userId. Only Owner can add an Admin.',
   })
   async addChannelAdmin(
-    @Param('userId') userId: number,
+    @Param('callerId') callerId: number,
     @Param('targetId') targetId: number,
     @Param('channelId') channelId: number,
   ): Promise<ChannelAdmin> {
-    return this.channelService.addAdmin(userId, targetId, channelId);
+    return this.channelService.addAdmin(callerId, targetId, channelId);
   }
 
   @Get(':channelId/admins')
@@ -97,15 +101,16 @@ export class ChannelController {
     await this.channelService.removeChannelAdmin(userId, targetId, channelId);
   }
 
-  @Post(':userId/:channelId/user')
+  @Post(':callerId/:targetId/:channelId/user')
   @ApiOperation({
     summary: 'Add a User by his userId. Only Admins can add a User.',
   })
   async addChannelUser(
-    @Param('userId') userId: number,
+    @Param('callerId') callerId: number,
+    @Param('targetId') targetId: number,
     @Param('channelId') channelId: number,
   ): Promise<ChannelUser> {
-    return this.channelService.addChannelUser(userId, channelId);
+    return this.channelService.addChannelUser(callerId, targetId, channelId);
   }
 
   @Get(':channelId/users')
@@ -130,10 +135,11 @@ export class ChannelController {
     summary: 'Delete a User by his userId. Only Admins can delete a User.',
   })
   async removeChannelUser(
-    @Param('userId') userId: number,
+    @Param('callerId') callerId: number,
+    @Param('targetId') targetId: number,
     @Param('channelId') channelId: number,
   ): Promise<void> {
-    await this.channelService.removeChannelUser(userId, channelId);
+    await this.channelService.removeChannelUser(callerId, targetId, channelId);
   }
 
   @Post(':userId/:channelId/blocked')
@@ -173,5 +179,80 @@ export class ChannelController {
     @Param('channelId') channelId: number,
   ): Promise<void> {
     await this.channelService.removeChannelBlockedUser(userId, channelId);
+  }
+
+  @Put(':userId/:channelId/type')
+  @ApiOperation({
+    summary:
+      'Change the type of a channel to public/private. Only Owner can change the type of a channel.',
+  })
+  async changeChannelType(
+    @Param('userId') userId: number,
+    @Param('channelId') channelId: number,
+  ): Promise<void> {
+    await this.channelService.changeChannelType(userId, channelId);
+  }
+
+  @Delete(':userId/:channelId/password')
+  @ApiOperation({
+    summary: 'Delete a channel password.',
+  })
+  async deleteChannelPassword(
+    @Param('userId') userId: number,
+    @Param('channelId') channelId: number,
+  ): Promise<void> {
+    await this.channelService.deleteChannelPassword(userId, channelId);
+  }
+
+  @Put(':userId/:channelId/:password/password')
+  @ApiOperation({
+    summary:
+      'Change the password of a channel. Only Owner can change the password of a channel.',
+  })
+  async changeChannelPassword(
+    @Param('userId') userId: number,
+    @Param('channelId') channelId: number,
+    @Param('password') password: string,
+  ): Promise<void> {
+    await this.channelService.changeChannelPassword(
+      userId,
+      channelId,
+      password,
+    );
+  }
+
+  @Post(':userId/:channelId/:password/password')
+  @ApiOperation({
+    summary: 'Add an user to a  private channel.',
+  })
+  async addUserToPrivateChannel(
+    @Param('userId') userId: number,
+    @Param('channelId') channelId: number,
+    @Param('password') password: string,
+  ): Promise<void> {
+    return this.channelService.addUserToPrivateChannel(
+      userId,
+      channelId,
+      password,
+    );
+  }
+
+  @Post(':callerId/:targetId/:channelId/mute/:duration')
+  @ApiOperation({
+    summary:
+      'Mute a user in the channel for a specified duration (in minutes). Only admins can mute users.',
+  })
+  async muteUserForDuration(
+    @Param('callerId') callerId: number,
+    @Param('targetId') targetId: number,
+    @Param('channelId') channelId: number,
+    @Param('duration') duration: number,
+  ): Promise<void> {
+    await this.channelService.muteUserForDuration(
+      callerId,
+      targetId,
+      channelId,
+      duration,
+    );
   }
 }
