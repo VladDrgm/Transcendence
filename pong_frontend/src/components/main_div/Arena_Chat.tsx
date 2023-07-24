@@ -7,7 +7,7 @@ import { io, Socket } from "socket.io-client";
 import immer, { Draft } from "immer";
 import "../../App.css";
 import {fetchChannelNames, copyChannelByName} from "../div/channel_utils"
-import {postChannelUser, deleteChannelUser} from "../../api/channel.api"
+import {postChannelUser, deleteChannelUser} from "../../api/channel/channel_user.api"
 import { Channel } from '../../interfaces/channel.interface';
 import { User } from '../../interfaces/user.interface';
 // import { Channel } from 'diagnostics_channel';

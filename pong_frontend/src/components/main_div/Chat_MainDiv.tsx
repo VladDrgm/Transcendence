@@ -7,7 +7,9 @@ import {addAdminPopUp, /*blockUserPopUp, */ banUserPopUp } from '../div/channel_
 import { renderUser, renderMessages } from "../div/chat_utils"; 
 
 // import { ChatName } from "./Arena_Chat";
-import { deleteChannel, getIsAdmin, getChannelUser, getChannelBlockedUser } from '../../api/channel.api';
+import { deleteChannel} from '../../api/channel/channel.api';
+import { getIsAdmin } from "../../api/channel/channel_admin.api";
+import { getChannelUser, getChannelBlockedUser } from "../../api/channel/channel_user.api";
 import  {ChatProps, Message} from '../../interfaces/channel.interface';
 import { User } from "../../interfaces/user.interface";
 

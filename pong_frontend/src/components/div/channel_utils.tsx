@@ -1,6 +1,8 @@
 import { Dispatch, SetStateAction } from 'react';
 import { Channel, ChatData, ChatProps } from '../../interfaces/channel.interface';
-import { getChannels, postAdmin, postChannelUserBlocked, deleteChannelUserBlocked, getUsers, postChannelUser } from '../../api/channel.api';
+import { getChannels} from '../../api/channel/channel.api';
+import { postAdmin } from '../../api/channel/channel_admin.api';
+import { postChannelUserBlocked, deleteChannelUserBlocked, getUsers, postChannelUser} from '../../api/channel/channel_user.api';
 import styled from "styled-components";
 import {IUser} from '../../interfaces/interface';
 import { fetchAddress } from './channel_div';
@@ -170,7 +172,7 @@ export function CreateChannel(props: ChatProps, channelName: String, password: S
     }
 
     const jsonData = JSON.stringify(ChannelData);
-    fetch(fetchAddress + 'channel', {credentials: "include",
+    fetch(fetchAddress + 'channel/' + props.userID, {credentials: "include",
         method:"POST",
         headers: {
             "Content-Type": "application/json"

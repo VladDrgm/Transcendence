@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Channel } from '../../interfaces/channel.interface';
-import { getChannels} from '../../api/channel.api';
+import { getChannels} from '../../api/channel/channel.api';
 import  {ChatProps} from '../../interfaces/channel.interface';
 import {renderRooms, fetchPublicChannels} from './channel_utils';
 import { popUpJoinPrivateChannel, popUpCreateChannel } from './channel_popups';
