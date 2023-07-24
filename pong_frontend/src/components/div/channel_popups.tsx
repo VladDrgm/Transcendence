@@ -1,6 +1,7 @@
 import { Dispatch, SetStateAction } from 'react';
 import { Channel, ChatProps } from '../../interfaces/channel.interface';
 import { modBannedUser, addAdmin, joinPrivateChannel, CreateChannel} from './channel_utils';
+import { postChannelUser } from '../../api/channel/channel_user.api';
 
 
 

@@ -124,7 +124,7 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 					// setLoadingChatBody(true);
 				)
 			);
-		} else if (isUserInChannel || !props.currentChat.isChannel || props.connectedRooms.includes(props.currentChat.chatName.toString())) {
+		} else if ((isUserInChannel || !props.currentChat.isChannel) || (isAdmin && isAdminResolved) || props.connectedRooms.includes(props.currentChat.chatName.toString())) {
 			setBody (
 				loadingChatBody ? (
 					<div>Loading Chat...</div> // Show a loading spinner or placeholder
@@ -145,7 +145,7 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 			);
 		}
 		setChatBodyLoaded(true);
-	}, [isUserInChannel, isUserInChannelBlocked, loadingChatBody, messages, props]);
+	}, [isUserInChannel, isUserInChannelBlocked, loadingChatBody, messages, props, isAdmin]);
 
 	const handleChannelPanel = useCallback(() =>{
 		// setLoadingChannelpanel(false);
@@ -163,7 +163,7 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 			  
 			)
 		  );
-		if (isUserInChannel && isAdmin && isAdminResolved && !isUserInChannelBlocked) {
+		if ((isUserInChannel && !isUserInChannelBlocked)|| (isAdmin && isAdminResolved) ) {
 			setChannelpanel(
 				loadingChannelpanel ? (
 					<div>Loading Channel Name and Buttons...</div> // Show a loading spinner or placeholder
@@ -242,6 +242,7 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 		getIsAdmin(props.currentChat.Channel.ChannelId, props.userID)
 		.then(isAdmin => {
 			setIsAdmin(isAdmin);
+			console.log("UserID:", props.userID , "admin:", isAdmin);
 			setIsAdminResolved(true);
 		})
 		.catch(error => {

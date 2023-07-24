@@ -1,7 +1,6 @@
 import { ChatProps, ChatData, Channel, Message } from "../../interfaces/channel.interface";
 import { User } from "../../interfaces/user.interface";
 import { Row } from "../main_div/Chat_MainDiv";
-// import
 
 
 
