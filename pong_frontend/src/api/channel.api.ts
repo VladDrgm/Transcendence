@@ -151,7 +151,7 @@ export async function getChannelUser(userId: number, channelId: number): Promise
     const response = await fetch(fetchAddress + 'channel/' + userId + '/' + channelId + '/user', {credentials: "include",});
 
     if (!response.ok) {
-      console.error("Error retrieving ChannelUser");
+      console.log("User is not Member of Channel");
       return false;
     }
     if (!response.headers.has("content-length")) {
