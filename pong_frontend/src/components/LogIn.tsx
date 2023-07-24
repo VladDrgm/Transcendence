@@ -1,4 +1,4 @@
-import React, { useRef, useContext, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { login } from '../api/login.api';
 import CSS from 'csstype';
 import gif from './assets/billy.png'
@@ -15,12 +15,17 @@ const LogIn: React.FC<LogInProps> = ({onSignUp, userID_set, loginDone_set}) => {
   const input_id = useRef<HTMLInputElement>(null);
   var input_user_id;
   var fetchAddress = 'http://localhost:3000/';
+  var signUpEndpoint = 'user';
+  var loginEndpoint = 'user/login/'; // Replace later with user/login
 
   const [showLoginPopup, setShowLoginPopup] = useState(false);
   const [showSignupPopup, setShowSignupPopup] = useState(false);
 
-  const [username, setUsername] = useState(''); // State for username input
-  const [password, setPassword] = useState(''); // State for password input
+  const [username, setUsername] = useState(''); // Login state for username input
+  const [password, setPassword] = useState(''); // Login state for password input
+  
+  const [newUsername, setNewUsername] = useState(''); // Sign up state for username input
+  const [newPassword, setNewPassword] = useState(''); // Sign up state for password input
 
 const pageStyle: CSS.Properties = {
 	backgroundColor: 'rgba(3, 3, 3, 1)',
@@ -189,8 +194,7 @@ const formFieldStyle: CSS.Properties = {
 
 		try {
 			// Make API call and get the response
-			const response = await fetch(fetchAddress + 'user', {
-				// credentials: "include",
+			const response = await fetch(fetchAddress + signUpEndpoint, {
 				method:"POST",
 				headers: {
 					"Content-Type": "application/json"
@@ -214,6 +218,62 @@ const formFieldStyle: CSS.Properties = {
 	};
 
   const handleLogin = async () => {
+	// const user = {
+	// 	username: username,
+	// 	password: password
+	// }
+	// try {
+	// 	// Make API call and get the response
+	// 	const response = await fetch(fetchAddress + loginEndpoint + 30, {
+	// 		method:"GET",
+	// 		headers: {
+	// 			"Content-Type": "application/json"
+	// 		},
+	// 		body:JSON.stringify(user),
+	// 	});
+	
+	// 	if (response.ok) {
+	// 		const loggedInUser: User = await response.json(); 
+	// 		await login(loggedInUser.userID);
+	// 		userID_set(loggedInUser.userID);
+	// 		loginDone_set(true);
+	// 	} else {
+	// 		throw new Error(response.statusText);
+	// 	}
+	// } catch (error) {
+	// 	throw new Error('Error logging in. Try again!');
+	// }
+
+	const someUser: User = {
+		username: 'tim',
+		userID: 30,
+		avatarPath: '',
+		wins: 0,
+		losses: 0,
+		points: 0,
+		status: '',
+		achievementsCSV: '',
+		passwordHash: password,
+		friends: [],
+		befriendedBy: [],
+		blocked: [],
+		blockedBy: [],
+		adminChannels: [],
+		blockedChannels: [],
+		channels: [],
+	  };
+	input_user_id = 30
+	if (input_user_id != 0)
+    {
+      if (!isNaN(input_user_id))
+      {
+		onSignUp(someUser);
+        await login(input_user_id);
+        userID_set(input_user_id);
+        loginDone_set(true);
+      }
+      input_user_id = 0
+    }
 	setShowLoginPopup(false)
   };
 //   async function signUpUser() {
@@ -243,6 +303,8 @@ const formFieldStyle: CSS.Properties = {
 					<input
 					type="text"
 					placeholder="Username"
+					value={username}
+              		onChange={(e) => setUsername(e.target.value)} // Update state on change
 					style={formFieldStyle}
 					/>
 				</form>
@@ -250,6 +312,8 @@ const formFieldStyle: CSS.Properties = {
 					<input
 					type="password"
 					placeholder="Password"
+					value={password}
+              		onChange={(e) => setPassword(e.target.value)} // Update state on change
 					style={formFieldStyle}
 					/>
 				</form>
@@ -264,15 +328,15 @@ const formFieldStyle: CSS.Properties = {
 						<input
 						type="text"
 						placeholder="Username"
-						value={username}
-              			onChange={(e) => setUsername(e.target.value)} // Update state on change
+						value={newUsername}
+              			onChange={(e) => setNewUsername(e.target.value)} // Update state on change
 						style={formFieldStyle}
 						/>
 						<input
 						type="password"
 						placeholder="Password"
-						value={password}
-              			onChange={(e) => setPassword(e.target.value)} // Update state on change
+						value={newPassword}
+              			onChange={(e) => setNewPassword(e.target.value)} // Update state on change
 						style={formFieldStyle}
 						/>
 					</form>
