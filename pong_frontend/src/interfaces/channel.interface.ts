@@ -1,4 +1,5 @@
 import React, { FC, ChangeEvent, KeyboardEvent } from "react";
+import { User } from "./user.interface";
 
 export interface Channel {
 	ChannelId: number;
@@ -9,9 +10,11 @@ export interface Channel {
 }
 
 export interface ChatProps {
+	userID: number; //userID from login process
+	user: User; //USer from login process
 	toggleChat: (currentChat: ChatData) => void;
-	yourId: string | number;
-	username: string;
+	yourId: string | number;  //socketId from joining the game
+	username: string; //name given in the game startpage
 	currentChat: ChatData;
 	connectedRooms: string[];
 	messages: Message[];
@@ -27,7 +30,7 @@ export interface ChatProps {
  export type ChatData = {
 	isChannel: boolean;
 	chatName: ChatName;
-	receiverId: string;
+	receiverId: string | number;
 	isResolved: boolean;
 	Channel: Channel;
 };
@@ -37,10 +40,10 @@ export interface Message {
 	content: string;
 }
 
-export interface User {
-	id: string;
-	username: string;
-}
+// export interface User {
+// 	id: string;
+// 	username: string;
+// }
 
 let initialMessagesState: {
 	[key: string]: { sender: string; content: string }[];

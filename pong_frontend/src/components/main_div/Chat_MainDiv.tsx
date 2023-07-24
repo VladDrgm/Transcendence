@@ -2,24 +2,16 @@ import React, { FC,KeyboardEvent, useEffect, useState, useCallback, useMemo} fro
 import styled from "styled-components";
 import { Channel } from '../../interfaces/channel.interface';
 import Channel_Div from '../div/channel_div';
-import {addAdminPopUp, /*blockUserPopUp, */ banUserPopUp } from '../div/channel_popups';
+import { mapChannel } from "../div/channel_utils";
+import {addAdminPopUp, /*blockUserPopUp, */ banUserPopUp, kickUserPopUp, muteUserPopUp } from '../div/channel_popups';
+import { renderUser, renderMessages } from "../div/chat_utils"; 
 
 // import { ChatName } from "./Arena_Chat";
-import { deleteChannel, getIsAdmin, getChannelUser, getChannelBlockedUser } from '../../api/channel.api';
-import  {ChatProps, ChatData, Message, User} from '../../interfaces/channel.interface';
-
-
-function mapChannel(item: any) {
-    const { ChannelId, OwnerId, Name, Type, Password } = item;
-    return {
-        ChannelId,
-        OwnerId,
-        Name,
-        Type,
-        Password
-    };
-}
-
+import { deleteChannel} from '../../api/channel/channel.api';
+import { getIsAdmin } from "../../api/channel/channel_admin.api";
+import { getChannelUser, getChannelBlockedUser } from "../../api/channel/channel_user.api";
+import  {ChatProps, Message} from '../../interfaces/channel.interface';
+import { User } from "../../interfaces/user.interface";
 
 const Container = styled.div`
   height: 100vh;
@@ -58,7 +50,7 @@ const ChannelInfo = styled.div`
   border-bottom: 1px solid black;
 `;
 
-const Row = styled.div`
+export const Row = styled.div`
   cursor: pointer;
 `;
 
@@ -79,45 +71,6 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 	const [loadingChatBody, setLoadingChatBody] = useState(true);
 	const [channelPanelLoaded, setChannelPanelLoaded] = useState(false);
   	const [chatBodyLoaded, setChatBodyLoaded] = useState(false);
-	function renderUser(user: User) {
-		// console.log("User id is: " + user.id);
-		// console.log("User.username is: " + user.username);
-		// console.log("Props id is: " + props.yourId);
-		// console.log("Props username is: " + props.username);
-		if (user.id === props.yourId) {
-			// console.log("Reached here");
-		return (
-			<Row key={user.id}>
-			You: {props.username}
-			</Row>
-		);
-		}
-		// console.log("Reached here");
-		const currentChat: ChatData = {
-		chatName: user.username,
-		isChannel: false,
-		receiverId: user.id,
-		isResolved: true,
-		Channel: {} as Channel,
-		};
-		// console.log("Reached here");
-		return (
-		<Row onClick={() => {
-			props.toggleChat(currentChat);
-		}} key={user.id}>
-			{user.username}
-		</Row>
-		);
-	}
-
-	function renderMessages(message: Message, index: number) {
-		return (
-		<div key={index}>
-			<h3>{message.sender}</h3>
-			<p>{message.content}</p>
-		</div>
-		);
-	}
 
 	// let body: JSX.Element | null = null;
 	const messages = useMemo(() =>
@@ -140,8 +93,7 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 			if (!props.currentChat.isResolved){
 				return;
 			}
-			//replacing the user here with the real user when login finished
-			setIsUserInChannel(await getChannelUser(1, props.currentChat.Channel.ChannelId));
+			setIsUserInChannel(await getChannelUser(props.userID, props.currentChat.Channel.ChannelId));
 		}catch (error){
 			console.error('Error occured in handleUserChannelCheck:', error);
 		}
@@ -154,7 +106,7 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 				return;
 			}
 			//replacing the user here with the real user when login finished
-			setIsUserInChannelBlocked(await getChannelBlockedUser(1, props.currentChat.Channel.ChannelId));
+			setIsUserInChannelBlocked(await getChannelBlockedUser(props.userID, props.currentChat.Channel.ChannelId));
 		}catch (error){
 			console.error('Error occured in handleUserChannelBlockedCheck:', error);
 		}
@@ -172,7 +124,7 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 					// setLoadingChatBody(true);
 				)
 			);
-		} else if (isUserInChannel || !props.currentChat.isChannel || props.connectedRooms.includes(props.currentChat.chatName.toString())) {
+		} else if ((isUserInChannel || !props.currentChat.isChannel) || (isAdmin && isAdminResolved) || props.connectedRooms.includes(props.currentChat.chatName.toString())) {
 			setBody (
 				loadingChatBody ? (
 					<div>Loading Chat...</div> // Show a loading spinner or placeholder
@@ -193,7 +145,7 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 			);
 		}
 		setChatBodyLoaded(true);
-	}, [isUserInChannel, isUserInChannelBlocked, loadingChatBody, messages, props]);
+	}, [isUserInChannel, isUserInChannelBlocked, loadingChatBody, messages, props, isAdmin]);
 
 	const handleChannelPanel = useCallback(() =>{
 		// setLoadingChannelpanel(false);
@@ -211,7 +163,7 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 			  
 			)
 		  );
-		if (isUserInChannel && isAdmin && isAdminResolved && !isUserInChannelBlocked) {
+		if ((isUserInChannel && !isUserInChannelBlocked)|| (isAdmin && isAdminResolved) ) {
 			setChannelpanel(
 				loadingChannelpanel ? (
 					<div>Loading Channel Name and Buttons...</div> // Show a loading spinner or placeholder
@@ -229,7 +181,15 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 							</button>
 							<button
 							onClick={() => banUserPopUp(props)}>
-							Ban/Unban/Kick User
+							Ban User
+							</button>
+							<button
+							onClick={() => kickUserPopUp(props)}>
+							Kick User
+							</button>
+							<button
+							onClick={() => muteUserPopUp(props)}>
+							Mute User
 							</button>
 						</div>
 					</ChannelInfo>
@@ -287,9 +247,10 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 		if (!props.currentChat.isResolved)
 			return;
 		
-		getIsAdmin(props.currentChat.Channel.ChannelId, 2)
+		getIsAdmin(props.currentChat.Channel.ChannelId, props.userID)
 		.then(isAdmin => {
 			setIsAdmin(isAdmin);
+			console.log("UserID:", props.userID , "admin:", isAdmin);
 			setIsAdminResolved(true);
 		})
 		.catch(error => {
@@ -311,35 +272,12 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 		<SideBar>
 			<Channel_Div{...props}/>
 			<h3>All Users</h3>
-			{props.allUsers.map(renderUser)}
+			{props.allUsers.map((user) => renderUser(user, props))}
 		</SideBar>
 		<ChatPanel>
 			<ChannelInfo>
 				{channelpanel}
 			</ChannelInfo>
-			{/* <ChannelInfo>
-				{channelpanel}
-
-			{props.currentChat.chatName}
-			//{isAdminResolved && isAdmin && ( 
-			{(
-			<div>
-				<button
-				onClick={() => deleteChannel(props.currentChat.Channel.ChannelId)}>
-				Delete Channel
-				</button>
-				<button
-				onClick={() => addAdminPopUp(props)}>
-				Add Admin
-				</button>
-				<button
-				onClick={() => banUserPopUp(props)}>
-				Ban/Unban/Kick User
-				</button>
-			</div>
-			)}
-			
-			</ChannelInfo> */}
 			<BodyContainer>
 			{body}
 			</BodyContainer>

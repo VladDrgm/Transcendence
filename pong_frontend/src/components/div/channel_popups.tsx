@@ -1,8 +1,7 @@
 import { Dispatch, SetStateAction } from 'react';
 import { Channel, ChatProps } from '../../interfaces/channel.interface';
-import { modBannedUser, addAdmin, joinPrivateChannel, CreateChannel} from './channel_utils';
-
-
+import { modBannedUser, addAdmin, joinPrivateChannel, CreateChannel, addMuteUser} from './channel_utils';
+import { postChannelUser, postMuteUser } from '../../api/channel/channel_user.api';
 
 export function banUserPopUp(props: &ChatProps) {
     
@@ -10,7 +9,7 @@ export function banUserPopUp(props: &ChatProps) {
     var popup = window.open('', '_blank', 'width=500,height=300,menubar=no,toolbar=no');
 
     const newBlockedLabel = document.createElement("h1");
-    newBlockedLabel.textContent = "User to be Banned / Unbanned / Kicked from the Channel";
+    newBlockedLabel.textContent = "User to be Banned / Unbanned from the Channel";
     popup?.document.body.appendChild(newBlockedLabel);
 
     var newBlockedUserNameInput = document.createElement('input');
@@ -35,6 +34,63 @@ export function banUserPopUp(props: &ChatProps) {
         popup?.close();
     });
     popup?.document.body.appendChild(addUnblockButton);
+}
+
+export function muteUserPopUp(props: &ChatProps) {
+    
+    // Open Window
+    var popup = window.open('', '_blank', 'width=500,height=300,menubar=no,toolbar=no');
+
+    const newBlockedLabel = document.createElement("h1");
+    newBlockedLabel.textContent = "User to be Muted in the Channel";
+    popup?.document.body.appendChild(newBlockedLabel);
+
+    var newMutedUserNameInput = document.createElement('input');
+    newMutedUserNameInput.type = 'text';
+    newMutedUserNameInput.placeholder = "Enter Target Username";
+    popup?.document.body.appendChild(newMutedUserNameInput);
+
+    var newMutedUserDurationInput = document.createElement('input');
+    newMutedUserDurationInput.type = 'number';
+    newMutedUserDurationInput.placeholder = "Enter Duration of Muting in min";
+    popup?.document.body.appendChild(newMutedUserDurationInput);
+
+    var addMuteButton = document.createElement('button');
+    addMuteButton.innerHTML = 'Mute';
+    addMuteButton.addEventListener('click', function() {
+        var newMutedUserName = newMutedUserNameInput.value;
+        var newMutedUserDuration = newMutedUserDurationInput.valueAsNumber;
+        addMuteUser(newMutedUserName, newMutedUserDuration, props);
+        popup?.close();
+    });
+    popup?.document.body.appendChild(addMuteButton)
+
+    // var addUnmuteButton = document.createElement('button');
+    // addUnmuteButton.innerHTML = 'Unmute';
+    // addUnmuteButton.addEventListener('click', function() {
+    //     // var newBlockedUserName = newBlockedUserNameInput.value;
+    //     // var newBlockedUserName = newBlockedUserNameInput.value;
+    //     // modBannedUser(true, newBlockedUserName, props);
+    //     popup?.close();
+    // });
+    // popup?.document.body.appendChild(addUnmuteButton)
+
+}
+
+export function kickUserPopUp(props: &ChatProps) {
+    
+    // Open Window
+    var popup = window.open('', '_blank', 'width=500,height=300,menubar=no,toolbar=no');
+
+    const newBlockedLabel = document.createElement("h1");
+    newBlockedLabel.textContent = "User to be Kicked from the Channel";
+    popup?.document.body.appendChild(newBlockedLabel);
+
+    var newBlockedUserNameInput = document.createElement('input');
+    newBlockedUserNameInput.type = 'text';
+    newBlockedUserNameInput.placeholder = "Enter Target Username";
+    popup?.document.body.appendChild(newBlockedUserNameInput);
+
     var addKickFiveButton = document.createElement('button');
     addKickFiveButton.innerHTML = 'Kick 5min';
     addKickFiveButton.addEventListener('click', function() {
@@ -60,27 +116,6 @@ export function banUserPopUp(props: &ChatProps) {
         }, fifteenMin);
     });
     popup?.document.body.appendChild(addKickFifteenButton);
-
-    var addMuteButton = document.createElement('button');
-    addMuteButton.innerHTML = 'Mute';
-    addMuteButton.addEventListener('click', function() {
-        // var newBlockedUserName = newBlockedUserNameInput.value;
-        // var newBlockedUserName = newBlockedUserNameInput.value;
-        // modBannedUser(true, newBlockedUserName, props);
-        popup?.close();
-    });
-    popup?.document.body.appendChild(addMuteButton)
-
-    var addUnmuteButton = document.createElement('button');
-    addUnmuteButton.innerHTML = 'Unmute';
-    addUnmuteButton.addEventListener('click', function() {
-        // var newBlockedUserName = newBlockedUserNameInput.value;
-        // var newBlockedUserName = newBlockedUserNameInput.value;
-        // modBannedUser(true, newBlockedUserName, props);
-        popup?.close();
-    });
-    popup?.document.body.appendChild(addUnmuteButton)
-
 }
 
 //opens the window for adding Usersnames as Admins and passes the input to addAdmin()
