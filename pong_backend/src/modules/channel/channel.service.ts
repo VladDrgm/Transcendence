@@ -7,6 +7,8 @@ import { ChannelUser } from 'src/models/orm_models/channel_user.entity';
 import { ChannelBlockedUser } from 'src/models/orm_models/channel_blocked_user.entity';
 import { HttpException, HttpStatus } from '@nestjs/common';
 import { CreateChannelDto } from './channelDTO';
+import { UserService } from '../user/userservice';
+import { users } from 'src/models/mock_data/mock_user';
 
 export class ChannelRepository extends Repository<Channel> {}
 
@@ -21,6 +23,8 @@ export class ChannelService {
     private readonly channelUserRepository: Repository<ChannelUser>,
     @InjectRepository(ChannelBlockedUser)
     private readonly channelBlockedUserRepository: Repository<ChannelBlockedUser>,
+	// @InjectRepository(UserService)
+	// private readonly userService: UserService,
   ) {}
 
   async findAll(): Promise<Channel[]> {
@@ -415,5 +419,47 @@ export class ChannelService {
 
     channelUser.MutedUntil = futureTimestamp;
     await this.channelUserRepository.save(channelUser);
+  }
+
+  async getChannelOwner(channelId: number): Promise<ChannelAdmin> {
+	const channel = await this.findOne(channelId);
+	const result = await this.channelAdminRepository.findOneBy({ ChannelId: channelId, UserId: channel.OwnerId });
+
+	if (!result) {
+		throw new HttpException('Channel owner not found', 400);
+	}
+
+
+	return result;
+  }
+
+  async deleteChannelOwner(channelId: number): Promise<void> {
+	const channel = await this.findOne(channelId);
+
+	if (!channel) {
+		throw new HttpException('Channel not found', 400);
+	}
+
+	await this.channelAdminRepository.delete(channel.OwnerId);
+	channel.OwnerId = -1;
+
+	await this.channelRepository.save(channel);
+  }
+
+
+  async changeChannelOwner(userId: number, channelId: number): Promise<void> {
+	const channel = await this.findOne(channelId);
+
+	if (!channel) {
+		throw new HttpException('Channel not found', 400);
+	}
+
+	channel.OwnerId = userId;
+	await this.channelRepository.save(channel);
+
+	const newChannelAdmin = new ChannelAdmin();
+	newChannelAdmin.UserId = userId;
+	newChannelAdmin.ChannelId = channelId;
+	await this.channelAdminRepository.save(newChannelAdmin);
   }
 }
