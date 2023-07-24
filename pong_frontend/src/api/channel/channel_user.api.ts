@@ -71,6 +71,21 @@ export function postChannelUser(userId: number, channelId: number) {
       .then(data => {console.log("ChannelUser with UserId :" + userId +" added:", data);})
       .catch(error => {console.log("Error adding ChannelUser with UserId :" + userId +":", error);});
 }
+
+export function postPrivateChannelUser(userId: number, channelId: number, password: string) {
+  const requestOptions = {
+    method: 'POST',
+    headers: { 
+      "Accept": "*/*",
+      "Content-Type": "application/json"
+    },
+    body:  ''
+  };
+  fetch(fetchAddress + 'channel/' + userId +'/' + channelId + '/' + password +  '/password', requestOptions)
+    .then(response => response.json())
+    .then(data => {console.log("ChannelUser with UserId :" + userId +" added to private Channel:", data);})
+    .catch(error => {console.log("Error adding ChannelUser with UserId :" + userId +" to private Channel:", error);});
+}
   
   
   //Channel blocked Users
@@ -164,4 +179,47 @@ export async function getChannelBlockedUser(userId: number, channelId: number): 
       .then(response => response.json())
       .then(data => {console.log("ChannelUser with UserId :" + targetId +" muted:", data);})
       .catch(error => {console.log("Error muting ChannelUser with UserId :" + targetId +":", error);});
+}
+
+
+//Password protection
+
+export function deleteChannelPassword(userId: number, channelId: number) {
+  fetch(fetchAddress + 'channel/' + userId + '/' + channelId + '/password', {method: 'DELETE'})
+    .then(response => response.json())
+    .then(data => {console.log("ChannelPassword deleted from Channel" + channelId + ":", data);})
+    .catch(error => {console.log("Error deleting Password from Channel " + channelId + ":" , error);})
+}
+
+
+export function putChannelPassword(userId: number, channelId: number, password: string) {
+  const requestOptions = {
+    method: 'PUT',
+    headers: { 
+      "Accept": "*/*",
+      "Content-Type": "application/json"
+    },
+    body:  ''
+  };
+  fetch(fetchAddress + 'channel/' + userId +'/' + channelId + '/' + password +  '/password', requestOptions)
+    .then(response => response.json())
+    .then(data => {console.log("ChannelPassword of Channel" + channelId + " was changed :", data);})
+    .catch(error => {console.log("Error changing ChannelPassword of Channel" + channelId + ":", error);});
+}
+
+
+// changes the Channeltype from public to private and the other way around
+export function putChannelType(userId: number, channelId: number) {
+  const requestOptions = {
+    method: 'PUT',
+    headers: { 
+      "Accept": "*/*",
+      "Content-Type": "application/json"
+    },
+    body:  ''
+  };
+  fetch(fetchAddress + 'channel/' + userId +'/' + channelId + '/type', requestOptions)
+    .then(response => response.json())
+    .then(data => {console.log("ChannelType of Channel" + channelId + " was changed :", data);})
+    .catch(error => {console.log("Error changing ChannelType of Channel" + channelId + ":", error);});
 }

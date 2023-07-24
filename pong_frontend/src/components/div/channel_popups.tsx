@@ -5,7 +5,6 @@ import { postChannelUser, postMuteUser } from '../../api/channel/channel_user.ap
 
 export function banUserPopUp(props: &ChatProps) {
     
-    // Open Window
     var popup = window.open('', '_blank', 'width=500,height=300,menubar=no,toolbar=no');
 
     const newBlockedLabel = document.createElement("h1");
@@ -37,8 +36,6 @@ export function banUserPopUp(props: &ChatProps) {
 }
 
 export function muteUserPopUp(props: &ChatProps) {
-    
-    // Open Window
     var popup = window.open('', '_blank', 'width=500,height=300,menubar=no,toolbar=no');
 
     const newBlockedLabel = document.createElement("h1");
@@ -64,17 +61,6 @@ export function muteUserPopUp(props: &ChatProps) {
         popup?.close();
     });
     popup?.document.body.appendChild(addMuteButton)
-
-    // var addUnmuteButton = document.createElement('button');
-    // addUnmuteButton.innerHTML = 'Unmute';
-    // addUnmuteButton.addEventListener('click', function() {
-    //     // var newBlockedUserName = newBlockedUserNameInput.value;
-    //     // var newBlockedUserName = newBlockedUserNameInput.value;
-    //     // modBannedUser(true, newBlockedUserName, props);
-    //     popup?.close();
-    // });
-    // popup?.document.body.appendChild(addUnmuteButton)
-
 }
 
 export function kickUserPopUp(props: &ChatProps) {
