@@ -255,4 +255,30 @@ export class ChannelController {
       duration,
     );
   }
+
+  @Get(':channelId/owner')
+  @ApiOperation({ summary: 'Get the owner of a channel' })
+  async getChannelOwner(
+	@Param('channelId') channelId: number,
+	  ): Promise<ChannelAdmin> {
+	return this.channelService.getChannelOwner(channelId);
+	  }
+
+  @Put(':userId/:channelId/owner')
+  @ApiOperation({ summary: 'Change the owner of a channel' })
+  async changeChannelOwner(
+	@Param('userId') userId: number,
+	@Param('channelId') channelId: number,
+	  ): Promise<void> {
+	await this.channelService.changeChannelOwner(userId, channelId);
+	  }
+
+  @Delete(':channelId/owner')
+  @ApiOperation({ summary: 'Delete the owner of a channel' })
+  async deleteChannelOwner(
+	@Param('channelId') channelId: number,
+	  ): Promise<void> {
+	await this.channelService.deleteChannelOwner(channelId);
+	  }
+
 }
