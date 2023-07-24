@@ -149,3 +149,19 @@ export async function getChannelBlockedUser(userId: number, channelId: number): 
         return false;
     } 
   }
+
+
+  export function postMuteUser(callerId: number, targetId: number, channelId: number, duration: number) {
+    const requestOptions = {
+      method: 'POST',
+      headers: { 
+        "Accept": "*/*",
+        "Container-Type": "application/json"
+      },
+      body:  ''
+    };
+    fetch(fetchAddress + 'channel/' + callerId +'/' + targetId + '/' + channelId + '/mute/' + duration, requestOptions)
+      .then(response => response.json())
+      .then(data => {console.log("ChannelUser with UserId :" + targetId +" muted:", data);})
+      .catch(error => {console.log("Error muting ChannelUser with UserId :" + targetId +":", error);});
+}

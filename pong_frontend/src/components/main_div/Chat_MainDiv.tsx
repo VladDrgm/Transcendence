@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { Channel } from '../../interfaces/channel.interface';
 import Channel_Div from '../div/channel_div';
 import { mapChannel } from "../div/channel_utils";
-import {addAdminPopUp, /*blockUserPopUp, */ banUserPopUp } from '../div/channel_popups';
+import {addAdminPopUp, /*blockUserPopUp, */ banUserPopUp, kickUserPopUp, muteUserPopUp } from '../div/channel_popups';
 import { renderUser, renderMessages } from "../div/chat_utils"; 
 
 // import { ChatName } from "./Arena_Chat";
@@ -181,7 +181,15 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 							</button>
 							<button
 							onClick={() => banUserPopUp(props)}>
-							Ban/Unban/Kick User
+							Ban User
+							</button>
+							<button
+							onClick={() => kickUserPopUp(props)}>
+							Kick User
+							</button>
+							<button
+							onClick={() => muteUserPopUp(props)}>
+							Mute User
 							</button>
 						</div>
 					</ChannelInfo>

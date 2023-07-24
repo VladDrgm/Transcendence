@@ -2,7 +2,7 @@ import { Dispatch, SetStateAction } from 'react';
 import { Channel, ChatData, ChatProps } from '../../interfaces/channel.interface';
 import { getChannels} from '../../api/channel/channel.api';
 import { postAdmin } from '../../api/channel/channel_admin.api';
-import { postChannelUserBlocked, deleteChannelUserBlocked, getUsers, postChannelUser} from '../../api/channel/channel_user.api';
+import { postChannelUserBlocked, deleteChannelUserBlocked, getUsers, postChannelUser, postMuteUser} from '../../api/channel/channel_user.api';
 import styled from "styled-components";
 import {IUser} from '../../interfaces/interface';
 import { fetchAddress } from './channel_div';
@@ -158,7 +158,17 @@ export async function modBannedUser(add: boolean, newBlockedUsername: string, pr
     console.error('Error banning/allowing User with Username:' , newBlockedUsername);
 }
 
-
+export async function addMuteUser(newBlockedUsername: string, duration:number, props: &ChatProps){
+    //finding right UserId to the Username input from banUserPopUp
+    var targetID = await getUserIDByUserName(newBlockedUsername);
+    // console.log('TargetId:', targetID);
+    if (targetID)//changing the 1 to props.yourId or the real UserID of the caller
+        {
+            // console.log('User banned with UserId:', targetID);
+            postMuteUser(props.userID, targetID, props.currentChat.Channel.ChannelId, duration);
+    } else 
+    console.error('Error muting User with Username:' , newBlockedUsername);
+}
 export function CreateChannel(props: ChatProps, channelName: String, password: String){
     if(password === "")
         var channelType = "public";
