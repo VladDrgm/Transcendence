@@ -281,4 +281,25 @@ export class ChannelController {
 	await this.channelService.deleteChannelOwner(channelId);
 	  }
 
+  @Get(':callerId/:targetId/:channelId/mute')
+  @ApiOperation({ summary: 'Get the mute status of a user in a channel' })
+  async getMuteStatus(
+	@Param('callerId') callerId: number,
+	@Param('targetId') targetId: number,
+	@Param('channelId') channelId: number,
+	  ): Promise<boolean> {
+	return this.channelService.getMutedStatus(callerId, targetId, channelId);
+	  }
+
+
+	@Post(':callerId/:channelId')
+	@ApiOperation({ summary: 'Join a public channel as a user' })
+	async postChannelUserInPublicChannel(
+	  @Param('callerId') callerId: number,
+	  @Param('channelId') channelId: number,
+	): Promise<void> {
+	  await this.channelService.createPublicChannelUser(callerId, channelId);
+	}
+
+	
 }
