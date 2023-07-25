@@ -69,12 +69,12 @@ export class UserService {
 	return this.userRepository.save(user);
   }
 
-  async confirmUserLoggedIn(userId, password): Promise<boolean> {
-	const user = await this.userRepository.findOneBy({ userID: userId });
+  async confirmUserLoggedIn(ftUserName: string, password: string): Promise<User> {
+	const user = await this.userRepository.findOneBy({ intraUsername: ftUserName });
 	if (user.passwordHash === password) {
-	  return true;
+	  return user;
 	}
-	return false;
+	throw new HttpException('Wrong password', HttpStatus.UNAUTHORIZED);
   }
 
   async updateUserPassword(userId, password): Promise<void> {
