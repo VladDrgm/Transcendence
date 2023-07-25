@@ -1,7 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/models/orm_models/user.entity';
 import { Repository } from 'typeorm';
+import { UserDTO } from './userDTO';
 
 export class UserRepository extends Repository<User> {}
 
@@ -46,5 +47,42 @@ export class UserService {
       },
       take: 10,
     });
+  }
+
+  async getUserLoggedIn(user: UserDTO): Promise<User> {
+	return this.userRepository
+	  .createQueryBuilder('user')
+	  .where('user.username = :username', { username: user.username })
+	  .andWhere('user.password = :password', { password: user.password })
+	  .getOne();
+  }
+
+  async postUserLoggedIn(userDto: UserDTO): Promise<User> {
+	const user = new User();
+	user.username = userDto.username;
+	user.passwordHash = userDto.password;
+	user.avatarPath = userDto.avatarPath;
+	user.points = userDto.points;
+	user.status = userDto.status;
+	user.achievementsCSV = userDto.achievementsCSV;
+	user.intraUsername = userDto.intraUsername;
+	return this.userRepository.save(user);
+  }
+
+  async confirmUserLoggedIn(userId, password): Promise<boolean> {
+	const user = await this.userRepository.findOneBy({ userID: userId });
+	if (user.passwordHash === password) {
+	  return true;
+	}
+	return false;
+  }
+
+  async updateUserPassword(userId, password): Promise<void> {
+	const user = await this.userRepository.findOneBy({ userID: userId });
+	if (!user) {
+		throw new HttpException('User not found', HttpStatus.NOT_FOUND)
+	}
+
+	await this.userRepository.update(userId, { passwordHash: password });
   }
 }
