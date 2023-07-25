@@ -12,10 +12,8 @@ export class MatchController {
   @Post()
   @ApiOperation({ summary: 'Create a match' })
   async createMatch(@Body() matchDto: MatchDTO,
-  @Param('player1Id') p1Id: number,
-  @Param('player2Id') p2Id: number
   ): Promise<Match> {
-    return this.matchService.createMatch(matchDto, p1Id, p2Id);
+    return this.matchService.createMatch(matchDto);
   }
 
   @Get()

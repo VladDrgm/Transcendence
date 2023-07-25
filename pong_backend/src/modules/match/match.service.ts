@@ -10,16 +10,16 @@ export class MatchService {
   constructor(
     @InjectRepository(Match)
     private readonly matchRepository: Repository<Match>,
+    @InjectRepository(MatchHistory)
+    private readonly matchHistoryRepository: Repository<MatchHistory>
   ) {}
 
   async createMatch(
     matchDTO: MatchDTO,
-    p1Id: number,
-    p2Id: number
     ): Promise<Match> {
     const matchDb = new Match();
-    matchDb.Player1.userID = p1Id;
-    matchDb.Player2.userID = p2Id;
+    matchDb.Player1Id = matchDTO.Player1Id;
+    matchDb.Player2Id = matchDTO.Player2Id;
     matchDb.Player1Points = matchDTO.Player1Points;
     matchDb.Player2Points = matchDTO.Player2Points;
     matchDb.GameType = matchDTO.GameType;
@@ -29,21 +29,17 @@ export class MatchService {
     matchDb.WinnerId = matchDTO.WinnerId;
     matchDb.WinningCondition = matchDTO.WinningCondition;
 
-    const MatchId = await this.matchRepository
-      .save(matchDb)
-      .then((match) => match.MatchId);
+    const match = await this.matchRepository.save(matchDb);
 
-    const player1MatchHistory = new MatchHistory();
-    player1MatchHistory.MatchId = MatchId;
-    player1MatchHistory.UserId.userID = matchDb.Player1.userID;
-    this.matchRepository.save(player1MatchHistory);
+    const matchId = match.MatchId;
 
-    const player2MatchHistory = new MatchHistory();
-    player2MatchHistory.MatchId = MatchId;
-    player2MatchHistory.UserId.userID = matchDb.Player2.userID;
-    this.matchRepository.save(player2MatchHistory);
+    const matchHistory = new MatchHistory();
+    matchHistory.MatchId = matchId;
+    matchHistory.Player1Id = match.Player1Id;
+    matchHistory.Player2Id = match.Player2Id;
+    this.matchHistoryRepository.save(matchHistory);
 
-    return this.matchRepository.save(matchDb);
+    return match;
   }
 
   async getMatchById(matchId: number): Promise<Match> {
