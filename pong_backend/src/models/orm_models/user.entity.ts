@@ -55,6 +55,13 @@ export class User {
   achievementsCSV: string;
 
   @Column({
+	type: 'text',
+	name: '42IntraUsername',
+	default: null,
+  })
+  intraUsername: string;
+
+  @Column({
     type: 'text',
     default: null,
   })
