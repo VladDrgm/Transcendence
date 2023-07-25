@@ -16,7 +16,9 @@ const LogIn: React.FC<LogInProps> = ({onSignUp, userID_set, loginDone_set}) => {
   var input_user_id;
   var fetchAddress = 'http://localhost:3000/';
   var signUpEndpoint = 'user';
-  var loginEndpoint = 'user/login/'; // Replace later with user/login
+  var loginEndpoint1 = 'user/'; // Replace later with user/login
+  var endpointSlash = '/'
+  var loginEndpoint2 = '/login/confirm';
 
   const [showLoginPopup, setShowLoginPopup] = useState(false);
   const [showSignupPopup, setShowSignupPopup] = useState(false);
@@ -218,62 +220,31 @@ const formFieldStyle: CSS.Properties = {
 	};
 
   const handleLogin = async () => {
-	// const user = {
-	// 	username: username,
-	// 	password: password
-	// }
-	// try {
-	// 	// Make API call and get the response
-	// 	const response = await fetch(fetchAddress + loginEndpoint + 30, {
-	// 		method:"GET",
-	// 		headers: {
-	// 			"Content-Type": "application/json"
-	// 		},
-	// 		body:JSON.stringify(user),
-	// 	});
+	const user = {
+		username: username,
+		password: password
+	}
+	try {
+		// Make API call and get the response
+		const response = await fetch(fetchAddress + loginEndpoint1 + username + endpointSlash + password + loginEndpoint2, {
+			method:"POST",
+			headers: {
+				"Content-Type": "application/json"
+			},
+		});
 	
-	// 	if (response.ok) {
-	// 		const loggedInUser: User = await response.json(); 
-	// 		await login(loggedInUser.userID);
-	// 		userID_set(loggedInUser.userID);
-	// 		loginDone_set(true);
-	// 	} else {
-	// 		throw new Error(response.statusText);
-	// 	}
-	// } catch (error) {
-	// 	throw new Error('Error logging in. Try again!');
-	// }
-
-	const someUser: User = {
-		username: 'tim',
-		userID: 30,
-		avatarPath: '',
-		wins: 0,
-		losses: 0,
-		points: 0,
-		status: '',
-		achievementsCSV: '',
-		passwordHash: password,
-		friends: [],
-		befriendedBy: [],
-		blocked: [],
-		blockedBy: [],
-		adminChannels: [],
-		blockedChannels: [],
-		channels: [],
-	  };
-	input_user_id = 30
-	if (input_user_id != 0)
-    {
-      if (!isNaN(input_user_id))
-      {
-		onSignUp(someUser);
-        await login(input_user_id);
-        userID_set(input_user_id);
-        loginDone_set(true);
-      }
-      input_user_id = 0
-    }
+		if (response.ok) {
+			const loggedInUser: User = await response.json(); 
+			onSignUp(loggedInUser);
+			await login(loggedInUser.userID);
+			userID_set(loggedInUser.userID);
+			loginDone_set(true);
+		} else {
+			throw new Error(response.statusText);
+		}
+	} catch (error) {
+		throw new Error('Error logging in. Try again!');
+	}
 	setShowLoginPopup(false)
   };
 //   async function signUpUser() {
