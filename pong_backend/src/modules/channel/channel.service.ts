@@ -499,19 +499,19 @@ export class ChannelService {
   }
 
   async createPublicChannelUser(callerId: number, channelId: number): Promise<void> {
-	// const channel = await this.channelRepository.findOneByOrFail({ ChannelId: channelId, Type: 'public' });
+	const channel = await this.channelRepository.findOneByOrFail({ ChannelId: channelId, Type: 'public' });
 
-	// if (!channel) {
-	// 	throw new HttpException('Channel not found', 400);
-	// }
+	if (!channel) {
+		throw new HttpException('Channel not found', 400);
+	}
 
-	// const channelUser = await this.getChannelUserByUserId(callerId, channelId);
-	// if (channelUser) {
-	// 	throw new HttpException(
-	// 	  'User is already in channel.',
-	// 	  HttpStatus.BAD_REQUEST,
-	// 	);
-	// }
+	const channelUser = await this.getChannelUserByUserId(callerId, channelId);
+	if (channelUser) {
+		throw new HttpException(
+		  'User is already in channel.',
+		  HttpStatus.BAD_REQUEST,
+		);
+	}
 
 	const newUser = new ChannelUser();
 	newUser.UserId = callerId;
