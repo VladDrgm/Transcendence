@@ -1,7 +1,7 @@
 import { Dispatch, SetStateAction } from 'react';
 import { Channel, ChatProps } from '../../interfaces/channel.interface';
 import { modBannedUser, addAdmin, joinPrivateChannel, CreateChannel, addMuteUser} from './channel_utils';
-import { postChannelUser, postMuteUser } from '../../api/channel/channel_user.api';
+import { deleteChannelPassword, postChannelUser, postMuteUser, putChannelPassword, putChannelType } from '../../api/channel/channel_user.api';
 
 export function banUserPopUp(props: &ChatProps) {
     
@@ -127,6 +127,56 @@ export function addAdminPopUp(props:  &ChatProps) {
         popup?.close();
     });
     popup?.document.body.appendChild(addAdminButton);
+
+}
+
+export function changePasswordPopUp(props:  &ChatProps) {
+    // Open Window
+    var popup = window.open('', '_blank', 'width=500,height=300,menubar=no,toolbar=no');
+
+    const newPwLabel = document.createElement("h1");
+    newPwLabel.textContent = "New Passowrd:";
+    popup?.document.body.appendChild(newPwLabel);
+
+    var newPwInput = document.createElement('input');
+    newPwInput.type = 'text';
+    newPwInput.placeholder = "Enter new Channel Password";
+    popup?.document.body.appendChild(newPwInput);
+
+    var changePwButton = document.createElement('button');
+    changePwButton.innerHTML = 'Update Password';
+    changePwButton.addEventListener('click', function() {
+        var newPw = newPwInput.value;
+        if (newPw === ""){
+            deleteChannelPassword(props.userID, props.currentChat.Channel.ChannelId);
+            console.log("Password removed");
+            if (props.currentChat.Channel.Type === "private"){
+                putChannelType(props.userID, props.currentChat.Channel.ChannelId);
+                console.log("Channel Type changed to public");
+            }
+        }
+        putChannelPassword(props.userID, props.currentChat.Channel.ChannelId, newPw);
+        console.log("Password updated");
+        if (props.currentChat.Channel.Type === "public"){
+            putChannelType(props.userID, props.currentChat.Channel.ChannelId);
+            console.log("Channel Type changed to private");
+        }
+        popup?.close();
+    });
+    popup?.document.body.appendChild(changePwButton);
+
+    var removePwButton = document.createElement('button');
+    removePwButton.innerHTML = 'Remove Password';
+    removePwButton.addEventListener('click', function() {
+        deleteChannelPassword(props.userID, props.currentChat.Channel.ChannelId);
+        console.log("Password removed");
+        if (props.currentChat.Channel.Type === "private"){
+            putChannelType(props.userID, props.currentChat.Channel.ChannelId);
+            console.log("Channel Type changed to public");
+        }
+        popup?.close();
+    });
+    popup?.document.body.appendChild(removePwButton);
 
 }
 

@@ -66,7 +66,7 @@ export function postChannelUser(userId: number, channelId: number) {
       },
       body:  ''
     };
-    fetch(fetchAddress + 'channel/' + userId +'/' + channelId + '/user', requestOptions)
+    fetch(fetchAddress + 'channel/' + userId +'/' + channelId, requestOptions)
       .then(response => response.json())
       .then(data => {console.log("ChannelUser with UserId :" + userId +" added:", data);})
       .catch(error => {console.log("Error adding ChannelUser with UserId :" + userId +":", error);});
@@ -202,9 +202,16 @@ export function putChannelPassword(userId: number, channelId: number, password: 
     body:  ''
   };
   fetch(fetchAddress + 'channel/' + userId +'/' + channelId + '/' + password +  '/password', requestOptions)
-    .then(response => response.json())
-    .then(data => {console.log("ChannelPassword of Channel" + channelId + " was changed :", data);})
-    .catch(error => {console.log("Error changing ChannelPassword of Channel" + channelId + ":", error);});
+  .then(response => {
+    if (response.ok) {
+      console.log("ChannelPassword of Channel" + channelId + " was changed");
+    } else {
+      console.error("Error changing ChannelPassword of Channel" + channelId + ":", response.status);
+    }
+  })
+  .catch(error => {
+    console.error("Error changing ChannelPassword of Channel:", error);
+  });
 }
 
 
@@ -219,7 +226,14 @@ export function putChannelType(userId: number, channelId: number) {
     body:  ''
   };
   fetch(fetchAddress + 'channel/' + userId +'/' + channelId + '/type', requestOptions)
-    .then(response => response.json())
-    .then(data => {console.log("ChannelType of Channel" + channelId + " was changed :", data);})
-    .catch(error => {console.log("Error changing ChannelType of Channel" + channelId + ":", error);});
+  .then(response => {
+    if (response.ok) {
+      console.log("ChannelType of Channel " + channelId + " was changed");
+    } else {
+      console.error("Error changing ChannelType of Channel " + channelId + ": ", response.status);
+    }
+  })
+  .catch(error => {
+    console.error("Error changing ChannelType of Channel: ", error);
+  });
 }

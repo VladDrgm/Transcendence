@@ -178,7 +178,7 @@ export function CreateChannel(props: ChatProps, channelName: String, password: S
         "Name": channelName,
         "Type": channelType,
         "Password": password,
-        "OwnerId": 1
+        "OwnerId": props.userID
     }
 
     const jsonData = JSON.stringify(ChannelData);
@@ -192,9 +192,8 @@ export function CreateChannel(props: ChatProps, channelName: String, password: S
     .then(response => response.json())
     .then(data => {
         console.log("Channel created:", data);
-        //User needs to be changed based on the real user after login is finished
-        console.log("Posting User 1 in Channel:", props.currentChat.Channel.ChannelId);
-        postChannelUser(1, props.currentChat.Channel.ChannelId);
+        console.log("Posting User " + props.userID + " in Channel:" + props.currentChat.Channel.ChannelId);
+        postChannelUser(props.userID, props.currentChat.Channel.ChannelId);
     })
     .catch(error => {
         console.log("Error creating channel:", error);

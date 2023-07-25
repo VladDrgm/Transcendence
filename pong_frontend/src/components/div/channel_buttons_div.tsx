@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import  {ChatProps} from '../../interfaces/channel.interface';
-import { addAdminPopUp, banUserPopUp, kickUserPopUp, muteUserPopUp } from './channel_popups';
+import { addAdminPopUp, banUserPopUp, changePasswordPopUp, kickUserPopUp, muteUserPopUp } from './channel_popups';
 import { deleteChannel } from '../../api/channel/channel.api';
 import { ChannelInfo } from '../main_div/Chat_MainDiv';
 
 export interface LoadingProps {
 	loadingChannelPanel: boolean;
 }
+
+
 
 
 export const ChannelOwner_Buttons_Div: React.FC<ChatProps> = (props) => {
@@ -20,6 +22,10 @@ export const ChannelOwner_Buttons_Div: React.FC<ChatProps> = (props) => {
                     <button
                     onClick={() => deleteChannel(props)}>
                     Delete Channel
+                    </button>
+                    <button
+                    onClick={() => changePasswordPopUp(props)}>
+                    Change Password protection
                     </button>
                     <button
                     onClick={() => addAdminPopUp(props)}>
