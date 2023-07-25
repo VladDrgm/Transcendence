@@ -58,7 +58,7 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID, user}) => {
 		isChannel: true,
 		chatName: "general",
 		receiverId: "",
-		isResolved: false,
+		isResolved: true,
 		Channel: {} as Channel,
 	});
 
@@ -297,6 +297,7 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID, user}) => {
 			messages={messages[currentChat.chatName]}
 			toggleChat={toggleChat}
 			username={username}
+			loadingChannelPanel = {false}
 		/>
 		);
 	} else {

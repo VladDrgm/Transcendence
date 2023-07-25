@@ -25,6 +25,7 @@ export interface ChatProps {
 	message: string;
 	allUsers: User[];
     allChannels: Channel[];
+	loadingChannelPanel: boolean;
 }
 
  export type ChatData = {

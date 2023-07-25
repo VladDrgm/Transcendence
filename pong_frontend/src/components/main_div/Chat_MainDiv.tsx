@@ -12,6 +12,8 @@ import { getIsAdmin } from "../../api/channel/channel_admin.api";
 import { getChannelUser, getChannelBlockedUser } from "../../api/channel/channel_user.api";
 import  {ChatProps, Message} from '../../interfaces/channel.interface';
 import { User } from "../../interfaces/user.interface";
+import { ChannelAdmin_Buttons_Div, ChannelOwner_Buttons_Div } from "../div/channel_buttons_div";
+import { getOwnerId } from "../../api/channel/channel_owner.api";
 
 const Container = styled.div`
   height: 100vh;
@@ -25,7 +27,7 @@ const SideBar = styled.div`
   border-right: 1px solid black;
 `;
 
-const ChatPanel = styled.div`
+export const ChatPanel = styled.div`
   height: 50%;
   width: 85%;
   display: flex;
@@ -44,7 +46,7 @@ const TextBox = styled.textarea`
   width: 100%;
 `;
 
-const ChannelInfo = styled.div`
+export const ChannelInfo = styled.div`
   height: 10%;
   width: 100%;
   border-bottom: 1px solid black;
@@ -63,6 +65,7 @@ const Messages = styled.div`
 const Chat_MainDiv: FC<ChatProps> = (props) => {
 	const [isAdmin, setIsAdmin] = useState(false);
 	const [isAdminResolved, setIsAdminResolved] = useState(false);
+	const [isOwner, setIsOwner] = useState(false);
 	const [isUserInChannel, setIsUserInChannel] = useState(false);
 	const [isUserInChannelBlocked, setIsUserInChannelBlocked] = useState(false);
 	const [body, setBody] = useState<JSX.Element | null>(null);
@@ -163,39 +166,16 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 			  
 			)
 		  );
-		if ((isUserInChannel && !isUserInChannelBlocked)|| (isAdmin && isAdminResolved) ) {
+		if (isOwner){
+			  setChannelpanel(
+				  <ChannelOwner_Buttons_Div{...props} loadingChannelPanel={loadingChannelpanel}/>
+			  );
+		  }
+		else if (isAdmin && isAdminResolved) {
 			setChannelpanel(
-				loadingChannelpanel ? (
-					<div>Loading Channel Name and Buttons...</div> // Show a loading spinner or placeholder
-				) : (
-					<ChannelInfo>
-						{props.currentChat.chatName}
-						<div>
-							<button
-							onClick={() => deleteChannel(props.currentChat.Channel.ChannelId)}>
-							Delete Channel
-							</button>
-							<button
-							onClick={() => addAdminPopUp(props)}>
-							Add Admin
-							</button>
-							<button
-							onClick={() => banUserPopUp(props)}>
-							Ban User
-							</button>
-							<button
-							onClick={() => kickUserPopUp(props)}>
-							Kick User
-							</button>
-							<button
-							onClick={() => muteUserPopUp(props)}>
-							Mute User
-							</button>
-						</div>
-					</ChannelInfo>
-				)
+				<ChannelAdmin_Buttons_Div{...props} loadingChannelPanel={loadingChannelpanel}/>
 			);
-		}
+		} 
 		setChannelPanelLoaded(true);
 	}, [
 		props,
@@ -204,6 +184,7 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 		loadingChannelpanel,
 		isUserInChannel,
 		isAdmin,
+		isOwner,
 		isAdminResolved,
 		isUserInChannelBlocked,
 	]);
@@ -240,8 +221,22 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 	}, [props.currentChat, handleBody, handleChannelPanel, loadingChannelpanel, loadingChatBody]);
 
 
-	//checks if a user is Admin and sets the isAdmin to true or false
-	//using yourID as UserId here, maybe neede to be updated later
+	useEffect(() => {
+		setIsOwner(false);
+		if (!props.currentChat.isResolved)
+			return;
+
+		console.log("owner id:", props.currentChat.Channel.OwnerId);
+		console.log("UserID:", props.userID);
+		if (props.currentChat.Channel.OwnerId === props.userID){
+			setIsOwner(true);
+			console.log("true UserID:", props.userID , "owner:", isOwner);
+		} else {
+			setIsOwner(false);
+			console.log("false UserID:", props.userID , "owner:", isOwner);
+		};
+	}, [props.currentChat.isResolved, props.yourId, props.currentChat.isResolved]);
+
 	useEffect(() => {
 		setIsAdminResolved(false);
 		if (!props.currentChat.isResolved)
@@ -259,7 +254,9 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 		});
 		// handleUserInChannelCheck();
 		// setIsAdminResolved(false);
-	}, [props.currentChat.Channel.ChannelId, props.yourId, props.currentChat.isResolved]);
+	}, [props.currentChat.isResolved, props.yourId, props.currentChat.isResolved]);
+
+	
 
 	function handleKeyPress(e: KeyboardEvent<HTMLTextAreaElement>) {
 		if (e.key === "Enter") {
