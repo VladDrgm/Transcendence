@@ -255,4 +255,51 @@ export class ChannelController {
       duration,
     );
   }
+
+  @Get(':channelId/owner')
+  @ApiOperation({ summary: 'Get the owner of a channel' })
+  async getChannelOwner(
+	@Param('channelId') channelId: number,
+	  ): Promise<ChannelAdmin> {
+	return this.channelService.getChannelOwner(channelId);
+	  }
+
+  @Put(':userId/:channelId/owner')
+  @ApiOperation({ summary: 'Change the owner of a channel' })
+  async changeChannelOwner(
+	@Param('userId') userId: number,
+	@Param('channelId') channelId: number,
+	  ): Promise<void> {
+	await this.channelService.changeChannelOwner(userId, channelId);
+	  }
+
+  @Delete(':channelId/owner')
+  @ApiOperation({ summary: 'Delete the owner of a channel' })
+  async deleteChannelOwner(
+	@Param('channelId') channelId: number,
+	  ): Promise<void> {
+	await this.channelService.deleteChannelOwner(channelId);
+	  }
+
+  @Get(':callerId/:targetId/:channelId/mute')
+  @ApiOperation({ summary: 'Get the mute status of a user in a channel' })
+  async getMuteStatus(
+	@Param('callerId') callerId: number,
+	@Param('targetId') targetId: number,
+	@Param('channelId') channelId: number,
+	  ): Promise<boolean> {
+	return this.channelService.getMutedStatus(callerId, targetId, channelId);
+	  }
+
+
+	@Post(':callerId/:channelId')
+	@ApiOperation({ summary: 'Join a public channel as a user' })
+	async postChannelUserInPublicChannel(
+	  @Param('callerId') callerId: number,
+	  @Param('channelId') channelId: number,
+	): Promise<void> {
+	  await this.channelService.createPublicChannelUser(callerId, channelId);
+	}
+
+	
 }

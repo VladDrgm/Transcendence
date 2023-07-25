@@ -1,8 +1,8 @@
-import React, { useRef, useContext, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { login } from '../api/login.api';
 import CSS from 'csstype';
 import gif from './assets/billy.png'
-import { UserContext, User } from '../interfaces/user.interface';
+import { User } from '../interfaces/user.interface';
 
 interface LogInProps
 {
@@ -15,6 +15,17 @@ const LogIn: React.FC<LogInProps> = ({onSignUp, userID_set, loginDone_set}) => {
   const input_id = useRef<HTMLInputElement>(null);
   var input_user_id;
   var fetchAddress = 'http://localhost:3000/';
+  var signUpEndpoint = 'user';
+  var loginEndpoint = 'user/login/'; // Replace later with user/login
+
+  const [showLoginPopup, setShowLoginPopup] = useState(false);
+  const [showSignupPopup, setShowSignupPopup] = useState(false);
+
+  const [username, setUsername] = useState(''); // Login state for username input
+  const [password, setPassword] = useState(''); // Login state for password input
+  
+  const [newUsername, setNewUsername] = useState(''); // Sign up state for username input
+  const [newPassword, setNewPassword] = useState(''); // Sign up state for password input
 
 const pageStyle: CSS.Properties = {
 	backgroundColor: 'rgba(3, 3, 3, 1)',
@@ -24,6 +35,11 @@ const pageStyle: CSS.Properties = {
 	alignItems: 'center',
 	flexDirection: 'column',
 	textAlign: 'center',
+	justifyContent: 'center',
+	left: 0,
+	right: 0,
+	margin: 0,
+	display: 'flex',
 }
 
 const gifStyle: CSS.Properties = {
@@ -32,7 +48,6 @@ const gifStyle: CSS.Properties = {
 	padding: '24px',
 	width:'360px',
 	height:'360px', 
-  //   boxShadow: '0 0 10px rgba(0, 0, 0, 0.3)'
   };
 
 const welcomeTitleStyle: CSS.Properties = {
@@ -52,15 +67,114 @@ const loginButtonStyle: CSS.Properties = {
 	width:'160px',
 	fontFamily: 'Shlop',
 	fontSize: '24px',
+	display: 'block',
+	borderRadius: '6px',
+	border: 'none',
+	color:'white',
+	marginBottom: '20px',
+}
+
+const signupButtonStyle: CSS.Properties = {
+	backgroundColor: 'rgba(254, 8, 16, 1)',
+	position: 'relative',
+	height:'40px',
+	width:'160px',
+	fontFamily: 'Shlop',
+	fontSize: '24px',
+	display: 'block',
+	borderRadius: '6px',
+	border: 'none',
+	color:'white',
+	marginBottom: '20px',
+}
+
+const loginPopupStyle: CSS.Properties = {
+    position: 'fixed',
+    top: '60%',
+    left: '50%',
+	height: '40%',
+	width: '40%',
+    transform: 'translate(-50%, -50%)',
+    padding: '20px',
+    backgroundColor: 'rgba(3, 3, 3, 1)',
+    boxShadow: '0 2px 20px rgba(255, 255, 255, 1)',
+	borderRadius: '4px',
+    border: '1px solid #fff',
+    zIndex: 9999,
+}
+
+const signupPopupStyle: CSS.Properties = {
+    position: 'fixed',
+    top: '60%',
+    left: '50%',
+	height: '40%',
+	width: '40%',
+    transform: 'translate(-50%, -50%)',
+    padding: '20px',
+    backgroundColor: 'rgba(3, 3, 3, 1)',
+    boxShadow: '0 2px 20px rgba(255, 255, 255, 1)',
+	borderRadius: '4px',
+    border: '1px solid #fff',
+    zIndex: 9999,
+}
+
+const popUpTitleStyle: CSS.Properties = {
+	color: 'rgba(254, 8, 16, 1)',
+	position: 'relative',
+	textAlign: 'center',
+	fontFamily: 'Shlop',
+	fontSize: '50px',
+  };
+
+const popUpLoginButtonStyle: CSS.Properties = {
+	backgroundColor: 'rgba(254, 8, 16, 1)',
+	position: 'relative',
+	height:'40px',
+	width:'160px',
+	fontFamily: 'Shlop',
+	fontSize: '24px',
 	alignSelf: 'center',
 	borderRadius: '6px',
 	border: 'none',
 	color:'white',
+	marginTop: '20px',
+}
+
+const popUpSignupButtonStyle: CSS.Properties = {
+	backgroundColor: 'rgba(254, 8, 16, 1)',
+	position: 'relative',
+	height:'40px',
+	width:'160px',
+	fontFamily: 'Shlop',
+	fontSize: '24px',
+	alignSelf: 'center',
+	borderRadius: '6px',
+	border: 'none',
+	color:'white',
+	marginTop: '10px',
+}
+
+const formFieldStyle: CSS.Properties = {
+    padding: '8px',
+    width: '200px',
+    fontSize: '18px',
+    borderRadius: '4px',
+    border: '1px solid #fff',
+	marginBottom: '13px',
+	fontFamily: 'Shlop',
 }
   
+	const OnSignUpButtonClick = async () => {
+		setShowSignupPopup(true);
+	};
+
+	const OnLoginButtonClick = async () => {
+		setShowLoginPopup(true);
+	};
+
 	const handleSignUp = async () => {
 		const newUser: User = {
-			username: 'Tim',
+			username: username,
 			userID: 123,
 			avatarPath: '',
 			wins: 0,
@@ -68,7 +182,7 @@ const loginButtonStyle: CSS.Properties = {
 			points: 0,
 			status: '',
 			achievementsCSV: '',
-			passwordHash: '',
+			passwordHash: password,
 			friends: [],
 			befriendedBy: [],
 			blocked: [],
@@ -80,8 +194,7 @@ const loginButtonStyle: CSS.Properties = {
 
 		try {
 			// Make API call and get the response
-			const response = await fetch(fetchAddress + 'user', {
-				// credentials: "include",
+			const response = await fetch(fetchAddress + signUpEndpoint, {
 				method:"POST",
 				headers: {
 					"Content-Type": "application/json"
@@ -101,6 +214,67 @@ const loginButtonStyle: CSS.Properties = {
 		} catch (error) {
 			throw new Error('Error creating a new user');
 		}
+		setShowSignupPopup(false)
+	};
+
+  const handleLogin = async () => {
+	// const user = {
+	// 	username: username,
+	// 	password: password
+	// }
+	// try {
+	// 	// Make API call and get the response
+	// 	const response = await fetch(fetchAddress + loginEndpoint + 30, {
+	// 		method:"GET",
+	// 		headers: {
+	// 			"Content-Type": "application/json"
+	// 		},
+	// 		body:JSON.stringify(user),
+	// 	});
+	
+	// 	if (response.ok) {
+	// 		const loggedInUser: User = await response.json(); 
+	// 		await login(loggedInUser.userID);
+	// 		userID_set(loggedInUser.userID);
+	// 		loginDone_set(true);
+	// 	} else {
+	// 		throw new Error(response.statusText);
+	// 	}
+	// } catch (error) {
+	// 	throw new Error('Error logging in. Try again!');
+	// }
+
+	const someUser: User = {
+		username: 'tim',
+		userID: 30,
+		avatarPath: '',
+		wins: 0,
+		losses: 0,
+		points: 0,
+		status: '',
+		achievementsCSV: '',
+		passwordHash: password,
+		friends: [],
+		befriendedBy: [],
+		blocked: [],
+		blockedBy: [],
+		adminChannels: [],
+		blockedChannels: [],
+		channels: [],
+	  };
+	input_user_id = 30
+	if (input_user_id != 0)
+    {
+      if (!isNaN(input_user_id))
+      {
+		onSignUp(someUser);
+        await login(input_user_id);
+        userID_set(input_user_id);
+        loginDone_set(true);
+      }
+      input_user_id = 0
+    }
+	setShowLoginPopup(false)
   };
 //   async function signUpUser() {
 // 	createNewUser();
@@ -119,7 +293,57 @@ const loginButtonStyle: CSS.Properties = {
   return (<div style={pageStyle}>
 			<img src={gif} style={gifStyle} ></img>
             <p style={welcomeTitleStyle}>Do you want to play a game?</p>
-            <button style={loginButtonStyle} onClick={handleSignUp}>Sign up</button>
+            <button style={loginButtonStyle} onClick={OnLoginButtonClick}>Login</button>
+            <button style={signupButtonStyle} onClick={OnSignUpButtonClick}>Sign up</button>
+
+			{showLoginPopup && (
+        		<div style={loginPopupStyle}>
+          		<p style={popUpTitleStyle}>Login</p>
+          		<form>
+					<input
+					type="text"
+					placeholder="Username"
+					value={username}
+              		onChange={(e) => setUsername(e.target.value)} // Update state on change
+					style={formFieldStyle}
+					/>
+				</form>
+				<form>
+					<input
+					type="password"
+					placeholder="Password"
+					value={password}
+              		onChange={(e) => setPassword(e.target.value)} // Update state on change
+					style={formFieldStyle}
+					/>
+				</form>
+          		<button style={popUpLoginButtonStyle} onClick={handleLogin}>Login</button>
+        		</div>
+      		)}
+
+			{showSignupPopup && (
+        		<div style={signupPopupStyle}>
+          			<p style={popUpTitleStyle}>Sign Up</p>
+          			<form>
+						<input
+						type="text"
+						placeholder="Username"
+						value={newUsername}
+              			onChange={(e) => setNewUsername(e.target.value)} // Update state on change
+						style={formFieldStyle}
+						/>
+						<input
+						type="password"
+						placeholder="Password"
+						value={newPassword}
+              			onChange={(e) => setNewPassword(e.target.value)} // Update state on change
+						style={formFieldStyle}
+						/>
+					</form>
+          			<button style={popUpSignupButtonStyle} onClick={handleSignUp}>Sign up</button>
+        		</div>
+      		)}
+
           </div>);
 };
 
