@@ -86,18 +86,18 @@ export class UserController {
   }
 
   @Post('user/login')
-  @ApiOperation({ summary: 'Post the user logged in' })
+  @ApiOperation({ summary: 'Sign up' })
   async postUserLoggedIn(@Body() userDto: UserDTO): Promise<User> {
 	return this.userService.postUserLoggedIn(userDto);
   }
 
-  @Post(':userId/:password/login/confirm')
-  @ApiOperation({ summary: 'Confirm the user logged in' })
+  @Post(':userName/:password/login/confirm')
+  @ApiOperation({ summary: 'Log in' })
   async confirmUserLoggedIn(
-	@Param('userId', ParseIntPipe) userId: number,
+	@Param('userName') userName: string,
 	@Param('password') password: string,
-	  ): Promise<boolean> {
-	return this.userService.confirmUserLoggedIn(userId, password);
+	  ): Promise<User> {
+	return this.userService.confirmUserLoggedIn(userName, password);
 	  }
 
   @Put(':id/:password/update/password')
