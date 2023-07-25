@@ -1,11 +1,11 @@
-import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
-export class matchDTO {
-  @ApiProperty({ example: 1, description: 'The ID of the match history' })
+export class MatchDTO {
+  @ApiProperty({ example: 1, description: 'The ID of the match' })
   @IsNumber()
   @IsNotEmpty()
-  MatchHistoryId: number;
+  MatchId: number;
 
   @ApiProperty({ example: 1, description: 'The ID of the player 1' })
   @IsNumber()

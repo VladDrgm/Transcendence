@@ -16,9 +16,9 @@ export class MatchHistory {
   @Column()
   MatchId: number;
 
-  @ManyToOne(() => User)
-  UserId: User;
+  @Column()
+  Player1Id: number;
 
-  @OneToMany(() => Match, (match) => match.matchHistory)
-  matches: Match[];
+  @Column()
+  Player2Id: number;
 }
