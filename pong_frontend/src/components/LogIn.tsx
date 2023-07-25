@@ -178,7 +178,7 @@ const formFieldStyle: CSS.Properties = {
 	const handleSignUp = async () => {
 		const newUser: User = {
 			username: newUsername,
-			intraUsername: newIntraUsername,
+			intraUsername: newUsername,
 			userID: 123,
 			avatarPath: '',
 			wins: 0,
