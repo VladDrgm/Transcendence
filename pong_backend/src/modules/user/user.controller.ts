@@ -14,6 +14,7 @@ import {
 import { UserService } from './userservice';
 import { User } from 'src/models/orm_models/user.entity';
 import { Friend } from 'src/models/orm_models/friend.entity';
+import { UserDTO } from './userDTO';
 
 @ApiTags('User')
 @Controller('user')
@@ -24,11 +25,6 @@ export class UserController {
   async findAll(): Promise<User[]> {
     return this.userService.findAll();
   }
-
-  //   @Get(':id')
-  //   async findOne(@Param('id') id: number): Promise<User> {
-  //     return this.userService.findOne(id);
-  //   }
 
   @Post()
   @ApiOperation({ summary: 'Create a new user' })
@@ -82,4 +78,34 @@ export class UserController {
   async getUsersOrderedByPoints(): Promise<User[]> {
     return this.userService.getUsersOrderedByPoints();
   }
+
+  @Get('user/login')
+  @ApiOperation({ summary: 'Get the user logged in' })
+  async getUserLoggedIn(@Body() user: UserDTO): Promise<User> {
+	return this.userService.getUserLoggedIn(user);
+  }
+
+  @Post('user/login')
+  @ApiOperation({ summary: 'Post the user logged in' })
+  async postUserLoggedIn(@Body() userDto: UserDTO): Promise<User> {
+	return this.userService.postUserLoggedIn(userDto);
+  }
+
+  @Post(':userId/:password/login/confirm')
+  @ApiOperation({ summary: 'Confirm the user logged in' })
+  async confirmUserLoggedIn(
+	@Param('userId', ParseIntPipe) userId: number,
+	@Param('password') password: string,
+	  ): Promise<boolean> {
+	return this.userService.confirmUserLoggedIn(userId, password);
+	  }
+
+  @Put(':id/:password/update/password')
+  @ApiOperation({ summary: 'Update the password of a user' })
+  async updatePassword(
+	@Param('id', ParseIntPipe) id: number,
+	@Param('password') password: string,
+	  ): Promise<void> {
+	await this.userService.updateUserPassword(id, password);
+	  }
 }
