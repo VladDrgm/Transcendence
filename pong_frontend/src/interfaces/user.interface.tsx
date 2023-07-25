@@ -3,6 +3,7 @@ import { Channel } from './channel.interface';
 
 export interface User {
 	username: string,
+	intraUsername: string,
 	userID: number,
 	avatarPath: string,
 	wins: number,

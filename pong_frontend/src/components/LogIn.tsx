@@ -27,6 +27,7 @@ const LogIn: React.FC<LogInProps> = ({onSignUp, userID_set, loginDone_set}) => {
   const [password, setPassword] = useState(''); // Login state for password input
   
   const [newUsername, setNewUsername] = useState(''); // Sign up state for username input
+  const [newIntraUsername, setNewIntraUsername] = useState(''); // Sign up state for username input
   const [newPassword, setNewPassword] = useState(''); // Sign up state for password input
 
 const pageStyle: CSS.Properties = {
@@ -176,7 +177,8 @@ const formFieldStyle: CSS.Properties = {
 
 	const handleSignUp = async () => {
 		const newUser: User = {
-			username: username,
+			username: newUsername,
+			intraUsername: newIntraUsername,
 			userID: 123,
 			avatarPath: '',
 			wins: 0,
@@ -184,7 +186,7 @@ const formFieldStyle: CSS.Properties = {
 			points: 0,
 			status: '',
 			achievementsCSV: '',
-			passwordHash: password,
+			passwordHash: newPassword,
 			friends: [],
 			befriendedBy: [],
 			blocked: [],
