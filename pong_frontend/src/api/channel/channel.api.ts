@@ -1,4 +1,4 @@
-import { Channel } from "../../interfaces/channel.interface";
+import { Channel, ChatProps } from "../../interfaces/channel.interface";
 import { fetchAddress } from "../../components/div/channel_div";
 
 export async function getChannels():  Promise<Channel[]> {
@@ -16,16 +16,25 @@ export async function getChannel(channelId: number): Promise<Channel> {
 }
 
 //to be tested
-export function deleteChannel(channelId: number) {
-  if (channelId === 41)
+export function deleteChannel(props: ChatProps) {
+  if (props.currentChat.Channel.ChannelId === 41)
   {
     console.error("Error: Don't delete general Channel");
     return;
   }
-  fetch(fetchAddress + 'channel/' + channelId, {method: 'DELETE'})
-    .then(response => response.json())
-    .then(data => {console.log("Channel deleted:", data);})
-    .catch(error => {console.error("Error deleting Channel:", error);})
+  fetch(fetchAddress + 'channel/' + props.currentChat.Channel.ChannelId, {method: 'DELETE'})
+  .then(response => {
+    if (response.ok) {
+      console.log("Channel deleted successfully.");
+    } else {
+      console.error("Error deleting Channel:", response.status);
+    }
+  })
+  .catch(error => {
+    console.error("Error deleting Channel:", error);
+  });
+
+
 }
 
 //when using gives a internal server error for OwnerId = null, while i give some not null OwnerId

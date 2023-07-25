@@ -1,7 +1,7 @@
 import { fetchAddress } from "../../components/div/channel_div";
 
 //to be tested
-export function getAdmins(channelId: number): Promise<any[]>{
+export async function getAdmins(channelId: number): Promise<any[]>{
     return fetch(fetchAddress + 'channel/' + channelId + '/admin', {credentials: "include",})
     .then(response => {
       if (response.ok) {
