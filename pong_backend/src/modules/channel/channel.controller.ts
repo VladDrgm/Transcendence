@@ -121,6 +121,14 @@ export class ChannelController {
     return this.channelService.getChannelUsers(channelId);
   }
 
+  @Get(':channelId/mutedusers')
+  @ApiOperation({ summary: 'Get all muted users of a Channel' })
+  async getChannelMutedUsers(
+    @Param('channelId') channelId: number,
+  ): Promise<ChannelUser[]> {
+    return this.channelService.getChannelUsersOnMute(channelId);
+  }
+
   @Get(':userId/:channelId/user')
   @ApiOperation({ summary: 'Get a ChannelUser by his userId' })
   async getChannelUserByUserId(
