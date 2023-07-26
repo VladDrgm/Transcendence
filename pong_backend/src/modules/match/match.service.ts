@@ -11,12 +11,10 @@ export class MatchService {
     @InjectRepository(Match)
     private readonly matchRepository: Repository<Match>,
     @InjectRepository(MatchHistory)
-    private readonly matchHistoryRepository: Repository<MatchHistory>
+    private readonly matchHistoryRepository: Repository<MatchHistory>,
   ) {}
 
-  async createMatch(
-    matchDTO: MatchDTO,
-    ): Promise<Match> {
+  async createMatch(matchDTO: MatchDTO): Promise<Match> {
     const matchDb = new Match();
     matchDb.Player1Id = matchDTO.Player1Id;
     matchDb.Player2Id = matchDTO.Player2Id;
