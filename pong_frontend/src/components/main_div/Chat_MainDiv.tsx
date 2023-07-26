@@ -15,6 +15,7 @@ import { User } from "../../interfaces/user.interface";
 import { ChannelAdmin_Buttons_Div, ChannelOwner_Buttons_Div } from "../div/channel_buttons_div";
 import { getOwnerId } from "../../api/channel/channel_owner.api";
 import ChatTextBox from "../div/channel_ChatTextBox_div";
+import ChatBody_Div from "../div/channel_ChatBody_div";
 
 const Container = styled.div`
   height: 100vh;
@@ -42,7 +43,7 @@ const BodyContainer = styled.div`
   border-bottom: 1px solid black;
 `;
 
-const TextBox = styled.textarea`
+export const TextBox = styled.textarea`
   height: 15%;
   width: 100%;
 `;
@@ -57,7 +58,7 @@ export const Row = styled.div`
   cursor: pointer;
 `;
 
-const Messages = styled.div`
+export const Messages = styled.div`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -77,22 +78,9 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 	const [channelPanelLoaded, setChannelPanelLoaded] = useState(false);
   	const [chatBodyLoaded, setChatBodyLoaded] = useState(false);
 
-	// let body: JSX.Element | null = null;
 	const messages = useMemo(() =>
 		props.messages || [], [props.messages])
-	// if (!props.currentChat.isChannel || props.connectedRooms.includes(props.currentChat.chatName.toString())) {
-	// 	body = (
-	// 	<Messages>
-	// 		{messages.map(renderMessages)}
-	// 	</Messages>
-	// 	);
-	// } else {
-	// 	body = (
-	// 	<button onClick={() => props.joinRoom(props.currentChat.chatName)}>
-	// 		Join {props.currentChat.chatName}
-	// 	</button>
-	// 	);
-	// }
+
 	const handleUserInChannelCheck = useCallback (async () => {
 		try {
 			if (!props.currentChat.isResolved){
@@ -110,7 +98,6 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 			if (!props.currentChat.isResolved){
 				return;
 			}
-			//replacing the user here with the real user when login finished
 			setIsUserInChannelBlocked(await getChannelBlockedUser(props.userID, props.currentChat.Channel.ChannelId));
 		}catch (error){
 			console.error('Error occured in handleUserChannelBlockedCheck:', error);
@@ -118,37 +105,16 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 	}, [props.currentChat.isResolved, props.currentChat.Channel.ChannelId]);
 
 	const handleBody = useCallback (() =>{
-		if (isUserInChannelBlocked) {
-			setBody ( 
-				loadingChatBody ? (
-				<div>Loading Chat...</div> // Show a loading spinner or placeholder
-				) : (
-					<TextBox>
-						You are blocked from using this Channel.
-					</TextBox>
-					// setLoadingChatBody(true);
-				)
-			);
-		} else if ((isUserInChannel || !props.currentChat.isChannel) || (isAdmin && isAdminResolved) || props.connectedRooms.includes(props.currentChat.chatName.toString())) {
-			setBody (
-				loadingChatBody ? (
-					<div>Loading Chat...</div> // Show a loading spinner or placeholder
-					) : (
-					<Messages>
-						{messages.map(renderMessages)}
-					</Messages>)
-				);
-		} else {
-			setBody (
-				loadingChatBody ? (
-					<div>Loading Chat...</div> // Show a loading spinner or placeholder
-					) : (
-					<button onClick={() => props.joinRoom(props.currentChat.chatName)}>
-						Join {props.currentChat.chatName}
-					</button>
-					)
-			);
-		}
+		setBody(
+		<ChatBody_Div
+			props = {props}
+			isUserInChannelBlocked = {isUserInChannelBlocked}
+			isUserInChannel = {isUserInChannel}
+			isAdmin = {isAdmin}
+			isAdminResolved = {isAdminResolved}
+			loadingChatBody = {loadingChatBody}
+			messages = {messages}
+        	/>)
 		setChatBodyLoaded(true);
 	}, [isUserInChannel, isUserInChannelBlocked, loadingChatBody, messages, props, isAdmin]);
 
@@ -181,8 +147,6 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 		setChannelPanelLoaded(true);
 	}, [
 		props,
-		/*props.currentChat.chatName,
-		props.currentChat.Channel.ChannelId,*/
 		loadingChannelpanel,
 		isUserInChannel,
 		isAdmin,
@@ -194,8 +158,6 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 	useEffect(() => {
 		handleUserInChannelCheck();
 		handleUserInChannelBlockedCheck();
-		// setLoadingChannelpanel(true);
-    	// setLoadingChatBody(true);
 		setLoadingChannelpanel(false);
 		setLoadingChatBody(false);
 		// handleChannelPanel();
@@ -254,29 +216,7 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 			console.log("Error checking admin status:", error);
 			setIsAdminResolved(true);
 		});
-
-		// const intervalId = setInterval(() => {
-		// 	setIsAdminResolved(false);
-		// if (!props.currentChat.isResolved)
-		// 	return;
 		
-		// getIsAdmin(props.currentChat.Channel.ChannelId, props.userID)
-		// .then(isAdmin => {
-		// 	setIsAdmin(isAdmin);
-		// 	console.log("UserID:", props.userID , "admin:", isAdmin);
-		// 	setIsAdminResolved(true);
-		// })
-		// .catch(error => {
-		// 	console.log("Error checking admin status:", error);
-		// 	setIsAdminResolved(true);
-		// });
-		//   }, 5000);
-		//   return () => {
-		// 	clearInterval(intervalId);
-		//   };
-
-		// handleUserInChannelCheck();
-		// setIsAdminResolved(false);
 	}, [props.currentChat.isResolved, props.yourId, props.currentChat]);
 
 
@@ -291,24 +231,7 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 			console.log("Error checking mute status:", error);
 		});
 	}, [props.currentChat, props.currentChat.isResolved]);
-
-	// useEffect(() => {
-	// 	const intervalId = setInterval(() => {
-	// 		getIsMuted(props.currentChat.Channel.ChannelId, props.userID, props.userID)
-	// 		.then(isMuted => {
-	// 			setIsUserMuted(isMuted);
-	// 			console.log("UserId: ", props.userID, " muted: ", isUserMuted);
-	// 		})
-	// 		.catch (error =>{
-	// 			console.log("Error checking mute status:", error);
-	// 		});
-	// 	  }, 5000); // 5000 milliseconds (5 seconds) interval
-	// 	  return () => {
-	// 		clearInterval(intervalId);
-	// 	  };
-	// }, [props.currentChat, props.currentChat.isResolved]);
 	
-
 	function handleKeyPress(e: KeyboardEvent<HTMLTextAreaElement>) {
 		if (e.key === "Enter") {
 		props.sendMessage();
@@ -329,17 +252,10 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 			<BodyContainer>
 			{body}
 			</BodyContainer>
-			{/* <TextBox
-			value={props.message}
-			onChange={props.handleMessageChange}
-			onKeyPress={handleKeyPress}
-			placeholder="You can write something here"
-			/> */}
 			<ChatTextBox
 			value={props.message}
 			onChange={props.handleMessageChange}
 			onKeyPress={handleKeyPress}
-			// placeholder="You can write something here"
 			isUserMuted={isUserMuted}
         	/>
 		</ChatPanel>
