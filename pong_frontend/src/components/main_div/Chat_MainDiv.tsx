@@ -9,11 +9,12 @@ import { renderUser, renderMessages } from "../div/chat_utils";
 // import { ChatName } from "./Arena_Chat";
 import { deleteChannel} from '../../api/channel/channel.api';
 import { getIsAdmin } from "../../api/channel/channel_admin.api";
-import { getChannelUser, getChannelBlockedUser } from "../../api/channel/channel_user.api";
+import { getChannelUser, getChannelBlockedUser, getIsMuted } from "../../api/channel/channel_user.api";
 import  {ChatProps, Message} from '../../interfaces/channel.interface';
 import { User } from "../../interfaces/user.interface";
 import { ChannelAdmin_Buttons_Div, ChannelOwner_Buttons_Div } from "../div/channel_buttons_div";
 import { getOwnerId } from "../../api/channel/channel_owner.api";
+import ChatTextBox from "../div/channel_ChatTextBox_div";
 
 const Container = styled.div`
   height: 100vh;
@@ -68,6 +69,7 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 	const [isOwner, setIsOwner] = useState(false);
 	const [isUserInChannel, setIsUserInChannel] = useState(false);
 	const [isUserInChannelBlocked, setIsUserInChannelBlocked] = useState(false);
+	const [isUserMuted, setIsUserMuted] = useState(false);
 	const [body, setBody] = useState<JSX.Element | null>(null);
 	const [channelpanel, setChannelpanel] = useState<JSX.Element | null>(null);
 	const [loadingChannelpanel, setLoadingChannelpanel] = useState(true);
@@ -249,13 +251,62 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 			setIsAdminResolved(true);
 		})
 		.catch(error => {
-			console.log("Error checking admin status:", error)
+			console.log("Error checking admin status:", error);
 			setIsAdminResolved(true);
 		});
+
+		// const intervalId = setInterval(() => {
+		// 	setIsAdminResolved(false);
+		// if (!props.currentChat.isResolved)
+		// 	return;
+		
+		// getIsAdmin(props.currentChat.Channel.ChannelId, props.userID)
+		// .then(isAdmin => {
+		// 	setIsAdmin(isAdmin);
+		// 	console.log("UserID:", props.userID , "admin:", isAdmin);
+		// 	setIsAdminResolved(true);
+		// })
+		// .catch(error => {
+		// 	console.log("Error checking admin status:", error);
+		// 	setIsAdminResolved(true);
+		// });
+		//   }, 5000);
+		//   return () => {
+		// 	clearInterval(intervalId);
+		//   };
+
 		// handleUserInChannelCheck();
 		// setIsAdminResolved(false);
-	}, [props.currentChat.isResolved, props.yourId, props.currentChat.isResolved]);
+	}, [props.currentChat.isResolved, props.yourId, props.currentChat]);
 
+
+
+	useEffect(() => {
+		getIsMuted(props.currentChat.Channel.ChannelId, props.userID, props.userID)
+		.then(isMuted => {
+			setIsUserMuted(isMuted);
+			console.log("UserId: ", props.userID, " muted: ", isUserMuted);
+		})
+		.catch (error =>{
+			console.log("Error checking mute status:", error);
+		});
+	}, [props.currentChat, props.currentChat.isResolved]);
+
+	// useEffect(() => {
+	// 	const intervalId = setInterval(() => {
+	// 		getIsMuted(props.currentChat.Channel.ChannelId, props.userID, props.userID)
+	// 		.then(isMuted => {
+	// 			setIsUserMuted(isMuted);
+	// 			console.log("UserId: ", props.userID, " muted: ", isUserMuted);
+	// 		})
+	// 		.catch (error =>{
+	// 			console.log("Error checking mute status:", error);
+	// 		});
+	// 	  }, 5000); // 5000 milliseconds (5 seconds) interval
+	// 	  return () => {
+	// 		clearInterval(intervalId);
+	// 	  };
+	// }, [props.currentChat, props.currentChat.isResolved]);
 	
 
 	function handleKeyPress(e: KeyboardEvent<HTMLTextAreaElement>) {
@@ -278,12 +329,19 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 			<BodyContainer>
 			{body}
 			</BodyContainer>
-			<TextBox
+			{/* <TextBox
 			value={props.message}
 			onChange={props.handleMessageChange}
 			onKeyPress={handleKeyPress}
 			placeholder="You can write something here"
-			/>
+			/> */}
+			<ChatTextBox
+			value={props.message}
+			onChange={props.handleMessageChange}
+			onKeyPress={handleKeyPress}
+			// placeholder="You can write something here"
+			isUserMuted={isUserMuted}
+        	/>
 		</ChatPanel>
 		</Container>
 	);

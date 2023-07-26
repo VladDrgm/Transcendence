@@ -67,9 +67,16 @@ export function postChannelUser(userId: number, channelId: number) {
       body:  ''
     };
     fetch(fetchAddress + 'channel/' + userId +'/' + channelId, requestOptions)
-      .then(response => response.json())
-      .then(data => {console.log("ChannelUser with UserId :" + userId +" added:", data);})
-      .catch(error => {console.log("Error adding ChannelUser with UserId :" + userId +":", error);});
+      .then(response => {
+        if (response.ok) {
+          console.log("ChannelUser with UserId :" + userId +" added");
+        } else {
+          console.error("Error adding ChannelUser with UserId :" + userId +":", response.status);
+        }
+      })
+      .catch(error => {
+        console.error("Error adding ChannelUser with UserId :" + userId +":", error);
+      });
 }
 
 export function postPrivateChannelUser(userId: number, channelId: number, password: string) {
@@ -132,9 +139,18 @@ export function postChannelUserBlocked(userId: number, channelId: number) {
       body:  ''
     };
     fetch(fetchAddress + 'channel/' + userId +'/' + channelId + '/blocked', requestOptions)
-      .then(response => response.json())
-      .then(data => {console.log("ChannelUser with UserId :" + userId +" blocked:", data);})
-      .catch(error => {console.log("Error blocking ChannelUser with UserId :" + userId +":", error);});
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Request failed with status: ' + response.status);
+        }
+        return response.text();
+      })
+      .then(data => {
+        console.log("ChannelUser with UserId :" + userId +" blocked");
+      })
+      .catch(error => {
+        console.log("Error blocking ChannelUser with UserId :" + userId +":", error);
+      });
 }
 
 //to be tested#
@@ -163,10 +179,10 @@ export async function getChannelBlockedUser(userId: number, channelId: number): 
         console.log("Error returning blocked ChannelUser "+ userId + " of Channel "+ channelId + ":", error);
         return false;
     } 
-  }
+}
 
 
-  export function postMuteUser(callerId: number, targetId: number, channelId: number, duration: number) {
+export function postMuteUser(callerId: number, targetId: number, channelId: number, duration: number) {
     const requestOptions = {
       method: 'POST',
       headers: { 
@@ -176,9 +192,39 @@ export async function getChannelBlockedUser(userId: number, channelId: number): 
       body:  ''
     };
     fetch(fetchAddress + 'channel/' + callerId +'/' + targetId + '/' + channelId + '/mute/' + duration, requestOptions)
-      .then(response => response.json())
-      .then(data => {console.log("ChannelUser with UserId :" + targetId +" muted:", data);})
-      .catch(error => {console.log("Error muting ChannelUser with UserId :" + targetId +":", error);});
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Request failed with status: ' + response.status);
+      }
+      return response.text();
+    })
+    .then(data => {
+      console.log("ChannelUser with UserId :" + targetId +" muted:");
+    })
+    .catch(error => {
+      console.log("Error muting ChannelUser with UserId :" + targetId +":", error);
+    });  
+}
+
+export async function getIsMuted(channelId: number, callerId: number, targetId: number): Promise<boolean> {
+  try {
+    const response = await fetch(fetchAddress + 'channel/' + callerId + '/' + targetId + '/' + channelId + '/mute', {credentials: "include",})
+    if (!response.ok) {
+      console.error("Error retrieving mute status");
+      return false;
+    }
+    if (!response.headers.has("content-length")) {
+      return false;
+    }
+    const data = await response.json();
+    if(!data) {
+      return false;
+    }
+    return true
+  } catch (error) {
+      console.log("Error retrieving mute status of User" + targetId + " in channel " + channelId + ":", error);
+      return false;
+  }
 }
 
 
