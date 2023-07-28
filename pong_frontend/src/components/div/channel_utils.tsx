@@ -49,6 +49,21 @@ export async function fetchPublicChannels(setPublicChannels: Dispatch<SetStateAc
     }
 }
 
+export async function fetchPrivateChannels(setPrivateChannels: Dispatch<SetStateAction<Channel[]>>, setLoading : Dispatch<SetStateAction<boolean>>): Promise<Channel[]>{
+    try{
+        const response = await getChannels();
+        const channelList = Array.isArray(response) ? response.map(mapChannel) : [];
+        const channelListPrivate = channelList.filter(channel => channel.Type === "private");
+        setPrivateChannels(channelListPrivate);
+        setLoading(false);
+        return channelListPrivate;
+    } catch (error){
+        console.error('Error fetching channels:', error);
+        setLoading(false);
+        return [];
+    }
+}
+
 export async function fetchAllChannels(): Promise<Channel[]> {
     try{
         const response = await getChannels();

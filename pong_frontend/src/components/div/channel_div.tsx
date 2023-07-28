@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Channel } from '../../interfaces/channel.interface';
 import  {ChatProps} from '../../interfaces/channel.interface';
-import {renderRooms, fetchPublicChannels} from './channel_utils';
+import {renderRooms, fetchPublicChannels, fetchPrivateChannels} from './channel_utils';
 import { popUpJoinPrivateChannel, popUpCreateChannel } from './channel_popups';
 
 export var fetchAddress = 'http://localhost:3000/';
@@ -33,6 +33,7 @@ const Channel_Div: React.FC<ChatProps> = (props) => {
 
     useEffect(() => {
         fetchPublicChannels(setPublicChannels, setLoading);
+        fetchPrivateChannels(setPrivateChannels, setLoading);
       });
     if (loading) {
         return <div>Loading channels...</div>;
