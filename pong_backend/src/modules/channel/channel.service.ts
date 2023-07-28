@@ -7,8 +7,6 @@ import { ChannelUser } from 'src/models/orm_models/channel_user.entity';
 import { ChannelBlockedUser } from 'src/models/orm_models/channel_blocked_user.entity';
 import { HttpException, HttpStatus } from '@nestjs/common';
 import { CreateChannelDto } from './channelDTO';
-import { UserService } from '../user/userservice';
-import { users } from 'src/models/mock_data/mock_user';
 
 export class ChannelRepository extends Repository<Channel> {}
 
@@ -497,6 +495,19 @@ export class ChannelService {
     const result = channelUser.MutedUntil > new Date();
 
     return result;
+  }
+
+  async getChannelUsersOnMute(channelId: number): Promise<ChannelUser[]> {
+    const users = await this.channelUserRepository.findBy({
+      ChannelId: channelId,
+    });
+
+    const currentTimestamp = new Date();
+    const mutedUsers = users.filter(
+      (user) => user.MutedUntil && user.MutedUntil > currentTimestamp,
+    );
+
+    return mutedUsers;
   }
 
   async createPublicChannelUser(

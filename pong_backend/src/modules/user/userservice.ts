@@ -40,6 +40,21 @@ export class UserService {
     await this.userRepository.update(id, { avatarPath: newAvatar });
   }
 
+  async updateUsername(id: number, newUsername: string): Promise<void> {
+    const isUsernameInDb = await this.userRepository.findOneBy({
+      username: newUsername,
+    });
+
+    if (isUsernameInDb) {
+      throw new HttpException(
+        'Username already exists. Please choose a different username.',
+        HttpStatus.UNAUTHORIZED,
+      );
+    }
+
+    await this.userRepository.update(id, { username: newUsername });
+  }
+
   async getUsersOrderedByPoints(): Promise<User[]> {
     return this.userRepository.find({
       order: {
@@ -50,39 +65,44 @@ export class UserService {
   }
 
   async getUserLoggedIn(user: UserDTO): Promise<User> {
-	return this.userRepository
-	  .createQueryBuilder('user')
-	  .where('user.username = :username', { username: user.username })
-	  .andWhere('user.password = :password', { password: user.password })
-	  .getOne();
+    return this.userRepository
+      .createQueryBuilder('user')
+      .where('user.username = :username', { username: user.username })
+      .andWhere('user.password = :password', { password: user.password })
+      .getOne();
   }
 
   async postUserLoggedIn(userDto: UserDTO): Promise<User> {
-	const user = new User();
-	user.username = userDto.username;
-	user.passwordHash = userDto.password;
-	user.avatarPath = userDto.avatarPath;
-	user.points = userDto.points;
-	user.status = userDto.status;
-	user.achievementsCSV = userDto.achievementsCSV;
-	user.intraUsername = userDto.intraUsername;
-	return this.userRepository.save(user);
+    const user = new User();
+    user.username = userDto.username;
+    user.passwordHash = userDto.password;
+    user.avatarPath = userDto.avatarPath;
+    user.points = userDto.points;
+    user.status = userDto.status;
+    user.achievementsCSV = userDto.achievementsCSV;
+    user.intraUsername = userDto.intraUsername;
+    return this.userRepository.save(user);
   }
 
-  async confirmUserLoggedIn(ftUserName: string, password: string): Promise<User> {
-	const user = await this.userRepository.findOneBy({ intraUsername: ftUserName });
-	if (user.passwordHash === password) {
-	  return user;
-	}
-	throw new HttpException('Wrong password', HttpStatus.UNAUTHORIZED);
+  async confirmUserLoggedIn(
+    ftUserName: string,
+    password: string,
+  ): Promise<User> {
+    const user = await this.userRepository.findOneBy({
+      intraUsername: ftUserName,
+    });
+    if (user.passwordHash === password) {
+      return user;
+    }
+    throw new HttpException('Wrong password', HttpStatus.UNAUTHORIZED);
   }
 
   async updateUserPassword(userId, password): Promise<void> {
-	const user = await this.userRepository.findOneBy({ userID: userId });
-	if (!user) {
-		throw new HttpException('User not found', HttpStatus.NOT_FOUND)
-	}
+    const user = await this.userRepository.findOneBy({ userID: userId });
+    if (!user) {
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    }
 
-	await this.userRepository.update(userId, { passwordHash: password });
+    await this.userRepository.update(userId, { passwordHash: password });
   }
 }
