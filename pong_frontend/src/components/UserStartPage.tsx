@@ -4,15 +4,14 @@ import CSS from 'csstype';
 import { User } from '../interfaces/user.interface';
 
 
-type StartPageProps =
+interface StartPageProps
 {
   id: number;
   user: User;
 }
 
-const UserStartPage: React.FC<StartPageProps> = ({user}) => {
+const UserStartPage: React.FC<StartPageProps> = ({id, user}) => {
   const [mode, mode_set] = useState<main_div_mode_t>(main_div_mode_t.HOME_PAGE);
-  const [userID, userID_set] = useState<main_div_mode_t>(main_div_mode_t.HOME_PAGE);
 
   	const pageStyle: CSS.Properties = {
 		backgroundColor: 'rgba(3, 3, 3, 1)',
@@ -51,7 +50,7 @@ const UserStartPage: React.FC<StartPageProps> = ({user}) => {
               <button style={buttonStyle} onClick={() => mode_set(main_div_mode_t.SETTINGS)}>Settings</button>
             </header>
             <div style={{ width: '100%', height: '500px', backgroundColor: 'lightgray' }}>
-              <MainDivSelector userID={userID} user={user} mode={mode} mode_set={mode_set} />
+              <MainDivSelector userID={id} user={user} mode={mode} mode_set={mode_set} />
             </div>
           </div>);
 };
