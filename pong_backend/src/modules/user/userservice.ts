@@ -46,8 +46,11 @@ export class UserService {
     const isUsernameInDb = await this.userRepository.findOneBy({
       username: newUsername,
     });
+	const isIntraUsernameInDb = await this.userRepository.findOneBy({
+	  intraUsername: newUsername,
+	});
 
-    if (isUsernameInDb) {
+    if (isUsernameInDb || isIntraUsernameInDb) {
       throw new HttpException(
         'Username already exists. Please choose a different username.',
         HttpStatus.UNAUTHORIZED,
