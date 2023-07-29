@@ -87,12 +87,6 @@ export class UserController {
     return this.userService.getUsersOrderedByPoints();
   }
 
-  @Get('user/login')
-  @ApiOperation({ summary: 'Get the user logged in' })
-  async getUserLoggedIn(@Body() user: UserDTO): Promise<User> {
-    return this.userService.getUserLoggedIn(user);
-  }
-
   @Post('user/login')
   @ApiOperation({ summary: 'Sign up' })
   async postUserLoggedIn(@Body() userDto: UserDTO): Promise<User> {
