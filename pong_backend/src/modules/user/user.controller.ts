@@ -107,7 +107,7 @@ export class UserController {
   async updatePassword(
     @Param('id', ParseIntPipe) id: number,
     @Param('password') password: string,
-  ): Promise<void> {
-    await this.userService.updateUserPassword(id, password);
+  ): Promise<User> {
+    return await this.userService.updateUserPassword(id, password);
   }
 }
