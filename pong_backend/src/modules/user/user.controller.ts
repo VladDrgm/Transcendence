@@ -77,8 +77,8 @@ export class UserController {
   async updateUsername(
     @Param('id', ParseIntPipe) id: number,
     @Param('username') newUsername: string,
-  ): Promise<void> {
-    await this.userService.updateUsername(id, newUsername);
+  ): Promise<User> {
+    return await this.userService.updateUsername(id, newUsername);
   }
 
   @Get('users/points')
