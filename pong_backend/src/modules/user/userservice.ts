@@ -1,8 +1,9 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/models/orm_models/user.entity';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { UserDTO } from './userDTO';
+import { PasswordService } from '../password/password.service';
 
 export class UserRepository extends Repository<User> {}
 
@@ -11,6 +12,8 @@ export class UserService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+	@InjectRepository(PasswordService)
+	private readonly passwordService: PasswordService,
   ) {}
 
   async findAll(): Promise<User[]> {
@@ -64,18 +67,10 @@ export class UserService {
     });
   }
 
-  async getUserLoggedIn(user: UserDTO): Promise<User> {
-    return this.userRepository
-      .createQueryBuilder('user')
-      .where('user.username = :username', { username: user.username })
-      .andWhere('user.password = :password', { password: user.password })
-      .getOne();
-  }
-
   async postUserLoggedIn(userDto: UserDTO): Promise<User> {
     const user = new User();
     user.username = userDto.username;
-    user.passwordHash = userDto.password;
+    user.passwordHash = await this.passwordService.hashPassword(userDto.password);
     user.avatarPath = userDto.avatarPath;
     user.points = userDto.points;
     user.status = userDto.status;
@@ -91,7 +86,7 @@ export class UserService {
     const user = await this.userRepository.findOneBy({
       intraUsername: ftUserName,
     });
-    if (user.passwordHash === password) {
+    if (this.passwordService.comparePassword(user.passwordHash, await this.passwordService.hashPassword(password))) {
       return user;
     }
     throw new HttpException('Wrong password', HttpStatus.UNAUTHORIZED);
@@ -102,7 +97,7 @@ export class UserService {
     if (!user) {
       throw new HttpException('User not found', HttpStatus.NOT_FOUND);
     }
-
-    await this.userRepository.update(userId, { passwordHash: password });
+	const psswd = await this.passwordService.hashPassword(password);
+    await this.userRepository.update(userId, { passwordHash: psswd });
   }
 }

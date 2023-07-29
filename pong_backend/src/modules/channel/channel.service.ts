@@ -7,6 +7,7 @@ import { ChannelUser } from 'src/models/orm_models/channel_user.entity';
 import { ChannelBlockedUser } from 'src/models/orm_models/channel_blocked_user.entity';
 import { HttpException, HttpStatus } from '@nestjs/common';
 import { CreateChannelDto } from './channelDTO';
+import { PasswordService } from '../password/password.service';
 
 export class ChannelRepository extends Repository<Channel> {}
 
@@ -21,6 +22,8 @@ export class ChannelService {
     private readonly channelUserRepository: Repository<ChannelUser>,
     @InjectRepository(ChannelBlockedUser)
     private readonly channelBlockedUserRepository: Repository<ChannelBlockedUser>,
+	@InjectRepository(PasswordService)
+	private readonly passwordService: PasswordService,
   ) {}
 
   async findAll(): Promise<Channel[]> {
@@ -44,7 +47,7 @@ export class ChannelService {
 
     channelDb.Name = channelDTO.Name;
     channelDb.OwnerId = callerId;
-    channelDb.Password = channelDTO.Password;
+    channelDb.Password = await this.passwordService.hashPassword(channelDTO.Password);
     channelDb.Type = channelDTO.Type;
 
     const ChannelId = await this.channelRepository
@@ -323,7 +326,7 @@ export class ChannelService {
     if (!isOwner) {
       throw new HttpException('You are not the owner of this channel', 400);
     }
-    channel.Password = password;
+    channel.Password = await this.passwordService.hashPassword(password);
     await this.channelRepository.save(channel);
   }
 
@@ -341,7 +344,7 @@ export class ChannelService {
       throw new HttpException('Channel is not private', 400);
     }
 
-    if (channel.Password != password) {
+    if (this.passwordService.comparePassword(await this.passwordService.hashPassword(password), channel.Password)) {
       throw new HttpException('Wrong password', 400);
     }
     const channelUser = await this.getChannelUserByUserId(userId, channelId);
