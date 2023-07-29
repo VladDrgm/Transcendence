@@ -42,7 +42,7 @@ export class UserService {
     await this.userRepository.update(id, { avatarPath: newAvatar });
   }
 
-  async updateUsername(id: number, newUsername: string): Promise<void> {
+  async updateUsername(id: number, newUsername: string): Promise<User> {
     const isUsernameInDb = await this.userRepository.findOneBy({
       username: newUsername,
     });
@@ -58,6 +58,8 @@ export class UserService {
     }
 
     await this.userRepository.update(id, { username: newUsername });
+
+	return await this.userRepository.findOneBy({ userID: id });
   }
 
   async getUsersOrderedByPoints(): Promise<User[]> {
@@ -94,12 +96,14 @@ export class UserService {
     throw new HttpException('Wrong password', HttpStatus.UNAUTHORIZED);
   }
 
-  async updateUserPassword(userId, password): Promise<void> {
+  async updateUserPassword(userId, password): Promise<User> {
     const user = await this.userRepository.findOneBy({ userID: userId });
     if (!user) {
       throw new HttpException('User not found', HttpStatus.NOT_FOUND);
     }
 	const psswd = await this.passwordService.hashPassword(password);
     await this.userRepository.update(userId, { passwordHash: psswd });
+
+	return await this.userRepository.findOneBy({ userID: userId });
   }
 }
