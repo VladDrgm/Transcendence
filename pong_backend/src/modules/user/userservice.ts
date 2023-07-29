@@ -12,7 +12,6 @@ export class UserService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
-	@InjectRepository(PasswordService)
 	private readonly passwordService: PasswordService,
   ) {}
 
@@ -86,7 +85,7 @@ export class UserService {
     const user = await this.userRepository.findOneBy({
       intraUsername: ftUserName,
     });
-    if (this.passwordService.comparePassword(user.passwordHash, await this.passwordService.hashPassword(password))) {
+    if (this.passwordService.comparePassword(user.passwordHash, password)) {
       return user;
     }
     throw new HttpException('Wrong password', HttpStatus.UNAUTHORIZED);

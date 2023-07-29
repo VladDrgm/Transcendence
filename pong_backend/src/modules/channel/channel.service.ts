@@ -22,7 +22,6 @@ export class ChannelService {
     private readonly channelUserRepository: Repository<ChannelUser>,
     @InjectRepository(ChannelBlockedUser)
     private readonly channelBlockedUserRepository: Repository<ChannelBlockedUser>,
-	@InjectRepository(PasswordService)
 	private readonly passwordService: PasswordService,
   ) {}
 
@@ -344,8 +343,8 @@ export class ChannelService {
       throw new HttpException('Channel is not private', 400);
     }
 
-    if (this.passwordService.comparePassword(await this.passwordService.hashPassword(password), channel.Password)) {
-      throw new HttpException('Wrong password', 400);
+    if (await this.passwordService.comparePassword(channel.Password, password) == false) {
+      throw new HttpException('Wrong password.', 400);
     }
     const channelUser = await this.getChannelUserByUserId(userId, channelId);
     if (channelUser) {

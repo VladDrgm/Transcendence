@@ -37,16 +37,16 @@ export class UserController {
     await this.userService.remove(id);
   }
 
-  @Get('login/:id')
-  @ApiOperation({ summary: 'Login a user' })
-  async loginUser(
-    @Param('id', ParseIntPipe) userID: number,
-    @Session() session: Record<string, any>,
-  ) {
-    session.userID = userID;
-    console.log(userID);
-    return 'Loged in with id: ' + userID;
-  }
+//   @Get('login/:id')
+//   @ApiOperation({ summary: 'Login a user' })
+//   async loginUser(
+//     @Param('id', ParseIntPipe) userID: number,
+//     @Session() session: Record<string, any>,
+//   ) {
+//     session.userID = userID;
+//     console.log(userID);
+//     return 'Loged in with id: ' + userID;
+//   }
 
   @Get('user/:id')
   @ApiOperation({ summary: 'Get a user by his id' })
@@ -87,7 +87,7 @@ export class UserController {
     return this.userService.getUsersOrderedByPoints();
   }
 
-  @Post('user/login')
+  @Post('user/signup')
   @ApiOperation({ summary: 'Sign up' })
   async postUserLoggedIn(@Body() userDto: UserDTO): Promise<User> {
     return this.userService.postUserLoggedIn(userDto);
