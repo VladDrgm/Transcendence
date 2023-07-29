@@ -5,8 +5,9 @@ import Profile_MainDiv from './main_div/Profile_MainDiv';
 import Leaderboard_MainDiv from './main_div/Leaderboard_MainDiv';
 // import Chat_MainDiv from './main_div/Chat_MainDiv';
 import Arena_Chat_MainDiv from './main_div/Arena_Chat';
-// import Settings_MainDiv from './main_div/Settings_MainDiv';
+import Settings_MainDiv from './main_div/Settings_MainDiv';
 import { User } from '../interfaces/user.interface';
+import { useUserContext } from './context/UserContext';
 
 export enum main_div_mode_t {
   ERROR_PAGE = -1,
@@ -20,25 +21,26 @@ export enum main_div_mode_t {
 
 interface MainDivProps
 {
-  userID: number;
-  user: User;
-  mode: main_div_mode_t;
-  mode_set: React.Dispatch<React.SetStateAction<main_div_mode_t>>;
+	onLogout: () => void;
+	userID: number;
+	mode: main_div_mode_t;
+	mode_set: React.Dispatch<React.SetStateAction<main_div_mode_t>>;
 }
 
-const MainDivSelector: React.FC<MainDivProps> = ({userID, user, mode, mode_set}) => {
+const MainDivSelector: React.FC<MainDivProps> = ({onLogout, userID, mode, mode_set}) => {
+	const {user} = useUserContext();
 	var userID = user.userID;
   switch (mode){
     case main_div_mode_t.HOME_PAGE:
-      return (<Welcome_MainDiv user={user}/>);
+      return (<Welcome_MainDiv/>);
 	case main_div_mode_t.CHAT:
-		return (<Arena_Chat_MainDiv userID={userID} user={user}/>)
+		return (<Arena_Chat_MainDiv userID={userID}/>)
 	case main_div_mode_t.PROFILE:
 		return (<Profile_MainDiv userID={userID} mode_set={mode_set} />);
 	case main_div_mode_t.LEADERBORAD:
       	return (<Leaderboard_MainDiv/>);
-	// case main_div_mode_t.SETTINGS:
-	// 	return (<Settings_MainDiv userID={userID} mode_set={mode_set} />);
+	case main_div_mode_t.SETTINGS:
+		return (<Settings_MainDiv onLogout={onLogout} userID={userID} mode_set={mode_set} />);
     default:
       mode_set(main_div_mode_t.ERROR_PAGE);
       return (<Error_MainDiv />);
