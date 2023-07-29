@@ -29,6 +29,7 @@ import { RedirectController } from './modules/redirect/redirect.controller';
 import { BlockedService } from './modules/blocked/blocked.service';
 import { BlockedController } from './modules/blocked/blocked.controller';
 import { MatchService } from './modules/match/match.service';
+import { PasswordService } from './modules/password/password.service';
 
 @Module({
   imports: [
@@ -60,6 +61,7 @@ import { MatchService } from './modules/match/match.service';
     FriendService,
     BlockedService,
     MatchService,
+	PasswordService
   ],
 })
 export class AppModule {}
