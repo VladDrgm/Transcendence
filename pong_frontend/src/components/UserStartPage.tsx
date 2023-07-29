@@ -2,16 +2,18 @@ import React, {useState} from 'react';
 import MainDivSelector, {main_div_mode_t} from './MainDivSelector';
 import CSS from 'csstype';
 import { User } from '../interfaces/user.interface';
+import { useUserContext } from './context/UserContext';
 
 
 interface StartPageProps
 {
-  id: number;
-  user: User;
+	onLogout: () => void;
+	id: number;
 }
 
-const UserStartPage: React.FC<StartPageProps> = ({id, user}) => {
-  const [mode, mode_set] = useState<main_div_mode_t>(main_div_mode_t.HOME_PAGE);
+const UserStartPage: React.FC<StartPageProps> = ({onLogout, id}) => {
+	const { user } = useUserContext();
+  	const [mode, mode_set] = useState<main_div_mode_t>(main_div_mode_t.HOME_PAGE);
 
   	const pageStyle: CSS.Properties = {
 		backgroundColor: 'rgba(3, 3, 3, 1)',
@@ -50,7 +52,7 @@ const UserStartPage: React.FC<StartPageProps> = ({id, user}) => {
               <button style={buttonStyle} onClick={() => mode_set(main_div_mode_t.SETTINGS)}>Settings</button>
             </header>
             <div style={{ width: '100%', height: '500px', backgroundColor: 'lightgray' }}>
-              <MainDivSelector userID={id} user={user} mode={mode} mode_set={mode_set} />
+              <MainDivSelector onLogout={onLogout} userID={id} mode={mode} mode_set={mode_set} />
             </div>
           </div>);
 };

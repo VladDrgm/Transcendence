@@ -1,22 +1,25 @@
 import React, {useState, useEffect} from 'react';
 import {main_div_mode_t} from '../MainDivSelector'
-import Private_Div from '../div/private_div';
-import { getMyID } from '../../api/profile.api';
 import CSS from 'csstype';
 import { User } from '../../interfaces/user.interface';
+import { useUserContext } from '../context/UserContext';
 
 interface SettingsMainDivProps
 {
-  userID: number;
-  user: User;
-  mode_set: React.Dispatch<React.SetStateAction<main_div_mode_t>>;
+	onLogout: () => void;
+  	userID: number;
+  	mode_set: React.Dispatch<React.SetStateAction<main_div_mode_t>>;
 }
 
-const Settings_MainDiv: React.FC<SettingsMainDivProps> = ({user, userID, mode_set}) => {
+const Settings_MainDiv: React.FC<SettingsMainDivProps> = ({onLogout, userID, mode_set}) => {
+	const { user, setUser } = useUserContext();
+
 	var fetchAddress = 'http://localhost:3000/user/';
 	var slash = '/'
 	var updatePasswordEndpoint = '/update/password';
 	var updateUsernameEndpoint = '/update/username/';
+
+	const [updatedUser, setUpdatedUser] = useState<User>(user);
 
 	const [showUpdatePasswordSuccessMessage, setShowUpdatePasswordSuccessMessage] = useState(false);
 	const [showUpdateUsernameSuccessMessage, setShowUpdateUsernameSuccessMessage] = useState(false);
@@ -35,6 +38,14 @@ const handleUpdatePassword = async () => {
 		});
 	
 		if (response.ok) {
+			const userObject: User = await response.json(); 
+			setUpdatedUser(userObject);
+
+			setUser(userObject);
+
+			// Update the stored user item in localStorage
+			localStorage.setItem('user', JSON.stringify(userObject));
+
 			setShowUpdatePasswordSuccessMessage(true);
 		} else {
 			throw new Error(response.statusText);
@@ -56,6 +67,14 @@ const handleUpdateUsername = async () => {
 		});
 	
 		if (response.ok) {
+			const userObject: User = await response.json(); 
+			setUpdatedUser(userObject);
+
+			setUser(userObject);
+
+			// Update the stored user item in localStorage
+			localStorage.setItem('user', JSON.stringify(userObject));
+
 			setShowUpdateUsernameSuccessMessage(true);
 		} else {
 			throw new Error(response.statusText);
@@ -67,6 +86,7 @@ const handleUpdateUsername = async () => {
 };
 
 const OnLogoutButtonClick = async () => {
+	onLogout()
 };
 
 const settingsTitleStyle: CSS.Properties = {

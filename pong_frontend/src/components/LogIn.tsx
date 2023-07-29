@@ -237,7 +237,7 @@ const formFieldStyle: CSS.Properties = {
 	
 		if (response.ok) {
 			const loggedInUser: User = await response.json(); 
-			onSignUp(loggedInUser)
+			onSignUp(loggedInUser);
 			await login(loggedInUser.userID);
 			userID_set(loggedInUser.userID);
 			loginDone_set(true);

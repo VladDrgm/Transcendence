@@ -2,6 +2,7 @@ import React, {useState, useEffect} from 'react';
 import LogIn from './components/LogIn';
 import UserStartPage from './components/UserStartPage';
 import { User } from './interfaces/user.interface';
+import { UserContext } from './components/context/UserContext';
 
 const emptyUserObject: User = {
 	username: '',
@@ -50,12 +51,14 @@ const App = () => {
 	  }, []);
  
 return (
-	<div>
-		{user.userID <= 0
-			? (<LogIn onSignUp={storeUserInCookies} userID_set={userID_set} loginDone_set={loged_in_set} />)
-			: (<UserStartPage id={userID} user={user} />)
-		}
-	</div>
+	<UserContext.Provider value={{ user, setUser }}>
+		<div>
+			{user.userID <= 0
+				? (<LogIn onSignUp={storeUserInCookies} userID_set={userID_set} loginDone_set={loged_in_set} />)
+				: (<UserStartPage onLogout={handleLogout} id={userID} />)
+			}
+		</div>
+	</UserContext.Provider>
 )
   
 };
