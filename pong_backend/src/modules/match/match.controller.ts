@@ -42,7 +42,7 @@ export class MatchController {
 
   @Get(':userId/matchHistory')
   @ApiOperation({ summary: 'Get match history of a user' })
-  async getMatchHistory(@Param('userId') userId: number): Promise<MatchHistory[]> {
+  async getMatchHistory(@Param('userId') userId: number): Promise<Match[]> {
 	return this.matchService.getMatchHistory(userId);
   }
 }

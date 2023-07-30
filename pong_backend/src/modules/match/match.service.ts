@@ -52,8 +52,8 @@ export class MatchService {
     await this.matchRepository.delete(matchId);
   }
 
-  async getMatchHistory(userId: number): Promise<MatchHistory[]> {
-	const result =  await this.matchHistoryRepository.find({ where: { Player1Id: userId } || { Player2Id: userId } });
+  async getMatchHistory(userId: number): Promise<Match[]> {
+	const result =  await this.matchRepository.find({ where: { Player1Id: userId } || { Player2Id: userId } });
 	
 	if (result.length == 0) {
 	  throw new HttpException('No match history found', 404);
