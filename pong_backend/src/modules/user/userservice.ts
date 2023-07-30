@@ -1,9 +1,11 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/models/orm_models/user.entity';
 import { In, Repository } from 'typeorm';
 import { UserDTO } from './userDTO';
 import { PasswordService } from '../password/password.service';
+import { createWriteStream } from 'fs';
+import * as path from 'path';
 
 export class UserRepository extends Repository<User> {}
 
@@ -39,7 +41,14 @@ export class UserService {
   }
 
   async updateAvatar(id: number, newAvatar: string): Promise<void> {
-    await this.userRepository.update(id, { avatarPath: newAvatar });
+	const user = await this.userRepository.findOneBy({ userID: id });
+  
+	if (!user) {
+	  throw new NotFoundException('User not found');
+	}
+  
+	user.avatarPath = newAvatar;
+	await this.userRepository.save(user);
   }
 
   async updateUsername(id: number, newUsername: string): Promise<User> {
@@ -106,4 +115,21 @@ export class UserService {
 
 	return await this.userRepository.findOneBy({ userID: userId });
   }
+
+  async saveAvatar(file: any): Promise<string> {
+		const avatarDir = path.join(__dirname, '../public/avatars');
+		const avatarPath = path.join(avatarDir, file.filename);
+		return new Promise<string>((resolve, reject) => {
+		const writeStream = createWriteStream(avatarPath);
+		writeStream.on('finish', () => {
+			resolve(avatarPath);
+		});
+		writeStream.on('error', (error) => {
+			reject(error);
+		});
+		writeStream.write(file.buffer);
+		writeStream.end();
+		});
+	}
+
 }
