@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Match } from 'src/models/orm_models/match.entity';
@@ -53,6 +53,12 @@ export class MatchService {
   }
 
   async getMatchHistory(userId: number): Promise<MatchHistory[]> {
-	return this.matchHistoryRepository.find({ where: { Player1Id: userId } || { Player2Id: userId } });
+	const result =  await this.matchHistoryRepository.find({ where: { Player1Id: userId } || { Player2Id: userId } });
+	
+	if (result.length == 0) {
+	  throw new HttpException('No match history found', 404);
+	}
+
+	return result;
   }
 }
