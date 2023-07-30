@@ -1,4 +1,4 @@
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import {
   Controller,
   Get,
@@ -9,10 +9,14 @@ import {
   Delete,
   Session,
   ParseIntPipe,
+  UseInterceptors,
+  UploadedFile,
+  BadRequestException,
 } from '@nestjs/common';
 import { UserService } from './userservice';
 import { User } from 'src/models/orm_models/user.entity';
 import { UserDTO } from './userDTO';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @ApiTags('User')
 @Controller('user')
@@ -63,13 +67,22 @@ export class UserController {
     await this.userService.updatePoints(id, points);
   }
 
-  @Put(':id/update/avatar/:avatar')
-  @ApiOperation({ summary: 'Update the profile avatar of a user' })
+  @Put(':id/update/avatar')
+  @UseInterceptors(FileInterceptor('avatar'))
   async updateAvatar(
-    @Param('id', ParseIntPipe) id: number,
-    @Param('avatar') newAvatar: string,
+    @UploadedFile() file,
+    @Param('id') id: number,
   ): Promise<void> {
-    await this.userService.updateAvatar(id, newAvatar);
+    if (!file) {
+      throw new BadRequestException('No file uploaded');
+    }
+
+    // Save the image and get the URL or path
+    const newAvatarPath = await this.userService.saveAvatar(file);
+	// const newAvatarPath = "test";
+
+    // Update the user's avatarPath with the new URL or path
+    await this.userService.updateAvatar(id, newAvatarPath);
   }
 
   @Put(':id/update/username/:username')
