@@ -51,4 +51,8 @@ export class MatchService {
   async deleteMatch(matchId: number): Promise<void> {
     await this.matchRepository.delete(matchId);
   }
+
+  async getMatchHistory(userId: number): Promise<MatchHistory[]> {
+	return this.matchHistoryRepository.find({ where: { Player1Id: userId } || { Player2Id: userId } });
+  }
 }
