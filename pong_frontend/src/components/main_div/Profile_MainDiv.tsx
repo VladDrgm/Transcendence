@@ -39,7 +39,7 @@ const Profile_MainDiv: React.FC<ProfileProps> = ({userID, mode_set}) => {
                   <div>
                   <p>Welcome {userID}. This is your profile on server {idTxt}. </p> 
                   </div>
-                  <Private_Div/>
+                  <Private_Div userID={userID}/>
                   <hr/>
                   <FriendList userID={userID} friend_set={setFid}/>
                 </div>)

@@ -6,6 +6,7 @@ import Leaderboard_MainDiv from './main_div/Leaderboard_MainDiv';
 // import Chat_MainDiv from './main_div/Chat_MainDiv';
 import Arena_Chat_MainDiv from './main_div/Arena_Chat';
 import Settings_MainDiv from './main_div/Settings_MainDiv';
+import MatchHistory_MainDiv from './main_div/MatchHistory_MainDiv';
 import { User } from '../interfaces/user.interface';
 import { useUserContext } from './context/UserContext';
 
@@ -16,6 +17,7 @@ export enum main_div_mode_t {
   GAME = 3,
   PROFILE = 4,
   SETTINGS = 5,
+  HISTORY = 6,
   LEADERBORAD = 8,
 }
 
@@ -39,6 +41,8 @@ const MainDivSelector: React.FC<MainDivProps> = ({onLogout, userID, mode, mode_s
 		return (<Profile_MainDiv userID={userID} mode_set={mode_set} />);
 	case main_div_mode_t.LEADERBORAD:
       	return (<Leaderboard_MainDiv/>);
+  case main_div_mode_t.HISTORY:
+        return (<MatchHistory_MainDiv userID={userID}/>);
 	case main_div_mode_t.SETTINGS:
 		return (<Settings_MainDiv onLogout={onLogout} userID={userID} mode_set={mode_set} />);
     default:

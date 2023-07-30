@@ -1,7 +1,7 @@
 export interface PrivateProfile {
     userId: number;
     nickname: string;
-    avatar: string;
+    avatarPath: string;
     wins: number;
     losses: number;
     points: number;

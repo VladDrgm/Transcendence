@@ -4,14 +4,17 @@ import { getPrivateProfile } from '../../api/profile.api';
 import defaultProfile from '../../default_profiile.jpg';
 import { serialize } from 'v8';
 
+interface PrivateDivProps
+{
+  userID: number;
+}
 
-
-const Private_Div = () => {
+const Private_Div: React.FC<PrivateDivProps> = ({userID}) => {
   const [user, setUser] = useState<PrivateProfile>();
 
   const getData = async () => {
     try{
-      const myProf = await getPrivateProfile();
+      const myProf = await getPrivateProfile(userID);
       setUser(myProf);
     }
     catch (error) {
@@ -47,7 +50,7 @@ const Private_Div = () => {
       if (user != undefined)
       {
         var temp:PrivateProfile = user;
-        temp.avatar = imageUrl;
+        temp.avatarPath = imageUrl;
         setUser(temp);
       }
       
@@ -66,11 +69,11 @@ const Private_Div = () => {
       <div>
         <div>
           <h2>{user.nickname}</h2>
-          {(user.avatar.substring(0, 5) != "https") && (
+          {(user.avatarPath.substring(0, 5) != "https") && (
             <img src={defaultProfile} alt="default profile" width="400" height="300"/>
           )}
-          {(user.avatar.substring(0, 5) === "https") && (
-            <img src={user.avatar} alt={user.nickname} width="400" height="300"/>
+          {(user.avatarPath.substring(0, 5) === "https") && (
+            <img src={user.avatarPath} alt={user.nickname} width="400" height="300"/>
           )}
           <div>
             <input type="file" accept="image/*" onChange={handleImageChange} />
