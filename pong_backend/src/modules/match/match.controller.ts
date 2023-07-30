@@ -3,6 +3,7 @@ import { MatchService } from './match.service';
 import { Match } from 'src/models/orm_models/match.entity';
 import { MatchDTO } from './matchDTO';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { MatchHistory } from 'src/models/orm_models/matchHistory.entity';
 
 @ApiTags('Match')
 @Controller('match')
@@ -37,5 +38,11 @@ export class MatchController {
   @ApiOperation({ summary: 'Delete a match by matchId' })
   async deleteMatch(@Param('id') matchId: number): Promise<void> {
     return this.matchService.deleteMatch(matchId);
+  }
+
+  @Get(':userId/matchHistory')
+  @ApiOperation({ summary: 'Get match history of a user' })
+  async getMatchHistory(@Param('userId') userId: number): Promise<MatchHistory[]> {
+	return this.matchService.getMatchHistory(userId);
   }
 }
