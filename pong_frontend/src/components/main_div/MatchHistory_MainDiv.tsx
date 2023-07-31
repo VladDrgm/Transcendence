@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import Pagination from '../div/pagination';
 import { MatchHistoryItem } from '../../interfaces/matchHistory.interface';
+import { UsernameItem } from '../../interfaces/username_list.interface';
 import { getGlobalMatchHistory, getPersonalMatchHistory } from '../../api/matchHistory.api';
+import { getUserList } from '../../api/user_list.api';
 
 const ITEMS_PER_PAGE = 3;
 
@@ -18,13 +20,17 @@ interface MatchHistoryProps
 
 const MatchHistory_MainDiv: React.FC<MatchHistoryProps>  = ({userID}) => {
   const [jsonData, setJsonData] = useState<MatchHistoryItem[]>([]);
+  const [usernameList, setusernameList] = useState<UsernameItem[]>([]);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [historyType, setHistoryType]  = useState<number>(matchHistoryType_t.GLOBAL);
 
   const getData = async () => {
+    const usenames = await getUserList();
+    setusernameList(usenames);
     if (historyType === matchHistoryType_t.PERSONAL)
     {
         const matchData = await getPersonalMatchHistory(userID);
+       
         if (matchData.length === 0)
         {
           setJsonData([]);
@@ -57,6 +63,10 @@ const MatchHistory_MainDiv: React.FC<MatchHistoryProps>  = ({userID}) => {
     getData();
   }, [historyType]);
 
+  const findUsername = (idToFind: number): string | undefined => {
+    return usernameList.find((user) => user.userID === idToFind)?.username;
+  };
+
   // Split the data into multiple pages
   const totalPages = Math.ceil(jsonData.length / ITEMS_PER_PAGE);
   const startIdx = (currentPage - 1) * ITEMS_PER_PAGE;
@@ -75,9 +85,9 @@ const MatchHistory_MainDiv: React.FC<MatchHistoryProps>  = ({userID}) => {
       {currentPageData.map((item) => (
         <div key={item.MatchId}>
             <p>Match: {item.GameType}</p>
-            <p>{item.Player1Id} vs {item.Player2Id}</p>
+            <p>{findUsername(item.Player1Id)} vs {findUsername(item.Player2Id)}</p>
             <p>Score: {item.Player1Points} : {item.Player2Points}</p>
-            <p>Winner: {item.WinnerId} by {item.WinningCondition}</p>
+            <p>Winner: {findUsername(item.WinnerId)} by {item.WinningCondition}</p>
         </div>
       ))}
 
