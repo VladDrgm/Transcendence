@@ -33,7 +33,13 @@ const ChatBody_Div: React.FC<ChatBodyProps> = ({
         // setLoadingChatBody(true);
       )
     );
-  } else if ((isUserInChannel || !props.currentChat.isChannel) || (isAdmin && isAdminResolved) || props.connectedRooms.includes(props.currentChat.chatName.toString())) {
+  } else if(props.currentChat.Channel.Type === "private"){
+    return (
+      <TextBox>
+          Private
+        </TextBox>
+  );
+  }  else if ((isUserInChannel || !props.currentChat.isChannel) || (isAdmin && isAdminResolved) || props.connectedRooms.includes(props.currentChat.chatName.toString())) {
     return (
       loadingChatBody ? (
         <div>Loading Chat...</div> // Show a loading spinner or placeholder
@@ -42,7 +48,7 @@ const ChatBody_Div: React.FC<ChatBodyProps> = ({
           {messages.map(renderMessages)}
         </Messages>)
       );
-  } else {
+  }  else {
     return (
       loadingChatBody ? (
         <div>Loading Chat...</div> // Show a loading spinner or placeholder
