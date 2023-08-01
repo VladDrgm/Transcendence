@@ -29,28 +29,27 @@ const MatchHistory_MainDiv: React.FC<MatchHistoryProps>  = ({userID}) => {
     setusernameList(usenames);
     if (historyType === matchHistoryType_t.PERSONAL)
     {
-        const matchData = await getPersonalMatchHistory(userID);
-       
-        if (matchData.length === 0)
+        try
+        {  
+          const matchData = await getPersonalMatchHistory(userID)
+          setJsonData(matchData);
+        }
+        catch(error)
         {
           setJsonData([]);
-        }
-        else
-        {
-          setJsonData(matchData);
         }
     }
     else if (historyType === matchHistoryType_t.GLOBAL)
-    {
+    {   
+      try
+      {  
         const matchData = await getGlobalMatchHistory();
-        if (matchData.length === 0)
-        {
-          setJsonData([]);
-        }
-        else
-        {
-          setJsonData(matchData);
-        }
+        setJsonData(matchData);
+      }
+      catch(error)
+      {
+        setJsonData([]);
+      }
     }
     else
     {
@@ -69,9 +68,28 @@ const MatchHistory_MainDiv: React.FC<MatchHistoryProps>  = ({userID}) => {
 
   // Split the data into multiple pages
   const totalPages = Math.ceil(jsonData.length / ITEMS_PER_PAGE);
-  const startIdx = (currentPage - 1) * ITEMS_PER_PAGE;
-  const endIdx = startIdx + ITEMS_PER_PAGE;
-  const currentPageData = jsonData.slice(startIdx, endIdx);
+  var startIdx;
+  var endIdx;
+  var currentPageData: MatchHistoryItem[];
+  if (totalPages === 0)
+  {
+    startIdx = 0;
+    endIdx = 0;
+    currentPageData = [];
+  }
+  else
+  {
+    startIdx = (currentPage - 1) * ITEMS_PER_PAGE;
+    endIdx = startIdx + ITEMS_PER_PAGE;
+    try
+    {
+      currentPageData = jsonData.slice(startIdx, endIdx);
+    }
+    catch(error)
+    {
+      currentPageData = [];
+    }
+  }
 
   // Handle page change
   const handlePageChange = (page: number) => {
