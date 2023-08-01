@@ -1,21 +1,48 @@
-import React, { ChangeEvent } from "react";
+import React, { useState, useEffect } from "react";
 
 interface FormProps {
-	registerPlayerOne: () => void;
-	registerPlayerTwo: () => void;
-	registerAudience: () => void;
+	joinQueue: () => void;
 	startGame: () => void;
+	gameSession: {
+		playerOne: string | null;
+		playerTwo: string | null;
+	};
+	isConnected: boolean;
 }
 
-const Form: React.FC<FormProps> = (props) => {
-  return (
-    <form>
-      <button onClick={props.registerPlayerOne}>Register as Player 1</button>
-	  <button onClick={props.registerPlayerTwo}>Register as Player 2</button>
-	  <button onClick={props.registerAudience}>Register as Audience</button>
-	  <button onClick={props.startGame}>Start the Game!</button>
-    </form>
-  );
+const GameForm: React.FC<FormProps> = (props) => {
+	const [gameSession, setGameSession] = useState<{
+		playerOne: string | null;
+		playerTwo: string | null;
+	}>(props.gameSession);
+
+	useEffect(() => {
+		// Update the gameSession state whenever props.gameSession changes
+		setGameSession(props.gameSession);
+	}, [props.gameSession]);
+
+	const handleStartGameClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+		event.preventDefault();
+		let { playerOne, playerTwo } = props.gameSession;
+
+		if (playerOne && playerTwo) {
+			// Both Player 1 and Player 2 are assigned and valid
+			props.startGame();
+		} else if (!playerTwo) {
+			// Player 2 has not joined yet
+			alert("Session not ready.");
+		} 
+	};
+
+	return (
+		<>
+			<form>
+				<button onClick={props.joinQueue}>Join Game</button>
+				<button onClick={handleStartGameClick}>Start the Game!</button>
+			</form>
+			<p>Controls: W - UP, S - Down, R - Change Map, P - PowerUp: Increase Gravity!</p>
+		</>
+	);
 };
 
-export default Form;
+export default GameForm;
