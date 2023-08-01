@@ -1,8 +1,11 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/models/orm_models/user.entity';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { UserDTO } from './userDTO';
+import { PasswordService } from '../password/password.service';
+import { createWriteStream } from 'fs';
+import * as path from 'path';
 
 export class UserRepository extends Repository<User> {}
 
@@ -11,6 +14,7 @@ export class UserService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+	private readonly passwordService: PasswordService,
   ) {}
 
   async findAll(): Promise<User[]> {
@@ -37,15 +41,25 @@ export class UserService {
   }
 
   async updateAvatar(id: number, newAvatar: string): Promise<void> {
-    await this.userRepository.update(id, { avatarPath: newAvatar });
+	const user = await this.userRepository.findOneBy({ userID: id });
+  
+	if (!user) {
+	  throw new NotFoundException('User not found');
+	}
+  
+	user.avatarPath = newAvatar;
+	await this.userRepository.save(user);
   }
 
-  async updateUsername(id: number, newUsername: string): Promise<void> {
+  async updateUsername(id: number, newUsername: string): Promise<User> {
     const isUsernameInDb = await this.userRepository.findOneBy({
       username: newUsername,
     });
+	const isIntraUsernameInDb = await this.userRepository.findOneBy({
+	  intraUsername: newUsername,
+	});
 
-    if (isUsernameInDb) {
+    if (isUsernameInDb || isIntraUsernameInDb) {
       throw new HttpException(
         'Username already exists. Please choose a different username.',
         HttpStatus.UNAUTHORIZED,
@@ -53,6 +67,8 @@ export class UserService {
     }
 
     await this.userRepository.update(id, { username: newUsername });
+
+	return await this.userRepository.findOneBy({ userID: id });
   }
 
   async getUsersOrderedByPoints(): Promise<User[]> {
@@ -64,18 +80,10 @@ export class UserService {
     });
   }
 
-  async getUserLoggedIn(user: UserDTO): Promise<User> {
-    return this.userRepository
-      .createQueryBuilder('user')
-      .where('user.username = :username', { username: user.username })
-      .andWhere('user.password = :password', { password: user.password })
-      .getOne();
-  }
-
   async postUserLoggedIn(userDto: UserDTO): Promise<User> {
     const user = new User();
     user.username = userDto.username;
-    user.passwordHash = userDto.password;
+    user.passwordHash = await this.passwordService.hashPassword(userDto.password);
     user.avatarPath = userDto.avatarPath;
     user.points = userDto.points;
     user.status = userDto.status;
@@ -91,18 +99,37 @@ export class UserService {
     const user = await this.userRepository.findOneBy({
       intraUsername: ftUserName,
     });
-    if (user.passwordHash === password) {
+    if (this.passwordService.comparePassword(user.passwordHash, password)) {
       return user;
     }
     throw new HttpException('Wrong password', HttpStatus.UNAUTHORIZED);
   }
 
-  async updateUserPassword(userId, password): Promise<void> {
+  async updateUserPassword(userId, password): Promise<User> {
     const user = await this.userRepository.findOneBy({ userID: userId });
     if (!user) {
       throw new HttpException('User not found', HttpStatus.NOT_FOUND);
     }
+	const psswd = await this.passwordService.hashPassword(password);
+    await this.userRepository.update(userId, { passwordHash: psswd });
 
-    await this.userRepository.update(userId, { passwordHash: password });
+	return await this.userRepository.findOneBy({ userID: userId });
   }
+
+  async saveAvatar(file: any): Promise<string> {
+		const avatarDir = path.join(__dirname, '../public/avatars');
+		const avatarPath = path.join(avatarDir, file.filename);
+		return new Promise<string>((resolve, reject) => {
+		const writeStream = createWriteStream(avatarPath);
+		writeStream.on('finish', () => {
+			resolve(avatarPath);
+		});
+		writeStream.on('error', (error) => {
+			reject(error);
+		});
+		writeStream.write(file.buffer);
+		writeStream.end();
+		});
+	}
+
 }

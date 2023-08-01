@@ -1,4 +1,4 @@
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import {
   Controller,
   Get,
@@ -9,10 +9,14 @@ import {
   Delete,
   Session,
   ParseIntPipe,
+  UseInterceptors,
+  UploadedFile,
+  BadRequestException,
 } from '@nestjs/common';
 import { UserService } from './userservice';
 import { User } from 'src/models/orm_models/user.entity';
 import { UserDTO } from './userDTO';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @ApiTags('User')
 @Controller('user')
@@ -37,16 +41,16 @@ export class UserController {
     await this.userService.remove(id);
   }
 
-  @Get('login/:id')
-  @ApiOperation({ summary: 'Login a user' })
-  async loginUser(
-    @Param('id', ParseIntPipe) userID: number,
-    @Session() session: Record<string, any>,
-  ) {
-    session.userID = userID;
-    console.log(userID);
-    return 'Loged in with id: ' + userID;
-  }
+//   @Get('login/:id')
+//   @ApiOperation({ summary: 'Login a user' })
+//   async loginUser(
+//     @Param('id', ParseIntPipe) userID: number,
+//     @Session() session: Record<string, any>,
+//   ) {
+//     session.userID = userID;
+//     console.log(userID);
+//     return 'Loged in with id: ' + userID;
+//   }
 
   @Get('user/:id')
   @ApiOperation({ summary: 'Get a user by his id' })
@@ -63,13 +67,22 @@ export class UserController {
     await this.userService.updatePoints(id, points);
   }
 
-  @Put(':id/update/avatar/:avatar')
-  @ApiOperation({ summary: 'Update the profile avatar of a user' })
+  @Put(':id/update/avatar')
+  @UseInterceptors(FileInterceptor('avatar'))
   async updateAvatar(
-    @Param('id', ParseIntPipe) id: number,
-    @Param('avatar') newAvatar: string,
+    @UploadedFile() file,
+    @Param('id') id: number,
   ): Promise<void> {
-    await this.userService.updateAvatar(id, newAvatar);
+    if (!file) {
+      throw new BadRequestException('No file uploaded');
+    }
+
+    // Save the image and get the URL or path
+    const newAvatarPath = await this.userService.saveAvatar(file);
+	// const newAvatarPath = "test";
+
+    // Update the user's avatarPath with the new URL or path
+    await this.userService.updateAvatar(id, newAvatarPath);
   }
 
   @Put(':id/update/username/:username')
@@ -77,8 +90,8 @@ export class UserController {
   async updateUsername(
     @Param('id', ParseIntPipe) id: number,
     @Param('username') newUsername: string,
-  ): Promise<void> {
-    await this.userService.updateUsername(id, newUsername);
+  ): Promise<User> {
+    return await this.userService.updateUsername(id, newUsername);
   }
 
   @Get('users/points')
@@ -87,13 +100,7 @@ export class UserController {
     return this.userService.getUsersOrderedByPoints();
   }
 
-  @Get('user/login')
-  @ApiOperation({ summary: 'Get the user logged in' })
-  async getUserLoggedIn(@Body() user: UserDTO): Promise<User> {
-    return this.userService.getUserLoggedIn(user);
-  }
-
-  @Post('user/login')
+  @Post('user/signup')
   @ApiOperation({ summary: 'Sign up' })
   async postUserLoggedIn(@Body() userDto: UserDTO): Promise<User> {
     return this.userService.postUserLoggedIn(userDto);
@@ -113,7 +120,7 @@ export class UserController {
   async updatePassword(
     @Param('id', ParseIntPipe) id: number,
     @Param('password') password: string,
-  ): Promise<void> {
-    await this.userService.updateUserPassword(id, password);
+  ): Promise<User> {
+    return await this.userService.updateUserPassword(id, password);
   }
 }

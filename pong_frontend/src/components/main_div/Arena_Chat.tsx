@@ -10,12 +10,12 @@ import {fetchChannelNames, copyChannelByName} from "../div/channel_utils"
 import {postChannelUser, deleteChannelUser} from "../../api/channel/channel_user.api"
 import { Channel } from '../../interfaces/channel.interface';
 import { User } from '../../interfaces/user.interface';
+import { useUserContext } from '../context/UserContext';
 // import { Channel } from 'diagnostics_channel';
 
 interface ArenaDivProps
 {
   userID: number;
-  user: User;
 }
 
 type WritableDraft<T> = Draft<T>;
@@ -50,7 +50,8 @@ type CurrentChat = {
 	Channel: Channel;
 };
 
-const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID, user}) => {
+const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID}) => {
+	const { user } = useUserContext()
 	/* chat utilities */
 	const [username, setUsername] = useState("");
 	const [connected, setConnected] = useState(false);

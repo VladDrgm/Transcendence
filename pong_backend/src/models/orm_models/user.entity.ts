@@ -18,6 +18,7 @@ export class User {
   username: string;
 
   @Column({
+	nullable: true,
     name: 'avatar',
     type: 'text',
   })

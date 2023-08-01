@@ -8,11 +8,12 @@ import { ProfileService } from '../profile/profile.service';
 import { UserController } from './user.controller';
 import { SharedSession } from '../session/shared-session.service';
 import { UserService } from './userservice';
+import { PasswordService } from '../password/password.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([User, Blocked, Friend])],
   controllers: [ProfileController, UserController],
-  providers: [ProfileService, SharedSession, UserService],
+  providers: [ProfileService, SharedSession, UserService, PasswordService],
   exports: [UserService],
 })
 export class UsersModule {}
