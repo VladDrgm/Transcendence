@@ -1,13 +1,9 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { config } from 'dotenv';
 import * as session from 'express-session';
 import { SessionOptions } from 'express-session';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import './socket-server';
-import { ValidationPipe } from '@nestjs/common';
-
-config();
+import { ValidationPipe } from '@nestjs/common/pipes/validation.pipe';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -37,6 +33,7 @@ async function bootstrap() {
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
+
   app.useGlobalPipes(new ValidationPipe({ transform: true }));
   await app.listen(process.env.PORT);
   console.log('Server is running on port ' + process.env.PORT + '.');

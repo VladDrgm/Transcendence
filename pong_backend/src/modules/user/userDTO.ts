@@ -2,7 +2,6 @@ import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class UserDTO {
-
   @ApiProperty({ example: 'Username', description: 'The username of the user' })
   @IsString()
   @IsNotEmpty()
@@ -13,7 +12,10 @@ export class UserDTO {
   @IsNotEmpty()
   password: string;
 
-  @ApiProperty({ example: 'Avatar path', description: 'The avatar path of the user' })
+  @ApiProperty({
+    example: 'Avatar path',
+    description: 'The avatar path of the user',
+  })
   @IsString()
   @IsOptional()
   avatarPath: string;
@@ -28,12 +30,18 @@ export class UserDTO {
   @IsNotEmpty()
   status: string;
 
-  @ApiProperty({ example: 'Achievements', description: 'The achievements of the user' })
+  @ApiProperty({
+    example: 'Achievements',
+    description: 'The achievements of the user',
+  })
   @IsString()
   @IsOptional()
   achievementsCSV: string;
 
-  @ApiProperty({ example: '42IntraUsername', description: 'The 42IntraUsername of the user' })
+  @ApiProperty({
+    example: '42IntraUsername',
+    description: 'The 42IntraUsername of the user',
+  })
   @IsString()
   @IsOptional()
   intraUsername: string;

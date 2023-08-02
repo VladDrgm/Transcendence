@@ -53,15 +53,19 @@ export class MatchService {
   }
 
   async getMatchHistory(userId: number): Promise<Match[]> {
-	const result1 =  await this.matchRepository.find({ where: { Player1Id: userId } });
-	const result2 = await this.matchRepository.find({ where: { Player2Id: userId } });
+    const result1 = await this.matchRepository.find({
+      where: { Player1Id: userId },
+    });
+    const result2 = await this.matchRepository.find({
+      where: { Player2Id: userId },
+    });
 
-	const result = result1.concat(result2);
-	
-	if (result.length == 0) {
-	  throw new HttpException('No match history found', 404);
-	}
+    const result = result1.concat(result2);
 
-	return result;
+    if (result.length == 0) {
+      throw new HttpException('No match history found', 404);
+    }
+
+    return result;
   }
 }
