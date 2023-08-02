@@ -2,6 +2,7 @@ import { Dispatch, SetStateAction } from 'react';
 import { Channel, ChatProps } from '../../interfaces/channel.interface';
 import { modBannedUser, addAdmin, CreateChannel, addMuteUser} from './channel_utils';
 import { deleteChannelPassword, postChannelUser, postMuteUser, postPrivateChannelUser, putChannelPassword, putChannelType } from '../../api/channel/channel_user.api';
+import { getChannel } from '../../api/channel/channel.api';
 
 export function banUserPopUp(props: &ChatProps) {
     
@@ -276,7 +277,8 @@ export async function popUpJoinPrivateChannel(props: ChatProps){
     createButton.addEventListener('click', async function() {
         // var channelName = channelNameInput.value;
         var password = channelPasswordInput.value;
-        const TargetChannel = await postPrivateChannelUser(props.userID,props.currentChat.Channel.ChannelId, password);
+        postPrivateChannelUser(props.userID,props.currentChat.Channel.ChannelId, password);
+        // props.currentChat = await getChannel(props.currentChat.Channel.ChannelId);
         // if (TargetChannel){
         //     //adding a channel to the list of shown channels
         //     setPrivateChannels((prevChannels) => [...prevChannels, TargetChannel]);

@@ -30,22 +30,8 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 	const [channelPanelLoaded, setChannelPanelLoaded] = useState(false);
   	const [chatBodyLoaded, setChatBodyLoaded] = useState(false);
 
-	// let body: JSX.Element | null = null;
 	const messages = useMemo(() =>
 		props.messages || [], [props.messages])
-	// if (!props.currentChat.isChannel || props.connectedRooms.includes(props.currentChat.chatName.toString())) {
-	// 	body = (
-	// 	<Messages>
-	// 		{messages.map(renderMessages)}
-	// 	</Messages>
-	// 	);
-	// } else {
-	// 	body = (
-	// 	<button onClick={() => props.joinRoom(props.currentChat.chatName)}>
-	// 		Join {props.currentChat.chatName}
-	// 	</button>
-	// 	);
-	// }
 	const handleUserInChannelCheck = useCallback (async () => {
 		try {
 			if (!props.currentChat.isResolved){
@@ -80,37 +66,6 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 			messages={messages}
 			loadingChatBody = {loadingChatBody}
 		/>);
-		// if (isUserInChannelBlocked) {
-		// 	setBody ( 
-		// 		loadingChatBody ? (
-		// 		<div>Loading Chat...</div> // Show a loading spinner or placeholder
-		// 		) : (
-		// 			<TextBox>
-		// 				You are blocked from using this Channel.
-		// 			</TextBox>
-		// 			// setLoadingChatBody(true);
-		// 		)
-		// 	);
-		// } else if ((isUserInChannel || !props.currentChat.isChannel) || (isAdmin && isAdminResolved) || props.connectedRooms.includes(props.currentChat.chatName.toString())) {
-		// 	setBody (
-		// 		loadingChatBody ? (
-		// 			<div>Loading Chat...</div> // Show a loading spinner or placeholder
-		// 			) : (
-		// 			<Messages>
-		// 				{messages.map(renderMessages)}
-		// 			</Messages>)
-		// 		);
-		// } else {
-		// 	setBody (
-		// 		loadingChatBody ? (
-		// 			<div>Loading Chat...</div> // Show a loading spinner or placeholder
-		// 			) : (
-		// 			<button onClick={() => props.joinRoom(props.currentChat.chatName)}>
-		// 				Join {props.currentChat.chatName}
-		// 			</button>
-		// 			)
-		// 	);
-		// }
 		setChatBodyLoaded(true);
 	}, [isUserInChannel, isUserInChannelBlocked, loadingChatBody, messages, props, isAdmin]);
 
