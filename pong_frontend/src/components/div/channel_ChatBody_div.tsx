@@ -2,6 +2,7 @@ import React, { KeyboardEvent } from 'react';
 import { ChatProps, Message } from '../../interfaces/channel.interface';
 import { renderMessages } from './chat_utils';
 import { TextBox, Messages } from '../main_div/Chat_MainDiv';
+import { popUpJoinPrivateChannel } from './channel_popups';
 
 interface ChatBodyProps {
   props: ChatProps;
@@ -34,10 +35,25 @@ const ChatBody_Div: React.FC<ChatBodyProps> = ({
       )
     );
   } else if(props.currentChat.Channel.Type === "private"){
+    if (isUserInChannel){
+      return(
+        loadingChatBody ? (
+          <div>Loading Chat...</div> // Show a loading spinner or placeholder
+          ) :(  
+          <Messages>
+            {messages.map(renderMessages)}
+          </Messages>       
+        )
+      )
+    }
     return (
-      <TextBox>
-          Private
-        </TextBox>
+      loadingChatBody ? (
+        <div>Loading Chat...</div> // Show a loading spinner or placeholder
+        ) : (
+        <button onClick={() => popUpJoinPrivateChannel(props)}>
+          Join private Channel {props.currentChat.chatName}
+        </button>
+        )
   );
   }  else if ((isUserInChannel || !props.currentChat.isChannel) || (isAdmin && isAdminResolved) || props.connectedRooms.includes(props.currentChat.chatName.toString())) {
     return (

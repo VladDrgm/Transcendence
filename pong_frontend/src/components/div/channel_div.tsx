@@ -44,9 +44,9 @@ const Channel_Div: React.FC<ChatProps> = (props) => {
             <button onClick={() => popUpCreateChannel(props)}>
 			Create Channel
 		    </button>
-            <button onClick={() => popUpJoinPrivateChannel(setPrivateChannels)}>
+            {/* <button onClick={() => popUpJoinPrivateChannel(props)}>
 			Join private Channel
-		    </button>
+		    </button> */}
             <h3>Public Channels</h3>
             {publicChannels.length > 0 ? publicChannels.map((room) => renderRooms(props, room)) : 'no public Channels'}
             <h3>Private Channels</h3>

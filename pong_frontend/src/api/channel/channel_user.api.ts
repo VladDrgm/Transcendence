@@ -89,9 +89,16 @@ export function postPrivateChannelUser(userId: number, channelId: number, passwo
     body:  ''
   };
   fetch(fetchAddress + 'channel/' + userId +'/' + channelId + '/' + password +  '/password', requestOptions)
-    .then(response => response.json())
-    .then(data => {console.log("ChannelUser with UserId :" + userId +" added to private Channel:", data);})
-    .catch(error => {console.log("Error adding ChannelUser with UserId :" + userId +" to private Channel:", error);});
+  .then(response => {
+    if (response.ok) {
+      console.log("ChannelUser with UserId :" + userId +" added to private Channel");
+    } else {
+      console.error("Error adding ChannelUser with UserId :" + userId +":", response.status);
+    }
+  })
+  .catch(error => {
+    console.error("Error adding ChannelUser with UserId :" + userId +":", error);
+  });
 }
   
   
