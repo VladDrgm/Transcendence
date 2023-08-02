@@ -1,68 +1,20 @@
 import React, { FC,KeyboardEvent, useEffect, useState, useCallback, useMemo} from "react";
 import styled from "styled-components";
+import { renderUser, renderMessages, BodyContainer, ChannelInfo, ChatPanel, Container, Messages, SideBar, TextBox } from "../div/chat_utils"; 
 import { Channel } from '../../interfaces/channel.interface';
 import Channel_Div from '../div/channel_div';
 import { mapChannel } from "../div/channel_utils";
 import {addAdminPopUp, /*blockUserPopUp, */ banUserPopUp, kickUserPopUp, muteUserPopUp } from '../div/channel_popups';
-import { renderUser, renderMessages } from "../div/chat_utils"; 
 
 // import { ChatName } from "./Arena_Chat";
 import { deleteChannel} from '../../api/channel/channel.api';
 import { getIsAdmin } from "../../api/channel/channel_admin.api";
-import { getChannelUser, getChannelBlockedUser, getIsMuted } from "../../api/channel/channel_user.api";
+import { getChannelUser, getChannelBlockedUser } from "../../api/channel/channel_user.api";
 import  {ChatProps, Message} from '../../interfaces/channel.interface';
 import { User } from "../../interfaces/user.interface";
 import { ChannelAdmin_Buttons_Div, ChannelOwner_Buttons_Div } from "../div/channel_buttons_div";
 import { getOwnerId } from "../../api/channel/channel_owner.api";
-import ChatTextBox from "../div/channel_ChatTextBox_div";
-import ChatBody_Div from "../div/channel_ChatBody_div";
 
-const Container = styled.div`
-  height: 100vh;
-  width: 100%;
-  display: flex;
-`;
-
-const SideBar = styled.div`
-  height: 100%;
-  width: 15%;
-  border-right: 1px solid black;
-`;
-
-export const ChatPanel = styled.div`
-  height: 50%;
-  width: 85%;
-  display: flex;
-  flex-direction: column;
-`;
-
-const BodyContainer = styled.div`
-  width: 100%;
-  height: 75%;
-  overflow: scroll;
-  border-bottom: 1px solid black;
-`;
-
-export const TextBox = styled.textarea`
-  height: 15%;
-  width: 100%;
-`;
-
-export const ChannelInfo = styled.div`
-  height: 10%;
-  width: 100%;
-  border-bottom: 1px solid black;
-`;
-
-export const Row = styled.div`
-  cursor: pointer;
-`;
-
-export const Messages = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-`;
 
 const Chat_MainDiv: FC<ChatProps> = (props) => {
 	const [isAdmin, setIsAdmin] = useState(false);
@@ -70,7 +22,6 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 	const [isOwner, setIsOwner] = useState(false);
 	const [isUserInChannel, setIsUserInChannel] = useState(false);
 	const [isUserInChannelBlocked, setIsUserInChannelBlocked] = useState(false);
-	const [isUserMuted, setIsUserMuted] = useState(false);
 	const [body, setBody] = useState<JSX.Element | null>(null);
 	const [channelpanel, setChannelpanel] = useState<JSX.Element | null>(null);
 	const [loadingChannelpanel, setLoadingChannelpanel] = useState(true);
@@ -78,9 +29,22 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 	const [channelPanelLoaded, setChannelPanelLoaded] = useState(false);
   	const [chatBodyLoaded, setChatBodyLoaded] = useState(false);
 
+	// let body: JSX.Element | null = null;
 	const messages = useMemo(() =>
 		props.messages || [], [props.messages])
-
+	// if (!props.currentChat.isChannel || props.connectedRooms.includes(props.currentChat.chatName.toString())) {
+	// 	body = (
+	// 	<Messages>
+	// 		{messages.map(renderMessages)}
+	// 	</Messages>
+	// 	);
+	// } else {
+	// 	body = (
+	// 	<button onClick={() => props.joinRoom(props.currentChat.chatName)}>
+	// 		Join {props.currentChat.chatName}
+	// 	</button>
+	// 	);
+	// }
 	const handleUserInChannelCheck = useCallback (async () => {
 		try {
 			if (!props.currentChat.isResolved){
@@ -98,6 +62,7 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 			if (!props.currentChat.isResolved){
 				return;
 			}
+			//replacing the user here with the real user when login finished
 			setIsUserInChannelBlocked(await getChannelBlockedUser(props.userID, props.currentChat.Channel.ChannelId));
 		}catch (error){
 			console.error('Error occured in handleUserChannelBlockedCheck:', error);
@@ -105,16 +70,37 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 	}, [props.currentChat.isResolved, props.currentChat.Channel.ChannelId]);
 
 	const handleBody = useCallback (() =>{
-		setBody(
-		<ChatBody_Div
-			props = {props}
-			isUserInChannelBlocked = {isUserInChannelBlocked}
-			isUserInChannel = {isUserInChannel}
-			isAdmin = {isAdmin}
-			isAdminResolved = {isAdminResolved}
-			loadingChatBody = {loadingChatBody}
-			messages = {messages}
-        	/>)
+		if (isUserInChannelBlocked) {
+			setBody ( 
+				loadingChatBody ? (
+				<div>Loading Chat...</div> // Show a loading spinner or placeholder
+				) : (
+					<TextBox>
+						You are blocked from using this Channel.
+					</TextBox>
+					// setLoadingChatBody(true);
+				)
+			);
+		} else if ((isUserInChannel || !props.currentChat.isChannel) || (isAdmin && isAdminResolved) || props.connectedRooms.includes(props.currentChat.chatName.toString())) {
+			setBody (
+				loadingChatBody ? (
+					<div>Loading Chat...</div> // Show a loading spinner or placeholder
+					) : (
+					<Messages>
+						{messages.map(renderMessages)}
+					</Messages>)
+				);
+		} else {
+			setBody (
+				loadingChatBody ? (
+					<div>Loading Chat...</div> // Show a loading spinner or placeholder
+					) : (
+					<button onClick={() => props.joinRoom(props.currentChat.chatName)}>
+						Join {props.currentChat.chatName}
+					</button>
+					)
+			);
+		}
 		setChatBodyLoaded(true);
 	}, [isUserInChannel, isUserInChannelBlocked, loadingChatBody, messages, props, isAdmin]);
 
@@ -147,6 +133,8 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 		setChannelPanelLoaded(true);
 	}, [
 		props,
+		/*props.currentChat.chatName,
+		props.currentChat.Channel.ChannelId,*/
 		loadingChannelpanel,
 		isUserInChannel,
 		isAdmin,
@@ -158,6 +146,8 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 	useEffect(() => {
 		handleUserInChannelCheck();
 		handleUserInChannelBlockedCheck();
+		// setLoadingChannelpanel(true);
+    	// setLoadingChatBody(true);
 		setLoadingChannelpanel(false);
 		setLoadingChatBody(false);
 		// handleChannelPanel();
@@ -213,25 +203,15 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 			setIsAdminResolved(true);
 		})
 		.catch(error => {
-			console.log("Error checking admin status:", error);
+			console.log("Error checking admin status:", error)
 			setIsAdminResolved(true);
 		});
-		
-	}, [props.currentChat.isResolved, props.yourId, props.currentChat]);
+		// handleUserInChannelCheck();
+		// setIsAdminResolved(false);
+	}, [props.currentChat.isResolved, props.yourId, props.currentChat.isResolved]);
 
-
-
-	useEffect(() => {
-		getIsMuted(props.currentChat.Channel.ChannelId, props.userID, props.userID)
-		.then(isMuted => {
-			setIsUserMuted(isMuted);
-			console.log("UserId: ", props.userID, " muted: ", isUserMuted);
-		})
-		.catch (error =>{
-			console.log("Error checking mute status:", error);
-		});
-	}, [props.currentChat, props.currentChat.isResolved]);
 	
+
 	function handleKeyPress(e: KeyboardEvent<HTMLTextAreaElement>) {
 		if (e.key === "Enter") {
 		props.sendMessage();
@@ -252,12 +232,12 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 			<BodyContainer>
 			{body}
 			</BodyContainer>
-			<ChatTextBox
+			<TextBox
 			value={props.message}
 			onChange={props.handleMessageChange}
 			onKeyPress={handleKeyPress}
-			isUserMuted={isUserMuted}
-        	/>
+			placeholder="You can write something here"
+			/>
 		</ChatPanel>
 		</Container>
 	);

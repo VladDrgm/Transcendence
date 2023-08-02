@@ -2,11 +2,11 @@ import { Dispatch, SetStateAction } from 'react';
 import { Channel, ChatData, ChatProps } from '../../interfaces/channel.interface';
 import { getChannels} from '../../api/channel/channel.api';
 import { postAdmin } from '../../api/channel/channel_admin.api';
-import { postChannelUserBlocked, deleteChannelUserBlocked, getUsers, postChannelUser, postMuteUser} from '../../api/channel/channel_user.api';
+import { postChannelUserBlocked, deleteChannelUserBlocked, getUsers, postChannelUser, postMuteUser, postPrivateChannelUser} from '../../api/channel/channel_user.api';
 import styled from "styled-components";
 import {IUser} from '../../interfaces/interface';
 import { fetchAddress } from './channel_div';
-import { Row } from '../main_div/Chat_MainDiv';
+import { Row } from './chat_utils';
 
 export function mapChannel(item: any) {
     const { ChannelId, OwnerId, Name, Type, Password } = item;
@@ -184,7 +184,7 @@ export async function addMuteUser(newBlockedUsername: string, duration:number, p
     } else 
     console.error('Error muting User with Username:' , newBlockedUsername);
 }
-export function CreateChannel(props: ChatProps, channelName: String, password: String){
+export function CreateChannel(props: ChatProps, channelName: string, password: string){
     if(password === "")
         var channelType = "public";
     else
@@ -207,8 +207,6 @@ export function CreateChannel(props: ChatProps, channelName: String, password: S
     .then(response => response.json())
     .then(data => {
         console.log("Channel created:", data);
-        console.log("Posting User " + props.userID + " in Channel:" + props.currentChat.Channel.ChannelId);
-        postChannelUser(props.userID, props.currentChat.Channel.ChannelId);
     })
     .catch(error => {
         console.log("Error creating channel:", error);
