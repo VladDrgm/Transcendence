@@ -141,24 +141,24 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID}) => {
 	}
 
 	function joinRoom(chatName: ChatName) {
-		const newConnectedRooms = immer(connectedRooms, (draft: WritableDraft<typeof connectedRooms>) => {
-			const chatNameString = String(chatName); // Convert chatName to string
-			draft.push(chatNameString);
-		});
+		// const newConnectedRooms = immer(connectedRooms, (draft: WritableDraft<typeof connectedRooms>) => {
+		// 	const chatNameString = String(chatName); // Convert chatName to string
+		// 	draft.push(chatNameString);
+		// });
 		console.log("Posting User ", userID, " in Channel:", currentChat.Channel.ChannelId);
 		postChannelUser(userID, currentChat.Channel.ChannelId);
 		socketRef.current?.emit("join room", chatName, (messages: any) => roomJoinCallback(messages, chatName));
-		setConnectedRooms(newConnectedRooms);
+		// setConnectedRooms(newConnectedRooms);
 	}
 
 	function leaveRoom(chatName: ChatName) {
-		const newConnectedRooms = immer(connectedRooms, (draft: WritableDraft<typeof connectedRooms>) => {
-			const chatNameString = String(chatName); // Convert chatName to string
-			draft = draft.filter((room) => room !== chatNameString);
-		});
+		// const newConnectedRooms = immer(connectedRooms, (draft: WritableDraft<typeof connectedRooms>) => {
+		// 	const chatNameString = String(chatName); // Convert chatName to string
+		// 	draft = draft.filter((room) => room !== chatNameString);
+		// });
 		console.log("Removing User ", userID, " from Channel:", currentChat.Channel.ChannelId);
 		deleteChannelUser(userID, currentChat.Channel.ChannelId);
-		setConnectedRooms(newConnectedRooms);
+		// setConnectedRooms(newConnectedRooms);
 	}
 
 	function toggleChat(currentChat: CurrentChat) {

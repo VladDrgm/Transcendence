@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import  {ChatProps} from '../../interfaces/channel.interface';
 import { addAdminPopUp, banUserPopUp, changePasswordPopUp, kickUserPopUp, muteUserPopUp } from './channel_popups';
 import { deleteChannel } from '../../api/channel/channel.api';
-import { ChannelInfo } from '../main_div/Chat_MainDiv';
+import { ChannelInfo } from './chat_utils';
 
 export interface LoadingProps {
 	loadingChannelPanel: boolean;
