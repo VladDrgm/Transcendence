@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import Error_MainDiv from './main_div/Error_MainDiv';
 import Welcome_MainDiv from './main_div/Welcome_MainDiv';
 import Profile_MainDiv from './main_div/Profile_MainDiv';
@@ -18,6 +18,7 @@ export enum main_div_mode_t {
   PROFILE = 4,
   SETTINGS = 5,
   HISTORY = 6,
+  PUBLIC_PROFILE = 7,
   LEADERBORAD = 8,
 }
 
@@ -32,13 +33,14 @@ interface MainDivProps
 const MainDivSelector: React.FC<MainDivProps> = ({onLogout, userID, mode, mode_set}) => {
 	const {user} = useUserContext();
 	var userID = user.userID;
+  const [friendID, friend_set] = useState<number>(-1);
   switch (mode){
     case main_div_mode_t.HOME_PAGE:
       return (<Welcome_MainDiv/>);
 	case main_div_mode_t.CHAT:
 		return (<Arena_Chat_MainDiv userID={userID}/>)
 	case main_div_mode_t.PROFILE:
-		return (<Profile_MainDiv userID={userID} mode_set={mode_set} />);
+		return (<Profile_MainDiv userID={userID} mode_set={mode_set} friend_set={friend_set}/>);
 	case main_div_mode_t.LEADERBORAD:
       	return (<Leaderboard_MainDiv/>);
   case main_div_mode_t.HISTORY:

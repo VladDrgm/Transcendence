@@ -88,6 +88,7 @@ const Private_Div: React.FC<PrivateDivProps> = ({userID}) => {
           placeholder="Enter new username"
           />
           <button onClick={handleButtonClick}>Change Username</button>
+          <br/>
           {(user.avatarPath.substring(0, 5) != "https") && (
             <img src={defaultProfile} alt="default profile" width="400" height="300"/>
           )}
