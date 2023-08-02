@@ -14,6 +14,7 @@ import  {ChatProps, Message} from '../../interfaces/channel.interface';
 import { User } from "../../interfaces/user.interface";
 import { ChannelAdmin_Buttons_Div, ChannelOwner_Buttons_Div } from "../div/channel_buttons_div";
 import { getOwnerId } from "../../api/channel/channel_owner.api";
+import ChatBody_Div from "../div/channel_ChatBody_div";
 
 
 const Chat_MainDiv: FC<ChatProps> = (props) => {
@@ -70,37 +71,46 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 	}, [props.currentChat.isResolved, props.currentChat.Channel.ChannelId]);
 
 	const handleBody = useCallback (() =>{
-		if (isUserInChannelBlocked) {
-			setBody ( 
-				loadingChatBody ? (
-				<div>Loading Chat...</div> // Show a loading spinner or placeholder
-				) : (
-					<TextBox>
-						You are blocked from using this Channel.
-					</TextBox>
-					// setLoadingChatBody(true);
-				)
-			);
-		} else if ((isUserInChannel || !props.currentChat.isChannel) || (isAdmin && isAdminResolved) || props.connectedRooms.includes(props.currentChat.chatName.toString())) {
-			setBody (
-				loadingChatBody ? (
-					<div>Loading Chat...</div> // Show a loading spinner or placeholder
-					) : (
-					<Messages>
-						{messages.map(renderMessages)}
-					</Messages>)
-				);
-		} else {
-			setBody (
-				loadingChatBody ? (
-					<div>Loading Chat...</div> // Show a loading spinner or placeholder
-					) : (
-					<button onClick={() => props.joinRoom(props.currentChat.chatName)}>
-						Join {props.currentChat.chatName}
-					</button>
-					)
-			);
-		}
+		setBody(<ChatBody_Div
+			props = {props}
+			isUserInChannelBlocked = {isUserInChannelBlocked}
+			isUserInChannel = {isUserInChannel}
+			isAdmin= {isAdmin}
+			isAdminResolved = {isAdminResolved}
+			messages={messages}
+			loadingChatBody = {loadingChatBody}
+		/>);
+		// if (isUserInChannelBlocked) {
+		// 	setBody ( 
+		// 		loadingChatBody ? (
+		// 		<div>Loading Chat...</div> // Show a loading spinner or placeholder
+		// 		) : (
+		// 			<TextBox>
+		// 				You are blocked from using this Channel.
+		// 			</TextBox>
+		// 			// setLoadingChatBody(true);
+		// 		)
+		// 	);
+		// } else if ((isUserInChannel || !props.currentChat.isChannel) || (isAdmin && isAdminResolved) || props.connectedRooms.includes(props.currentChat.chatName.toString())) {
+		// 	setBody (
+		// 		loadingChatBody ? (
+		// 			<div>Loading Chat...</div> // Show a loading spinner or placeholder
+		// 			) : (
+		// 			<Messages>
+		// 				{messages.map(renderMessages)}
+		// 			</Messages>)
+		// 		);
+		// } else {
+		// 	setBody (
+		// 		loadingChatBody ? (
+		// 			<div>Loading Chat...</div> // Show a loading spinner or placeholder
+		// 			) : (
+		// 			<button onClick={() => props.joinRoom(props.currentChat.chatName)}>
+		// 				Join {props.currentChat.chatName}
+		// 			</button>
+		// 			)
+		// 	);
+		// }
 		setChatBodyLoaded(true);
 	}, [isUserInChannel, isUserInChannelBlocked, loadingChatBody, messages, props, isAdmin]);
 
