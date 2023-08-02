@@ -1,7 +1,8 @@
 import { Dispatch, SetStateAction } from 'react';
 import { Channel, ChatProps } from '../../interfaces/channel.interface';
-import { modBannedUser, addAdmin, joinPrivateChannel, CreateChannel, addMuteUser} from './channel_utils';
-import { deleteChannelPassword, postChannelUser, postMuteUser, putChannelPassword, putChannelType } from '../../api/channel/channel_user.api';
+import { modBannedUser, addAdmin, CreateChannel, addMuteUser} from './channel_utils';
+import { deleteChannelPassword, postChannelUser, postMuteUser, postPrivateChannelUser, putChannelPassword, putChannelType } from '../../api/channel/channel_user.api';
+import { getChannel } from '../../api/channel/channel.api';
 
 export function banUserPopUp(props: &ChatProps) {
     
@@ -249,18 +250,18 @@ export function popUpCreateChannel(props: ChatProps){
     popup?.document.body.appendChild(createButton);
 }
 
-export async function popUpJoinPrivateChannel(setPrivateChannels:  Dispatch<SetStateAction<Channel[]>>){
+export async function popUpJoinPrivateChannel(props: ChatProps){
     // Open Window
     var popup = window.open('', '_blank', 'width=500,height=300,menubar=no,toolbar=no');
 
-    const channelNameLabel = document.createElement("h1");
-    channelNameLabel.textContent = "Channel Name:";
-    popup?.document.body.appendChild(channelNameLabel);
+    // const channelNameLabel = document.createElement("h1");
+    // channelNameLabel.textContent = "Channel Name:";
+    // popup?.document.body.appendChild(channelNameLabel);
 
-    var channelNameInput = document.createElement('input');
-    channelNameInput.type = 'text';
-    channelNameInput.placeholder = "Enter Channel Name you wnat to join";
-    popup?.document.body.appendChild(channelNameInput);
+    // var channelNameInput = document.createElement('input');
+    // channelNameInput.type = 'text';
+    // channelNameInput.placeholder = "Enter Channel Name you wnat to join";
+    // popup?.document.body.appendChild(channelNameInput);
 
     const channelPasswordLabel = document.createElement("h1");
     channelPasswordLabel.textContent = "Channel Password:";
@@ -274,14 +275,15 @@ export async function popUpJoinPrivateChannel(setPrivateChannels:  Dispatch<SetS
     var createButton = document.createElement('button');
     createButton.innerHTML = 'Join';
     createButton.addEventListener('click', async function() {
-        var channelName = channelNameInput.value;
+        // var channelName = channelNameInput.value;
         var password = channelPasswordInput.value;
-        const TargetChannel = await joinPrivateChannel(channelName, password);
-        if (TargetChannel){
-            //adding a channel to the list of shown channels
-            setPrivateChannels((prevChannels) => [...prevChannels, TargetChannel]);
-            //does Channel creation adds an element to the channelarray of the chatsurface?
-        }
+        postPrivateChannelUser(props.userID,props.currentChat.Channel.ChannelId, password);
+        // props.currentChat = await getChannel(props.currentChat.Channel.ChannelId);
+        // if (TargetChannel){
+        //     //adding a channel to the list of shown channels
+        //     setPrivateChannels((prevChannels) => [...prevChannels, TargetChannel]);
+        //     //does Channel creation adds an element to the channelarray of the chatsurface?
+        // }
         popup?.close();
         // return TargetChannel;
     });
