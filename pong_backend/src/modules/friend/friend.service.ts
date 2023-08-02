@@ -4,6 +4,7 @@ import { Friend } from 'src/models/orm_models/friend.entity';
 import { In, Repository } from 'typeorm';
 import { User } from 'src/models/orm_models/user.entity';
 import { UserService } from '../user/userservice';
+import { FriendDto } from './friendDto';
 
 export class FriendRepository extends Repository<Friend> {}
 
@@ -15,15 +16,11 @@ export class FriendService {
     private readonly userService: UserService,
   ) {}
 
-  async findAll(): Promise<Friend[]> {
-    return this.friendRepository.find();
-  }
-
   async findOne(id: number): Promise<Friend> {
     return this.friendRepository.findOneBy({ FId: id });
   }
 
-  async remove(userId: number, friendId: number): Promise<string> {
+  async remove(userId: number, friendId: number): Promise<Friend> {
     if (userId === friendId) {
       throw new HttpException('Cannot remove yourself', 400);
     }
@@ -32,45 +29,46 @@ export class FriendService {
       throw new HttpException('Invalid user ID or friend ID', 400);
     }
 
-    const friend = await this.friendRepository
-      .createQueryBuilder('friend')
-      .leftJoinAndSelect('friend.friendUser', 'friendUser')
-      .where('friend.user.userID = :userId', { userId })
-      .andWhere('friendUser.userID = :friendId', { friendId })
-      .getOne();
+    const friend = await this.friendRepository.findOneBy({ UserId: userId, FriendId: friendId });
 
     if (!friend) {
       throw new HttpException('Friend not found', 404);
     }
 
     await this.friendRepository.delete(friend.FId);
-    return 'Friend removed';
+    return friend;
   }
 
-  async findUserFriends(userId: number): Promise<Friend[]> {
-    const result = await this.friendRepository
-      .createQueryBuilder('friend')
-      .leftJoinAndSelect('friend.friendUser', 'friendUser')
-      .where('friend.user.userID = :userId', { userId })
-      .getMany();
+  async findUserFriends(userId: number): Promise<User[]> {
+    const friends = await this.friendRepository.findBy({ UserId: userId });
+
+	if (!friends || friends.length == 0) {
+		throw new HttpException('Friends not found', 404);
+	}
+
+	const result = [];
+
+	for (const friend of friends) {
+		result.push(await this.userService.findOne(friend.FriendId));
+	}
 
     return result;
   }
 
   async findFriendById(userId: number, friendId: number): Promise<User> {
-    const result = await this.friendRepository
-      .createQueryBuilder('friend')
-      .leftJoinAndSelect('friend.friendUser', 'friendUser')
-      .where('friend.user.userID = :userId', { userId })
-      .andWhere('friendUser.userID = :friendId', { friendId })
-      .getMany();
+    const friend = await this.friendRepository.findOneBy({ UserId: userId, FriendId: friendId });
 
-    return result[0].friendUser;
+	if (!friend) {
+		throw new HttpException('Friend not found', 404);
+	}
+
+	const result = await this.userService.findOne(friend.FriendId);
+
+    return result;
   }
 
   async getFriendStatus(userId: number, friendId: number): Promise<string> {
-    const result = (await this.findFriendById(userId, friendId)).status;
-    return result;
+    return (await this.findFriendById(userId, friendId)).status;
   }
 
   async getFriendsStatuses(userId: number): Promise<string[]> {
@@ -78,9 +76,28 @@ export class FriendService {
     const friends = await this.findUserFriends(userId);
 
     for (const friend of friends) {
-      result.push(friend.friendUser.status);
+      result.push(friend.status);
     }
 
     return result;
+  }
+
+  async addFriend(dto : FriendDto): Promise<User> {
+	
+	if (dto.UserId === dto.FriendId) {
+		throw new HttpException('Cannot add yourself', 400);
+	}
+
+	const friend = await this.friendRepository.findOneBy({ UserId: dto.UserId, FriendId: dto.FriendId });
+
+	if (friend) {
+		throw new HttpException('Friend already exists', 400);
+	}
+
+	const newFriend = new Friend();
+	newFriend.UserId = dto.UserId;
+	newFriend.FriendId = dto.FriendId;
+
+	return this.userService.findOne(dto.FriendId);
   }
 }

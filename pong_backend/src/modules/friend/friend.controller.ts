@@ -11,6 +11,7 @@ import { ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 import { Friend } from 'src/models/orm_models/friend.entity';
 import { FriendService } from './friend.service';
 import { User } from 'src/models/orm_models/user.entity';
+import { FriendDto } from './friendDto';
 
 @ApiTags('Friend')
 @Controller('friend')
@@ -19,7 +20,7 @@ export class FriendController {
 
   @Get(':id/friends')
   @ApiOperation({ summary: 'Get all friends of a user' })
-  async getUserFriends(@Param('id') id: number): Promise<Friend[]> {
+  async getUserFriends(@Param('id') id: number): Promise<User[]> {
     const friends = await this.friendService.findUserFriends(id);
     return friends;
   }
@@ -61,7 +62,19 @@ export class FriendController {
   async remove(
     @Param('userId') userId: number,
     @Param('friendId') friendId: number,
-  ): Promise<string> {
+  ): Promise<Friend> {
     return await this.friendService.remove(userId, friendId);
   }
+
+  @Post(':userId/friend/:friendId')
+  @ApiOperation({ summary: 'Add a friend to a user' })
+  @ApiParam({ name: 'userId', description: 'User ID' })
+  @ApiParam({ name: 'friendId', description: 'Friend ID' })
+  async add(
+	@Param('userId') userId: number,
+	@Param('friendId') friendId: number,
+	  ): Promise<User> {
+	const dto : FriendDto = { UserId: userId, FriendId: friendId };
+	return await this.friendService.addFriend(dto);
+	}
 }
