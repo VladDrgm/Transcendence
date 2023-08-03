@@ -15,7 +15,15 @@ export class FileService {
   async saveAvatar(file: Express.Multer.File, id: number): Promise<string> {
     const avatarFolder = './avatars';
     const filePath = `${avatarFolder}/${id}${extname(file.originalname)}`;
-    await fs.writeFile(filePath, file.buffer);
-    return filePath;
+
+    const filePermissions = 0o777;
+
+    try {
+      await fs.writeFile(filePath, file.buffer, { mode: filePermissions });
+      return filePath;
+    } catch (error) {
+      console.error(`Error saving avatar: ${error.message}`);
+      throw new Error('Failed to save avatar.');
+    }
   }
 }
