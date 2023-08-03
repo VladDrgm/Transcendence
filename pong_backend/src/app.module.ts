@@ -23,9 +23,18 @@ import { BlockedService } from './modules/blocked/blocked.service';
 import { BlockedController } from './modules/blocked/blocked.controller';
 import { MatchService } from './modules/match/match.service';
 import { PasswordService } from './modules/password/password.service';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
 @Module({
   imports: [
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '../avatars'),
+      serveStaticOptions: {
+        redirect: false,
+        index: false,
+      },
+    }),
     UsersModule,
     DatabaseModule,
     TypeOrmModule.forFeature([
