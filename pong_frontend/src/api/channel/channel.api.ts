@@ -33,8 +33,6 @@ export function deleteChannel(props: ChatProps) {
   .catch(error => {
     console.error("Error deleting Channel:", error);
   });
-
-
 }
 
 //when using gives a internal server error for OwnerId = null, while i give some not null OwnerId

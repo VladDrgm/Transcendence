@@ -68,12 +68,6 @@ export class User {
   })
   passwordHash: string;
 
-  @OneToMany(() => Friend, (friend) => friend.user)
-  friends: User[];
-
-  @OneToMany(() => Friend, (friend) => friend.friendUser)
-  befriendedBy: User[];
-
   @OneToMany(() => Blocked, (block) => block.user)
   blocked: User[];
 
