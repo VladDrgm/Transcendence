@@ -247,7 +247,7 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID}) => {
 						playerOne: socketRef.current?.id || '',
 					}));
 					console.log("Player 1 set");
-					//alert("Joined a Session as Player 1");
+					alert("Joined a Session as Player 1");
 				} else if (playerInput === 2) {
 					setGameSession((prevSession) => ({
 						...prevSession,
@@ -256,7 +256,7 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID}) => {
 						playerTwo: socketRef.current?.id || '',
 					}));
 					console.log("Player 2 set");
-					//alert("Joined a session as Player 2");
+					alert("Joined a session as Player 2");
 				}
 			});
 	
@@ -269,7 +269,7 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID}) => {
 				}
 				if (gameSession.player === 1) {
 					gameSession.playerTwo = opponentSocketId;
-					//alert("Player 2 joined your session");
+					alert("Player 2 joined your session");
 				}
 			});
 	
