@@ -85,7 +85,8 @@ export const ChannelPriv_Buttons_Div: React.FC<ChatProps> = (props) => {
             <ChannelInfo>
                 {props.currentChat.chatName}
                 <div>
-                    <button>
+                    <button
+                    onClick={() => console.log("recieverID:", props.currentChat.receiverId)}>
                      Invite/Join for Game
                     </button>
                 </div>

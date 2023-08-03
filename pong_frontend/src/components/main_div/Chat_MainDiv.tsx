@@ -12,7 +12,7 @@ import { getIsAdmin } from "../../api/channel/channel_admin.api";
 import { getChannelUser, getChannelBlockedUser } from "../../api/channel/channel_user.api";
 import  {ChatProps, Message} from '../../interfaces/channel.interface';
 import { User } from "../../interfaces/user.interface";
-import { ChannelAdmin_Buttons_Div, ChannelOwner_Buttons_Div } from "../div/channel_buttons_div";
+import { ChannelAdmin_Buttons_Div, ChannelOwner_Buttons_Div, ChannelPriv_Buttons_Div } from "../div/channel_buttons_div";
 import { getOwnerId } from "../../api/channel/channel_owner.api";
 import ChatBody_Div from "../div/channel_ChatBody_div";
 
@@ -95,7 +95,7 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 				<ChannelAdmin_Buttons_Div{...props} loadingChannelPanel={loadingChannelpanel}/>
 			);
 		} 
-		else if (props.currentChat.isChannel) {
+		else if (!props.currentChat.isChannel) {
 			setChannelpanel(
 				<ChannelPriv_Buttons_Div{...props} loadingChannelPanel={loadingChannelpanel}/>
 			);
