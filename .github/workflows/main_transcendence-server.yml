@@ -7,9 +7,6 @@ on:
   push:
     branches:
       - main
-    paths:
-      - ./pong_backend/**
-      - .github/workflows/main_transcendence-server.yml
   workflow_dispatch:
 
 jobs:
@@ -24,29 +21,17 @@ jobs:
         with:
           node-version: '18.x'
 
-      - name: Install dependencies
-        working-directory: ./pong_backend
-        run: npm ci
-
-      - name: Build application
-        working-directory: ./pong_backend
-        run: npm run build
-
-      - name: Create ZIP archive
-        run: zip --symlinks -r nodejs-app.zip ./pong_backend
+      - name: npm install, build, and test
+        run: |
+          npm install
+          npm run build --if-present
+          npm run test --if-present
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v2
         with:
-          name: nodejs-app
-          path: nodejs-app.zip
-        env: 
-          DB_USERNAME: ${{ secrets.DB_USERNAME }}
-          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          DB_PORT: ${{ secrets.DB_PORT }}
-          DB_HOSTNAME: ${{ secrets.DB_HOSTNAME }}
-          SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
-          DEBUG: true
+          name: node-app
+          path: .
 
   deploy:
     runs-on: ubuntu-latest
@@ -59,7 +44,7 @@ jobs:
       - name: Download artifact from build job
         uses: actions/download-artifact@v2
         with:
-          name: nodejs-app
+          name: node-app
 
       - name: 'Deploy to Azure Web App'
         id: deploy-to-webapp
@@ -67,5 +52,5 @@ jobs:
         with:
           app-name: 'transcendence-server'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_75A9FFE05F58406BBCA2AA8DEF621328 }}
-          package: nodejs-app.zip
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_C57BBF6E64604AC4B5C070882FB6F917 }}
+          package: .
