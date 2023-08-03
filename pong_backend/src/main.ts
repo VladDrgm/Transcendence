@@ -31,12 +31,14 @@ async function bootstrap() {
     .setDescription('API description')
     .setVersion('1.0')
     .build();
+
+  const port = process.env.PORT || 8080;
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
 
   app.useGlobalPipes(new ValidationPipe({ transform: true }));
 
-  await app.listen(process.env.PORT);
+  await app.listen(port);
   console.log('Server is running on port ' + process.env.PORT + '.');
   console.log('Access the app at http://localhost:' + process.env.PORT + '/');
 }
