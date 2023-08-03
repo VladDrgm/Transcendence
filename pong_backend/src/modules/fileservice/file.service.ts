@@ -10,7 +10,7 @@ export class FileService {
       console.log('Deleting image:', imageUrl);
       await fs.unlink(imageUrl);
     } catch (error) {
-      console.error(`Error deleting image: ${error.message}`);
+      console.error(`Error deleting image: ${imageUrl}`);
     }
   }
 
