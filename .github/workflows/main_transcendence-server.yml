@@ -1,7 +1,7 @@
 # Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
 # More GitHub Actions for Azure: https://github.com/Azure/actions
 
-name: Build and deploy Node.js app to Azure Web App - mock-t
+name: Build and deploy Node.js app to Azure Web App - transcendence-server
 
 on:
   push:
@@ -31,8 +31,9 @@ jobs:
       - name: Build application
         working-directory: ./pong_backend
         run: npm run build
+
       - name: Create ZIP archive
-        run: zip --symlinks -r nodejs-app.zip ./pong_backend
+        run: zip --symlinks -r node-app.zip ./pong_backend
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v2
