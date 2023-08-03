@@ -57,14 +57,18 @@ export function renderUser(user: User, props: ChatProps) {
     // console.log("User.username is: " + user.username);
     // console.log("Props id is: " + props.yourId);
     // console.log("Props username is: " + props.username);
-    if (user.userID === props.yourId) {
-        // console.log("Reached here");
-    return (
-        <Row key={user.userID}>
-        You: {props.username}
-        </Row>
-    );
-    }
+
+      //to be checken again
+    // if (user.userID === props.yourId) {
+    //     // console.log("Reached here");
+    // return (
+    //     <Row key={user.userID}>
+    //     You: {props.username}
+    //     </Row>
+    // );
+
+
+    // }
     // console.log("Reached here");
     const currentChat: ChatData = {
     chatName: user.username,

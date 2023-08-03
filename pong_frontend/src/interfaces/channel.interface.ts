@@ -1,5 +1,6 @@
 import React, { FC, ChangeEvent, KeyboardEvent } from "react";
 import { User } from "./user.interface";
+import { Socket } from "socket.io-client";
 
 export interface Channel {
 	ChannelId: number;
@@ -13,7 +14,7 @@ export interface ChatProps {
 	userID: number; //userID from login process
 	user: User; //USer from login process
 	toggleChat: (currentChat: ChatData) => void;
-	yourId: string | number;  //socketId from joining the game
+	yourId: Socket | null;  //socketId from joining the game
 	username: string; //name given in the game startpage
 	currentChat: ChatData;
 	connectedRooms: string[];
@@ -26,12 +27,13 @@ export interface ChatProps {
 	allUsers: User[];
     allChannels: Channel[];
 	loadingChannelPanel: boolean;
+	gameSessionId: string | null;
 }
 
  export type ChatData = {
 	isChannel: boolean;
 	chatName: ChatName;
-	receiverId: string | number;
+	receiverId: Socket | null;
 	isResolved: boolean;
 	Channel: Channel;
 };

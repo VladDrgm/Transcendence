@@ -45,7 +45,7 @@ export type ChatName = keyof typeof initialMessagesState;
 type CurrentChat = {
 	isChannel: boolean;
 	chatName: ChatName;
-	receiverId: string | number;
+	receiverId: Socket | null;
 	isResolved: boolean;
 	Channel: Channel;
 };
@@ -58,7 +58,7 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID}) => {
 	const [currentChat, setCurrentChat] = useState<CurrentChat>({
 		isChannel: true,
 		chatName: "general",
-		receiverId: "",
+		receiverId: null,
 		isResolved: true,
 		Channel: {} as Channel,
 	});
@@ -324,7 +324,7 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID}) => {
 			message={message}
 			handleMessageChange={handleMessageChange}
 			sendMessage={sendMessage}
-			yourId={socketRef.current ? socketRef.current.id : ""}
+			yourId={socketRef.current ? socketRef.current : null}
 			allUsers={allUsers}
 			allChannels={allChannels}
 			joinRoom={joinRoom}
@@ -335,6 +335,7 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID}) => {
 			toggleChat={toggleChat}
 			username={username}
 			loadingChannelPanel = {false}
+			gameSessionId={gameSession.sessionId}
 		/>
 		);
 	} else {

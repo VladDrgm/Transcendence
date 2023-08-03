@@ -23,7 +23,7 @@ export function renderRooms(props: ChatProps, room: Channel) {
     let currentChat: ChatData = {
     chatName: room.Name,
     isChannel: true,
-    receiverId: "",
+    receiverId: null,
     isResolved: false,
     Channel: {} as Channel,
     };
