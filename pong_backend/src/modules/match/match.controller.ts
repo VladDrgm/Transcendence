@@ -3,7 +3,6 @@ import { MatchService } from './match.service';
 import { Match } from 'src/models/orm_models/match.entity';
 import { MatchDTO } from './matchDTO';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { MatchHistory } from 'src/models/orm_models/matchHistory.entity';
 
 @ApiTags('Match')
 @Controller('match')
@@ -12,8 +11,7 @@ export class MatchController {
 
   @Post()
   @ApiOperation({ summary: 'Create a match' })
-  async createMatch(@Body() matchDto: MatchDTO,
-  ): Promise<Match> {
+  async createMatch(@Body() matchDto: MatchDTO): Promise<Match> {
     return this.matchService.createMatch(matchDto);
   }
 
@@ -43,6 +41,6 @@ export class MatchController {
   @Get(':userId/matchHistory')
   @ApiOperation({ summary: 'Get match history of a user' })
   async getMatchHistory(@Param('userId') userId: number): Promise<Match[]> {
-	return this.matchService.getMatchHistory(userId);
+    return this.matchService.getMatchHistory(userId);
   }
 }

@@ -3,6 +3,7 @@ import {main_div_mode_t} from '../MainDivSelector'
 import CSS from 'csstype';
 import { User } from '../../interfaces/user.interface';
 import { useUserContext } from '../context/UserContext';
+import { updateAvatarApi, updatePasswordApi, updateUsernameApi } from '../../api/userApi';
 
 interface SettingsMainDivProps
 {
@@ -13,81 +14,93 @@ interface SettingsMainDivProps
 
 const Settings_MainDiv: React.FC<SettingsMainDivProps> = ({onLogout, userID, mode_set}) => {
 	const { user, setUser } = useUserContext();
-
-	var fetchAddress = 'http://localhost:3000/user/';
-	var slash = '/'
-	var updatePasswordEndpoint = '/update/password';
-	var updateUsernameEndpoint = '/update/username/';
-
 	const [updatedUser, setUpdatedUser] = useState<User>(user);
+	const [newPassword, setNewPassword] = useState(''); // Sign up state for password input
+	const [newUsername, setNewUsername] = useState(''); // Sign up state for password input
+	const [newAvatar, setNewAvatar] = useState<File | null>(null)
 
 	const [showUpdatePasswordSuccessMessage, setShowUpdatePasswordSuccessMessage] = useState(false);
 	const [showUpdateUsernameSuccessMessage, setShowUpdateUsernameSuccessMessage] = useState(false);
+	const [showUpdateAvatarSuccessMessage, setShowUpdateAvatarSuccessMessage] = useState(false);
+  
 
-	const [newPassword, setNewPassword] = useState(''); // Sign up state for password input
-	const [newUsername, setNewUsername] = useState(''); // Sign up state for password input
-
-const handleUpdatePassword = async () => {
-	try {
-		// Make API call and get the response
-		const response = await fetch(fetchAddress + userID + slash + newPassword + updatePasswordEndpoint, {
-			method:"PUT",
-			headers: {
-				"Content-Type": "application/json"
-			},
-		});
-	
-		if (response.ok) {
-			const userObject: User = await response.json(); 
-			setUpdatedUser(userObject);
-
-			setUser(userObject);
-
-			// Update the stored user item in localStorage
-			localStorage.setItem('user', JSON.stringify(userObject));
-
-			setShowUpdatePasswordSuccessMessage(true);
-		} else {
-			throw new Error(response.statusText);
+	const handleUpdatePassword = async () => {
+		try {
+		  // Call the API function and get the updated user object
+		  const userObject = await updatePasswordApi(userID, newPassword);
+	  
+		  // Update the state and local storage with the updated user object
+		  setUpdatedUser(userObject);
+		  setUser(userObject);
+		  localStorage.setItem('user', JSON.stringify(userObject));
+	  
+		  setShowUpdatePasswordSuccessMessage(true);
+		} catch (error) {
+		  throw new Error('Error updating password. Try again!');
 		}
-	} catch (error) {
-		throw new Error('Error logging in. Try again!');
-	}
-	setShowUpdatePasswordSuccessMessage(false);
-};
+		setShowUpdatePasswordSuccessMessage(false);
+	  };
 
-const handleUpdateUsername = async () => {
-	try {
-		// Make API call and get the response
-		const response = await fetch(fetchAddress + userID + updateUsernameEndpoint + newUsername, {
-			method:"PUT",
-			headers: {
-				"Content-Type": "application/json"
-			},
-		});
-	
-		if (response.ok) {
-			const userObject: User = await response.json(); 
-			setUpdatedUser(userObject);
-
-			setUser(userObject);
-
-			// Update the stored user item in localStorage
-			localStorage.setItem('user', JSON.stringify(userObject));
-
-			setShowUpdateUsernameSuccessMessage(true);
-		} else {
-			throw new Error(response.statusText);
+	  const handleUpdateUsername = async () => {
+		try {
+		  // Call the API function and get the updated user object
+		  const userObject = await updateUsernameApi(userID, newUsername);
+	  
+		  // Update the state and local storage with the updated user object
+		  setUpdatedUser(userObject);
+		  setUser(userObject);
+		  localStorage.setItem('user', JSON.stringify(userObject));
+	  
+		  setShowUpdateUsernameSuccessMessage(true);
+		} catch (error) {
+		  throw new Error('Error updating username. Try again!');
 		}
-	} catch (error) {
-		throw new Error('Error logging in. Try again!');
-	}
-	setShowUpdateUsernameSuccessMessage(false);
-};
+		setShowUpdateUsernameSuccessMessage(false);
+	  };
+
+	  const handleUpdateAvatar = async () => {
+		try {
+		  if (!newAvatar) {
+			throw new Error('Please select an image to upload');
+		  }
+	
+		  const formData = new FormData();
+      formData.append('picture', newAvatar);
+		  const userObject = await updateAvatarApi(userID, formData);
+		  setUpdatedUser(userObject);
+		  setUser(userObject);
+		  localStorage.setItem('user', JSON.stringify(userObject));
+		  setShowUpdateAvatarSuccessMessage(true);
+		} catch (error) {
+		  throw new Error('Error updating avatar. Try again!');
+		}
+		setShowUpdateAvatarSuccessMessage(false);
+	  };
+
+	   // Extract the filename from the File object and update the state
+  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files ? e.target.files[0] : null;
+    if (file) {
+      setNewAvatar(file);
+    }
+  };
 
 const OnLogoutButtonClick = async () => {
 	onLogout()
+
+	console.log('User avatarPath:', user.avatarPath);
+
 };
+
+  // CSS for the profile picture
+  const profilePictureStyle: CSS.Properties = {
+    width: '150px',
+    height: '150px',
+    borderRadius: '50%',
+    objectFit: 'cover',
+    marginBottom: '20px',
+    border: '3px solid rgba(254, 8, 16, 1)',
+  };
 
 const settingsTitleStyle: CSS.Properties = {
 	color: 'rgba(254, 8, 16, 1)',
@@ -134,15 +147,15 @@ const updateButtonStyle: CSS.Properties = {
 	marginLeft: '20px',
 }
 
-const successMessageStyle: CSS.Properties = {
-	color: 'rgba(254, 8, 16, 1)',
-	position: 'relative',
-	textAlign: 'center',
-	top: '8px',
-	padding: '4px',
-	fontFamily: 'Shlop',
-	fontSize: '12px',
-}
+// const successMessageStyle: CSS.Properties = {
+// 	color: 'rgba(254, 8, 16, 1)',
+// 	position: 'relative',
+// 	textAlign: 'center',
+// 	top: '8px',
+// 	padding: '4px',
+// 	fontFamily: 'Shlop',
+// 	fontSize: '12px',
+// }
 
 const logoutButtonStyle: CSS.Properties = {
 	backgroundColor: 'rgba(254, 8, 16, 1)',
@@ -158,38 +171,60 @@ const logoutButtonStyle: CSS.Properties = {
 	marginBottom: '20px',
 }
 
-    return (<div>
-              <div>
-                <p style={settingsTitleStyle}>Settings</p>
-				<form>
-					<input
-					type="text"
-					placeholder={user.intraUsername}
-					value={newUsername}
-					onChange={(e) => setNewUsername(e.target.value)} // Update state on change
-					style={usernameFormFieldStyle}
-					/>
-					{showUpdatePasswordSuccessMessage && (
-						<p>Successfully update the password</p>
-					)}
-					<button style={updateButtonStyle} onClick={handleUpdateUsername}>Update</button>
-				</form>
-				<form>
-					<input
-					type="password"
-					placeholder="Type in new password"
-					value={newPassword}
-					onChange={(e) => setNewPassword(e.target.value)} // Update state on change
-					style={passwordFormFieldStyle}
-					/>
-					{showUpdatePasswordSuccessMessage && (
-						<p>Successfully update the password</p>
-					)}
-					<button style={updateButtonStyle} onClick={handleUpdatePassword}>Update</button>
-				</form>
-				<button style={logoutButtonStyle} onClick={OnLogoutButtonClick}>Logout</button>
-              </div>
-            </div>)
+return (
+	<div>
+	  <div>
+		<p style={settingsTitleStyle}>Settings</p>
+		<img
+			className='user-card__image'
+			src={`http://localhost:3000/${user.avatarPath}`}
+			alt='Profile Picture'
+			onError={({ currentTarget }) => {
+				currentTarget.onerror = null;
+				currentTarget.src = '/default_pfp.png';
+			}}
+			style={profilePictureStyle}
+			/>
+		<form>
+		  <input
+			type="text"
+			placeholder={user.intraUsername}
+			value={newUsername}
+			onChange={(e) => setNewUsername(e.target.value)} // Update state on change
+			style={usernameFormFieldStyle}
+		  />
+		  {showUpdateUsernameSuccessMessage && <p>Successfully update the username</p>}
+		  <button style={updateButtonStyle} onClick={handleUpdateUsername}>
+			Update
+		  </button>
+		</form>
+		<form>
+		  <input
+			type="password"
+			placeholder="Type in new password"
+			value={newPassword}
+			onChange={(e) => setNewPassword(e.target.value)} // Update state on change
+			style={passwordFormFieldStyle}
+		  />
+		  {showUpdatePasswordSuccessMessage && <p>Successfully update the password</p>}
+		  <button style={updateButtonStyle} onClick={handleUpdatePassword}>
+			Update
+		  </button>
+		</form>
+		<form>
+		  <input type="file" onChange={handleAvatarChange} />
+		  {showUpdateAvatarSuccessMessage && <p>Successfully update the avatar</p>}
+		  <button style={updateButtonStyle} onClick={handleUpdateAvatar}>
+			Update Avatar
+		  </button>
+		</form>
+		<button style={logoutButtonStyle} onClick={OnLogoutButtonClick}>
+		  Logout
+		</button>
+	  </div>
+	</div>
+  );
+  
 };
 
 export default Settings_MainDiv;

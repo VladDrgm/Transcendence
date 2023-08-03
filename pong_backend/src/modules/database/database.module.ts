@@ -35,7 +35,7 @@ config();
         ChannelBlockedUser,
         Channel,
         ChannelUser,
-      ], // add your entity classes here
+      ],
       synchronize: true, // set to false in production -> THIS SETS UP THE DATABASE AUTOMATICALLY BASED ON THE ORM MODELS
       ssl: true,
       extra: {
