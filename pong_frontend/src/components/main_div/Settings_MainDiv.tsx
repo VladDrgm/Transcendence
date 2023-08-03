@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState} from 'react';
 import {main_div_mode_t} from '../MainDivSelector'
 import CSS from 'csstype';
 import { User } from '../../interfaces/user.interface';
@@ -23,6 +23,11 @@ const Settings_MainDiv: React.FC<SettingsMainDivProps> = ({onLogout, userID, mod
 	const [showUpdateUsernameSuccessMessage, setShowUpdateUsernameSuccessMessage] = useState(false);
 	const [showUpdateAvatarSuccessMessage, setShowUpdateAvatarSuccessMessage] = useState(false);
   
+	//   // Add a conditional rendering to check if user is available
+	//   if (!user || !user.avatarPath) {
+	// 	// Return a loading state or null
+	// 	return <p>Loading...</p>;
+	//   }
 
 	const handleUpdatePassword = async () => {
 		try {
@@ -44,13 +49,16 @@ const Settings_MainDiv: React.FC<SettingsMainDivProps> = ({onLogout, userID, mod
 	  const handleUpdateUsername = async () => {
 		try {
 		  // Call the API function and get the updated user object
-		  const userObject = await updateUsernameApi(userID, newUsername);
+		  const updatedUser = await updateUsernameApi(userID, newUsername);
 	  
 		  // Update the state and local storage with the updated user object
-		  setUpdatedUser(userObject);
-		  setUser(userObject);
-		  localStorage.setItem('user', JSON.stringify(userObject));
+		  setUpdatedUser(updatedUser);
+		  setUser(updatedUser);
+		  localStorage.setItem('user', JSON.stringify(updatedUser));
 	  
+		  // Clear the input field after successful update
+		  setNewUsername('');
+
 		  setShowUpdateUsernameSuccessMessage(true);
 		} catch (error) {
 		  throw new Error('Error updating username. Try again!');
@@ -65,7 +73,7 @@ const Settings_MainDiv: React.FC<SettingsMainDivProps> = ({onLogout, userID, mod
 		  }
 	
 		  const formData = new FormData();
-      formData.append('picture', newAvatar);
+          formData.append('img', newAvatar);
 		  const userObject = await updateAvatarApi(userID, formData);
 		  setUpdatedUser(userObject);
 		  setUser(userObject);
@@ -80,6 +88,7 @@ const Settings_MainDiv: React.FC<SettingsMainDivProps> = ({onLogout, userID, mod
 	   // Extract the filename from the File object and update the state
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files ? e.target.files[0] : null;
+    console.log('Selected file:', file);
     if (file) {
       setNewAvatar(file);
     }
@@ -94,8 +103,8 @@ const OnLogoutButtonClick = async () => {
 
   // CSS for the profile picture
   const profilePictureStyle: CSS.Properties = {
-    width: '150px',
-    height: '150px',
+    width: '120px',
+    height: '120px',
     borderRadius: '50%',
     objectFit: 'cover',
     marginBottom: '20px',
@@ -112,23 +121,13 @@ const settingsTitleStyle: CSS.Properties = {
 	fontSize: '40px',
 }
 
-const usernameFormFieldStyle: CSS.Properties = {
+const FormFieldStyle: CSS.Properties = {
     padding: '8px',
-    width: '200px',
+    width: '250px',
     fontSize: '18px',
     borderRadius: '4px',
     border: '1px solid #fff',
-	marginBottom: '13px',
-	fontFamily: 'Shlop',
-}
-
-const passwordFormFieldStyle: CSS.Properties = {
-    padding: '8px',
-    width: '200px',
-    fontSize: '18px',
-    borderRadius: '4px',
-    border: '1px solid #fff',
-	marginBottom: '13px',
+	marginBottom: '15px',
 	fontFamily: 'Shlop',
 }
 
@@ -168,7 +167,7 @@ const logoutButtonStyle: CSS.Properties = {
 	borderRadius: '6px',
 	border: 'none',
 	color:'white',
-	marginBottom: '20px',
+	marginBottom: '0px',
 }
 
 return (
@@ -177,8 +176,8 @@ return (
 		<p style={settingsTitleStyle}>Settings</p>
 		<img
 			className='user-card__image'
-			src={`http://localhost:3000/${user.avatarPath}`}
-			alt='Profile Picture'
+			src={`http://localhost:3000/avatars/${user.avatarPath}`}
+			alt='user.avatarPath'
 			onError={({ currentTarget }) => {
 				currentTarget.onerror = null;
 				currentTarget.src = '/default_pfp.png';
@@ -191,7 +190,7 @@ return (
 			placeholder={user.intraUsername}
 			value={newUsername}
 			onChange={(e) => setNewUsername(e.target.value)} // Update state on change
-			style={usernameFormFieldStyle}
+			style={FormFieldStyle}
 		  />
 		  {showUpdateUsernameSuccessMessage && <p>Successfully update the username</p>}
 		  <button style={updateButtonStyle} onClick={handleUpdateUsername}>
@@ -204,7 +203,7 @@ return (
 			placeholder="Type in new password"
 			value={newPassword}
 			onChange={(e) => setNewPassword(e.target.value)} // Update state on change
-			style={passwordFormFieldStyle}
+			style={FormFieldStyle}
 		  />
 		  {showUpdatePasswordSuccessMessage && <p>Successfully update the password</p>}
 		  <button style={updateButtonStyle} onClick={handleUpdatePassword}>
@@ -212,10 +211,10 @@ return (
 		  </button>
 		</form>
 		<form>
-		  <input type="file" onChange={handleAvatarChange} />
+		  <input type="file" onChange={handleAvatarChange} style={FormFieldStyle}/>
 		  {showUpdateAvatarSuccessMessage && <p>Successfully update the avatar</p>}
 		  <button style={updateButtonStyle} onClick={handleUpdateAvatar}>
-			Update Avatar
+			Update
 		  </button>
 		</form>
 		<button style={logoutButtonStyle} onClick={OnLogoutButtonClick}>

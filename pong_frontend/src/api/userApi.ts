@@ -1,7 +1,7 @@
 import { User } from "../interfaces/user.interface";
 
 var fetchAddress = 'http://localhost:3000/';
-var fetchUserAddress = 'http://localhost:3000/user';
+var fetchUserAddress = 'http://localhost:3000/user/';
 const slash = '/';
 const updatePasswordEndpoint = '/update/password';
 const updateUsernameEndpoint = '/update/username/';
@@ -66,6 +66,10 @@ export const updateAvatarApi = async (userID: number, formData: FormData) => {
 	  const response = await fetch(fetchUserAddress + userID + '/update/avatar', {
 		method: 'PUT',
 		body: formData,
+		headers: {
+			'Accept': 'application/json',
+			'Content-Type': 'multipart/form-data',
+		  }
 	  });
   
 	  if (response.ok) {
