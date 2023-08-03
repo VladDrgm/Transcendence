@@ -95,6 +95,11 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 				<ChannelAdmin_Buttons_Div{...props} loadingChannelPanel={loadingChannelpanel}/>
 			);
 		} 
+		else if (props.currentChat.isChannel) {
+			setChannelpanel(
+				<ChannelPriv_Buttons_Div{...props} loadingChannelPanel={loadingChannelpanel}/>
+			);
+		} 
 		setChannelPanelLoaded(true);
 	}, [
 		props,

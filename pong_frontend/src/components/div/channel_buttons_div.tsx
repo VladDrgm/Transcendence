@@ -76,3 +76,20 @@ export const ChannelAdmin_Buttons_Div: React.FC<ChatProps> = (props) => {
         )
     );
 };
+
+export const ChannelPriv_Buttons_Div: React.FC<ChatProps> = (props) => {
+    return (
+        props.loadingChannelPanel ? (
+            <div>Loading Channel Name and Buttons...</div> // Show a loading spinner or placeholder
+        ) : (
+            <ChannelInfo>
+                {props.currentChat.chatName}
+                <div>
+                    <button>
+                     Invite/Join for Game
+                    </button>
+                </div>
+            </ChannelInfo>
+        )
+    );
+};
