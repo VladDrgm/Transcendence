@@ -216,6 +216,78 @@ io.on('connection', (socket: Socket) => {
 		}
 	});
 
+	socket.on('invite player', (newSessionId:any) => {
+		console.log("Invite Player was triggered");
+		let existingSession:any;
+
+		// check if player is already in a queue or session
+		if (gameSessions.length !== 0) {
+			let playerIsInSession = gameSessions.some(session => session.playerIds.includes(socket.id));
+			if (playerIsInSession) {
+				return;
+			}
+		}
+
+		// Check if a session exists with the given newSessionId
+		if (newSessionId) {
+			existingSession = gameSessions.find(
+				(session) => session.sessionId === newSessionId
+			);
+		}
+
+		if (!existingSession) {
+			// If no existing session, create a new session and join as Player 1
+			console.log("New session created for Player 1");
+			const newSessionId = generateNewSessionId();
+			const newGameState = createNewGameState(); // Initialize the gameState
+			gameSessions.push({
+				sessionId: newSessionId,
+				invite: true,
+				playerIds: [socket.id],
+				gameState: newGameState,
+			});
+
+			// Notify the player that they are Player 1 and provide the new sessionId
+			console.log("Emitting joining answer back to Player 1, for socketID " + socket.id);
+			socket.emit('session joined', {
+				sessionIdInput: newSessionId,
+				playerInput: 1
+			});
+			playerQueue.push(socket.id);
+			console.log("Game sessions after joining as Player 1:", gameSessions);
+		} else {
+			// If the existing session exists, join as Player 2
+			console.log("Joining as Player 2 has been triggered");
+			existingSession.playerIds.push(socket.id);
+
+			// Notify both players (Player 1 and Player 2) about the session details
+			gameSessions.forEach((session) => {
+				if (session.sessionId === existingSession.sessionId) {
+					// Notify Player 2
+					console.log("Notifying Player 2 that he is player 2, his socketId is " + socket.id);
+					socket.emit('session joined', {
+						sessionIdInput: session.sessionId,
+						playerInput: 2
+					});
+			
+					// Notify each player of opponents
+					let playerOneSocketId = session.playerIds[0];
+					console.log("Notifying Player 1 of Player 2 joining, playerOneSocket being " + playerOneSocketId);
+					socket.to(playerOneSocketId).emit('session joined', {
+						sessionIdInput: session.sessionId,
+						player: 1
+					});
+					
+					console.log("Notifying Player 2 - " + socket.id + " who is player 1 - " + playerOneSocketId);
+					socket.emit('opponent joined', playerOneSocketId);
+					console.log("Notifying player 1 - " + playerOneSocketId + " who is Player 2 - " + socket.id);
+					io.to(playerOneSocketId).emit('opponent joined', socket.id);
+				}
+			});
+			console.log("Game sessions after joining as Player 2:", gameSessions);
+		}
+	});
+
 
 	/* STARTING GAME */
 
