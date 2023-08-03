@@ -30,6 +30,7 @@ import { join } from 'path';
   imports: [
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '../avatars'),
+      serveRoot: '/avatars',
       serveStaticOptions: {
         redirect: false,
         index: false,
