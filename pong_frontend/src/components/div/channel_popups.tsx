@@ -277,7 +277,8 @@ export async function popUpJoinPrivateChannel(props: ChatProps){
     createButton.addEventListener('click', async function() {
         // var channelName = channelNameInput.value;
         var password = channelPasswordInput.value;
-        postPrivateChannelUser(props.userID,props.currentChat.Channel.ChannelId, password);
+        props.joinRoom(props.currentChat.chatName, "private", password);
+        // postPrivateChannelUser(props.userID,props.currentChat.Channel.ChannelId, password);
         // props.currentChat = await getChannel(props.currentChat.Channel.ChannelId);
         // if (TargetChannel){
         //     //adding a channel to the list of shown channels

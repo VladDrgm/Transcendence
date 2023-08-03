@@ -18,7 +18,7 @@ export interface ChatProps {
 	currentChat: ChatData;
 	connectedRooms: string[];
 	messages: Message[];
-	joinRoom: (chatName: ChatName) => void;
+	joinRoom: (chatName: ChatName, channelStatus: string, password: string) => void;
 	leaveRoom: (chatName: ChatName) => void;
 	sendMessage: () => void;
 	handleMessageChange: (e: ChangeEvent<HTMLTextAreaElement>) => void;

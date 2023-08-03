@@ -32,7 +32,8 @@ const ChatBody_Div: React.FC<ChatBodyProps> = ({
   console.log("Channel type: ", props.currentChat.Channel.Type);
   switch (props.currentChat.Channel.Type) {
     case "private":
-      if (isUserInChannel) {
+      if (isUserInChannel ||
+        (isAdmin && isAdminResolved)) {
         return loadingChatBody ? (
           <div>Loading Chat...</div>
         ) : (
@@ -51,8 +52,8 @@ const ChatBody_Div: React.FC<ChatBodyProps> = ({
       if (
         isUserInChannel ||
         !props.currentChat.isChannel ||
-        (isAdmin && isAdminResolved) ||
-        props.connectedRooms.includes(props.currentChat.chatName.toString())
+        (isAdmin && isAdminResolved) 
+        // || props.connectedRooms.includes(props.currentChat.chatName.toString())
       ) {
         return loadingChatBody ? (
           <div>Loading Chat...</div>
@@ -63,7 +64,7 @@ const ChatBody_Div: React.FC<ChatBodyProps> = ({
         return loadingChatBody ? (
           <div>Loading Chat...</div>
         ) : (
-          <button onClick={() => props.joinRoom(props.currentChat.chatName)}>
+          <button onClick={() => props.joinRoom(props.currentChat.chatName, "public", "")}>
             Join {props.currentChat.chatName}
           </button>
         );

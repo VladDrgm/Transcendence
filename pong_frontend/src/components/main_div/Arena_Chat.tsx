@@ -7,7 +7,7 @@ import { io, Socket } from "socket.io-client";
 import immer, { Draft } from "immer";
 import "../../App.css";
 import {fetchChannelNames, copyChannelByName} from "../div/channel_utils"
-import {postChannelUser, deleteChannelUser} from "../../api/channel/channel_user.api"
+import {postChannelUser, deleteChannelUser, postPrivateChannelUser} from "../../api/channel/channel_user.api"
 import { Channel } from '../../interfaces/channel.interface';
 import { User } from '../../interfaces/user.interface';
 import { useUserContext } from '../context/UserContext';
@@ -140,13 +140,16 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID}) => {
 	setMessages(newMessages);
 	}
 
-	function joinRoom(chatName: ChatName) {
+	function joinRoom(chatName: ChatName, channelStatus: string, password: string) {
 		// const newConnectedRooms = immer(connectedRooms, (draft: WritableDraft<typeof connectedRooms>) => {
 		// 	const chatNameString = String(chatName); // Convert chatName to string
 		// 	draft.push(chatNameString);
 		// });
 		console.log("Posting User ", userID, " in Channel:", currentChat.Channel.ChannelId);
-		postChannelUser(userID, currentChat.Channel.ChannelId);
+		if (channelStatus === "public")
+			postChannelUser(userID, currentChat.Channel.ChannelId);
+		else if (channelStatus === "private")
+			postPrivateChannelUser(userID, currentChat.Channel.ChannelId, password);
 		socketRef.current?.emit("join room", chatName, (messages: any) => roomJoinCallback(messages, chatName));
 		// setConnectedRooms(newConnectedRooms);
 	}
