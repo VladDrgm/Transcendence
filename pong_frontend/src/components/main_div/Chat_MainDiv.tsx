@@ -123,7 +123,7 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 		// handleChannelPanel();
 		// handleBody();
 		// setIsAdminResolved(false);
-	}, [props.currentChat, props.currentChat.isResolved, props.messages, handleUserInChannelBlockedCheck, handleUserInChannelCheck]);
+	}, [props.currentChat, props.currentChat.isResolved]);
 
 	useEffect(() => {
 		if (channelPanelLoaded) {
