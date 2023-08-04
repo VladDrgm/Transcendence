@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { User } from 'src/models/mock_data/local_models';
 
 @Injectable()
 export class SharedUser {

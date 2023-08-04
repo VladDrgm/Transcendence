@@ -1,4 +1,5 @@
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiConsumes, ApiBody } from '@nestjs/swagger';
 import {
   Controller,
   Get,
@@ -7,7 +8,6 @@ import {
   Param,
   Body,
   Delete,
-  Session,
   ParseIntPipe,
   UseInterceptors,
   UploadedFile,
@@ -17,6 +17,7 @@ import { UserService } from './userservice';
 import { User } from 'src/models/orm_models/user.entity';
 import { UserDTO } from './userDTO';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { UploadAvatarDto } from './UploadAvatarDTO';
 
 @ApiTags('User')
 @Controller('user')
@@ -41,17 +42,6 @@ export class UserController {
     await this.userService.remove(id);
   }
 
-//   @Get('login/:id')
-//   @ApiOperation({ summary: 'Login a user' })
-//   async loginUser(
-//     @Param('id', ParseIntPipe) userID: number,
-//     @Session() session: Record<string, any>,
-//   ) {
-//     session.userID = userID;
-//     console.log(userID);
-//     return 'Loged in with id: ' + userID;
-//   }
-
   @Get('user/:id')
   @ApiOperation({ summary: 'Get a user by his id' })
   async getUser(@Param('id', ParseIntPipe) id: number): Promise<User> {
@@ -65,24 +55,6 @@ export class UserController {
     @Param('points', ParseIntPipe) points: number,
   ): Promise<void> {
     await this.userService.updatePoints(id, points);
-  }
-
-  @Put(':id/update/avatar')
-  @UseInterceptors(FileInterceptor('avatar'))
-  async updateAvatar(
-    @UploadedFile() file,
-    @Param('id') id: number,
-  ): Promise<void> {
-    if (!file) {
-      throw new BadRequestException('No file uploaded');
-    }
-
-    // Save the image and get the URL or path
-    const newAvatarPath = await this.userService.saveAvatar(file);
-	// const newAvatarPath = "test";
-
-    // Update the user's avatarPath with the new URL or path
-    await this.userService.updateAvatar(id, newAvatarPath);
   }
 
   @Put(':id/update/username/:username')
@@ -122,5 +94,20 @@ export class UserController {
     @Param('password') password: string,
   ): Promise<User> {
     return await this.userService.updateUserPassword(id, password);
+  }
+
+  @Put(':id/update/avatar')
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({ type: UploadAvatarDto })
+  @UseInterceptors(FileInterceptor('file'))
+  async updateAvatar(
+    @UploadedFile() file: Express.Multer.File,
+    @Param('id') id: number,
+  ): Promise<void> {
+    if (!file) {
+      throw new BadRequestException('No file uploaded');
+    }
+
+    await this.userService.updateAvatar(id, file);
   }
 }

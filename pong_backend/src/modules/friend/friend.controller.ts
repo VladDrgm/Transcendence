@@ -1,12 +1,4 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Put,
-  Delete,
-  Body,
-  Param,
-} from '@nestjs/common';
+import { Controller, Get, Post, Delete, Param } from '@nestjs/common';
 import { ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 import { Friend } from 'src/models/orm_models/friend.entity';
 import { FriendService } from './friend.service';
@@ -71,10 +63,10 @@ export class FriendController {
   @ApiParam({ name: 'userId', description: 'User ID' })
   @ApiParam({ name: 'friendId', description: 'Friend ID' })
   async add(
-	@Param('userId') userId: number,
-	@Param('friendId') friendId: number,
-	  ): Promise<User> {
-	const dto : FriendDto = { UserId: userId, FriendId: friendId };
-	return await this.friendService.addFriend(dto);
-	}
+    @Param('userId') userId: number,
+    @Param('friendId') friendId: number,
+  ): Promise<User> {
+    const dto: FriendDto = { UserId: userId, FriendId: friendId };
+    return await this.friendService.addFriend(dto);
+  }
 }

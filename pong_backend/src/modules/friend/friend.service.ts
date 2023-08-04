@@ -1,7 +1,7 @@
 import { HttpException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Friend } from 'src/models/orm_models/friend.entity';
-import { In, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { User } from 'src/models/orm_models/user.entity';
 import { UserService } from '../user/userservice';
 import { FriendDto } from './friendDto';
@@ -29,7 +29,10 @@ export class FriendService {
       throw new HttpException('Invalid user ID or friend ID', 400);
     }
 
-    const friend = await this.friendRepository.findOneBy({ UserId: userId, FriendId: friendId });
+    const friend = await this.friendRepository.findOneBy({
+      UserId: userId,
+      FriendId: friendId,
+    });
 
     if (!friend) {
       throw new HttpException('Friend not found', 404);
@@ -42,27 +45,30 @@ export class FriendService {
   async findUserFriends(userId: number): Promise<User[]> {
     const friends = await this.friendRepository.findBy({ UserId: userId });
 
-	if (!friends || friends.length == 0) {
-		throw new HttpException('Friends not found', 404);
-	}
+    if (!friends || friends.length == 0) {
+      throw new HttpException('Friends not found', 404);
+    }
 
-	const result = [];
+    const result = [];
 
-	for (const friend of friends) {
-		result.push(await this.userService.findOne(friend.FriendId));
-	}
+    for (const friend of friends) {
+      result.push(await this.userService.findOne(friend.FriendId));
+    }
 
     return result;
   }
 
   async findFriendById(userId: number, friendId: number): Promise<User> {
-    const friend = await this.friendRepository.findOneBy({ UserId: userId, FriendId: friendId });
+    const friend = await this.friendRepository.findOneBy({
+      UserId: userId,
+      FriendId: friendId,
+    });
 
-	if (!friend) {
-		throw new HttpException('Friend not found', 404);
-	}
+    if (!friend) {
+      throw new HttpException('Friend not found', 404);
+    }
 
-	const result = await this.userService.findOne(friend.FriendId);
+    const result = await this.userService.findOne(friend.FriendId);
 
     return result;
   }
@@ -82,22 +88,24 @@ export class FriendService {
     return result;
   }
 
-  async addFriend(dto : FriendDto): Promise<User> {
-	
-	if (dto.UserId === dto.FriendId) {
-		throw new HttpException('Cannot add yourself', 400);
-	}
+  async addFriend(dto: FriendDto): Promise<User> {
+    if (dto.UserId === dto.FriendId) {
+      throw new HttpException('Cannot add yourself', 400);
+    }
 
-	const friend = await this.friendRepository.findOneBy({ UserId: dto.UserId, FriendId: dto.FriendId });
+    const friend = await this.friendRepository.findOneBy({
+      UserId: dto.UserId,
+      FriendId: dto.FriendId,
+    });
 
-	if (friend) {
-		throw new HttpException('Friend already exists', 400);
-	}
+    if (friend) {
+      throw new HttpException('Friend already exists', 400);
+    }
 
-	const newFriend = new Friend();
-	newFriend.UserId = dto.UserId;
-	newFriend.FriendId = dto.FriendId;
+    const newFriend = new Friend();
+    newFriend.UserId = dto.UserId;
+    newFriend.FriendId = dto.FriendId;
 
-	return this.userService.findOne(dto.FriendId);
+    return this.userService.findOne(dto.FriendId);
   }
 }

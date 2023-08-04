@@ -22,7 +22,7 @@ export class ChannelService {
     private readonly channelUserRepository: Repository<ChannelUser>,
     @InjectRepository(ChannelBlockedUser)
     private readonly channelBlockedUserRepository: Repository<ChannelBlockedUser>,
-	private readonly passwordService: PasswordService,
+    private readonly passwordService: PasswordService,
   ) {}
 
   async findAll(): Promise<Channel[]> {
@@ -46,7 +46,9 @@ export class ChannelService {
 
     channelDb.Name = channelDTO.Name;
     channelDb.OwnerId = callerId;
-    channelDb.Password = await this.passwordService.hashPassword(channelDTO.Password);
+    channelDb.Password = await this.passwordService.hashPassword(
+      channelDTO.Password,
+    );
     channelDb.Type = channelDTO.Type;
 
     const ChannelId = await this.channelRepository
@@ -343,7 +345,12 @@ export class ChannelService {
       throw new HttpException('Channel is not private', 400);
     }
 
-    if (await this.passwordService.comparePassword(channel.Password, password) == false) {
+    if (
+      (await this.passwordService.comparePassword(
+        channel.Password,
+        password,
+      )) == false
+    ) {
       throw new HttpException('Wrong password.', 400);
     }
     const channelUser = await this.getChannelUserByUserId(userId, channelId);

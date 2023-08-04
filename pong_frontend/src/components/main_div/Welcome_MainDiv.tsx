@@ -18,7 +18,6 @@ const welcomeTitleStyle: CSS.Properties = {
 
 const Welcome_MainDiv: React.FC<WelcomeMainDivProps> = () => {
 	const { user } = useUserContext();
-
     return (<div>
                 <p style={welcomeTitleStyle}>Welcome {user.username} {user.userID} to the Horror Ping Pong</p>
             </div>)
