@@ -16,6 +16,7 @@ export interface ChatProps {
 	yourId: string | number;  //socketId from joining the game
 	username: string; //name given in the game startpage
 	currentChat: ChatData;
+	ChannelUserRoles: ChannelUserRoles;
 	connectedRooms: string[];
 	messages: Message[];
 	joinRoom: (chatName: ChatName) => void;
@@ -57,5 +58,20 @@ let initialMessagesState: {
 };
 
 // let playerOne:string = "", playerTwo:string = "", audience:string = "";
+
+export interface ChannelUserRoles {
+
+	isUser: 			boolean,
+	isUserResolved: 	boolean,
+	isAdmin: 			boolean,
+	isAdminResolved: 	boolean,
+	isOwner:			boolean,
+	isOwnerResolved:	boolean,
+	isBlocked:			boolean,
+	isBlockedResolved:	boolean,
+	isMuted:			boolean,
+	isMutedResolved:	boolean
+
+}
 
 export type ChatName = keyof typeof initialMessagesState;

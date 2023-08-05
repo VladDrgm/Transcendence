@@ -26,9 +26,9 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 	const [body, setBody] = useState<JSX.Element | null>(null);
 	const [channelpanel, setChannelpanel] = useState<JSX.Element | null>(null);
 	const [loadingChannelpanel, setLoadingChannelpanel] = useState(true);
-	const [loadingChatBody, setLoadingChatBody] = useState(true);
+	// const [loadingChatBody, setLoadingChatBody] = useState(true);
 	const [channelPanelLoaded, setChannelPanelLoaded] = useState(false);
-  	const [chatBodyLoaded, setChatBodyLoaded] = useState(false);
+  	// const [chatBodyLoaded, setChatBodyLoaded] = useState(false);
 
 	const messages = useMemo(() =>
 		props.messages || [], [props.messages])
@@ -59,15 +59,15 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 	const handleBody = useCallback (() =>{
 		setBody(<ChatBody_Div
 			props = {props}
-			isUserInChannelBlocked = {isUserInChannelBlocked}
-			isUserInChannel = {isUserInChannel}
-			isAdmin= {isAdmin}
-			isAdminResolved = {isAdminResolved}
+			// isUserInChannelBlocked = {isUserInChannelBlocked}
+			// isUserInChannel = {isUserInChannel}
+			// isAdmin= {isAdmin}
+			// isAdminResolved = {isAdminResolved}
 			messages={messages}
-			loadingChatBody = {loadingChatBody}
+			// loadingChatBody = {loadingChatBody}
 		/>);
-		setChatBodyLoaded(true);
-	}, [isUserInChannel, isUserInChannelBlocked, loadingChatBody, messages, props, isAdmin]);
+		// setChatBodyLoaded(true);
+	}, [isUserInChannel, isUserInChannelBlocked, messages, props, isAdmin]);
 
 	const handleChannelPanel = useCallback(() =>{
 		// setLoadingChannelpanel(false);
@@ -109,16 +109,16 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 	]);
 
 	useEffect(() => {
-		handleUserInChannelCheck();
-		handleUserInChannelBlockedCheck();
+		// handleUserInChannelCheck();
+		// handleUserInChannelBlockedCheck();
 		// setLoadingChannelpanel(true);
     	// setLoadingChatBody(true);
 		setLoadingChannelpanel(false);
-		setLoadingChatBody(false);
+		// setLoadingChatBody(false);
 		// handleChannelPanel();
 		// handleBody();
 		// setIsAdminResolved(false);
-	}, [props.currentChat, props.currentChat.isResolved, props.messages, handleUserInChannelBlockedCheck, handleUserInChannelCheck]);
+	}, [props.currentChat, props.currentChat.isResolved, props.messages]);
 
 	useEffect(() => {
 		if (channelPanelLoaded) {
@@ -126,54 +126,53 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 		}
 	}, [channelPanelLoaded]);
 	
-	useEffect(() => {
-		if (chatBodyLoaded) {
-		  setLoadingChatBody(false);
-		}
-	}, [chatBodyLoaded]);
+	// useEffect(() => {
+	// 	if (chatBodyLoaded) {
+	// 	  setLoadingChatBody(false);
+	// 	}
+	// }, [chatBodyLoaded]);
 	
 	useEffect(() => {
 		handleChannelPanel();
 		handleBody();
 		// setLoadingChannelpanel(true);
-		// setLoadingChatBody(true);
-	}, [props.currentChat, handleBody, handleChannelPanel, loadingChannelpanel, loadingChatBody]);
+	}, [props.currentChat, handleBody, handleChannelPanel, loadingChannelpanel]);
 
 
-	useEffect(() => {
-		setIsOwner(false);
-		if (!props.currentChat.isResolved)
-			return;
+	// useEffect(() => {
+	// 	setIsOwner(false);
+	// 	if (!props.currentChat.isResolved)
+	// 		return;
 
-		console.log("owner id:", props.currentChat.Channel.OwnerId);
-		console.log("UserID:", props.userID);
-		if (props.currentChat.Channel.OwnerId === props.userID){
-			setIsOwner(true);
-			console.log("true UserID:", props.userID , "owner:", isOwner);
-		} else {
-			setIsOwner(false);
-			console.log("false UserID:", props.userID , "owner:", isOwner);
-		};
-	}, [props.currentChat.isResolved, props.yourId, props.currentChat.isResolved]);
+	// 	console.log("owner id:", props.currentChat.Channel.OwnerId);
+	// 	console.log("UserID:", props.userID);
+	// 	if (props.currentChat.Channel.OwnerId === props.userID){
+	// 		setIsOwner(true);
+	// 		console.log("true UserID:", props.userID , "owner:", isOwner);
+	// 	} else {
+	// 		setIsOwner(false);
+	// 		console.log("false UserID:", props.userID , "owner:", isOwner);
+	// 	};
+	// }, [props.currentChat.isResolved, props.yourId, props.currentChat.isResolved]);
 
-	useEffect(() => {
-		setIsAdminResolved(false);
-		if (!props.currentChat.isResolved)
-			return;
+	// useEffect(() => {
+	// 	setIsAdminResolved(false);
+	// 	if (!props.currentChat.isResolved)
+	// 		return;
 		
-		getIsAdmin(props.currentChat.Channel.ChannelId, props.userID)
-		.then(isAdmin => {
-			setIsAdmin(isAdmin);
-			console.log("UserID:", props.userID , "admin:", isAdmin);
-			setIsAdminResolved(true);
-		})
-		.catch(error => {
-			console.log("Error checking admin status:", error)
-			setIsAdminResolved(true);
-		});
-		// handleUserInChannelCheck();
-		// setIsAdminResolved(false);
-	}, [props.currentChat.isResolved, props.yourId, props.currentChat.isResolved]);
+	// 	getIsAdmin(props.currentChat.Channel.ChannelId, props.userID)
+	// 	.then(isAdmin => {
+	// 		setIsAdmin(isAdmin);
+	// 		console.log("UserID:", props.userID , "admin:", isAdmin);
+	// 		setIsAdminResolved(true);
+	// 	})
+	// 	.catch(error => {
+	// 		console.log("Error checking admin status:", error)
+	// 		setIsAdminResolved(true);
+	// 	});
+	// 	// handleUserInChannelCheck();
+	// 	// setIsAdminResolved(false);
+	// }, [props.currentChat.isResolved, props.yourId, props.currentChat.isResolved]);
 
 	
 

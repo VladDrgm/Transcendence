@@ -7,10 +7,12 @@ import { io, Socket } from "socket.io-client";
 import immer, { Draft } from "immer";
 import "../../App.css";
 import {fetchChannelNames, copyChannelByName} from "../div/channel_utils"
-import {postChannelUser, deleteChannelUser} from "../../api/channel/channel_user.api"
-import { Channel } from '../../interfaces/channel.interface';
+import {postChannelUser, deleteChannelUser, getChannelUser, getChannelBlockedUser, getIsMuted} from "../../api/channel/channel_user.api"
+import { Channel, ChannelUserRoles } from '../../interfaces/channel.interface';
 import { User } from '../../interfaces/user.interface';
 import { useUserContext } from '../context/UserContext';
+import { connected } from 'process';
+import { getIsAdmin } from '../../api/channel/channel_admin.api';
 // import { Channel } from 'diagnostics_channel';
 
 interface ArenaDivProps
@@ -61,6 +63,19 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID}) => {
 		receiverId: "",
 		isResolved: true,
 		Channel: {} as Channel,
+	});
+
+	const [currentRoles, setCurrentRoles] = useState<ChannelUserRoles>({
+		isUser: 			false,
+		isUserResolved: 	false,
+		isAdmin: 			false,
+		isAdminResolved: 	false,
+		isOwner:			false,
+		isOwnerResolved:	false,
+		isBlocked:			false,
+		isBlockedResolved:	false,
+		isMuted:			false,
+		isMutedResolved:	false
 	});
 
 	useEffect(() => {
@@ -161,7 +176,7 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID}) => {
 		// setConnectedRooms(newConnectedRooms);
 	}
 
-	function toggleChat(currentChat: CurrentChat) {
+	async function toggleChat(currentChat: CurrentChat) {
 		if (!messages[currentChat.chatName]) {
 		const newMessages = immer(messages, (draft: WritableDraft<typeof messages>) => {
 			draft[currentChat.chatName] = [];
@@ -170,7 +185,134 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID}) => {
 		}
 		// console.log("Updating in toggle currenChatName", currentChat.chatName)
 		setCurrentChat(currentChat);
+		//fetching Roles
+		await handleUserCurrentUserRoles(currentRoles);
+		//Check User status
 	}
+
+	async function handleUserCurrentUserRoles(currentRoles: ChannelUserRoles) {
+		// setCurrentRoles((prevState) => ({
+		// 	...prevState,
+		// 	isUserResolved: 	false,
+		// 	isBlockedResolved: 	false,
+		// 	isAdminResolved: 	false, 
+		// 	isOwnerResolved: 	false,
+		// 	isMutedResolved: 	false,
+		// }));
+		handleUserInChannelCheck();
+		handleUserInChannelBlockedCheck();
+		handleUserInChannelMutedCheck();
+		handleAdminCheck();
+		handleOwnerCheck();
+	}
+
+	const handleUserInChannelCheck = useCallback (async () => {
+		setCurrentRoles((prevState) => ({
+			...prevState,
+			isUserResolved: false
+		}));
+		try {
+			if (!currentChat.isResolved){
+				return;
+			}
+			getChannelUser(userID, currentChat.Channel.ChannelId)
+				.then((user) => {
+					setCurrentRoles((prevState) => ( {
+						...prevState,
+						isUser: user,
+						isUserResolved: true
+					}));
+				})
+		}catch (error){
+			console.error('Error occured in handleUserChannelCheck:', error);
+		}
+	}, [currentChat.isResolved, currentChat.Channel.ChannelId]);
+
+	const handleUserInChannelBlockedCheck = useCallback (async () => {
+		setCurrentRoles((prevState) => ({
+			...prevState,
+			isBlockedResolved: false
+		}));
+		try {
+			if (!currentChat.isResolved){
+				return;
+			}
+			getChannelBlockedUser(userID, currentChat.Channel.ChannelId)
+				.then((user) => {
+					setCurrentRoles((prevState) => ({
+						...prevState,
+						isBlocked:	user,
+						isBlockedResolved: true
+					}));
+				})
+		}catch (error){
+			console.error('Error occured in handleUserChannelMutedCheck:', error);}
+	}, [currentChat.isResolved, currentChat.Channel.ChannelId]);
+
+
+	const handleUserInChannelMutedCheck = useCallback (async () => {
+		setCurrentRoles((prevState) => ({
+			...prevState,
+			isMutedResolved: false
+		}));
+		try {
+			if (!currentChat.isResolved){
+				return;
+			}
+			getIsMuted(currentChat.Channel.ChannelId, userID, userID)
+				.then((user) => {
+					setCurrentRoles((prevState) => ({
+						...prevState,
+						isMuted:	user,
+						isMutedResolved: true
+					}));
+				})
+		}catch (error){
+			console.error('Error occured in handleUserChannelBlockedCheck:', error);}
+	}, [currentChat.isResolved, currentChat.Channel.ChannelId]);
+
+	const handleAdminCheck = useCallback (async () => {
+		setCurrentRoles((prevState) => ({
+			...prevState,
+			isAdminResolved: false
+		}));
+		try {
+			if (!currentChat.isResolved){
+				return;
+			}
+			getIsAdmin(currentChat.Channel.ChannelId, userID)
+				.then((user) => {
+					setCurrentRoles((prevState) => ({
+						...prevState,
+						isAdmin:	user,
+						isAdminResolved: true
+					}));
+				})
+		}catch (error){
+					console.error('Error occured in handleAdminCheck:', error);}
+	}, [currentChat.isResolved, currentChat.Channel.ChannelId]);
+
+	const handleOwnerCheck = useCallback (async () => {
+		setCurrentRoles((prevState) => ({
+			...prevState,
+			isOwnerResolved: false
+		}));
+		if (!currentChat.isResolved)
+			return;
+		var ownerStatus = false;
+		if (currentChat.Channel.OwnerId === userID){
+			ownerStatus = true;
+			console.log("true UserID:", userID , "owner:", ownerStatus);
+		} else {
+			ownerStatus = true;
+			console.log("false UserID:", userID , "owner:", ownerStatus);
+		};
+		setCurrentRoles((prevState) => ({
+			...prevState,
+			isOwner:	ownerStatus,
+			isOwnerResolved: true
+		}));		
+	}, [currentChat.isResolved, currentChat.Channel.ChannelId]);
 
 	function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
 		setUsername(e.target.value);
@@ -330,6 +472,7 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID}) => {
 			currentChat={currentChat}
 			messages={messages[currentChat.chatName]}
 			toggleChat={toggleChat}
+			ChannelUserRoles={currentRoles}
 			username={username}
 			loadingChannelPanel = {false}
 		/>
