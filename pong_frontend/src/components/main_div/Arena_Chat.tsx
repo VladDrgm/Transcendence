@@ -280,7 +280,7 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID}) => {
 				.then((user) => {
 					setCurrentRoles((prevState) => ( {
 						...prevState,
-						isUser: user,
+						isUser: true,
 						isUserResolved: true
 					}));
 				})
