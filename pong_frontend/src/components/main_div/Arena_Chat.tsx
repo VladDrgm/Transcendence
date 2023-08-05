@@ -259,7 +259,7 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID}) => {
 				.then((user) => {
 					setCurrentRoles((prevState) => ( {
 						...prevState,
-						isUser: true,
+						isUser: !!user,
 						isUserResolved: true
 					}));
 				})
@@ -342,10 +342,10 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID}) => {
 		var ownerStatus = false;
 		if (currentChat.Channel.OwnerId === userID){
 			ownerStatus = true;
-			console.log("true UserID:", userID , "owner:", ownerStatus);
+			// console.log("true UserID:", userID , "owner:", ownerStatus);
 		} else {
-			ownerStatus = true;
-			console.log("false UserID:", userID , "owner:", ownerStatus);
+			ownerStatus = false;
+			// console.log("false UserID:", userID , "owner:", ownerStatus);
 		};
 		setCurrentRoles((prevState) => ({
 			...prevState,
@@ -353,6 +353,29 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID}) => {
 			isOwnerResolved: true
 		}));		
 	}, [currentChat.isResolved, currentChat.Channel.ChannelId]);
+
+
+	// function handleOwnerCheck() {
+	// 	setCurrentRoles((prevState) => ({
+	// 		...prevState,
+	// 		isOwnerResolved: false
+	// 	}));
+	// 	if (!currentChat.isResolved)
+	// 		return;
+	// 	var ownerStatus = false;
+	// 	if (currentChat.Channel.OwnerId === userID){
+	// 		ownerStatus = true;
+	// 		// console.log("true UserID:", userID , "owner:", ownerStatus);
+	// 	} else {
+	// 		ownerStatus = false;
+	// 		// console.log("false UserID:", userID , "owner:", ownerStatus);
+	// 	};
+	// 	setCurrentRoles((prevState) => ({
+	// 		...prevState,
+	// 		isOwner:	ownerStatus,
+	// 		isOwnerResolved: true
+	// 	}));		
+	// };
 
 	function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
 		setUsername(e.target.value);
