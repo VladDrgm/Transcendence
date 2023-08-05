@@ -114,27 +114,6 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID}) => {
 		}
 	}, []);
 
-	// useEffect(() => {
-	// 	const fetchAndCopyChannel = async () => {
-	// 	  currentChat.isResolved = false;
-	// 	  const copiedChannel = await copyChannelByName(currentChat.chatName.toString());
-	// 	  if (copiedChannel) {
-	// 		setCurrentChat(prevState => ({
-	// 		  ...prevState,
-	// 		  Channel: copiedChannel,
-	// 		}));
-	// 	  }
-	// 	};
-	// 	fetchAndCopyChannel();
-  	// }, [setCurrentChat, currentChat.chatName]); //this calls fetchAndCopyCahnnel whenever setCurrentChat is called with a new Chatname
-	
-	// useEffect(() => {
-	// 	if(currentChat.Channel && currentChat.Channel.ChannelId){
-	// 		currentChat.isResolved = true;
-	// 		console.log("Updating Channelobject in currentChat to:", currentChat.Channel.Name);
-	// 	}
-	//   }, [currentChat.Channel.Name]);
-
 	useEffect(() => {initializeMessagesState();});
 	const [messages, setMessages] = useState<{
 		[key in ChatName]: { sender: string; content: string }[];
