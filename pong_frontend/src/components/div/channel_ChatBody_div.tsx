@@ -59,7 +59,7 @@ const ChatBody_Div: React.FC<ChatBodyProps> = ({
       }
       default:
         return (
-         <div>Loading Chat...</div>);
+         <div>Loading Chat 2...</div>);
     }
 };
 

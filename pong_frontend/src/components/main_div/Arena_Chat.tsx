@@ -6,13 +6,14 @@ import GameForm from "./GameForm";
 import { io, Socket } from "socket.io-client";
 import immer, { Draft } from "immer";
 import "../../App.css";
-import {fetchChannelNames, copyChannelByName} from "../div/channel_utils"
+import {fetchChannelNames, copyChannelByName, fetchAllChannels} from "../div/channel_utils"
 import {postChannelUser, deleteChannelUser, getChannelUser, getChannelBlockedUser, getIsMuted} from "../../api/channel/channel_user.api"
 import { Channel, ChannelUserRoles } from '../../interfaces/channel.interface';
 import { User } from '../../interfaces/user.interface';
 import { useUserContext } from '../context/UserContext';
 import { connected } from 'process';
 import { getIsAdmin } from '../../api/channel/channel_admin.api';
+import { error } from 'console';
 // import { Channel } from 'diagnostics_channel';
 
 interface ArenaDivProps
@@ -42,6 +43,11 @@ async function initializeMessagesState() {
 	});
 }
 
+//returning Channelofject from Channellist with same Name
+function getChannelFromChannellist(channelList: Channel[], channelName: string | number): Channel | undefined {
+	return channelList.find((channel) => channel.Name === channelName);
+}
+
 export type ChatName = keyof typeof initialMessagesState;
 
 type CurrentChat = {
@@ -65,43 +71,70 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID}) => {
 		Channel: {} as Channel,
 	});
 
-	const [currentRoles, setCurrentRoles] = useState<ChannelUserRoles>({
-		isUser: 			false,
-		isUserResolved: 	false,
-		isAdmin: 			false,
-		isAdminResolved: 	false,
-		isOwner:			false,
-		isOwnerResolved:	false,
-		isBlocked:			false,
-		isBlockedResolved:	false,
-		isMuted:			false,
-		isMutedResolved:	false
-	});
 
-	useEffect(() => {
-		const fetchAndCopyChannel = async () => {
-		  currentChat.isResolved = false;
-		  const copiedChannel = await copyChannelByName(currentChat.chatName.toString());
-		  if (copiedChannel) {
-			setCurrentChat(prevState => ({
-			  ...prevState,
-			  Channel: copiedChannel,
-			}));
-		  }
-		};
-		fetchAndCopyChannel();
-  	}, [setCurrentChat, currentChat.chatName]); //this calls fetchAndCopyCahnnel whenever setCurrentChat is called with a new Chatname
 	
-	useEffect(() => {
-		if(currentChat.Channel && currentChat.Channel.ChannelId){
-			currentChat.isResolved = true;
-			console.log("Updating Channelobject in currentChat to:", currentChat.Channel.Name);
-		}
-	  }, [currentChat.Channel.Name]);
-
+	const [currentRoles, setCurrentRoles] = useState<ChannelUserRoles>({
+		isUser: 			true,
+		isUserResolved: 	true,
+		isAdmin: 			false,
+		isAdminResolved: 	true,
+		isOwner:			false,
+		isOwnerResolved:	true,
+		isBlocked:			false,
+		isBlockedResolved:	true,
+		isMuted:			false,
+		isMutedResolved:	true
+	});
+	
 	const [connectedRooms, setConnectedRooms] = useState<string[]>(["general"]);
 	const [allUsers, setAllUsers] = useState<any[]>([]);
 	const [allChannels, setAllChannels] = useState<any[]>([]);
+
+	//Populating the Channellist at Mount of Arena
+	//Filling Channel of currentChat variable with the fetched Channel Object
+	useEffect(() => {
+		try {
+			fetchAllChannels()
+				.then((channels) => {
+					setAllChannels(channels);
+					const currentChat = getChannelFromChannellist(channels, "general");
+					if (currentChat) {
+						console.log("gotChannel");
+						setCurrentChat((prevState) => ( {
+							...prevState,
+							Channel: currentChat,
+						}));
+					}
+				})
+				.catch((error) => {
+					console.error("Error fetching all Channels: ", error);
+				});
+		} catch(error) {
+			console.error('Error fetching all Channels:', error);
+		}
+	}, []);
+
+	// useEffect(() => {
+	// 	const fetchAndCopyChannel = async () => {
+	// 	  currentChat.isResolved = false;
+	// 	  const copiedChannel = await copyChannelByName(currentChat.chatName.toString());
+	// 	  if (copiedChannel) {
+	// 		setCurrentChat(prevState => ({
+	// 		  ...prevState,
+	// 		  Channel: copiedChannel,
+	// 		}));
+	// 	  }
+	// 	};
+	// 	fetchAndCopyChannel();
+  	// }, [setCurrentChat, currentChat.chatName]); //this calls fetchAndCopyCahnnel whenever setCurrentChat is called with a new Chatname
+	
+	// useEffect(() => {
+	// 	if(currentChat.Channel && currentChat.Channel.ChannelId){
+	// 		currentChat.isResolved = true;
+	// 		console.log("Updating Channelobject in currentChat to:", currentChat.Channel.Name);
+	// 	}
+	//   }, [currentChat.Channel.Name]);
+
 	useEffect(() => {initializeMessagesState();});
 	const [messages, setMessages] = useState<{
 		[key in ChatName]: { sender: string; content: string }[];
@@ -183,12 +216,23 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID}) => {
 		});
 		setMessages(newMessages);
 		}
-		// console.log("Updating in toggle currenChatName", currentChat.chatName)
-		setCurrentChat(currentChat);
+		//setting Channel propertie of currentChat from saved allChannels
+		const currentChannel = getChannelFromChannellist(allChannels, currentChat.chatName);
+		if (currentChannel) {
+			setCurrentChat(() => ({
+				isChannel: currentChat.isChannel,
+				chatName: currentChat.chatName,
+				receiverId: currentChat.receiverId,
+				Channel: currentChannel,
+				isResolved: true
+			}));
+		}
 		//fetching Roles
 		await handleUserCurrentUserRoles(currentRoles);
 		//Check User status
 	}
+
+	
 
 	async function handleUserCurrentUserRoles(currentRoles: ChannelUserRoles) {
 		// setCurrentRoles((prevState) => ({
@@ -205,6 +249,23 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID}) => {
 		handleAdminCheck();
 		handleOwnerCheck();
 	}
+	// const handleChannel = useCallback (async () => {
+	// 	try {
+	// 		if (!currentChat.isResolved){
+	// 			return;
+	// 		}
+	// 		getChannelUser(userID, currentChat.Channel.ChannelId)
+	// 			.then((user) => {
+	// 				setCurrentRoles((prevState) => ( {
+	// 					...prevState,
+	// 					isUser: user,
+	// 					isUserResolved: true
+	// 				}));
+	// 			})
+	// 	}catch (error){
+	// 		console.error('Error occured in handleUserChannelCheck:', error);
+	// 	}
+	// }, [currentChat.isResolved, currentChat.Channel.ChannelId]);
 
 	const handleUserInChannelCheck = useCallback (async () => {
 		setCurrentRoles((prevState) => ({
