@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react';
 import { Route, BrowserRouter as Router, Navigate, Routes } from 'react-router-dom';
 import { User } from './interfaces/user.interface';
 import { UserContextProvider, useUserContext } from './components/context/UserContext';
-import LogIn from './components/LogIn';
+import LoginPage from './components/LoginPage';
 import CompleteProfilePage from './components/main_div/CompleteProfilePage';
 import Welcome_MainDiv from './components/main_div/Welcome_MainDiv';
 import Arena_Chat_MainDiv from './components/main_div/Arena_Chat';
@@ -75,7 +75,7 @@ const App = () => {
 					<Route path="profile" element={<div><Profile_MainDiv userID={user.userID} /></div>} />
 					<Route path="settings" element={<div><SettingsPage onLogout={handleLogout} userID={user.userID} /></div>} />
 				</Route>
-				<Route path='/login' element={<LogIn onSignUp={storeUserInCookies} userID_set={userID_set} loginDone_set={loged_in_set} />}/>
+				<Route path='/login' element={<LoginPage onSignUp={storeUserInCookies} userID_set={userID_set} loginDone_set={loged_in_set} />}/>
 				<Route path='/complete_profile' element={<CompleteProfilePage userID={user.userID}/>}/>
 			</Routes>
 		  </Router>

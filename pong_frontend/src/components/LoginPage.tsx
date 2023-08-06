@@ -6,14 +6,14 @@ import gif from './assets/billy.png'
 import { User } from '../interfaces/user.interface';
 import { UserContextProvider, useUserContext } from './context/UserContext';
 
-interface LogInProps
+interface LoginPageProps
 {
 	onSignUp: (user: User) => void;
   	userID_set: React.Dispatch<React.SetStateAction<number>>;
   	loginDone_set: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const LogIn: React.FC<LogInProps> = ({onSignUp, userID_set, loginDone_set}) => {
+const LoginPage: React.FC<LoginPageProps> = ({onSignUp, userID_set, loginDone_set}) => {
   const input_id = useRef<HTMLInputElement>(null);
   var input_user_id;
   var fetchAddress = process.env.REACT_APP_SRVR_URL ||  'http://localhost:3000/';
@@ -350,4 +350,4 @@ const formFieldStyle: CSS.Properties = {
           </div>);
 };
 
-export default LogIn;
+export default LoginPage;
