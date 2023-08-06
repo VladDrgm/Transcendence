@@ -98,6 +98,8 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID}) => {
 				.then((channels) => {
 					setAllChannels(channels);
 					const currentChat = getChannelFromChannellist(channels, "general");
+					
+					console.log("Channels: ", currentChat);
 					if (currentChat) {
 						// console.log("gotChannel");
 						setCurrentChat((prevState) => ( {
@@ -197,7 +199,11 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID}) => {
 		}
 		//setting Channel propertie of currentChat from saved allChannels
 		const currentChannel = getChannelFromChannellist(allChannels, currentChat.chatName);
+		console.log("currenttChannel:", currentChannel);
+		console.log("currentChat:", currentChat);
 		if (currentChannel) {
+		console.log("inside if:", currentChannel);
+
 			setCurrentChat(() => ({
 				isChannel: currentChat.isChannel,
 				chatName: currentChat.chatName,
@@ -205,15 +211,17 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID}) => {
 				Channel: currentChannel,
 				isResolved: true
 			}));
+			// currentChat.Channel = currentChannel;
+			// currentChat.isResolved = true;
+		console.log("after", currentChat.Channel);
+		console.log("after currentchat", currentChat);
 		}
 		//fetching Roles
-		await handleUserCurrentUserRoles(currentRoles);
+		// await handleUserCurrentUserRoles(currentRoles);
 		//Check User status
 	}
 
-	
-
-	async function handleUserCurrentUserRoles(currentRoles: ChannelUserRoles) {
+	const  handleUserCurrentUserRoles = useEffect(() => {
 		// setCurrentRoles((prevState) => ({
 		// 	...prevState,
 		// 	isUserResolved: 	false,
@@ -222,13 +230,31 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID}) => {
 		// 	isOwnerResolved: 	false,
 		// 	isMutedResolved: 	false,
 		// }));
-		await handleUserInChannelCheck();
-		await handleUserInChannelBlockedCheck();
-		await handleUserInChannelMutedCheck();
-		await handleAdminCheck();
-		await handleOwnerCheck();
-	}
-	// const handleChannel = useCallback (async () => {
+		handleUserInChannelCheck();
+		handleUserInChannelBlockedCheck();
+		handleUserInChannelMutedCheck();
+		handleAdminCheck();
+		handleOwnerCheck();
+		console.log("in effect currentChat:", currentChat);
+	}, [currentChat.chatName])
+	
+
+	// async function handleUserCurrentUserRoles(currentRoles: ChannelUserRoles) {
+	// 	// setCurrentRoles((prevState) => ({
+	// 	// 	...prevState,
+	// 	// 	isUserResolved: 	false,
+	// 	// 	isBlockedResolved: 	false,
+	// 	// 	isAdminResolved: 	false, 
+	// 	// 	isOwnerResolved: 	false,
+	// 	// 	isMutedResolved: 	false,
+	// 	// }));
+	// 	await handleUserInChannelCheck();
+	// 	await handleUserInChannelBlockedCheck();
+	// 	await handleUserInChannelMutedCheck();
+	// 	await handleAdminCheck();
+	// 	await handleOwnerCheck();
+	// }
+	// // const handleChannel = useCallback (async () => {
 	// 	try {
 	// 		if (!currentChat.isResolved){
 	// 			return;
@@ -519,6 +545,7 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID}) => {
 	/* rendering condition */
 	let body;
 	if (connected) {
+		console.log("before body:", currentChat);
 		body = (
 		<Chat_MainDiv
 			user={user}
