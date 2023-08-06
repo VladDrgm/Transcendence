@@ -1,18 +1,17 @@
 import React, {useState} from 'react';
-import {main_div_mode_t} from '../MainDivSelector'
 import CSS from 'csstype';
 import { User } from '../../interfaces/user.interface';
 import { useUserContext } from '../context/UserContext';
 import { updateAvatarApi, updatePasswordApi, updateUsernameApi } from '../../api/userApi';
 
-interface SettingsMainDivProps
+interface SettingsPageProps
 {
 	onLogout: () => void;
-  	userID: number;
-  	mode_set: React.Dispatch<React.SetStateAction<main_div_mode_t>>;
+	userID: number;
 }
 
-const Settings_MainDiv: React.FC<SettingsMainDivProps> = ({onLogout, userID, mode_set}) => {
+// Component
+const SettingsPage: React.FC<SettingsPageProps> = ({onLogout, userID}) => {
 	const { user, setUser } = useUserContext();
 	const [updatedUser, setUpdatedUser] = useState<User>(user);
 	const [newPassword, setNewPassword] = useState(''); // Sign up state for password input
@@ -163,7 +162,7 @@ const logoutButtonStyle: CSS.Properties = {
 	width:'160px',
 	fontFamily: 'Shlop',
 	fontSize: '24px',
-	display: 'block',
+	alignSelf: 'center',
 	borderRadius: '6px',
 	border: 'none',
 	color:'white',
@@ -223,7 +222,6 @@ return (
 	  </div>
 	</div>
   );
-  
 };
 
-export default Settings_MainDiv;
+export default SettingsPage;

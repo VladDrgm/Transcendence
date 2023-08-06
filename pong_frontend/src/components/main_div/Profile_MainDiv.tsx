@@ -8,10 +8,10 @@ import Friend_Div from '../div/friend_div';
 interface ProfileProps
 {
   userID: number;
-  mode_set: React.Dispatch<React.SetStateAction<main_div_mode_t>>;
+//   mode_set: React.Dispatch<React.SetStateAction<main_div_mode_t>>;
 }
 
-const Profile_MainDiv: React.FC<ProfileProps> = ({userID, mode_set}) => {
+const Profile_MainDiv: React.FC<ProfileProps> = ({userID}) => {
   const [idTxt, setid] = useState<string>();
   const [idfriend, setFid] = useState<number>(-1);
   const getData = async () => {

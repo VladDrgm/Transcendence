@@ -1,8 +1,10 @@
 import React, { useRef, useState } from 'react';
 import { login } from '../api/login.api';
+import { useNavigate } from 'react-router-dom';
 import CSS from 'csstype';
 import gif from './assets/billy.png'
 import { User } from '../interfaces/user.interface';
+import { UserContextProvider, useUserContext } from './context/UserContext';
 
 interface LogInProps
 {
@@ -14,21 +16,23 @@ interface LogInProps
 const LogIn: React.FC<LogInProps> = ({onSignUp, userID_set, loginDone_set}) => {
   const input_id = useRef<HTMLInputElement>(null);
   var input_user_id;
-  var fetchAddress = process.env.REACT_APP_SRVR_URL || 'http://localhost:3000/';
+  var fetchAddress = process.env.REACT_APP_SRVR_URL ||  'http://localhost:3000/';
   var signUpEndpoint = 'user';
   var loginEndpoint1 = 'user/'; // Replace later with user/login
   var endpointSlash = '/'
   var loginEndpoint2 = '/login/confirm';
 
-  const [showLoginPopup, setShowLoginPopup] = useState(false);
-  const [showSignupPopup, setShowSignupPopup] = useState(false);
+	const { user, setUser } = useUserContext();
 
-  const [username, setUsername] = useState(''); // Login state for username input
-  const [password, setPassword] = useState(''); // Login state for password input
-  
-  const [newUsername, setNewUsername] = useState(''); // Sign up state for username input
-  const [newIntraUsername, setNewIntraUsername] = useState(''); // Sign up state for username input
-  const [newPassword, setNewPassword] = useState(''); // Sign up state for password input
+	const [showLoginPopup, setShowLoginPopup] = useState(false);
+	const [showSignupPopup, setShowSignupPopup] = useState(false);
+
+	const [username, setUsername] = useState(''); // Login state for username input
+	const [password, setPassword] = useState(''); // Login state for password input
+	
+	const [newUsername, setNewUsername] = useState(''); // Sign up state for username input
+	const [newIntraUsername, setNewIntraUsername] = useState(''); // Sign up state for username input
+	const [newPassword, setNewPassword] = useState(''); // Sign up state for password input
 
 const pageStyle: CSS.Properties = {
 	backgroundColor: 'rgba(3, 3, 3, 1)',
@@ -175,6 +179,27 @@ const formFieldStyle: CSS.Properties = {
 		setShowLoginPopup(true);
 	};
 
+	const OnLoginWith42ButtonClick = async () => {
+		const clientID = 'u-s4t2ud-5cd9e549c33e07468ded3a2cc3572e1a4c100c9c139d9c69edee2d7a856d2075';
+		const redirectURI = 'https://vlad-id-dev-transcendencedb.postgres.database.azure.com/redirect';
+
+		// Construct the URL for the 42 API authorization endpoint
+		const authEndpoint = 'https://api.intra.42.fr/oauth/authorize';
+		const queryParams = new URLSearchParams({
+		  client_id: clientID,
+		  redirect_uri: redirectURI,
+		  response_type: 'code',
+		  scope: 'public',
+		});
+		const authorizationUrl = `${authEndpoint}?${queryParams.toString()}`;
+	  
+		// Redirect the user to the 42 API authorization endpoint inside the same window
+		// window.location.href = authorizationUrl;
+
+		// Open the 42 API authorization page in a new tab
+		window.open(authorizationUrl, '_blank');
+	}
+
 	const handleSignUp = async () => {
 		const newUser: User = {
 			username: newUsername,
@@ -238,9 +263,13 @@ const formFieldStyle: CSS.Properties = {
 		if (response.ok) {
 			const loggedInUser: User = await response.json(); 
 			onSignUp(loggedInUser);
-			await login(loggedInUser.userID);
-			userID_set(loggedInUser.userID);
-			loginDone_set(true);
+			// await login(loggedInUser.userID);
+			// userID_set(loggedInUser.userID);
+			// loginDone_set(true);
+			const userJSON = JSON.stringify(loggedInUser);
+			localStorage.setItem('user', userJSON);
+			setUser(loggedInUser);
+			// navigate("/");
 		} else {
 			throw new Error(response.statusText);
 		}
@@ -268,6 +297,7 @@ const formFieldStyle: CSS.Properties = {
             <p style={welcomeTitleStyle}>Do you want to play a game?</p>
             <button style={loginButtonStyle} onClick={OnLoginButtonClick}>Login</button>
             <button style={signupButtonStyle} onClick={OnSignUpButtonClick}>Sign up</button>
+            <button style={signupButtonStyle} onClick={OnLoginWith42ButtonClick}>Login with 42</button>
 
 			{showLoginPopup && (
         		<div style={loginPopupStyle}>
