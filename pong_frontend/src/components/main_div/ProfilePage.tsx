@@ -1,17 +1,15 @@
 import React, {useState, useEffect} from 'react';
-import {main_div_mode_t} from '../MainDivSelector'
 import Private_Div from '../div/private_div';
 import FriendList from '../div/friend_list_div';
 import { getMyID } from '../../api/profile.api';
 import Friend_Div from '../div/friend_div';
 
-interface ProfileProps
+interface ProfilePageProps
 {
   userID: number;
-//   mode_set: React.Dispatch<React.SetStateAction<main_div_mode_t>>;
 }
 
-const Profile_MainDiv: React.FC<ProfileProps> = ({userID}) => {
+const ProfilePage: React.FC<ProfilePageProps> = ({userID}) => {
   const [idTxt, setid] = useState<string>();
   const [idfriend, setFid] = useState<number>(-1);
   const getData = async () => {
@@ -56,4 +54,4 @@ const Profile_MainDiv: React.FC<ProfileProps> = ({userID}) => {
     };
 };
 
-export default Profile_MainDiv;
+export default ProfilePage;

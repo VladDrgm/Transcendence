@@ -6,7 +6,7 @@ import LoginPage from './components/LoginPage';
 import CompleteProfilePage from './components/main_div/CompleteProfilePage';
 import Welcome_MainDiv from './components/main_div/Welcome_MainDiv';
 import Arena_Chat_MainDiv from './components/main_div/Arena_Chat';
-import Profile_MainDiv from './components/main_div/Profile_MainDiv';
+import ProfilePage from './components/main_div/ProfilePage';
 import UserStartPage from './components/UserStartPage';
 import Error_MainDiv from './components/main_div/Error_MainDiv';
 import Game from './components/main_div/Game';
@@ -72,7 +72,7 @@ const App = () => {
 					<Route path="chat" element={<div><Arena_Chat_MainDiv userID={user.userID} /></div>} />
 					{/* <Route path="game" element={<div><Game /></div>} /> */}
 					<Route path="leaderboard" element={<div><Leaderboard_MainDiv /></div>} />
-					<Route path="profile" element={<div><Profile_MainDiv userID={user.userID} /></div>} />
+					<Route path="profile" element={<div><ProfilePage userID={user.userID} /></div>} />
 					<Route path="settings" element={<div><SettingsPage onLogout={handleLogout} userID={user.userID} /></div>} />
 				</Route>
 				<Route path='/login' element={<LoginPage onSignUp={storeUserInCookies} userID_set={userID_set} loginDone_set={loged_in_set} />}/>
