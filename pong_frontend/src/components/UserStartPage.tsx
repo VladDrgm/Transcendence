@@ -1,41 +1,7 @@
 // Imports
 import { Link, Outlet } from 'react-router-dom';
-import CSS from 'csstype';
 import { useUserContext } from './context/UserContext';
-
-// CSS
-const pageStyle: CSS.Properties = {
-	backgroundColor: 'rgba(3, 3, 3, 1)',
-	height: '100%',
-	width: '100%',
-	position: 'absolute',
-	alignItems: 'center',
-	flexDirection: 'column',
-	textAlign: 'center',
-	borderColor: 'green',
-	borderWidth: '5px',
-}
-
-const subPageDimensions: CSS.Properties = {
-	width: '100%',
-	height: '500px',
-	backgroundColor: 'lightgray'
-}
-
-  const buttonStyle: CSS.Properties = {
-	backgroundColor: 'rgba(254, 8, 16, 1)',
-	position: 'relative',
-	height:'40px',
-	width:'160px',
-	fontFamily: 'Shlop',
-	fontSize: '24px',
-	alignSelf: 'center',
-	borderRadius: '6px',
-	border: 'none',
-	color:'white',
-	top:'4px',
-	margin:'4px',
-}
+import * as styles from './UserStartPageStyles';
 
 // Page properties
 interface UserStartPageProps {
@@ -56,15 +22,15 @@ const UserStartPage: React.FC<UserStartPageProps> = ({/* Use UserStartPageProps 
 	];
 
 	return (
-		<div style={pageStyle}>
+		<div style={styles.pageStyle}>
 			<header>
         		{
 					navigationLinks.map((link) => (
-          				<Link key={link.path} style={buttonStyle} to={link.path}>{link.label}</Link>
+          				<Link key={link.path} style={styles.buttonStyle} to={link.path}>{link.label}</Link>
         			))
 				}
       		</header>
-	  		<div style={subPageDimensions}>
+	  		<div style={styles.subPageDimensions}>
 	  			<Outlet /> {/* This will render the nested routes */}
       		</div>
 		</div>

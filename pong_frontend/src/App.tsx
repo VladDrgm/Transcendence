@@ -3,7 +3,7 @@ import { Route, BrowserRouter as Router, Navigate, Routes } from 'react-router-d
 import { User } from './interfaces/user.interface';
 import { UserContextProvider, useUserContext } from './components/context/UserContext';
 import LoginPage from './components/LoginPage';
-import CompleteProfilePage from './components/mainPages/CompleteProfilePage';
+import CompleteProfilePage from './components/CompleteProfilePage';
 import HomePage from './components/mainPages/HomePage';
 import Arena_Chat_MainDiv from './components/mainPages/Arena_Chat';
 import ProfilePage from './components/mainPages/ProfilePage';

@@ -1,78 +1,8 @@
 import React, {useState} from 'react';
-import { useUserContext } from '../context/UserContext';
-import CSS from 'csstype';
-import { User } from '../../interfaces/user.interface';
-import { updateAvatarApi, updateUsernameApi } from '../../api/userApi';
-
-
-// CSS
-const pageTitleStyle: CSS.Properties = {
-	color: 'rgba(254, 8, 16, 1)',
-	position: 'relative',
-	textAlign: 'center',
-	top: '8px',
-	padding: '4px',
-	fontFamily: 'Shlop',
-	fontSize: '40px',
-};
-
-const profilePictureStyle: CSS.Properties = {
-    width: '120px',
-    height: '120px',
-    borderRadius: '50%',
-    objectFit: 'cover',
-    marginBottom: '20px',
-    border: '3px solid rgba(254, 8, 16, 1)',
-  };
-
-const settingsTitleStyle: CSS.Properties = {
-	color: 'rgba(254, 8, 16, 1)',
-	position: 'relative',
-	textAlign: 'center',
-	top: '8px',
-	padding: '4px',
-	fontFamily: 'Shlop',
-	fontSize: '40px',
-}
-
-const FormFieldStyle: CSS.Properties = {
-    padding: '8px',
-    width: '250px',
-    fontSize: '18px',
-    borderRadius: '4px',
-    border: '1px solid #fff',
-	marginBottom: '15px',
-	fontFamily: 'Shlop',
-}
-
-const updateButtonStyle: CSS.Properties = {
-	backgroundColor: 'rgba(254, 8, 16, 1)',
-	position: 'relative',
-	height:'40px',
-	width:'80px',
-	fontFamily: 'Shlop',
-	fontSize: '14px',
-	alignSelf: 'center',
-	borderRadius: '6px',
-	border: 'none',
-	color:'white',
-	marginTop: '10px',
-	marginLeft: '20px',
-}
-
-const logoutButtonStyle: CSS.Properties = {
-	backgroundColor: 'rgba(254, 8, 16, 1)',
-	position: 'relative',
-	height:'40px',
-	width:'160px',
-	fontFamily: 'Shlop',
-	fontSize: '24px',
-	alignSelf: 'center',
-	borderRadius: '6px',
-	border: 'none',
-	color:'white',
-	marginBottom: '0px',
-}
+import { useUserContext } from './context/UserContext';
+import * as styles from './CompleteProfilePageStyles';
+import { User } from '../interfaces/user.interface';
+import { updateAvatarApi, updateUsernameApi } from '../api/userApi';
 
 // Page props
 interface CompleteProfilePageProps {
@@ -140,7 +70,7 @@ const CompleteProfilePage: React.FC<CompleteProfilePageProps> = ({userID}) => {
 
     return (<div>
 				<div>
-					<p style={settingsTitleStyle}>Complete your profile</p>
+					<p style={styles.settingsTitleStyle}>Complete your profile</p>
 					<img
 						className='user-card__image'
 						src={`http://localhost:3000/avatars/${user.avatarPath}`}
@@ -149,7 +79,7 @@ const CompleteProfilePage: React.FC<CompleteProfilePageProps> = ({userID}) => {
 							currentTarget.onerror = null;
 							currentTarget.src = '/default_pfp.png';
 						}}
-						style={profilePictureStyle}
+						style={styles.profilePictureStyle}
 						/>
 					<form>
 					<input
@@ -157,17 +87,17 @@ const CompleteProfilePage: React.FC<CompleteProfilePageProps> = ({userID}) => {
 						placeholder={user.intraUsername}
 						value={newUsername}
 						onChange={(e) => setNewUsername(e.target.value)} // Update state on change
-						style={FormFieldStyle}
+						style={styles.formFieldStyle}
 					/>
 					{showUpdateUsernameSuccessMessage && <p>Successfully update the username</p>}
-					<button style={updateButtonStyle} onClick={handleUpdateUsername}>
+					<button style={styles.updateButtonStyle} onClick={handleUpdateUsername}>
 						Update
 					</button>
 					</form>
 					<form>
-					<input type="file" onChange={handleAvatarChange} style={FormFieldStyle}/>
+					<input type="file" onChange={handleAvatarChange} style={styles.formFieldStyle}/>
 					{showUpdateAvatarSuccessMessage && <p>Successfully update the avatar</p>}
-					<button style={updateButtonStyle} onClick={handleUpdateAvatar}>
+					<button style={styles.updateButtonStyle} onClick={handleUpdateAvatar}>
 						Update
 					</button>
 					</form>

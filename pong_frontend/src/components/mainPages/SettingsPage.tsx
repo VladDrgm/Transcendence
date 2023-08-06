@@ -1,8 +1,8 @@
 import React, {useState} from 'react';
-import CSS from 'csstype';
 import { User } from '../../interfaces/user.interface';
 import { useUserContext } from '../context/UserContext';
 import { updateAvatarApi, updatePasswordApi, updateUsernameApi } from '../../api/userApi';
+import * as styles from './SettingsPageStyles';
 
 interface SettingsPageProps
 {
@@ -100,79 +100,10 @@ const OnLogoutButtonClick = async () => {
 
 };
 
-  // CSS for the profile picture
-  const profilePictureStyle: CSS.Properties = {
-    width: '120px',
-    height: '120px',
-    borderRadius: '50%',
-    objectFit: 'cover',
-    marginBottom: '20px',
-    border: '3px solid rgba(254, 8, 16, 1)',
-  };
-
-const settingsTitleStyle: CSS.Properties = {
-	color: 'rgba(254, 8, 16, 1)',
-	position: 'relative',
-	textAlign: 'center',
-	top: '8px',
-	padding: '4px',
-	fontFamily: 'Shlop',
-	fontSize: '40px',
-}
-
-const FormFieldStyle: CSS.Properties = {
-    padding: '8px',
-    width: '250px',
-    fontSize: '18px',
-    borderRadius: '4px',
-    border: '1px solid #fff',
-	marginBottom: '15px',
-	fontFamily: 'Shlop',
-}
-
-const updateButtonStyle: CSS.Properties = {
-	backgroundColor: 'rgba(254, 8, 16, 1)',
-	position: 'relative',
-	height:'40px',
-	width:'80px',
-	fontFamily: 'Shlop',
-	fontSize: '14px',
-	alignSelf: 'center',
-	borderRadius: '6px',
-	border: 'none',
-	color:'white',
-	marginTop: '10px',
-	marginLeft: '20px',
-}
-
-// const successMessageStyle: CSS.Properties = {
-// 	color: 'rgba(254, 8, 16, 1)',
-// 	position: 'relative',
-// 	textAlign: 'center',
-// 	top: '8px',
-// 	padding: '4px',
-// 	fontFamily: 'Shlop',
-// 	fontSize: '12px',
-// }
-
-const logoutButtonStyle: CSS.Properties = {
-	backgroundColor: 'rgba(254, 8, 16, 1)',
-	position: 'relative',
-	height:'40px',
-	width:'160px',
-	fontFamily: 'Shlop',
-	fontSize: '24px',
-	alignSelf: 'center',
-	borderRadius: '6px',
-	border: 'none',
-	color:'white',
-	marginBottom: '0px',
-}
-
 return (
 	<div>
 	  <div>
-		<p style={settingsTitleStyle}>Settings</p>
+		<p style={styles.settingsTitleStyle}>Settings</p>
 		<img
 			className='user-card__image'
 			src={`http://localhost:3000/avatars/${user.avatarPath}`}
@@ -181,7 +112,7 @@ return (
 				currentTarget.onerror = null;
 				currentTarget.src = '/default_pfp.png';
 			}}
-			style={profilePictureStyle}
+			style={styles.profilePictureStyle}
 			/>
 		<form>
 		  <input
@@ -189,10 +120,10 @@ return (
 			placeholder={user.intraUsername}
 			value={newUsername}
 			onChange={(e) => setNewUsername(e.target.value)} // Update state on change
-			style={FormFieldStyle}
+			style={styles.formFieldStyle}
 		  />
 		  {showUpdateUsernameSuccessMessage && <p>Successfully update the username</p>}
-		  <button style={updateButtonStyle} onClick={handleUpdateUsername}>
+		  <button style={styles.updateButtonStyle} onClick={handleUpdateUsername}>
 			Update
 		  </button>
 		</form>
@@ -202,21 +133,21 @@ return (
 			placeholder="Type in new password"
 			value={newPassword}
 			onChange={(e) => setNewPassword(e.target.value)} // Update state on change
-			style={FormFieldStyle}
+			style={styles.formFieldStyle}
 		  />
 		  {showUpdatePasswordSuccessMessage && <p>Successfully update the password</p>}
-		  <button style={updateButtonStyle} onClick={handleUpdatePassword}>
+		  <button style={styles.updateButtonStyle} onClick={handleUpdatePassword}>
 			Update
 		  </button>
 		</form>
 		<form>
-		  <input type="file" onChange={handleAvatarChange} style={FormFieldStyle}/>
+		  <input type="file" onChange={handleAvatarChange} style={styles.formFieldStyle}/>
 		  {showUpdateAvatarSuccessMessage && <p>Successfully update the avatar</p>}
-		  <button style={updateButtonStyle} onClick={handleUpdateAvatar}>
+		  <button style={styles.updateButtonStyle} onClick={handleUpdateAvatar}>
 			Update
 		  </button>
 		</form>
-		<button style={logoutButtonStyle} onClick={OnLogoutButtonClick}>
+		<button style={styles.logoutButtonStyle} onClick={OnLogoutButtonClick}>
 		  Logout
 		</button>
 	  </div>
