@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { IUser } from '../../interfaces/interface';
 import { getLeaderboard } from '../../api/leaderboard.api';
 
-const Leaderboard_MainDiv = () => {
+const LeaderboardPage = () => {
   const [leaderboard, setLeaderboard] = useState<IUser[]>([]);
   const [scoreMap, setScoreMap] = useState<Map<number, number>>(new Map());
 
@@ -55,4 +55,4 @@ const Leaderboard_MainDiv = () => {
   );
 };
 
-export default Leaderboard_MainDiv;
+export default LeaderboardPage;

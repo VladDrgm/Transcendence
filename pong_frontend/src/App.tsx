@@ -10,7 +10,7 @@ import ProfilePage from './components/main_div/ProfilePage';
 import UserStartPage from './components/UserStartPage';
 import Error_MainDiv from './components/main_div/Error_MainDiv';
 import Game from './components/main_div/Game';
-import Leaderboard_MainDiv from './components/main_div/Leaderboard_MainDiv';
+import LeaderboardPage from './components/main_div/LeaderboardPage';
 // import Chat_MainDiv from './main_div/Chat_MainDiv';
 import SettingsPage from './components/main_div/SettingsPage';
 
@@ -71,7 +71,7 @@ const App = () => {
 					<Route path="home" element={<div><Welcome_MainDiv /></div>} />
 					<Route path="chat" element={<div><Arena_Chat_MainDiv userID={user.userID} /></div>} />
 					{/* <Route path="game" element={<div><Game /></div>} /> */}
-					<Route path="leaderboard" element={<div><Leaderboard_MainDiv /></div>} />
+					<Route path="leaderboard" element={<div><LeaderboardPage /></div>} />
 					<Route path="profile" element={<div><ProfilePage userID={user.userID} /></div>} />
 					<Route path="settings" element={<div><SettingsPage onLogout={handleLogout} userID={user.userID} /></div>} />
 				</Route>
