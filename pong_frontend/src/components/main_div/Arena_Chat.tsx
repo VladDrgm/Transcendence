@@ -99,7 +99,7 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID}) => {
 					setAllChannels(channels);
 					const currentChat = getChannelFromChannellist(channels, "general");
 					if (currentChat) {
-						console.log("gotChannel");
+						// console.log("gotChannel");
 						setCurrentChat((prevState) => ( {
 							...prevState,
 							Channel: currentChat,
@@ -222,11 +222,11 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID}) => {
 		// 	isOwnerResolved: 	false,
 		// 	isMutedResolved: 	false,
 		// }));
-		handleUserInChannelCheck();
-		handleUserInChannelBlockedCheck();
-		handleUserInChannelMutedCheck();
-		handleAdminCheck();
-		handleOwnerCheck();
+		await handleUserInChannelCheck();
+		await handleUserInChannelBlockedCheck();
+		await handleUserInChannelMutedCheck();
+		await handleAdminCheck();
+		await handleOwnerCheck();
 	}
 	// const handleChannel = useCallback (async () => {
 	// 	try {
