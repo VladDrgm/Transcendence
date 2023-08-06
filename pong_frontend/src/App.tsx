@@ -3,16 +3,16 @@ import { Route, BrowserRouter as Router, Navigate, Routes } from 'react-router-d
 import { User } from './interfaces/user.interface';
 import { UserContextProvider, useUserContext } from './components/context/UserContext';
 import LoginPage from './components/LoginPage';
-import CompleteProfilePage from './components/main_div/CompleteProfilePage';
-import HomePage from './components/main_div/HomePage';
-import Arena_Chat_MainDiv from './components/main_div/Arena_Chat';
-import ProfilePage from './components/main_div/ProfilePage';
+import CompleteProfilePage from './components/mainPages/CompleteProfilePage';
+import HomePage from './components/mainPages/HomePage';
+import Arena_Chat_MainDiv from './components/mainPages/Arena_Chat';
+import ProfilePage from './components/mainPages/ProfilePage';
 import UserStartPage from './components/UserStartPage';
-import Error_MainDiv from './components/main_div/Error_MainDiv';
-import Game from './components/main_div/Game';
-import LeaderboardPage from './components/main_div/LeaderboardPage';
+import Error_MainDiv from './components/mainPages/Error_MainDiv';
+import Game from './components/mainPages/Game';
+import LeaderboardPage from './components/mainPages/LeaderboardPage';
 // import Chat_MainDiv from './main_div/Chat_MainDiv';
-import SettingsPage from './components/main_div/SettingsPage';
+import SettingsPage from './components/mainPages/SettingsPage';
 
 const emptyUserObject: User = {
 	username: '',
