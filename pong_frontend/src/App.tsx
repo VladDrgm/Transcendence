@@ -11,7 +11,6 @@ import UserStartPage from './components/UserStartPage';
 import Error_MainDiv from './components/mainPages/Error_MainDiv';
 import Game from './components/mainPages/Game';
 import LeaderboardPage from './components/mainPages/LeaderboardPage';
-// import Chat_MainDiv from './main_div/Chat_MainDiv';
 import SettingsPage from './components/mainPages/SettingsPage';
 
 const emptyUserObject: User = {
@@ -36,7 +35,6 @@ const emptyUserObject: User = {
 
 const App = () => {
 	const { user, setUser } = useUserContext();
-	// const [user, setUser] = useState<User>(emptyUserObject);
   	const [userID, userID_set] = useState<number>(0);
 
   	const [loged_in, loged_in_set] = useState<boolean>(false);
@@ -65,18 +63,17 @@ const App = () => {
 		<UserContextProvider>
 		  <Router>
 			<Routes>
-				<Route path='*' element={
-					user ? <UserStartPage /> : <Navigate to="/login"/>
-				}>
-					<Route path="home" element={<div><HomePage /></div>} />
-					<Route path="chat" element={<div><Arena_Chat_MainDiv userID={user.userID} /></div>} />
-					{/* <Route path="game" element={<div><Game /></div>} /> */}
-					<Route path="leaderboard" element={<div><LeaderboardPage /></div>} />
-					<Route path="profile" element={<div><ProfilePage userID={user.userID} /></div>} />
-					<Route path="settings" element={<div><SettingsPage onLogout={handleLogout} userID={user.userID} /></div>} />
+				<Route path='*' element={ user ? <UserStartPage /> : <Navigate to="/login" />}>
+					{/* Below are the child pages of UserStartPage and their paths */}
+					<Route path="home" element={<HomePage />} />
+					<Route path="chat" element={<Arena_Chat_MainDiv userID={user.userID} />} />
+					{/* <Route path="game" element={<Game />} /> */}
+					<Route path="leaderboard" element={<LeaderboardPage />} />
+					<Route path="profile" element={<ProfilePage userID={user.userID} />} />
+					<Route path="settings" element={<SettingsPage onLogout={handleLogout} userID={user.userID} />} />
 				</Route>
-				<Route path='/login' element={<LoginPage onSignUp={storeUserInCookies} userID_set={userID_set} loginDone_set={loged_in_set} />}/>
-				<Route path='/complete_profile' element={<CompleteProfilePage userID={user.userID}/>}/>
+				<Route path='/login' element={<LoginPage onSignUp={storeUserInCookies} userID_set={userID_set} loginDone_set={loged_in_set} />} />
+				<Route path='/complete_profile' element={<CompleteProfilePage userID={user.userID} />} />
 			</Routes>
 		  </Router>
 		</UserContextProvider>
