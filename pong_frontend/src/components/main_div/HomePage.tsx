@@ -12,7 +12,7 @@ const welcomeTitleStyle: CSS.Properties = {
 	fontSize: '40px',
   };
 
-const Welcome_MainDiv: React.FC = () => {
+const HomePage: React.FC = () => {
 	const { user } = useUserContext();
     return (<div>
 				{ user ? (<p style={welcomeTitleStyle}>Welcome {user.username} {user.userID} to the Horror Ping Pong</p>)
@@ -21,4 +21,4 @@ const Welcome_MainDiv: React.FC = () => {
             </div>)
 };
 
-export default Welcome_MainDiv;
+export default HomePage;

@@ -4,7 +4,7 @@ import { User } from './interfaces/user.interface';
 import { UserContextProvider, useUserContext } from './components/context/UserContext';
 import LoginPage from './components/LoginPage';
 import CompleteProfilePage from './components/main_div/CompleteProfilePage';
-import Welcome_MainDiv from './components/main_div/Welcome_MainDiv';
+import HomePage from './components/main_div/HomePage';
 import Arena_Chat_MainDiv from './components/main_div/Arena_Chat';
 import ProfilePage from './components/main_div/ProfilePage';
 import UserStartPage from './components/UserStartPage';
@@ -68,7 +68,7 @@ const App = () => {
 				<Route path='*' element={
 					user ? <UserStartPage /> : <Navigate to="/login"/>
 				}>
-					<Route path="home" element={<div><Welcome_MainDiv /></div>} />
+					<Route path="home" element={<div><HomePage /></div>} />
 					<Route path="chat" element={<div><Arena_Chat_MainDiv userID={user.userID} /></div>} />
 					{/* <Route path="game" element={<div><Game /></div>} /> */}
 					<Route path="leaderboard" element={<div><LeaderboardPage /></div>} />
