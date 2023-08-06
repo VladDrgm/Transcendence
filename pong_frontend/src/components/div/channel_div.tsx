@@ -35,7 +35,7 @@ const Channel_Div: React.FC<ChatProps> = (props) => {
     useEffect(() => {
         fetchPublicChannels(setPublicChannels, setLoading);
         fetchPrivateChannels(setPrivateChannels, setLoading);
-      },[]);
+      }, []);
     if (loading) {
         return <div>Loading channels...</div>;
     }
