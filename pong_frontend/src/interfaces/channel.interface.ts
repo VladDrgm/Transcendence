@@ -34,7 +34,7 @@ export interface ChatProps {
 	chatName: ChatName;
 	receiverId: string | number;
 	isResolved: boolean;
-	Channel: Channel;
+	Channel: Channel ;
 };
 
 export interface Message {

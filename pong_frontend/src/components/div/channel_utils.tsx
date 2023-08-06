@@ -7,6 +7,7 @@ import styled from "styled-components";
 import {IUser} from '../../interfaces/interface';
 import { fetchAddress } from './channel_div';
 import { Row } from './chat_utils';
+import { getChannelFromChannellist } from '../main_div/Arena_Chat';
 
 export function mapChannel(item: any) {
     const { ChannelId, OwnerId, Name, Type, Password } = item;
@@ -20,12 +21,13 @@ export function mapChannel(item: any) {
 }
 
 export function renderRooms(props: ChatProps, room: Channel) {
+    // const newChannel = getChannelFromChannellist(props.allChannels, room.Name);
     let currentChat: ChatData = {
     chatName: room.Name,
     isChannel: true,
     receiverId: "",
-    isResolved: false,
-    Channel: {} as Channel,
+    isResolved: true,
+    Channel: room,
     };
     return (
     <Row onClick={() => props.toggleChat(currentChat)} key={room.Name}>
