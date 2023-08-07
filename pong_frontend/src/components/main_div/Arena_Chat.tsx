@@ -121,6 +121,19 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID}) => {
 		}
 	}, []);
 
+	useEffect(() => {
+		const intervalID = setInterval(() => {
+			fetchAllChannels()
+				.then((channels) => {
+					setAllChannels(channels);
+				})
+				.catch((error) => {
+					console.error("Error fetching all Channels: ", error);
+				});
+		}, 30000);
+		return () => clearInterval(intervalID);
+	}, []);
+
 	useEffect(() => {initializeMessagesState();},[]);
 	const [messages, setMessages] = useState<{
 		[key in ChatName]: { sender: string; content: string }[];
