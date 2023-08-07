@@ -90,7 +90,7 @@ io.on('connection', (socket: Socket) => {
 	});
 
 	socket.on('join room', (roomName: string, cb: (messages: any[]) => void) => {
-		addChatRoom(roomName);
+		// addChatRoom(roomName);
 		socket.join(roomName);
 		cb(messages[roomName]);
 	});
@@ -105,6 +105,11 @@ io.on('connection', (socket: Socket) => {
 	socket.on('delete room', (roomName) => {
 		deleteChatRoom(roomName);
 		io.emit('room deleted', roomName);
+	});
+
+	socket.on('add room', (roomName) => {
+		addChatRoom(roomName);
+		io.emit('room added', roomName);
 	});
 
 	socket.on('send message', ({ content, to, sender, chatName, isChannel }) => {

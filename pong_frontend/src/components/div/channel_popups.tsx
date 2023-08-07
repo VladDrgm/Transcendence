@@ -247,6 +247,7 @@ export function popUpCreateChannel(props: ChatProps){
         .then(result => {
             if (result){
                 //updating Channelllists
+                props.addChatRoom(channelName);
 				props.updateChannellist();
             }
         })

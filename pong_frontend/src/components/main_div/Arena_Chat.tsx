@@ -244,6 +244,11 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID}) => {
 		socketRef.current?.emit('delete room', roomName);
 	}
 
+
+	function addChatRoom(roomName: string | number) {
+		socketRef.current?.emit('add room', roomName);
+	}
+
 	async function toggleChat(newCurrentChat: CurrentChat) {
 		socketRef.current?.emit("join room", newCurrentChat.chatName, (messages: any) => roomJoinCallback(messages, newCurrentChat.chatName));
 		
@@ -414,6 +419,9 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID}) => {
 	socketRef.current.on('room deleted', (roomName) => {
 		handleDeletingChatRoom(roomName);
 	});
+	socketRef.current.on('room added', (roomName) => {
+		updateChannellist();
+	});
 }
 
 	function handleDeletingChatRoom(roomName: string | number){
@@ -563,6 +571,7 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID}) => {
 			joinRoom={joinRoom}
 			leaveRoom={leaveRoom}
 			deleteChatRoom={deleteChatRoom}
+			addChatRoom={addChatRoom}
 			connectedRooms={connectedRooms}
 			currentChat={currentChat}
 			messages={messages[currentChat.chatName]}
