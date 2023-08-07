@@ -4,7 +4,8 @@ import  {ChatProps} from '../../interfaces/channel.interface';
 import {renderRooms, fetchPublicChannels, fetchPrivateChannels} from './channel_utils';
 import { popUpJoinPrivateChannel, popUpCreateChannel } from './channel_popups';
 
-export var fetchAddress = 'http://localhost:3000/';
+// export var fetchAddress = 'http://localhost:3000/';
+export var fetchAddress = process.env.REACT_APP_SRVR_URL || 'http://localhost:3000/';
 
 // export async function isChannelUser(userId: number, channelId: number): Promise<boolean> {
 //     try {
@@ -34,7 +35,7 @@ const Channel_Div: React.FC<ChatProps> = (props) => {
     useEffect(() => {
         fetchPublicChannels(setPublicChannels, setLoading);
         fetchPrivateChannels(setPrivateChannels, setLoading);
-      });
+      }, []);
     if (loading) {
         return <div>Loading channels...</div>;
     }

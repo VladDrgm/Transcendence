@@ -14,7 +14,7 @@ interface LogInProps
 const LogIn: React.FC<LogInProps> = ({onSignUp, userID_set, loginDone_set}) => {
   const input_id = useRef<HTMLInputElement>(null);
   var input_user_id;
-  var fetchAddress = 'http://localhost:3000/';
+  var fetchAddress = process.env.REACT_APP_SRVR_URL || 'http://localhost:3000/';
   var signUpEndpoint = 'user';
   var loginEndpoint1 = 'user/'; // Replace later with user/login
   var endpointSlash = '/'
