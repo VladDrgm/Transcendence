@@ -180,14 +180,17 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID}) => {
 	}
 
 	function joinRoom(chatName: ChatName) {
-		// const newConnectedRooms = immer(connectedRooms, (draft: WritableDraft<typeof connectedRooms>) => {
-		// 	const chatNameString = String(chatName); // Convert chatName to string
-		// 	draft.push(chatNameString);
-		// });
 		console.log("Posting User ", userID, " in Channel:", currentChat.Channel.ChannelId);
-		postChannelUser(userID, currentChat.Channel.ChannelId);
-		socketRef.current?.emit("join room", chatName, (messages: any) => roomJoinCallback(messages, chatName));
-		// setConnectedRooms(newConnectedRooms);
+		postChannelUser(userID, currentChat.Channel.ChannelId)
+			.then(()=> {
+			socketRef.current?.emit("join room", chatName, (messages: any) => roomJoinCallback(messages, chatName))
+			setCurrentRoles((prevState) => ({
+				...prevState,
+				isUser: true
+			}))
+			}).catch(error => {
+				console.error("Error in joinRoom when adding User to Channel: ", error);
+			});
 	}
 
 	function leaveRoom(chatName: ChatName) {

@@ -57,7 +57,7 @@ export function deleteChannelUser(userId: number, channelId: number) {
   
   //to be tested
   // adds a user to the Channeluser table of a channel with channelId
-export function postChannelUser(userId: number, channelId: number) {
+export async function postChannelUser(userId: number, channelId: number): Promise<void> {
     const requestOptions = {
       method: 'POST',
       headers: { 
@@ -72,10 +72,12 @@ export function postChannelUser(userId: number, channelId: number) {
           console.log("ChannelUser with UserId :" + userId +" added");
         } else {
           console.error("Error adding ChannelUser with UserId :" + userId +":", response.status);
+          throw new Error ("Error adding ChannelUser");
         }
       })
       .catch(error => {
         console.error("Error adding ChannelUser with UserId :" + userId +":", error);
+        throw error;
       });
 }
 
