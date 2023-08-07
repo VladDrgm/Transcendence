@@ -203,6 +203,10 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID}) => {
 		// setConnectedRooms(newConnectedRooms);
 	}
 
+	function updateChannellist(newList: Channel[]){
+		setAllChannels(newList);
+	}
+
 	async function toggleChat(newCurrentChat: CurrentChat) {
 		socketRef.current?.emit("join room", newCurrentChat.chatName, (messages: any) => roomJoinCallback(messages, newCurrentChat.chatName));
 		
@@ -495,6 +499,7 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID}) => {
 			yourId={socketRef.current ? socketRef.current.id : ""}
 			allUsers={allUsers}
 			allChannels={allChannels}
+			updateChannellist={updateChannellist}
 			joinRoom={joinRoom}
 			leaveRoom={leaveRoom}
 			connectedRooms={connectedRooms}

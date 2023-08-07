@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction } from 'react';
 import { Channel, ChatProps } from '../../interfaces/channel.interface';
-import { modBannedUser, addAdmin, CreateChannel, addMuteUser} from './channel_utils';
+import { modBannedUser, addAdmin, CreateChannel, addMuteUser, fetchAllChannels} from './channel_utils';
 import { deleteChannelPassword, postChannelUser, postMuteUser, postPrivateChannelUser, putChannelPassword, putChannelType } from '../../api/channel/channel_user.api';
 import { getChannel } from '../../api/channel/channel.api';
 
@@ -243,8 +243,18 @@ export function popUpCreateChannel(props: ChatProps){
     createButton.addEventListener('click', function() {
         var channelName = channelNameInput.value;
         var password = channelPasswordInput.value;
-
-        CreateChannel(props, channelName, password);
+        CreateChannel(props, channelName, password)
+        .then(result => {
+            if (result){
+                //updating Channelllists
+                fetchAllChannels()
+				.then((channels) => {
+					props.updateChannellist(channels);
+            })
+        }})
+        .catch(error => {
+            console.error("Error creating Channel: ", error);
+        })
         popup?.close();
     });
     popup?.document.body.appendChild(createButton);

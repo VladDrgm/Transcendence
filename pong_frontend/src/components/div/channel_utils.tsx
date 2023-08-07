@@ -186,7 +186,7 @@ export async function addMuteUser(newBlockedUsername: string, duration:number, p
     } else 
     console.error('Error muting User with Username:' , newBlockedUsername);
 }
-export function CreateChannel(props: ChatProps, channelName: string, password: string){
+export async function CreateChannel(props: ChatProps, channelName: string, password: string): Promise<boolean>{
     if(password === "")
         var channelType = "public";
     else
@@ -197,9 +197,8 @@ export function CreateChannel(props: ChatProps, channelName: string, password: s
         "Password": password,
         "OwnerId": props.userID
     }
-
     const jsonData = JSON.stringify(ChannelData);
-    fetch(fetchAddress + 'channel/' + props.userID, {credentials: "include",
+    return fetch(fetchAddress + 'channel/' + props.userID, {credentials: "include",
         method:"POST",
         headers: {
             "Content-Type": "application/json"
@@ -209,8 +208,10 @@ export function CreateChannel(props: ChatProps, channelName: string, password: s
     .then(response => response.json())
     .then(data => {
         console.log("Channel created:", data);
+        return true;
     })
     .catch(error => {
         console.log("Error creating channel:", error);
+        return false;
     })
 }
