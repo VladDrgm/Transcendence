@@ -21,12 +21,14 @@ export interface ChatProps {
 	messages: Message[];
 	joinRoom: (chatName: ChatName) => void;
 	leaveRoom: (chatName: ChatName) => void;
-	updateChannellist: (newList: Channel[]) => void;
+	deleteChatRoom: (chatName: ChatName) => void;
+	updateChannellist: () => void;
 	sendMessage: () => void;
 	handleMessageChange: (e: ChangeEvent<HTMLTextAreaElement>) => void;
 	message: string;
 	allUsers: User[];
     allChannels: Channel[];
+	generalChat: ChatData;
 	loadingChannelPanel: boolean;
 }
 

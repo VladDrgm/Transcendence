@@ -55,6 +55,12 @@ function addChatRoom(roomName: string) {
   }
 }
 
+function deleteChatRoom(roomName: string) {
+	if (messages.hasOwnProperty(roomName)) {
+	  delete messages[roomName];
+  }
+}
+
 //let playerOneSocket: string, playerTwoSocket: string, audienceMemberSocket: string;
 let userCount = 0, userNr = 0;
 
@@ -94,6 +100,11 @@ io.on('connection', (socket: Socket) => {
 		if (user) {
 			user.username = username;
 		}
+	});
+
+	socket.on('delete room', (roomName) => {
+		deleteChatRoom(roomName);
+		io.emit('room deleted', roomName);
 	});
 
 	socket.on('send message', ({ content, to, sender, chatName, isChannel }) => {

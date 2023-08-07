@@ -247,11 +247,9 @@ export function popUpCreateChannel(props: ChatProps){
         .then(result => {
             if (result){
                 //updating Channelllists
-                fetchAllChannels()
-				.then((channels) => {
-					props.updateChannellist(channels);
-            })
-        }})
+				props.updateChannellist();
+            }
+        })
         .catch(error => {
             console.error("Error creating Channel: ", error);
         })

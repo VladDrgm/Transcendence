@@ -76,7 +76,20 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID}) => {
 			Password: ""
 		} as Channel,
 	});
-
+	const[generalChat, setGeneralChat] = useState<CurrentChat>({
+		isChannel: true,
+		chatName: "general",
+		receiverId: "",
+		isResolved: true,
+		Channel: {
+			ChannelId: 41,
+			OwnerId: 1,
+			Name: 'general',
+			Type: "public",
+			Password: ""
+		} as Channel,
+	});
+	
 
 	
 	const [currentRoles, setCurrentRoles] = useState<ChannelUserRoles>({
@@ -110,6 +123,10 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID}) => {
 						setCurrentChat((prevState) => ( {
 							...prevState,
 							Channel: currentChannel,
+						}));
+						setGeneralChat((prevState) => ({
+							...prevState,
+							Channel:currentChannel
 						}));
 					}
 				})
@@ -216,8 +233,15 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID}) => {
 		// setConnectedRooms(newConnectedRooms);
 	}
 
-	function updateChannellist(newList: Channel[]){
-		setAllChannels(newList);
+	function updateChannellist(){
+		fetchAllChannels()
+		.then((channels) => {
+			setAllChannels(channels);
+		});
+	}
+
+	function deleteChatRoom(roomName: string | number) {
+		socketRef.current?.emit('delete room', roomName);
 	}
 
 	async function toggleChat(newCurrentChat: CurrentChat) {
@@ -387,7 +411,29 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID}) => {
 			return newMessages;
 		});
 	});
+	socketRef.current.on('room deleted', (roomName) => {
+		handleDeletingChatRoom(roomName);
+	});
 }
+
+	function handleDeletingChatRoom(roomName: string | number){
+		console.log("channel deleted from server");
+		console.log("curentChanma:", currentChat);
+		console.log("roomname", roomName);
+		updateChannellist();
+					setCurrentChat((prevChat) => {
+				// Check if the current chat's chatName matches the deleted roomName
+				console.log(prevChat);
+				if (prevChat.chatName === roomName) {
+				  // Replace the current chat with a default chat object (generalChat)
+				  return generalChat;
+				} else {
+				  // If it doesn't match, return the same chat object
+				  return prevChat;
+				}
+			  });
+	}
+
 
 		/* game utilities */
 		const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -513,8 +559,10 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID}) => {
 			allUsers={allUsers}
 			allChannels={allChannels}
 			updateChannellist={updateChannellist}
+			generalChat={generalChat}
 			joinRoom={joinRoom}
 			leaveRoom={leaveRoom}
+			deleteChatRoom={deleteChatRoom}
 			connectedRooms={connectedRooms}
 			currentChat={currentChat}
 			messages={messages[currentChat.chatName]}
