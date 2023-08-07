@@ -47,10 +47,13 @@ let users: { username: string; id: string }[] = []; // Array to store connected 
 /* Chatroom utilities */
 const messages: { [key: string]: { sender: string; content: string }[] } = {
 	general: [],
-	random: [],
-	jokes: [],
-	javascript: []
 };
+
+function addChatRoom(roomName: string) {
+	if (!messages.hasOwnProperty(roomName)) {
+	  messages[roomName] = [];
+  }
+}
 
 //let playerOneSocket: string, playerTwoSocket: string, audienceMemberSocket: string;
 let userCount = 0, userNr = 0;
@@ -81,6 +84,7 @@ io.on('connection', (socket: Socket) => {
 	});
 
 	socket.on('join room', (roomName: string, cb: (messages: any[]) => void) => {
+		addChatRoom(roomName);
 		socket.join(roomName);
 		cb(messages[roomName]);
 	});

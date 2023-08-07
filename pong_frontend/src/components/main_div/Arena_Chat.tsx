@@ -29,7 +29,7 @@ let initialMessagesState: {
 	[key: string]: { sender: string; content: string }[];
 	//[key: number]: { sender: string; content: string }[];
 } = {
-	general: [],
+	// general: [],
 	// random: [],
 	// jokes: [],
 	// javascript: []
@@ -68,7 +68,13 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID}) => {
 		chatName: "general",
 		receiverId: "",
 		isResolved: true,
-		Channel: {} as Channel,
+		Channel: {
+			ChannelId: 41,
+			OwnerId: 1,
+			Name: 'general',
+			Type: "public",
+			Password: ""
+		} as Channel,
 	});
 
 
@@ -115,7 +121,7 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID}) => {
 		}
 	}, []);
 
-	useEffect(() => {initializeMessagesState();});
+	useEffect(() => {initializeMessagesState();},[]);
 	const [messages, setMessages] = useState<{
 		[key in ChatName]: { sender: string; content: string }[];
 	}>(initialMessagesState);
@@ -138,6 +144,10 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID}) => {
 	}, [messages]);
 
 	function sendMessage() {
+		console.log("message:", message);
+		console.log("Messages :", messages);
+		console.log("currentchat: ", currentChat);
+		console.log("username : ", username);
 		const payload = {
 		content: message,
 		to: currentChat.isChannel ? currentChat.chatName : currentChat.receiverId,
@@ -145,16 +155,17 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID}) => {
 		chatName: currentChat.chatName,
 		isChannel: currentChat.isChannel
 		};
+
 		socketRef.current?.emit("send message", payload);
 		const newMessages = immer(messages, (draft: WritableDraft<typeof messages>) => {
 		//if the element doesn't exist, an empty one will be added
-		if(!draft[currentChat.chatName]) {
-			draft[currentChat.chatName] = [];
-		}
-		draft[currentChat.chatName].push({
-			sender: username,
-			content: message
-		});
+			if(!draft[currentChat.chatName]) {
+				draft[currentChat.chatName] = [];
+			}
+			draft[currentChat.chatName].push({
+				sender: username,
+				content: message
+			});
 		});
 		setMessages(newMessages);
 		setMessage("");
@@ -163,7 +174,7 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID}) => {
 	function roomJoinCallback(incomingMessages: any, room: keyof typeof messages) {
 	const newMessages = immer(messages, (draft: WritableDraft<typeof messages>) => {
 		draft[room] = incomingMessages;
-		// console.log("Callback");
+		console.log("Callback");
 	});
 	setMessages(newMessages);
 	}
@@ -190,10 +201,13 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID}) => {
 	}
 
 	async function toggleChat(newCurrentChat: CurrentChat) {
-		if (!messages[currentChat.chatName]) {
+		socketRef.current?.emit("join room", newCurrentChat.chatName, (messages: any) => roomJoinCallback(messages, newCurrentChat.chatName));
+		
+		if (!messages[newCurrentChat.chatName]) {
 		const newMessages = immer(messages, (draft: WritableDraft<typeof messages>) => {
-			draft[currentChat.chatName] = [];
+			draft[newCurrentChat.chatName] = [];
 		});
+		
 		setMessages(newMessages);
 		}
 		setCurrentChat(newCurrentChat);
@@ -214,6 +228,14 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID}) => {
 			...prevState,
 			isUserResolved: false
 		}));
+		if(currentChat.chatName === "general"){
+			setCurrentRoles((prevState) => ({
+				...prevState,
+				isUser: true,
+				isUserResolved: true
+			}))
+			return;
+		}
 		try {
 			if (!currentChat.isResolved){
 				return;
