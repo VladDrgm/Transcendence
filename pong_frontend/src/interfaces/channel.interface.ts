@@ -16,15 +16,24 @@ export interface ChatProps {
 	yourId: string | number;  //socketId from joining the game
 	username: string; //name given in the game startpage
 	currentChat: ChatData;
+	ChannelUserRoles: ChannelUserRoles;
+	handleAdminCheck: () => void;
+	addAdminRights: (TargetName: string, chatName: ChatName) => void;
 	connectedRooms: string[];
 	messages: Message[];
 	joinRoom: (chatName: ChatName) => void;
+	joinPrivateRoom: (chatName: ChatName, password: string) => void;
 	leaveRoom: (chatName: ChatName) => void;
+	deleteChatRoom: (chatName: ChatName) => void;
+	addChatRoom: (chatName: ChatName) => void;
+	changeChatRoom :(chatName: ChatName) => void;
+	updateChannellist: () => void;
 	sendMessage: () => void;
 	handleMessageChange: (e: ChangeEvent<HTMLTextAreaElement>) => void;
 	message: string;
 	allUsers: User[];
     allChannels: Channel[];
+	generalChat: ChatData;
 	loadingChannelPanel: boolean;
 }
 
@@ -33,7 +42,7 @@ export interface ChatProps {
 	chatName: ChatName;
 	receiverId: string | number;
 	isResolved: boolean;
-	Channel: Channel;
+	Channel: Channel ;
 };
 
 export interface Message {
@@ -57,5 +66,20 @@ let initialMessagesState: {
 };
 
 // let playerOne:string = "", playerTwo:string = "", audience:string = "";
+
+export interface ChannelUserRoles {
+
+	isUser: 			boolean,
+	isUserResolved: 	boolean,
+	isAdmin: 			boolean,
+	isAdminResolved: 	boolean,
+	isOwner:			boolean,
+	isOwnerResolved:	boolean,
+	isBlocked:			boolean,
+	isBlockedResolved:	boolean,
+	isMuted:			boolean,
+	isMutedResolved:	boolean
+
+}
 
 export type ChatName = keyof typeof initialMessagesState;

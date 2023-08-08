@@ -47,10 +47,19 @@ let users: { username: string; id: string }[] = []; // Array to store connected 
 /* Chatroom utilities */
 const messages: { [key: string]: { sender: string; content: string }[] } = {
 	general: [],
-	random: [],
-	jokes: [],
-	javascript: []
 };
+
+function addChatRoom(roomName: string) {
+	if (!messages.hasOwnProperty(roomName)) {
+	  messages[roomName] = [];
+  }
+}
+
+function deleteChatRoom(roomName: string) {
+	if (messages.hasOwnProperty(roomName)) {
+	  delete messages[roomName];
+  }
+}
 
 //let playerOneSocket: string, playerTwoSocket: string, audienceMemberSocket: string;
 let userCount = 0, userNr = 0;
@@ -81,6 +90,7 @@ io.on('connection', (socket: Socket) => {
 	});
 
 	socket.on('join room', (roomName: string, cb: (messages: any[]) => void) => {
+		// addChatRoom(roomName);
 		socket.join(roomName);
 		cb(messages[roomName]);
 	});
@@ -90,6 +100,27 @@ io.on('connection', (socket: Socket) => {
 		if (user) {
 			user.username = username;
 		}
+	});
+
+	socket.on('delete room', (roomName) => {
+		deleteChatRoom(roomName);
+		io.emit('room deleted', roomName);
+	});
+
+	socket.on('add room', (roomName) => {
+		addChatRoom(roomName);
+		io.emit('room added', roomName);
+	});
+
+	socket.on('change room', (roomName) => {
+		io.emit('room changed', roomName);
+	});
+
+	socket.on('add admin', (data) => {
+		const newAdminUserID = data.newAdminUserID;
+		const roomName  = data.roomName;
+		// console.log("admin event recieved");
+		io.emit('admin added', {newAdminUserID, roomName });
 	});
 
 	socket.on('send message', ({ content, to, sender, chatName, isChannel }) => {
