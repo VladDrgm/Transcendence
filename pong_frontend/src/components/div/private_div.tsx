@@ -1,17 +1,21 @@
 import React, { useEffect, useState, ChangeEvent  } from 'react';
 import { PrivateProfile } from '../../interfaces/private_profile.interface';
 import { getPrivateProfile } from '../../api/profile.api';
+import { changeUsername } from '../../api/change_username';
 import defaultProfile from '../../default_profiile.jpg';
 import { serialize } from 'v8';
 
+interface PrivateDivProps
+{
+  userID: number;
+}
 
-
-const Private_Div = () => {
+const Private_Div: React.FC<PrivateDivProps> = ({userID}) => {
   const [user, setUser] = useState<PrivateProfile>();
 
   const getData = async () => {
     try{
-      const myProf = await getPrivateProfile();
+      const myProf = await getPrivateProfile(userID);
       setUser(myProf);
     }
     catch (error) {
@@ -21,7 +25,17 @@ const Private_Div = () => {
   };
   const [image, setImage] = useState<File | null>(null);
   const [imageUrl, setImageUrl] = useState<string>('');
+  const [inputText, setInputText] = useState<string>('');
 
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setInputText(e.target.value);
+  };
+
+  const handleButtonClick = () => {
+    const data = { text: inputText };
+    changeUsername(userID, data.text);
+    setInputText(''); // Clear the input field after submitting
+  };
   const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files && e.target.files[0];
     setImage(file || null);
@@ -47,7 +61,7 @@ const Private_Div = () => {
       if (user != undefined)
       {
         var temp:PrivateProfile = user;
-        temp.avatar = imageUrl;
+        temp.avatarPath = imageUrl;
         setUser(temp);
       }
       
@@ -59,18 +73,27 @@ const Private_Div = () => {
 
   useEffect(() => {
     getData();
-  }, []);
+  }, [handleButtonClick]);
 
   if (user != null) {
     return (
       <div>
         <div>
-          <h2>{user.nickname}</h2>
-          {(user.avatar.substring(0, 5) != "https") && (
+          <h1>Personal profile</h1> 
+          <h2>{user.username}</h2> 
+          <input
+          type="text"
+          value={inputText}
+          onChange={handleInputChange}
+          placeholder="Enter new username"
+          />
+          <button onClick={handleButtonClick}>Change Username</button>
+          <br/>
+          {(user.avatarPath.substring(0, 5) != "https") && (
             <img src={defaultProfile} alt="default profile" width="400" height="300"/>
           )}
-          {(user.avatar.substring(0, 5) === "https") && (
-            <img src={user.avatar} alt={user.nickname} width="400" height="300"/>
+          {(user.avatarPath.substring(0, 5) === "https") && (
+            <img src={user.avatarPath} alt={user.username} width="400" height="300"/>
           )}
           <div>
             <input type="file" accept="image/*" onChange={handleImageChange} />
@@ -81,7 +104,7 @@ const Private_Div = () => {
           <p>Losses: {user.losses}</p>
           <p>Points: {user.points}</p>
           <p>Status: {user.status}</p>
-          <p>Achievements: {user.achievements}</p>
+          <p>Achievements: {user.achievementsCSV}</p>
         </div>
       </div>
     );
