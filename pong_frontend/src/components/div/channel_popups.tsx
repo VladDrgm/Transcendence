@@ -150,9 +150,12 @@ export function changePasswordPopUp(props:  &ChatProps) {
         var newPw = newPwInput.value;
         if (newPw === ""){
             deleteChannelPassword(props.userID, props.currentChat.Channel.ChannelId);
+            props.changeChatRoom(props.currentChat.chatName);
             console.log("Password removed");
             if (props.currentChat.Channel.Type === "private"){
                 putChannelType(props.userID, props.currentChat.Channel.ChannelId);
+                props.changeChatRoom(props.currentChat.chatName);
+                props.updateChannellist();
                 console.log("Channel Type changed to public");
             }
         }
@@ -160,6 +163,8 @@ export function changePasswordPopUp(props:  &ChatProps) {
         console.log("Password updated");
         if (props.currentChat.Channel.Type === "public"){
             putChannelType(props.userID, props.currentChat.Channel.ChannelId);
+            props.changeChatRoom(props.currentChat.chatName);
+            props.updateChannellist();
             console.log("Channel Type changed to private");
         }
         popup?.close();
@@ -173,6 +178,8 @@ export function changePasswordPopUp(props:  &ChatProps) {
         console.log("Password removed");
         if (props.currentChat.Channel.Type === "private"){
             putChannelType(props.userID, props.currentChat.Channel.ChannelId);
+            props.changeChatRoom(props.currentChat.chatName);
+            props.updateChannellist();
             console.log("Channel Type changed to public");
         }
         popup?.close();

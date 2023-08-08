@@ -112,6 +112,10 @@ io.on('connection', (socket: Socket) => {
 		io.emit('room added', roomName);
 	});
 
+	socket.on('change room', (roomName) => {
+		io.emit('room changed', roomName);
+	});
+
 	socket.on('send message', ({ content, to, sender, chatName, isChannel }) => {
 		if (isChannel) {
 			const payload = {
