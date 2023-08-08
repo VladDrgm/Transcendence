@@ -1,8 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { IUser } from '../../interfaces/interface';
 import { getLeaderboard } from '../../api/leaderboard.api';
+import {main_div_mode_t} from '../MainDivSelector';
+interface LeaderboardProps
+{
+  mode_set: React.Dispatch<React.SetStateAction<main_div_mode_t>>;
+  friend_set: React.Dispatch<React.SetStateAction<number>>;
+}
 
-const Leaderboard_MainDiv = () => {
+const Leaderboard_MainDiv: React.FC<LeaderboardProps>  = ({mode_set, friend_set}) => {
   const [leaderboard, setLeaderboard] = useState<IUser[]>([]);
   const [scoreMap, setScoreMap] = useState<Map<number, number>>(new Map());
 
@@ -14,6 +20,11 @@ const Leaderboard_MainDiv = () => {
   useEffect(() => {
     getData();
   }, []);
+
+  const openFriend = (FID:number) => {
+    friend_set(FID);
+    mode_set(main_div_mode_t.PUBLIC_PROFILE);
+  };
 
   useEffect(() => {
     if (leaderboard.length === 0) return;
@@ -43,7 +54,7 @@ const Leaderboard_MainDiv = () => {
           <li key={user.username}>
             <div>
               <h2>Place: {scoreMap.get(user.points)}</h2>
-              <p>Name: {user.username}</p>
+              <p onClick={() => openFriend(user.userID)}>Name: {user.username}</p>
               <p>Wins: {user.wins}</p>
               <p>Losses: {user.losses}</p>
               <p>Points: {user.points}</p>

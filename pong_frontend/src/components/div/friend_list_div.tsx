@@ -1,5 +1,5 @@
 import { FC, useEffect, useState } from 'react';
-import { FriendProfile_List } from '../../interfaces/friend_list.inerface';
+import { FriendProfile } from '../../interfaces/friend_profile.interface';
 import { getFriendList } from '../../api/friend_list.api';
 import {main_div_mode_t} from '../MainDivSelector';
 
@@ -11,7 +11,7 @@ interface FriendProps
 }
 
 const FriendList: FC<FriendProps> = ({userID, mode_set, friend_set}) => {
-  const [friends, setFriends] = useState<FriendProfile_List[]>([]);
+  const [friends, setFriends] = useState<FriendProfile[]>([]);
 
   const getData = async() => {
     const users = await getFriendList(userID);
@@ -31,7 +31,7 @@ const FriendList: FC<FriendProps> = ({userID, mode_set, friend_set}) => {
     <div>
       <h3>Friend List</h3>
         {friends?.map((friend) => (
-            <p onClick={() => openFriend(friend.friendUser.userID)}>{friend.friendUser.username}: {friend.friendUser.status}</p>
+            <p onClick={() => openFriend(friend.userID)}>{friend.username}: {friend.status}</p>
         ))}
     </div>
   );

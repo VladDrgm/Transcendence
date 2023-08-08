@@ -46,7 +46,6 @@ const Friend_Div: React.FC<FriendProps> = ({ userID, friendID }) => {
           <p>Status: {user.status}</p>
           <p>Achievements: {user.achievementsCSV}</p>
         </div>
-        <button>Unfriend</button>
         <button>Chat</button>
         <button>Match</button>
       </div>

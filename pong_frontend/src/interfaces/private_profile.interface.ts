@@ -6,5 +6,5 @@ export interface PrivateProfile {
     losses: number;
     points: number;
     status: string;
-    achievements: string;
+    achievementsCSV: string;
   }

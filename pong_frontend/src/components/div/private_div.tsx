@@ -104,7 +104,7 @@ const Private_Div: React.FC<PrivateDivProps> = ({userID}) => {
           <p>Losses: {user.losses}</p>
           <p>Points: {user.points}</p>
           <p>Status: {user.status}</p>
-          <p>Achievements: {user.achievements}</p>
+          <p>Achievements: {user.achievementsCSV}</p>
         </div>
       </div>
     );

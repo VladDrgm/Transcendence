@@ -30,16 +30,11 @@ const Public_Div: React.FC<PublicProps> = ({ userID, publicID }) => {
   if (user != null) {
     return (
       <div>
-        <div>
-          <h2>{user.username}</h2>
-          {(user.avatarPath.substring(0, 5) != "https") && (
-            <img src={defaultProfile} alt="default profile" width="400" height="300"/>
-          )}
-          {(user.avatarPath.substring(0, 5) === "https")  && (
-            <img src={user.avatarPath} alt={user.username} width="400" height="300"/>
-          )}
-        </div>
-        <button>Make Friend</button>
+        <h2>{user.username}</h2>
+        <p>Wins: {user.wins}</p>
+        <p>Losses: {user.losses}</p>
+        <p>Points: {user.points}</p>
+        <p>Achievements: {user.achievementsCSV}</p>
       </div>
     );
   } 

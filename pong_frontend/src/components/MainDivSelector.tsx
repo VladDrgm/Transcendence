@@ -7,6 +7,7 @@ import Leaderboard_MainDiv from './main_div/Leaderboard_MainDiv';
 import Arena_Chat_MainDiv from './main_div/Arena_Chat';
 import Settings_MainDiv from './main_div/Settings_MainDiv';
 import MatchHistory_MainDiv from './main_div/MatchHistory_MainDiv';
+import PublicProfile_MainDiv from './main_div/PublicProfile_MainDiv';
 import { User } from '../interfaces/user.interface';
 import { useUserContext } from './context/UserContext';
 
@@ -42,9 +43,11 @@ const MainDivSelector: React.FC<MainDivProps> = ({onLogout, userID, mode, mode_s
 	case main_div_mode_t.PROFILE:
 		return (<Profile_MainDiv userID={userID} mode_set={mode_set} friend_set={friend_set}/>);
 	case main_div_mode_t.LEADERBORAD:
-      	return (<Leaderboard_MainDiv/>);
+    return (<Leaderboard_MainDiv mode_set={mode_set} friend_set={friend_set}/>);
   case main_div_mode_t.HISTORY:
-        return (<MatchHistory_MainDiv userID={userID}/>);
+    return (<MatchHistory_MainDiv userID={userID} mode_set={mode_set} friend_set={friend_set}/> );
+  case main_div_mode_t.PUBLIC_PROFILE:
+    return (<PublicProfile_MainDiv userID={userID} mode_set={mode_set} friend_ID={friendID}/>);
 	case main_div_mode_t.SETTINGS:
 		return (<Settings_MainDiv onLogout={onLogout} userID={userID} mode_set={mode_set} />);
     default:
