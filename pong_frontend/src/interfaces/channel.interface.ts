@@ -17,9 +17,12 @@ export interface ChatProps {
 	username: string; //name given in the game startpage
 	currentChat: ChatData;
 	ChannelUserRoles: ChannelUserRoles;
+	handleAdminCheck: () => void;
+	addAdminRights: (TargetName: string, chatName: ChatName) => void;
 	connectedRooms: string[];
 	messages: Message[];
 	joinRoom: (chatName: ChatName) => void;
+	joinPrivateRoom: (chatName: ChatName, password: string) => void;
 	leaveRoom: (chatName: ChatName) => void;
 	deleteChatRoom: (chatName: ChatName) => void;
 	addChatRoom: (chatName: ChatName) => void;

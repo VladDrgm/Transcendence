@@ -64,7 +64,7 @@ export async function getAdmins(channelId: number): Promise<any[]>{
       },
       body:  ''
     };
-    fetch(fetchAddress + 'channel/' + userId +'/' + targetId + '/' + channelId, requestOptions)
+    return fetch(fetchAddress + 'channel/' + userId +'/' + targetId + '/' + channelId, requestOptions)
       .then(response => response.json())
       .then(data => {console.log("Channel Admin with UserId :" + userId +" added:", data);})
       .catch(error => {console.log("Error adding ChannelAdmin with UserId :" + userId +":", error);});

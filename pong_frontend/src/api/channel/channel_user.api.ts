@@ -90,16 +90,18 @@ export function postPrivateChannelUser(userId: number, channelId: number, passwo
     },
     body:  ''
   };
-  fetch(fetchAddress + 'channel/' + userId +'/' + channelId + '/' + password +  '/password', requestOptions)
+  return fetch(fetchAddress + 'channel/' + userId +'/' + channelId + '/' + password +  '/password', requestOptions)
   .then(response => {
     if (response.ok) {
       console.log("ChannelUser with UserId :" + userId +" added to private Channel");
     } else {
       console.error("Error adding ChannelUser with UserId :" + userId +":", response.status);
+      throw new Error("Error adding ChannelUser");
     }
   })
   .catch(error => {
     console.error("Error adding ChannelUser with UserId :" + userId +":", error);
+    throw error;
   });
 }
   
@@ -240,10 +242,17 @@ export async function getIsMuted(channelId: number, callerId: number, targetId: 
 //Password protection
 
 export function deleteChannelPassword(userId: number, channelId: number) {
-  fetch(fetchAddress + 'channel/' + userId + '/' + channelId + '/password', {method: 'DELETE'})
-    .then(response => response.json())
-    .then(data => {console.log("ChannelPassword deleted from Channel" + channelId + ":", data);})
-    .catch(error => {console.log("Error deleting Password from Channel " + channelId + ":" , error);})
+  return fetch(fetchAddress + 'channel/' + userId + '/' + channelId + '/password', {method: 'DELETE'})
+  .then(response => {
+    if (response.ok) {
+      console.log("ChannelPassword of Channel" + channelId + " was deleted");
+    } else {
+      console.error("Error deleting ChannelPassword of Channel" + channelId + ":", response.status);
+    }
+  })
+  .catch(error => {
+    console.error("Error deleting ChannelPassword of Channel:", error);
+  });
 }
 
 
@@ -256,7 +265,7 @@ export function putChannelPassword(userId: number, channelId: number, password: 
     },
     body:  ''
   };
-  fetch(fetchAddress + 'channel/' + userId +'/' + channelId + '/' + password +  '/password', requestOptions)
+  return fetch(fetchAddress + 'channel/' + userId +'/' + channelId + '/' + password +  '/password', requestOptions)
   .then(response => {
     if (response.ok) {
       console.log("ChannelPassword of Channel" + channelId + " was changed");
@@ -280,7 +289,7 @@ export function putChannelType(userId: number, channelId: number) {
     },
     body:  ''
   };
-  fetch(fetchAddress + 'channel/' + userId +'/' + channelId + '/type', requestOptions)
+  return fetch(fetchAddress + 'channel/' + userId +'/' + channelId + '/type', requestOptions)
   .then(response => {
     if (response.ok) {
       console.log("ChannelType of Channel " + channelId + " was changed");

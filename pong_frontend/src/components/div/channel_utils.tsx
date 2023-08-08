@@ -148,18 +148,6 @@ export async function fetchChannelNames(): Promise<string[]> {
     }
 };
 
-export async function addAdmin(newAdminUsername: string, props: &ChatProps){
-    //finding right UserId to the Username input from addAdminPopUp
-    var targetID = await getUserIDByUserName(newAdminUsername);
-    // retrieving UserID from getUserID(UserName) from backend maybe
-    if (targetID)//changing the 1 to props.yourId or the real UserID of the caller
-        {
-            postAdmin(props.currentChat.Channel.ChannelId, Number(targetID), props.userID);
-            console.log('Admin added with UserId:', targetID);
-    } else 
-    console.error('Error adding Admin with Username:' , newAdminUsername);
-}
-
 export async function modBannedUser(add: boolean, newBlockedUsername: string, props: &ChatProps){
     //finding right UserId to the Username input from banUserPopUp
     var targetID = await getUserIDByUserName(newBlockedUsername);

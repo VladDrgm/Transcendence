@@ -6,13 +6,13 @@ import GameForm from "./GameForm";
 import { io, Socket } from "socket.io-client";
 import immer, { Draft } from "immer";
 import "../../App.css";
-import {fetchChannelNames, copyChannelByName, fetchAllChannels} from "../div/channel_utils"
-import {postChannelUser, deleteChannelUser, getChannelUser, getChannelBlockedUser, getIsMuted} from "../../api/channel/channel_user.api"
-import { Channel, ChannelUserRoles } from '../../interfaces/channel.interface';
+import {fetchChannelNames, copyChannelByName, fetchAllChannels, getUserIDByUserName} from "../div/channel_utils"
+import {postChannelUser, deleteChannelUser, getChannelUser, getChannelBlockedUser, getIsMuted, postPrivateChannelUser} from "../../api/channel/channel_user.api"
+import { Channel, ChannelUserRoles, ChatProps } from '../../interfaces/channel.interface';
 import { User } from '../../interfaces/user.interface';
 import { useUserContext } from '../context/UserContext';
 import { connected } from 'process';
-import { getIsAdmin } from '../../api/channel/channel_admin.api';
+import { getIsAdmin, postAdmin } from '../../api/channel/channel_admin.api';
 import { error } from 'console';
 // import { Channel } from 'diagnostics_channel';
 
@@ -223,6 +223,47 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID}) => {
 			});
 	}
 
+	function joinPrivateRoom(chatName: ChatName, password: string) {
+		postPrivateChannelUser(userID, currentChat.Channel.ChannelId, password)
+		.then(() => {
+				console.log("Posting User ", userID, " in Channel:", currentChat.Channel.ChannelId);
+				socketRef.current?.emit("join room", chatName, (messages: any) => roomJoinCallback(messages, chatName));
+				setCurrentRoles((prevState) => ({
+					...prevState,
+					isUser: true
+				}));
+			})
+			.catch(error => {
+				console.error("Error in joinPrivateRoom when adding User to Channel: ", error);
+				alert("Wrong Password. Pleayse try again");
+			});
+	}
+
+
+	function addAdminRights(newAdminUsername: string, roomName: string | number){
+		//finding right UserId to the Username input from addAdminPopUp
+		getUserIDByUserName(newAdminUsername)
+			.then((targetID) => {
+				postAdmin(currentChat.Channel.ChannelId, Number(targetID), userID)
+				.then(() => {
+					console.log('Admin added with UserId:', targetID);
+					const data = {
+						newAdminUserID: Number(targetID),
+						roomName: roomName
+					};
+					socketRef.current?.emit('add admin', data);
+				})
+				.catch(error => {
+					console.error("Error posting admin with Username:" , newAdminUsername);
+					alert("Error while adding User as Admin");
+				})
+			})
+			.catch(error => {
+				console.error('Error getting USerID from User:' ,error);
+			});
+		}
+
+
 	function leaveRoom(chatName: ChatName) {
 		// const newConnectedRooms = immer(connectedRooms, (draft: WritableDraft<typeof connectedRooms>) => {
 		// 	const chatNameString = String(chatName); // Convert chatName to string
@@ -251,6 +292,14 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID}) => {
 
 	function changeChatRoom(roomName: string | number) {
 		socketRef.current?.emit('change room', roomName);
+	}
+
+	function addAdminSocket(newAdminUserID: number, roomName: string | number) {
+		const data = {
+			newAdminUserID: newAdminUserID,
+			roomName: roomName
+		};
+		socketRef.current?.emit('add Admin', data);
 	}
 
 	async function toggleChat(newCurrentChat: CurrentChat) {
@@ -429,24 +478,44 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID}) => {
 	socketRef.current.on('room changed', (roomName) => {
 		updateChannellist();
 	});
+	socketRef.current.on('admin added', (data) => {
+		const newAdminUserID =data.newAdminUserID;
+		const roomName = data.roomName;
+		console.log("Admin msg arrived");
+		handleAdminRights(newAdminUserID, roomName);
+	});
 }
 
-	function handleDeletingChatRoom(roomName: string | number){
-		console.log("channel deleted from server");
-		console.log("curentChanma:", currentChat);
-		console.log("roomname", roomName);
-		updateChannellist();
-					setCurrentChat((prevChat) => {
-				// Check if the current chat's chatName matches the deleted roomName
-				console.log(prevChat);
-				if (prevChat.chatName === roomName) {
-				  // Replace the current chat with a default chat object (generalChat)
-				  return generalChat;
-				} else {
-				  // If it doesn't match, return the same chat object
-				  return prevChat;
+	function handleAdminRights(newAdminUserID: number, roomName: string) {
+		console.log("newAdminUSerID", newAdminUserID);
+		console.log("userId", userID);
+		if (newAdminUserID === userID)
+		{
+			setCurrentChat((prevChat) => {
+			console.log("currenchat", prevChat.chatName);
+
+				if( prevChat.chatName === roomName){
+					setCurrentRoles((prevRoles) => ({
+						...prevRoles,
+						isAdmin: true
+					}));
 				}
-			  });
+				return prevChat;
+			});
+			console.log("currenchat", currentChat.chatName);
+			// handleAdminCheck();
+		}
+	}
+
+	function handleDeletingChatRoom(roomName: string | number){
+		updateChannellist();
+		setCurrentChat((prevChat) => {
+			if (prevChat.chatName === roomName) {
+			return generalChat;
+			} else {
+			return prevChat;
+			}
+		});
 	}
 
 
@@ -576,6 +645,7 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID}) => {
 			updateChannellist={updateChannellist}
 			generalChat={generalChat}
 			joinRoom={joinRoom}
+			joinPrivateRoom={joinPrivateRoom}
 			changeChatRoom={changeChatRoom}
 			leaveRoom={leaveRoom}
 			deleteChatRoom={deleteChatRoom}
@@ -585,6 +655,8 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID}) => {
 			messages={messages[currentChat.chatName]}
 			toggleChat={toggleChat}
 			ChannelUserRoles={currentRoles}
+			handleAdminCheck={handleAdminCheck}
+			addAdminRights={addAdminRights}
 			username={username}
 			loadingChannelPanel = {false}
 		/>

@@ -116,6 +116,13 @@ io.on('connection', (socket: Socket) => {
 		io.emit('room changed', roomName);
 	});
 
+	socket.on('add admin', (data) => {
+		const newAdminUserID = data.newAdminUserID;
+		const roomName  = data.roomName;
+		// console.log("admin event recieved");
+		io.emit('admin added', {newAdminUserID, roomName });
+	});
+
 	socket.on('send message', ({ content, to, sender, chatName, isChannel }) => {
 		if (isChannel) {
 			const payload = {
