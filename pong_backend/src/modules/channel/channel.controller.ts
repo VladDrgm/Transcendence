@@ -150,15 +150,16 @@ export class ChannelController {
     await this.channelService.removeChannelUser(callerId, targetId, channelId);
   }
 
-  @Post(':userId/:channelId/blocked')
+  @Post(':callerId/:targetId/:channelId/blocked')
   @ApiOperation({
     summary: 'Ban a user from a Channel. Only Admins/Owner can ban users.',
   })
   async addChannelBlockedUser(
-    @Param('userId') userId: number,
+    @Param('callerId') callerId: number,
+    @Param('targetId') targetId: number,
     @Param('channelId') channelId: number,
   ): Promise<ChannelBlockedUser> {
-    return this.channelService.addChannelBlockedUser(userId, channelId);
+    return this.channelService.addChannelBlockedUser(callerId, targetId, channelId);
   }
 
   @Get(':channelId/blockedUsers')

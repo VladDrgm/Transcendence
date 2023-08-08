@@ -247,12 +247,40 @@ export class ChannelService {
   }
 
   async addChannelBlockedUser(
-    userId: number,
+    callerId: number,
+    targetId: number,
     channelId: number,
   ): Promise<ChannelBlockedUser> {
+    if (callerId == targetId) {
+      throw new HttpException(
+        'You cannot ban yourself.',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    if (await this.getChannelBlockedUserByUserId(targetId, channelId)) {
+      throw new HttpException(
+        'User is already blocked.',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    const callerIsAdmin = await this.getChannelAdminByUserId(
+        callerId,
+        channelId,
+        );
+
+    if (!callerIsAdmin) {
+        throw new HttpException(
+            'You do not have the credentials to ban a user.',
+            HttpStatus.BAD_REQUEST,
+        );
+        }
+
     const channelBlockedUser = new ChannelBlockedUser();
-    channelBlockedUser.UserId = userId;
+    channelBlockedUser.UserId = targetId;
     channelBlockedUser.ChannelId = channelId;
+
     return this.channelBlockedUserRepository.save(channelBlockedUser);
   }
 
