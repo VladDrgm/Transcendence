@@ -241,9 +241,12 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID}) => {
 
 
 	function addAdminRights(newAdminUsername: string, roomName: string | number){
-		//finding right UserId to the Username input from addAdminPopUp
 		getUserIDByUserName(newAdminUsername)
 			.then((targetID) => {
+				if(targetID === undefined){
+					alert("User could not be found. Please try another Username.");
+					return;
+				}
 				postAdmin(currentChat.Channel.ChannelId, Number(targetID), userID)
 				.then(() => {
 					console.log('Admin added with UserId:', targetID);
@@ -259,7 +262,8 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID}) => {
 				})
 			})
 			.catch(error => {
-				console.error('Error getting USerID from User:' ,error);
+				console.error('Error getting UerID from User:' ,error);
+				alert("Error while adding User as Admin");
 			});
 		}
 

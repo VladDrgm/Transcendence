@@ -89,16 +89,11 @@ export async function copyChannelByName(channelName: string): Promise<Channel | 
 
 export async function getUserIDByUserName(UserName: string): Promise<number | undefined> {
     const UserList = await getUsers();
-    console.log('getUserIdByUserNAme Userlist:', UserList);
     const TargetUser = UserList.find((user: IUser) => user.username === UserName)
-    console.log('getUserIdByUserNAme TargetUser:', TargetUser);
     if (TargetUser) {
-        console.log('TargetUser in if:', TargetUser);
-        console.log('returned UserID from getUserIDbyUSerNAme:', TargetUser?.userID);
         return TargetUser.userID;
 
     }
-    console.log('returned undefined UserID from getUserIDbyUSerNAme:');
     return undefined;
 }
 

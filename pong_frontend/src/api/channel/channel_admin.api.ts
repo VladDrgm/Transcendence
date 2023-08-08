@@ -65,8 +65,17 @@ export async function getAdmins(channelId: number): Promise<any[]>{
       body:  ''
     };
     return fetch(fetchAddress + 'channel/' + userId +'/' + targetId + '/' + channelId, requestOptions)
-      .then(response => response.json())
+      .then((response) =>{
+        if (response.ok){
+          return response.json();
+        } else {
+          throw new Error("Failed to add channel admin");
+        }
+      })
       .then(data => {console.log("Channel Admin with UserId :" + userId +" added:", data);})
-      .catch(error => {console.log("Error adding ChannelAdmin with UserId :" + userId +":", error);});
+      .catch(error => {
+        console.error("Error adding ChannelAdmin with UserId :" + userId +":", error);
+        throw error;
+      });
   }
   
