@@ -267,6 +267,7 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID}) => {
 			});
 		}
 
+		
 
 	function leaveRoom(chatName: ChatName) {
 		// const newConnectedRooms = immer(connectedRooms, (draft: WritableDraft<typeof connectedRooms>) => {
@@ -298,12 +299,12 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID}) => {
 		socketRef.current?.emit('change room', roomName);
 	}
 
-	function addAdminSocket(newAdminUserID: number, roomName: string | number) {
-		const data = {
-			newAdminUserID: newAdminUserID,
-			roomName: roomName
-		};
-		socketRef.current?.emit('add Admin', data);
+	function banUserSocket(targetId: number, roomName: string | number) {
+		socketRef.current?.emit('ban user', {targetId, roomName});
+	}
+
+	function unbanUserSocket(targetId: number, roomName: string | number) {
+		socketRef.current?.emit('unban user', {targetId, roomName});
 	}
 
 	async function toggleChat(newCurrentChat: CurrentChat) {
@@ -485,14 +486,61 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID}) => {
 	socketRef.current.on('admin added', (data) => {
 		const newAdminUserID =data.newAdminUserID;
 		const roomName = data.roomName;
-		console.log("Admin msg arrived");
 		handleAdminRights(newAdminUserID, roomName);
 	});
+	socketRef.current.on('user banned', (data) => {
+		const targetId = data.targetId;
+		const roomName = data.roomName;
+		console.log("Banned msg arrived");
+		handleBannedUserSocket(targetId, roomName);
+	});
+	socketRef.current.on('user unbanned', (data) => {
+		const targetId = data.targetId;
+		const roomName = data.roomName;
+		console.log("Unbanned msg arrived");
+		handleUnbannedUserSocket(targetId, roomName);
+	});
 }
-
-	function handleAdminRights(newAdminUserID: number, roomName: string) {
-		console.log("newAdminUSerID", newAdminUserID);
+	function handleBannedUserSocket(targetId: number, roomName: string) {
+		console.log("targetID", targetId);
 		console.log("userId", userID);
+		if (targetId === userID)
+		{
+			setCurrentChat((prevChat) => {
+			console.log("currenchat", prevChat.chatName);
+
+				if( prevChat.chatName === roomName){
+					setCurrentRoles((prevRoles) => ({
+						...prevRoles,
+						isBlocked: true
+					}));
+				}
+				return prevChat;
+			});
+			console.log("currenchat", currentChat.chatName);
+		}
+	}
+
+	function handleUnbannedUserSocket(targetId: number, roomName: string) {
+		console.log("targetID", targetId);
+		console.log("userId", userID);
+		if (targetId === userID)
+		{
+			setCurrentChat((prevChat) => {
+			console.log("currenchat", prevChat.chatName);
+
+				if( prevChat.chatName === roomName){
+					setCurrentRoles((prevRoles) => ({
+						...prevRoles,
+						isBlocked: false
+					}));
+				}
+				return prevChat;
+			});
+			console.log("currenchat", currentChat.chatName);
+		}
+	}
+	function handleAdminRights(newAdminUserID: number, roomName: string) {
 		if (newAdminUserID === userID)
 		{
 			setCurrentChat((prevChat) => {
@@ -507,7 +555,6 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID}) => {
 				return prevChat;
 			});
 			console.log("currenchat", currentChat.chatName);
-			// handleAdminCheck();
 		}
 	}
 
@@ -661,6 +708,8 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID}) => {
 			ChannelUserRoles={currentRoles}
 			handleAdminCheck={handleAdminCheck}
 			addAdminRights={addAdminRights}
+			banUserSocket={banUserSocket}
+			unbanUserSocket={unbanUserSocket}
 			username={username}
 			loadingChannelPanel = {false}
 		/>

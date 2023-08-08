@@ -19,6 +19,8 @@ export interface ChatProps {
 	ChannelUserRoles: ChannelUserRoles;
 	handleAdminCheck: () => void;
 	addAdminRights: (TargetName: string, chatName: ChatName) => void;
+	banUserSocket: (targetId: number, chatName: ChatName) => void;
+	unbanUserSocket: (targetId: number, chatName: ChatName) => void;
 	connectedRooms: string[];
 	messages: Message[];
 	joinRoom: (chatName: ChatName) => void;

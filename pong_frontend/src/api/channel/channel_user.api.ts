@@ -123,8 +123,8 @@ export async function getChannelUserBlocked(userId: number, channelId: number): 
 }
   
   //works fine
-export function deleteChannelUserBlocked(userId: number, channelId: number) {
-    fetch(fetchAddress + 'channel/' + userId + '/' + channelId + '/blocked', {method: 'DELETE'})
+export function deleteChannelUserBlocked(callerId: number, targetId: number, channelId: number) {
+    return fetch(fetchAddress + 'channel/' + targetId + '/' + channelId + '/blocked', {method: 'DELETE'})
     .then(response => {
       if (!response.ok) {
         throw new Error('Request failed with status: ' + response.status);
@@ -132,15 +132,16 @@ export function deleteChannelUserBlocked(userId: number, channelId: number) {
       return response.text();
     })
     .then(data => {
-      console.log("ChannelUser " + userId + " unblocked from Channel");
+      console.log("ChannelUser " + targetId + " unblocked from Channel");
     })
     .catch(error => {
-      console.log("Error allowing ChannelUser " + userId + ":", error);
+      console.log("Error allowing ChannelUser " + targetId + ":", error);
+      alert("Error unbanning User");
     });
 }
   
   //to be tested
-export function postChannelUserBlocked(userId: number, channelId: number) {
+export function postChannelUserBlocked(callerId: number, targetId: number, channelId: number) {
     const requestOptions = {
       method: 'POST',
       headers: { 
@@ -149,7 +150,8 @@ export function postChannelUserBlocked(userId: number, channelId: number) {
       },
       body:  ''
     };
-    fetch(fetchAddress + 'channel/' + userId +'/' + channelId + '/blocked', requestOptions)
+    // /channel/{callerId}/{targetId}/{channelId}/blocked
+    return fetch(fetchAddress + 'channel/' + callerId +'/' + targetId + '/' + channelId + '/blocked', requestOptions)
       .then(response => {
         if (!response.ok) {
           throw new Error('Request failed with status: ' + response.status);
@@ -157,10 +159,11 @@ export function postChannelUserBlocked(userId: number, channelId: number) {
         return response.text();
       })
       .then(data => {
-        console.log("ChannelUser with UserId :" + userId +" blocked");
+        console.log("ChannelUser with UserId :" + targetId +" blocked");
       })
       .catch(error => {
-        console.log("Error blocking ChannelUser with UserId :" + userId +":", error);
+        console.error("Error blocking ChannelUser with UserId :" + targetId +":", error);
+        alert("Error banning User");
       });
 }
 

@@ -123,6 +123,18 @@ io.on('connection', (socket: Socket) => {
 		io.emit('admin added', {newAdminUserID, roomName });
 	});
 
+	socket.on('ban user', (data) => {
+		const targetId = data.targetId;
+		const roomName = data.roomName;
+		io.emit('user banned', {targetId, roomName });
+	});
+
+	socket.on('unban user', (data) => {
+		const targetId = data.targetId;
+		const roomName = data.roomName;
+		io.emit('user unbanned', {targetId, roomName });
+	});
+
 	socket.on('send message', ({ content, to, sender, chatName, isChannel }) => {
 		if (isChannel) {
 			const payload = {

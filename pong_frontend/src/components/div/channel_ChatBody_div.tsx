@@ -24,7 +24,7 @@ const ChatBody_Div: React.FC<ChatBodyProps> = ({
   //Checking if USer is Blocked from USing/Joining Channel
   if (props.ChannelUserRoles.isBlocked && props.ChannelUserRoles.isBlockedResolved) {
     return (
-      <TextBox>You are blocked from using this Channel.</TextBox>);
+      <div>You are blocked from using this Channel.</div>);
   }
   // Switch for Private and Public Channels
   switch (props.currentChat.Channel.Type) {
@@ -65,68 +65,3 @@ const ChatBody_Div: React.FC<ChatBodyProps> = ({
 
 export default ChatBody_Div;
 
-
-// const ChatBody_Div: React.FC<ChatBodyProps> = ({
-//   props,
-//   isUserInChannelBlocked,
-//   isUserInChannel,
-//   isAdmin,
-//   isAdminResolved,
-//   loadingChatBody,
-//   messages
-// }) => {
-//   if (isUserInChannelBlocked) {
-//     return ( 
-//       loadingChatBody ? (
-//       <div>Loading Chat...</div> // Show a loading spinner or placeholder
-//       ) : (
-//         <TextBox>
-//           You are blocked from using this Channel.
-//         </TextBox>
-//         // setLoadingChatBody(true);
-//       )
-//     );
-//   } else if(props.currentChat.Channel.Type === "private"){
-//     if (isUserInChannel){
-//       return(
-//         loadingChatBody ? (
-//           <div>Loading Chat...</div> // Show a loading spinner or placeholder
-//           ) :(  
-//           <Messages>
-//             {messages.map(renderMessages)}
-//           </Messages>       
-//         )
-//       )
-//     }
-//     return (
-//       loadingChatBody ? (
-//         <div>Loading Chat...</div> // Show a loading spinner or placeholder
-//         ) : (
-//         <button onClick={() => popUpJoinPrivateChannel(props)}>
-//           Join private Channel {props.currentChat.chatName}
-//         </button>
-//         )
-//   );
-//   }  else if ((isUserInChannel || !props.currentChat.isChannel) || (isAdmin && isAdminResolved) || props.connectedRooms.includes(props.currentChat.chatName.toString())) {
-//     return (
-//       loadingChatBody ? (
-//         <div>Loading Chat...</div> // Show a loading spinner or placeholder
-//         ) : (
-//         <Messages>
-//           {messages.map(renderMessages)}
-//         </Messages>)
-//       );
-//   }  else {
-//     return (
-//       loadingChatBody ? (
-//         <div>Loading Chat...</div> // Show a loading spinner or placeholder
-//         ) : (
-//         <button onClick={() => props.joinRoom(props.currentChat.chatName)}>
-//           Join {props.currentChat.chatName}
-//         </button>
-//         )
-//     );
-//   }
-// };
-
-// export default ChatBody_Div;

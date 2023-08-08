@@ -15,10 +15,12 @@ import { User } from "../../interfaces/user.interface";
 import { ChannelAdmin_Buttons_Div, ChannelOwner_Buttons_Div } from "../div/channel_buttons_div";
 import { getOwnerId } from "../../api/channel/channel_owner.api";
 import ChatBody_Div from "../div/channel_ChatBody_div";
+// import ChatPanel_Div from "../div/channel_ChatPanel_div";
 
 
 const Chat_MainDiv: FC<ChatProps> = (props) => {
 	const [body, setBody] = useState<JSX.Element | null>(null);
+	const [chatPanel, setChatPanel] = useState<JSX.Element | null>(null);
 	const [channelpanel, setChannelpanel] = useState<JSX.Element | null>(null);
 	const [loadingChannelpanel, setLoadingChannelpanel] = useState(true);
 	const [channelPanelLoaded, setChannelPanelLoaded] = useState(false);
@@ -56,6 +58,13 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 			messages={messages}
 		/>);
 	}, [messages, props.ChannelUserRoles]);
+	
+	// const handleChatPanel = useCallback (() =>{
+	// 	setBody(<ChatPanel_Div
+	// 		props = {props}
+	// 		handleKeyPress = {handleKeyPress}
+	// 	/>);
+	// }, [props.ChannelUserRoles]);
 
 	const handleChannelPanel = useCallback(() =>{
 		setChannelpanel(
@@ -99,6 +108,7 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 	useEffect(() => {
 		handleChannelPanel();
 		handleBody();
+		// handleChatPanel();
 	}, [props.currentChat, handleBody, handleChannelPanel, loadingChannelpanel, props.ChannelUserRoles]);
 
 
@@ -122,6 +132,7 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 			<BodyContainer>
 			{body}
 			</BodyContainer>
+			{/* {chatPanel} */}
 			<TextBox
 			value={props.message}
 			onChange={props.handleMessageChange}
