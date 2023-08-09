@@ -49,7 +49,8 @@ const UserStartPage: React.FC<StartPageProps> = ({onLogout, id}) => {
               <button style={buttonStyle}>Play</button>
               <button style={buttonStyle} onClick={() => mode_set(main_div_mode_t.PROFILE)}>Profile</button>
 			  <button style={buttonStyle} onClick={() => mode_set(main_div_mode_t.LEADERBORAD)}>Leaderboard</button>
-              <button style={buttonStyle} onClick={() => mode_set(main_div_mode_t.SETTINGS)}>Settings</button>
+              <button style={buttonStyle} onClick={() => mode_set(main_div_mode_t.HISTORY)}>Match History</button>
+			  <button style={buttonStyle} onClick={() => mode_set(main_div_mode_t.SETTINGS)}>Settings</button>
             </header>
             <div style={{ width: '100%', height: '500px', backgroundColor: 'lightgray' }}>
               <MainDivSelector onLogout={onLogout} userID={id} mode={mode} mode_set={mode_set} />

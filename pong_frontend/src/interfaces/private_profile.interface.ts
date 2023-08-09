@@ -1,10 +1,10 @@
 export interface PrivateProfile {
     userId: number;
-    nickname: string;
-    avatar: string;
+    username: string;
+    avatarPath: string;
     wins: number;
     losses: number;
     points: number;
     status: string;
-    achievements: string;
+    achievementsCSV: string;
   }

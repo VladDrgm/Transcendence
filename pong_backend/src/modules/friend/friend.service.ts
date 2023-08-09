@@ -105,6 +105,7 @@ export class FriendService {
     const newFriend = new Friend();
     newFriend.UserId = dto.UserId;
     newFriend.FriendId = dto.FriendId;
+    this.friendRepository.save(newFriend);
 
     return this.userService.findOne(dto.FriendId);
   }
