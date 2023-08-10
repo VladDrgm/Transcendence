@@ -224,8 +224,11 @@ export async function getIsMuted(channelId: number, callerId: number, targetId: 
   try {
     const response = await fetch(fetchAddress + 'channel/' + callerId + '/' + targetId + '/' + channelId + '/mute', {credentials: "include",})
     if (!response.ok) {
+      if (response.status === 400){
+        return false;
+      }
       // console.error("Error retrieving mute status");
-      return false;
+      throw new Error("Error retrieving mute status");
     }
     if (!response.headers.has("content-length")) {
       return false;

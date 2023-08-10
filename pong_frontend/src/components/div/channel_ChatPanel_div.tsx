@@ -1,13 +1,16 @@
-import React, { FC, useEffect, useState } from 'react';
-import { ChatProps } from '../../interfaces/channel.interface';
-import { TextBox } from './chat_utils';
+import React, { FC, KeyboardEvent, useEffect, useState } from 'react';
+import { ChatProps, Message } from '../../interfaces/channel.interface';
+import { Messages, TextBox, renderMessages } from './chat_utils';
+import { popUpJoinPrivateChannel } from './channel_popups';
 
-interface ChatPanelProps {
+export interface chatInputProps {
   props: ChatProps;
-  // handleKeyPress: React.KeyboardEvent<HTMLTextAreaElement> => void;
+  value: string;
+  onChange: (event: React.ChangeEvent<HTMLTextAreaElement>) => void;
+  onKeyPress: (event: KeyboardEvent<HTMLTextAreaElement>) => void;
 }
 
-const ChatInput_Div: FC<ChatPanelProps> = ({
+const ChatInput_Div: FC<chatInputProps> = ({
   props,
 }) => {
   const [localMessage, setLocalMessage] = useState('');
@@ -16,7 +19,7 @@ const ChatInput_Div: FC<ChatPanelProps> = ({
     setLocalMessage(props.message.trim());
   }, [props.message]);
 
-    function handleKeyPress(e: React.KeyboardEvent<HTMLTextAreaElement>) {
+    function handleKeyPress(e: KeyboardEvent<HTMLTextAreaElement>) {
 		if (e.key === "Enter") {
 		props.sendMessage();
     setLocalMessage('');

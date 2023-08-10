@@ -204,9 +204,7 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID}) => {
 	function roomJoinCallback(incomingMessages: any, room: keyof typeof messages) {
 	const newMessages = immer(messages, (draft: WritableDraft<typeof messages>) => {
 		draft[room] = incomingMessages;
-		console.log("Callback");
 	});
-	console.log("roomJoincallback newMessages:", newMessages);
 	setMessages(newMessages);
 	}
 
