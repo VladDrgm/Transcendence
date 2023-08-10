@@ -52,12 +52,14 @@ const messages: { [key: string]: { sender: string; content: string }[] } = {
 function addChatRoom(roomName: string) {
 	if (!messages.hasOwnProperty(roomName)) {
 	  messages[roomName] = [];
+	  console.log("new mas array added");
   }
 }
 
 function deleteChatRoom(roomName: string) {
 	if (messages.hasOwnProperty(roomName)) {
 	  delete messages[roomName];
+	  console.log("msg array deleted");
   }
 }
 
@@ -91,6 +93,9 @@ io.on('connection', (socket: Socket) => {
 
 	socket.on('join room', (roomName: string, cb: (messages: any[]) => void) => {
 		// addChatRoom(roomName);
+		if (!messages.hasOwnProperty(roomName)) {
+			messages[roomName] = [];
+		}
 		socket.join(roomName);
 		cb(messages[roomName]);
 	});
@@ -136,6 +141,12 @@ io.on('connection', (socket: Socket) => {
 	});
 
 	socket.on('send message', ({ content, to, sender, chatName, isChannel }) => {
+		// console.log("content:", content);
+		// console.log("sender:", sender);
+		// console.log("chatName:", chatName);
+		// console.log("isChannel", isChannel);
+		// console.log("to:", to);
+		// console.log("Messages:", messages);
 		if (isChannel) {
 			const payload = {
 				content,

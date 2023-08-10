@@ -1,7 +1,6 @@
-import React, { FC, KeyboardEvent, useEffect, useState } from 'react';
-import { ChatProps, Message } from '../../interfaces/channel.interface';
-import { Messages, TextBox, renderMessages } from './chat_utils';
-import { popUpJoinPrivateChannel } from './channel_popups';
+import React, { FC, useEffect, useState } from 'react';
+import { ChatProps } from '../../interfaces/channel.interface';
+import { TextBox } from './chat_utils';
 
 interface ChatPanelProps {
   props: ChatProps;
@@ -48,7 +47,7 @@ const ChatInput_Div: FC<ChatPanelProps> = ({
         ) {
         return (
             <TextBox
-            value={props.message}
+            value={localMessage}
             onChange={props.handleMessageChange}
             onKeyPress={handleKeyPress}
             placeholder="You can write something here"
@@ -67,7 +66,7 @@ const ChatInput_Div: FC<ChatPanelProps> = ({
       ) {
         return (
             <TextBox
-            value={props.message}
+            value={localMessage}
             onChange={props.handleMessageChange}
             onKeyPress={handleKeyPress}
             placeholder="You can write somehting here"

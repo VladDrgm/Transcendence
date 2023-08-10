@@ -27,13 +27,7 @@ type WritableDraft<T> = Draft<T>;
 
 let initialMessagesState: {
 	[key: string]: { sender: string; content: string }[];
-	//[key: number]: { sender: string; content: string }[];
-} = {
-	// general: [],
-	// random: [],
-	// jokes: [],
-	// javascript: []
-};
+} = {};
 
 //Using fetched Channel Names to add as keys to the initialMessageState object
 async function initializeMessagesState() {
@@ -193,6 +187,7 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID}) => {
 		socketRef.current?.emit("send message", payload);
 		const newMessages = immer(messages, (draft: WritableDraft<typeof messages>) => {
 		//if the element doesn't exist, an empty one will be added
+		console.log('Inside Immer callback');
 			if(!draft[currentChat.chatName]) {
 				draft[currentChat.chatName] = [];
 			}
@@ -201,6 +196,7 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID}) => {
 				content: message
 			});
 		});
+		console.log('New Messages:', newMessages);
 		setMessages(newMessages);
 		setMessage("");
 	}
@@ -210,6 +206,7 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID}) => {
 		draft[room] = incomingMessages;
 		console.log("Callback");
 	});
+	console.log("roomJoincallback newMessages:", newMessages);
 	setMessages(newMessages);
 	}
 
@@ -317,6 +314,7 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID}) => {
 		if (!messages[newCurrentChat.chatName]) {
 		const newMessages = immer(messages, (draft: WritableDraft<typeof messages>) => {
 			draft[newCurrentChat.chatName] = [];
+			console.log("newEmpty");
 		});
 		
 		setMessages(newMessages);

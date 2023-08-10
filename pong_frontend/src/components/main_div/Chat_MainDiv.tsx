@@ -16,12 +16,6 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 
 	const messages = useMemo(() =>
 		props.messages || [], [props.messages])
-	
-	function handleKeyPress(e: React.KeyboardEvent<HTMLTextAreaElement>) {
-		if (e.key === "Enter") {
-		props.sendMessage();
-		}
-	}
 
 	const handleBody = useCallback (() =>{
 		setBody(<ChatBody_Div
@@ -94,13 +88,7 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 			<BodyContainer>
 			{body}
 			</BodyContainer>
-			{/* {chatInput} */}
-			<TextBox
-            value={props.message}
-            onChange={props.handleMessageChange}
-            onKeyPress={handleKeyPress}
-            placeholder="You can write something here"
-            />
+			{chatInput}
 		</ChatPanel>
 		</Container>
 	);
