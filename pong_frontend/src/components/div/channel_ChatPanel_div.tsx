@@ -12,19 +12,10 @@ export interface chatInputProps {
 
 const ChatInput_Div: FC<chatInputProps> = ({
   props,
+  value, 
+  onChange,
+  onKeyPress
 }) => {
-  const [localMessage, setLocalMessage] = useState('');
-
-  useEffect(() => {
-    setLocalMessage(props.message.trim());
-  }, [props.message]);
-
-    function handleKeyPress(e: KeyboardEvent<HTMLTextAreaElement>) {
-		if (e.key === "Enter") {
-		props.sendMessage();
-    setLocalMessage('');
-		}
-	}
 
   // //Checking if everything is resolved
   if (!props.ChannelUserRoles.isAdminResolved ||
@@ -50,9 +41,9 @@ const ChatInput_Div: FC<chatInputProps> = ({
         ) {
         return (
             <TextBox
-            value={localMessage}
-            onChange={props.handleMessageChange}
-            onKeyPress={handleKeyPress}
+            value={value}
+            onChange={onChange}
+            onKeyPress={onKeyPress}
             placeholder="You can write something here"
             />);
       } else {
@@ -69,9 +60,9 @@ const ChatInput_Div: FC<chatInputProps> = ({
       ) {
         return (
             <TextBox
-            value={localMessage}
-            onChange={props.handleMessageChange}
-            onKeyPress={handleKeyPress}
+            value={value}
+            onChange={onChange}
+            onKeyPress={onKeyPress}
             placeholder="You can write somehting here"
             />
         );

@@ -163,13 +163,9 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID}) => {
 		setMessage(e.target.value);
 	}
 
-	// function clearMessage() {
-	// 	setMessage("");
-	// }
-
-	// useEffect(() => {
-	// 	setMessage("");
-	// }, [messages]);
+	useEffect(() => {
+    	setMessage(message.trim());
+  	}, [message]);
 
 	function sendMessage() {
 		console.log("message:", message);
