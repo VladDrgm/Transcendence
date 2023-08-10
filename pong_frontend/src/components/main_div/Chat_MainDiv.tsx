@@ -37,7 +37,21 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 			  </ChannelInfo>
 			)
 		  );
-		if (props.ChannelUserRoles.isOwner){
+		if (props.ChannelUserRoles.isBlocked || props.ChannelUserRoles.isMuted) {
+			setChannelpanel(
+				loadingChannelpanel ? (
+				  <div>Loading Channel Name...</div> // Show a loading spinner or placeholder
+				) : (
+				  <ChannelInfo>
+					{props.currentChat.chatName}
+					{/* <button onClick={() => props.leaveRoom(props.currentChat.chatName)}>
+							Leave {props.currentChat.chatName}
+						</button> */}
+				  </ChannelInfo>
+				)
+			);
+		}
+		else if (props.ChannelUserRoles.isOwner){
 			  setChannelpanel(
 				  <ChannelOwner_Buttons_Div{...props} loadingChannelPanel={loadingChannelpanel}/>
 			  );
@@ -49,7 +63,7 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 		} 
 		setChannelPanelLoaded(true);
 	}, [
-		props,
+		props.ChannelUserRoles,
 		loadingChannelpanel,
 	]);
 
