@@ -31,8 +31,9 @@ export interface ChatProps {
 	changeChatRoom :(chatName: ChatName) => void;
 	updateChannellist: () => void;
 	sendMessage: () => void;
-	handleMessageChange: (e: ChangeEvent<HTMLTextAreaElement>) => void;
+	handleMessageChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
 	message: string;
+	// setMessage: React.Dispatch<React.SetStateAction<string>>;
 	allUsers: User[];
     allChannels: Channel[];
 	generalChat: ChatData;

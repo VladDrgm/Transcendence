@@ -169,9 +169,13 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID}) => {
 		setMessage(e.target.value);
 	}
 
-	useEffect(() => {
-		setMessage("");
-	}, [messages]);
+	// function clearMessage() {
+	// 	setMessage("");
+	// }
+
+	// useEffect(() => {
+	// 	setMessage("");
+	// }, [messages]);
 
 	function sendMessage() {
 		console.log("message:", message);
@@ -688,6 +692,7 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID}) => {
 			user={user}
 			userID={userID}
 			message={message}
+			// setMessage={setMessage}
 			handleMessageChange={handleMessageChange}
 			sendMessage={sendMessage}
 			yourId={socketRef.current ? socketRef.current.id : ""}
@@ -704,6 +709,7 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID}) => {
 			connectedRooms={connectedRooms}
 			currentChat={currentChat}
 			messages={messages[currentChat.chatName]}
+			// clearMessage = {clearMessage}
 			toggleChat={toggleChat}
 			ChannelUserRoles={currentRoles}
 			handleAdminCheck={handleAdminCheck}

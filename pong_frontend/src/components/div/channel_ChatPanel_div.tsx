@@ -1,25 +1,32 @@
-import React, { KeyboardEvent } from 'react';
+import React, { FC, KeyboardEvent, useEffect, useState } from 'react';
 import { ChatProps, Message } from '../../interfaces/channel.interface';
 import { Messages, TextBox, renderMessages } from './chat_utils';
 import { popUpJoinPrivateChannel } from './channel_popups';
 
 interface ChatPanelProps {
   props: ChatProps;
+  // handleKeyPress: React.KeyboardEvent<HTMLTextAreaElement> => void;
 }
 
-const ChatInput_Div: React.FC<ChatPanelProps> = ({
+const ChatInput_Div: FC<ChatPanelProps> = ({
   props,
 }) => {
+  const [localMessage, setLocalMessage] = useState('');
 
-    function handleKeyPress(e: KeyboardEvent<HTMLTextAreaElement>) {
+  useEffect(() => {
+    setLocalMessage(props.message.trim());
+  }, [props.message]);
+
+    function handleKeyPress(e: React.KeyboardEvent<HTMLTextAreaElement>) {
 		if (e.key === "Enter") {
 		props.sendMessage();
+    setLocalMessage('');
 		}
 	}
 
-  //Checking if everything is resolved
-  if (!props.ChannelUserRoles.isAdminResolved || 
-      !props.ChannelUserRoles.isBlockedResolved || 
+  // //Checking if everything is resolved
+  if (!props.ChannelUserRoles.isAdminResolved ||
+      !props.ChannelUserRoles.isBlockedResolved ||
       !props.ChannelUserRoles.isMutedResolved ||
       !props.ChannelUserRoles.isOwnerResolved||
       !props.ChannelUserRoles.isUserResolved)
@@ -56,7 +63,7 @@ const ChatInput_Div: React.FC<ChatPanelProps> = ({
       if (
         props.ChannelUserRoles.isUser ||
         props.ChannelUserRoles.isAdmin ||
-        !props.currentChat.isChannel 
+        !props.currentChat.isChannel
       ) {
         return (
             <TextBox
