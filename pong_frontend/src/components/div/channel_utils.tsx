@@ -92,7 +92,6 @@ export async function getUserIDByUserName(UserName: string): Promise<number | un
     const TargetUser = UserList.find((user: IUser) => user.username === UserName)
     if (TargetUser) {
         return TargetUser.userID;
-
     }
     return undefined;
 }
@@ -144,31 +143,55 @@ export async function fetchChannelNames(): Promise<string[]> {
 };
 
 export async function modBannedUser(add: boolean, newBlockedUsername: string, props: &ChatProps){
-    //finding right UserId to the Username input from banUserPopUp
-    var targetID = await getUserIDByUserName(newBlockedUsername);
-    // console.log('TargetId:', targetID);
-    if (targetID)//changing the 1 to props.yourId or the real UserID of the caller
+    const targetID = await getUserIDByUserName(newBlockedUsername);
+    if (targetID !== undefined)
         {
-            // console.log('User banned with UserId:', targetID);
             if (add === true)
-                postChannelUserBlocked(targetID, props.currentChat.Channel.ChannelId);
+                postChannelUserBlocked(props.userID, targetID, props.currentChat.Channel.ChannelId)
+                .then(() => {
+                    props.banUserSocket(targetID, props.currentChat.chatName);
+                })
+                .catch(error => {
+                    console.error("Error banning User:", error);
+                    alert("Error unbanning User");
+                })
             else
-                deleteChannelUserBlocked(targetID, props.currentChat.Channel.ChannelId);
-    } else 
-    console.error('Error banning/allowing User with Username:' , newBlockedUsername);
+                deleteChannelUserBlocked(props.userID, targetID, props.currentChat.Channel.ChannelId)
+                .then(() => {
+                    props.unbanUserSocket(targetID, props.currentChat.chatName);
+                })
+                .catch(error => {
+                    console.error("Error unbanning User:", error);
+                    alert("Error unbanning User");
+                })
+    } else {
+        console.error('Error banning/allowing User with Username:' , newBlockedUsername);
+        alert("Error banning/unbanning User");
+    }
 }
 
 export async function addMuteUser(newBlockedUsername: string, duration:number, props: &ChatProps){
     //finding right UserId to the Username input from banUserPopUp
-    var targetID = await getUserIDByUserName(newBlockedUsername);
-    // console.log('TargetId:', targetID);
-    if (targetID)//changing the 1 to props.yourId or the real UserID of the caller
-        {
-            // console.log('User banned with UserId:', targetID);
-            postMuteUser(props.userID, targetID, props.currentChat.Channel.ChannelId, duration);
-    } else 
-    console.error('Error muting User with Username:' , newBlockedUsername);
+    getUserIDByUserName(newBlockedUsername)
+    .then((targetID) => {
+        if (targetID !== undefined) {
+            postMuteUser(props.userID, targetID, props.currentChat.Channel.ChannelId, duration)
+             .then(() => {
+                 const socketDuration = (duration * 60 * 1000) + 100;
+                 props.muteUserSocket(targetID, props.currentChat.chatName, socketDuration);
+             })
+
+        }
+        else {
+            console.error('Error muting User with Username:' , newBlockedUsername);
+            alert("Error muting User");
+        }
+    }).catch(error => {
+        alert("Error muting user: " + error.message);
+    })
 }
+
+
 export async function CreateChannel(props: ChatProps, channelName: string, password: string): Promise<boolean>{
     if(password === "")
         var channelType = "public";

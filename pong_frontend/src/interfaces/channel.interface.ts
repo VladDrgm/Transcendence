@@ -14,11 +14,14 @@ export interface ChatProps {
 	user: User; //USer from login process
 	toggleChat: (currentChat: ChatData) => void;
 	yourId: string | number;  //socketId from joining the game
-	username: string; //name given in the game startpage
+	// username: string; //name given in the game startpage
 	currentChat: ChatData;
 	ChannelUserRoles: ChannelUserRoles;
 	handleAdminCheck: () => void;
 	addAdminRights: (TargetName: string, chatName: ChatName) => void;
+	banUserSocket: (targetId: number, chatName: ChatName) => void;
+	unbanUserSocket: (targetId: number, chatName: ChatName) => void;
+	muteUserSocket: (targetId: number, chatName: ChatName, mutedDuration: number) => void;
 	connectedRooms: string[];
 	messages: Message[];
 	joinRoom: (chatName: ChatName) => void;
@@ -26,11 +29,13 @@ export interface ChatProps {
 	leaveRoom: (chatName: ChatName) => void;
 	deleteChatRoom: (chatName: ChatName) => void;
 	addChatRoom: (chatName: ChatName) => void;
+	addBlockedUser: (targetName: ChatName) => void;
 	changeChatRoom :(chatName: ChatName) => void;
 	updateChannellist: () => void;
 	sendMessage: () => void;
-	handleMessageChange: (e: ChangeEvent<HTMLTextAreaElement>) => void;
+	handleMessageChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
 	message: string;
+	// setMessage: React.Dispatch<React.SetStateAction<string>>;
 	allUsers: User[];
     allChannels: Channel[];
 	generalChat: ChatData;

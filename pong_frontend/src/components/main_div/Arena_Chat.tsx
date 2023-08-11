@@ -7,7 +7,7 @@ import { io, Socket } from "socket.io-client";
 import immer, { Draft } from "immer";
 import "../../App.css";
 import {fetchChannelNames, copyChannelByName, fetchAllChannels, getUserIDByUserName} from "../div/channel_utils"
-import {postChannelUser, deleteChannelUser, getChannelUser, getChannelBlockedUser, getIsMuted, postPrivateChannelUser} from "../../api/channel/channel_user.api"
+import {postChannelUser, deleteChannelUser, getChannelUser, getChannelBlockedUser, getIsMuted, postPrivateChannelUser, getMutedStatus, postBlockedUser, getBlockedUser} from "../../api/channel/channel_user.api"
 import { Channel, ChannelUserRoles, ChatProps } from '../../interfaces/channel.interface';
 import { User } from '../../interfaces/user.interface';
 import { useUserContext } from '../context/UserContext';
@@ -27,13 +27,7 @@ type WritableDraft<T> = Draft<T>;
 
 let initialMessagesState: {
 	[key: string]: { sender: string; content: string }[];
-	//[key: number]: { sender: string; content: string }[];
-} = {
-	// general: [],
-	// random: [],
-	// jokes: [],
-	// javascript: []
-};
+} = {};
 
 //Using fetched Channel Names to add as keys to the initialMessageState object
 async function initializeMessagesState() {
@@ -62,7 +56,7 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID}) => {
 	const { user } = useUserContext()
 	/* chat utilities */
 	const [username, setUsername] = useState("");
-	const [connected, setConnected] = useState(false);
+	const [connected, setConnected] = useState(true);
 	const [currentChat, setCurrentChat] = useState<CurrentChat>({
 		isChannel: true,
 		chatName: "general",
@@ -138,20 +132,21 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID}) => {
 		}
 	}, []);
 
-	useEffect(() => {
-		const intervalID = setInterval(() => {
-			fetchAllChannels()
-				.then((channels) => {
-					setAllChannels(channels);
-				})
-				.catch((error) => {
-					console.error("Error fetching all Channels: ", error);
-				});
-		}, 30000);
-		return () => clearInterval(intervalID);
-	}, []);
+	// useEffect(() => {
+	// 	const intervalID = setInterval(() => {
+	// 		fetchAllChannels()
+	// 			.then((channels) => {
+	// 				setAllChannels(channels);
+	// 			})
+	// 			.catch((error) => {
+	// 				console.error("Error fetching all Channels: ", error);
+	// 			});
+	// 	}, 30000);
+	// 	return () => clearInterval(intervalID);
+	// }, []);
 
 	useEffect(() => {initializeMessagesState();},[]);
+
 	const [messages, setMessages] = useState<{
 		[key in ChatName]: { sender: string; content: string }[];
 	}>(initialMessagesState);
@@ -170,18 +165,18 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID}) => {
 	}
 
 	useEffect(() => {
-		setMessage("");
-	}, [messages]);
+    	setMessage(message.trim());
+  	}, [message]);
 
 	function sendMessage() {
 		console.log("message:", message);
 		console.log("Messages :", messages);
 		console.log("currentchat: ", currentChat);
-		console.log("username : ", username);
+		console.log("username : ", user.username);
 		const payload = {
 		content: message,
 		to: currentChat.isChannel ? currentChat.chatName : currentChat.receiverId,
-		sender: username,
+		sender: user.username,
 		chatName: currentChat.chatName,
 		isChannel: currentChat.isChannel
 		};
@@ -189,14 +184,16 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID}) => {
 		socketRef.current?.emit("send message", payload);
 		const newMessages = immer(messages, (draft: WritableDraft<typeof messages>) => {
 		//if the element doesn't exist, an empty one will be added
+		console.log('Inside Immer callback');
 			if(!draft[currentChat.chatName]) {
 				draft[currentChat.chatName] = [];
 			}
 			draft[currentChat.chatName].push({
-				sender: username,
+				sender: user.username,
 				content: message
 			});
 		});
+		console.log('New Messages:', newMessages);
 		setMessages(newMessages);
 		setMessage("");
 	}
@@ -204,7 +201,6 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID}) => {
 	function roomJoinCallback(incomingMessages: any, room: keyof typeof messages) {
 	const newMessages = immer(messages, (draft: WritableDraft<typeof messages>) => {
 		draft[room] = incomingMessages;
-		console.log("Callback");
 	});
 	setMessages(newMessages);
 	}
@@ -267,6 +263,35 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID}) => {
 			});
 		}
 
+		function addBlockedUser(targetName: string | number){
+			getUserIDByUserName(targetName.toString())
+				.then((targetID) => {
+					if(targetID === undefined){
+						alert("User could not be found. Please try another Username.");
+						return;
+					}
+					postBlockedUser(userID, Number(targetID))
+					.then(() => {
+						console.log('User blocked with UserId:', targetID);
+						const data = {
+							callerId: userID,
+							targetId: Number(targetID)
+						};
+						socketRef.current?.emit('add blocked', data);
+					})
+					.catch(error => {
+						console.error("Error blocking user with Username:" , targetName);
+						alert("Error while blocking User" + error);
+					})
+				})
+				.catch(error => {
+					console.error('Error getting UserID from User:' ,error);
+					alert("Error while blocking User" + error);
+				});
+			}
+	
+
+		
 
 	function leaveRoom(chatName: ChatName) {
 		// const newConnectedRooms = immer(connectedRooms, (draft: WritableDraft<typeof connectedRooms>) => {
@@ -298,12 +323,16 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID}) => {
 		socketRef.current?.emit('change room', roomName);
 	}
 
-	function addAdminSocket(newAdminUserID: number, roomName: string | number) {
-		const data = {
-			newAdminUserID: newAdminUserID,
-			roomName: roomName
-		};
-		socketRef.current?.emit('add Admin', data);
+	function banUserSocket(targetId: number, roomName: string | number) {
+		socketRef.current?.emit('ban user', {targetId, roomName});
+	}
+
+	function unbanUserSocket(targetId: number, roomName: string | number) {
+		socketRef.current?.emit('unban user', {targetId, roomName});
+	}
+
+	function muteUserSocket(targetId: number, roomName: string | number, muteDuration: number) {
+		socketRef.current?.emit('mute user', {targetId, roomName, muteDuration});
 	}
 
 	async function toggleChat(newCurrentChat: CurrentChat) {
@@ -312,6 +341,7 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID}) => {
 		if (!messages[newCurrentChat.chatName]) {
 		const newMessages = immer(messages, (draft: WritableDraft<typeof messages>) => {
 			draft[newCurrentChat.chatName] = [];
+			console.log("newEmpty");
 		});
 		
 		setMessages(newMessages);
@@ -320,14 +350,47 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID}) => {
 	}
 
 	useEffect(() => {
-		handleUserInChannelCheck();
-		handleUserInChannelBlockedCheck();
-		handleUserInChannelMutedCheck();
-		handleAdminCheck();
-		handleOwnerCheck();
+		if (currentChat.isChannel){
+			handleUserInChannelCheck();
+			handleUserInChannelBlockedCheck();
+			handleUserInChannelMutedCheck();
+			handleAdminCheck();
+			handleOwnerCheck();
+		}
+		else if(!currentChat.isChannel){
+			handleUserDirektMessageStatus();
+		}
 		console.log("in effect currentChat:", currentChat);
 	}, [currentChat.chatName])
 	
+
+	const handleUserDirektMessageStatus = useCallback (async () => {
+		setCurrentRoles((prevState) => ({
+			...prevState,
+			isBlockedResolved: false
+		}));
+		if (!currentChat.isResolved){
+			return;
+		}
+		getUserIDByUserName(currentChat.chatName.toString())
+			.then((result) => {
+				if(result !== undefined){
+					getBlockedUser(userID, result)
+					.then((user) => {
+						setCurrentRoles((prevState) => ( {
+							...prevState,
+							isBlocked: user,
+							isBlockedResolved: true
+						}));
+					}).catch(error => {
+						console.log("Error blocking User:", error);
+						alert("Error while blocking User");
+					});
+				}
+			}).catch(error =>{
+			console.error('Error occured in handleUserChannelCheck:', error);
+			});
+	}, [currentChat.isResolved, currentChat.Channel.ChannelId]);
 
 	const handleUserInChannelCheck = useCallback (async () => {
 		setCurrentRoles((prevState) => ({
@@ -390,11 +453,11 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID}) => {
 			if (!currentChat.isResolved){
 				return;
 			}
-			getIsMuted(currentChat.Channel.ChannelId, userID, userID)
-				.then((user) => {
+			getMutedStatus(currentChat.Channel.ChannelId, userID)
+				.then((response) => {
 					setCurrentRoles((prevState) => ({
 						...prevState,
-						isMuted:	user,
+						isMuted:	response,
 						isMutedResolved: true
 					}));
 				})
@@ -449,51 +512,130 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID}) => {
 		setUsername(e.target.value);
 	}
 
-	function connect() {
-	setConnected(true);
-	socketRef.current = io("http://localhost:4000", {
-	  transports: ["websocket"],
-	  withCredentials: true,
-	});
-	console.log("What is being sent as username is: " + username);
-	socketRef.current.emit("join server", username);
-	socketRef.current.emit("join room", "general", (messages: any) => roomJoinCallback(messages, "general"));
-	socketRef.current.on("new user", (allUsers: any) => {
-		setAllUsers(allUsers);
-	});
-	socketRef.current.on("new message", ({ content, sender, chatName }: { content: string; sender: string; chatName: ChatName }) => {
-		setMessages(messages => {
-			const newMessages = immer(messages, (draft: WritableDraft<typeof messages>) => {
-				if (draft[chatName]) {
-					draft[chatName].push({ content, sender });
-				} else {
-					draft[chatName] = [{ content, sender }];
-				}
+	useEffect(() => {
+
+		function connect() {
+			setConnected(true);
+			socketRef.current = io("http://localhost:4000", {
+			transports: ["websocket"],
+			withCredentials: true,
 			});
-			return newMessages;
+			console.log("What is being sent as username is: " + user.username);
+			const data = {
+				username: user.username,
+				userId: user.userID,
+				};
+			socketRef.current.emit("join server", data);
+			socketRef.current.emit("join room", "general", (messages: any) => roomJoinCallback(messages, "general"));
+			socketRef.current.on("new user", (allUsers: any) => {
+				setAllUsers(allUsers);
+			});
+			socketRef.current.on("new message", ({ content, sender, chatName }: { content: string; sender: string; chatName: ChatName }) => {
+				console.log("sender", sender);
+				setMessages(messages => {
+					const newMessages = immer(messages, (draft: WritableDraft<typeof messages>) => {
+						if (draft[chatName]) {
+							draft[chatName].push({ content, sender });
+						} else {
+							draft[chatName] = [{ content, sender }];
+						}
+					});
+					return newMessages;
+				});
+			});
+			socketRef.current.on('room deleted', (roomName) => {
+				handleDeletingChatRoom(roomName);
+			});
+			socketRef.current.on('room added', (roomName) => {
+				updateChannellist();
+			});
+			socketRef.current.on('room changed', (roomName) => {
+				updateChannellist();
+			});
+			socketRef.current.on('admin added', (data) => {
+				const newAdminUserID =data.newAdminUserID;
+				const roomName = data.roomName;
+				handleAdminRights(newAdminUserID, roomName);
+			});
+			socketRef.current.on('user banned', (data) => {
+				const targetId = data.targetId;
+				const roomName = data.roomName;
+				// console.log("Banned msg arrived");
+				handleBannedUserSocket(targetId, roomName);
+			});
+			socketRef.current.on('user unbanned', (data) => {
+				const targetId = data.targetId;
+				const roomName = data.roomName;
+				// console.log("Unbanned msg arrived");
+				handleUnbannedUserSocket(targetId, roomName);
+			});
+			socketRef.current.on('user muted', (data) => {
+				const targetId = data.targetId;
+				const roomName = data.roomName;
+				console.log("Muted msg arrived");
+				handleMutedUserSocket(targetId, roomName);
+			});
+			socketRef.current.on('user unmuted', (data) => {
+				const targetId = data.targetId;
+				const roomName = data.roomName;
+				console.log("Muted msg arrived");
+				handleUnmutedUserSocket(targetId, roomName);
+			});
+		}
+		connect();
+
+		return () => {
+			if (socketRef.current)
+				socketRef.current.disconnect();
+		}
+	}, []);
+
+function handleUnmutedUserSocket(targetId: number, roomName: string) {
+	console.log("targetID", targetId);
+	console.log("userId", userID);
+	if (targetId === userID)
+	{
+		setCurrentChat((prevChat) => {
+		console.log("currenchat", prevChat.chatName);
+
+			if( prevChat.chatName === roomName){
+				setCurrentRoles((prevRoles) => ({
+					...prevRoles,
+					isMuted: false
+				}));
+				alert("You have been unmuted.");
+			}
+			return prevChat;
 		});
-	});
-	socketRef.current.on('room deleted', (roomName) => {
-		handleDeletingChatRoom(roomName);
-	});
-	socketRef.current.on('room added', (roomName) => {
-		updateChannellist();
-	});
-	socketRef.current.on('room changed', (roomName) => {
-		updateChannellist();
-	});
-	socketRef.current.on('admin added', (data) => {
-		const newAdminUserID =data.newAdminUserID;
-		const roomName = data.roomName;
-		console.log("Admin msg arrived");
-		handleAdminRights(newAdminUserID, roomName);
-	});
+		console.log("currenchat", currentChat.chatName);
+	}
 }
 
-	function handleAdminRights(newAdminUserID: number, roomName: string) {
-		console.log("newAdminUSerID", newAdminUserID);
+function handleMutedUserSocket(targetId: number, roomName: string) {
+	console.log("targetID", targetId);
+	console.log("userId", userID);
+	if (targetId === userID)
+	{
+		setCurrentChat((prevChat) => {
+		console.log("currenchat", prevChat.chatName);
+
+			if( prevChat.chatName === roomName){
+				setCurrentRoles((prevRoles) => ({
+					...prevRoles,
+					isMuted: true
+				}));
+				alert("You have been muted.");
+			}
+			return prevChat;
+		});
+		console.log("currenchat", currentChat.chatName);
+	}
+}
+
+	function handleBannedUserSocket(targetId: number, roomName: string) {
+		console.log("targetID", targetId);
 		console.log("userId", userID);
-		if (newAdminUserID === userID)
+		if (targetId === userID)
 		{
 			setCurrentChat((prevChat) => {
 			console.log("currenchat", prevChat.chatName);
@@ -501,13 +643,50 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID}) => {
 				if( prevChat.chatName === roomName){
 					setCurrentRoles((prevRoles) => ({
 						...prevRoles,
-						isAdmin: true
+						isBlocked: true
 					}));
 				}
 				return prevChat;
 			});
 			console.log("currenchat", currentChat.chatName);
-			// handleAdminCheck();
+		}
+	}
+
+	function handleUnbannedUserSocket(targetId: number, roomName: string) {
+		console.log("targetID", targetId);
+		console.log("userId", userID);
+		if (targetId === userID)
+		{
+			setCurrentChat((prevChat) => {
+			// console.log("currenchat", prevChat.chatName);
+
+				if( prevChat.chatName === roomName){
+					alert("You can use this Channel again.")
+					setCurrentRoles((prevRoles) => ({
+						...prevRoles,
+						isBlocked: false
+					}));
+				}
+				return prevChat;
+			});
+			// console.log("currenchat", currentChat.chatName);
+		}
+	}
+	function handleAdminRights(newAdminUserID: number, roomName: string) {
+		if (newAdminUserID === userID)
+		{
+			setCurrentChat((prevChat) => {
+			// console.log("currenchat", prevChat.chatName);
+				if( prevChat.chatName === roomName){
+					alert("You are now an admin of this Channel.");
+					setCurrentRoles((prevRoles) => ({
+						...prevRoles,
+						isAdmin: true
+					}));
+				}
+				return prevChat;
+			});
+			// console.log("currenchat", currentChat.chatName);
 		}
 	}
 
@@ -515,6 +694,7 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID}) => {
 		updateChannellist();
 		setCurrentChat((prevChat) => {
 			if (prevChat.chatName === roomName) {
+				alert("The Chat has been deleted by the Owner.");
 			return generalChat;
 			} else {
 			return prevChat;
@@ -634,7 +814,7 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID}) => {
 
 	/* rendering condition */
 	let body;
-	if (connected) {
+	// if (connected) {
 		// console.log("before body:", currentChat);
 		body = (
 		<Chat_MainDiv
@@ -654,6 +834,7 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID}) => {
 			leaveRoom={leaveRoom}
 			deleteChatRoom={deleteChatRoom}
 			addChatRoom={addChatRoom}
+			addBlockedUser={addBlockedUser}
 			connectedRooms={connectedRooms}
 			currentChat={currentChat}
 			messages={messages[currentChat.chatName]}
@@ -661,19 +842,22 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID}) => {
 			ChannelUserRoles={currentRoles}
 			handleAdminCheck={handleAdminCheck}
 			addAdminRights={addAdminRights}
-			username={username}
+			banUserSocket={banUserSocket}
+			unbanUserSocket={unbanUserSocket}
+			muteUserSocket={muteUserSocket}
+			// username={username}
 			loadingChannelPanel = {false}
 		/>
 		);
-	} else {
-		body = (
-		<Form
-			username={username}
-			onChange={handleChange}
-			connect={connect}
-		/>
-		);
-	}
+	// } else {
+	// 	body = (
+	// 	<Form
+	// 		username={username}
+	// 		onChange={handleChange}
+	// 		connect={connect}
+	// 	/>
+	// 	);
+	// }
 
 	let gameBody, gameBodyForm;
 	if (gameStatus === 1) {

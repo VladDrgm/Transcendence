@@ -45,8 +45,8 @@ const UserStartPage: React.FC<StartPageProps> = ({onLogout, id}) => {
   return (<div style={pageStyle}>
             <header>
               <button style={buttonStyle} onClick={() => mode_set(main_div_mode_t.HOME_PAGE)}>Home</button>
-              <button style={buttonStyle} onClick={() => mode_set(main_div_mode_t.CHAT)}>Chat</button>
-              <button style={buttonStyle}>Play</button>
+              <button style={buttonStyle} onClick={() => mode_set(main_div_mode_t.GAMEARENA)}>GameArena</button>
+              {/* <button style={buttonStyle}>Play</button> */}
               <button style={buttonStyle} onClick={() => mode_set(main_div_mode_t.PROFILE)}>Profile</button>
 			  <button style={buttonStyle} onClick={() => mode_set(main_div_mode_t.LEADERBORAD)}>Leaderboard</button>
               <button style={buttonStyle} onClick={() => mode_set(main_div_mode_t.HISTORY)}>Match History</button>

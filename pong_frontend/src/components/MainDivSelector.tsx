@@ -14,7 +14,7 @@ import { useUserContext } from './context/UserContext';
 export enum main_div_mode_t {
   ERROR_PAGE = -1,
   HOME_PAGE = 0,
-  CHAT = 2,
+  GAMEARENA = 2,
   GAME = 3,
   PROFILE = 4,
   SETTINGS = 5,
@@ -38,7 +38,7 @@ const MainDivSelector: React.FC<MainDivProps> = ({onLogout, userID, mode, mode_s
   switch (mode){
     case main_div_mode_t.HOME_PAGE:
       return (<Welcome_MainDiv/>);
-	case main_div_mode_t.CHAT:
+	case main_div_mode_t.GAMEARENA:
 		return (<Arena_Chat_MainDiv userID={userID}/>)
 	case main_div_mode_t.PROFILE:
 		return (<Profile_MainDiv userID={userID} mode_set={mode_set} friend_set={friend_set}/>);

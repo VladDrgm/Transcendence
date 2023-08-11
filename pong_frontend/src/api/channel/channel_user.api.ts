@@ -123,8 +123,8 @@ export async function getChannelUserBlocked(userId: number, channelId: number): 
 }
   
   //works fine
-export function deleteChannelUserBlocked(userId: number, channelId: number) {
-    fetch(fetchAddress + 'channel/' + userId + '/' + channelId + '/blocked', {method: 'DELETE'})
+export function deleteChannelUserBlocked(callerId: number, targetId: number, channelId: number) {
+    return fetch(fetchAddress + 'channel/' + targetId + '/' + channelId + '/blocked', {method: 'DELETE'})
     .then(response => {
       if (!response.ok) {
         throw new Error('Request failed with status: ' + response.status);
@@ -132,15 +132,16 @@ export function deleteChannelUserBlocked(userId: number, channelId: number) {
       return response.text();
     })
     .then(data => {
-      console.log("ChannelUser " + userId + " unblocked from Channel");
+      console.log("ChannelUser " + targetId + " unblocked from Channel");
     })
     .catch(error => {
-      console.log("Error allowing ChannelUser " + userId + ":", error);
+      console.log("Error allowing ChannelUser " + targetId + ":", error);
+      alert("Error unbanning User");
     });
 }
   
   //to be tested
-export function postChannelUserBlocked(userId: number, channelId: number) {
+export function postChannelUserBlocked(callerId: number, targetId: number, channelId: number) {
     const requestOptions = {
       method: 'POST',
       headers: { 
@@ -149,7 +150,8 @@ export function postChannelUserBlocked(userId: number, channelId: number) {
       },
       body:  ''
     };
-    fetch(fetchAddress + 'channel/' + userId +'/' + channelId + '/blocked', requestOptions)
+    // /channel/{callerId}/{targetId}/{channelId}/blocked
+    return fetch(fetchAddress + 'channel/' + callerId +'/' + targetId + '/' + channelId + '/blocked', requestOptions)
       .then(response => {
         if (!response.ok) {
           throw new Error('Request failed with status: ' + response.status);
@@ -157,10 +159,11 @@ export function postChannelUserBlocked(userId: number, channelId: number) {
         return response.text();
       })
       .then(data => {
-        console.log("ChannelUser with UserId :" + userId +" blocked");
+        console.log("ChannelUser with UserId :" + targetId +" blocked");
       })
       .catch(error => {
-        console.log("Error blocking ChannelUser with UserId :" + userId +":", error);
+        console.error("Error blocking ChannelUser with UserId :" + targetId +":", error);
+        alert("Error banning User");
       });
 }
 
@@ -194,40 +197,84 @@ export async function getChannelBlockedUser(userId: number, channelId: number): 
 
 
 export function postMuteUser(callerId: number, targetId: number, channelId: number, duration: number) {
+  return new Promise<void>((resolve, reject) => {
     const requestOptions = {
-      method: 'POST',
-      headers: { 
-        "Accept": "*/*",
-        "Container-Type": "application/json"
-      },
-      body:  ''
-    };
-    fetch(fetchAddress + 'channel/' + callerId +'/' + targetId + '/' + channelId + '/mute/' + duration, requestOptions)
-    .then(response => {
-      if (!response.ok) {
-        throw new Error('Request failed with status: ' + response.status);
-      }
-      return response.text();
-    })
-    .then(data => {
-      console.log("ChannelUser with UserId :" + targetId +" muted:");
-    })
-    .catch(error => {
-      console.log("Error muting ChannelUser with UserId :" + targetId +":", error);
+        method: 'POST',
+        headers: { 
+          "Accept": "*/*",
+          "Container-Type": "application/json"
+        },
+        body:  ''
+      };
+      fetch(fetchAddress + 'channel/' + callerId +'/' + targetId + '/' + channelId + '/mute/' + duration, requestOptions)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Request failed with status: ' + response.status);
+        }
+        return response.text();
+      })
+      .then(data => {
+        console.log("ChannelUser with UserId :" + targetId +" muted:");
+        resolve();
+      })
+      .catch(error => {
+        console.log("Error muting ChannelUser with UserId :" + targetId +":", error);
+        reject(error);
+      });  
     });  
+  }
+interface ApiResponseItem {
+  CUserId: number;
+  UserId: number;
+  ChannelId: number;
+  MutedUntil: string;
 }
 
-export async function getIsMuted(channelId: number, callerId: number, targetId: number): Promise<boolean> {
+function hasUserId(array: ApiResponseItem[], targetUserId: number): boolean {
+  return (array.some(item => item.UserId === targetUserId));
+}
+
+export async function getMutedStatus(channelId: number, targetId: number): Promise<boolean> {
   try {
-    const response = await fetch(fetchAddress + 'channel/' + callerId + '/' + targetId + '/' + channelId + '/mute', {credentials: "include",})
+    const response = await fetch(fetchAddress + 'channel/' + channelId + '/mutedusers', {credentials: "include",})
     if (!response.ok) {
+      if (response.status === 400){
+        return false;
+      }
       // console.error("Error retrieving mute status");
-      return false;
+      throw new Error("Error retrieving mute status");
     }
     if (!response.headers.has("content-length")) {
       return false;
     }
     const data = await response.json();
+    if(!data) {
+      return false;
+    }
+    const result = hasUserId(data, targetId);
+    return result;
+    // console.log(result);
+  } catch (error) {
+      console.log("Error retrieving mute status of User" + targetId + " in channel " + channelId + ":", error);
+      return false;
+  }
+}
+
+
+export async function getIsMuted(channelId: number, callerId: number, targetId: number): Promise<boolean> {
+  try {
+    const response = await fetch(fetchAddress + 'channel/' + callerId + '/' + targetId + '/' + channelId + '/mute', {credentials: "include",})
+    if (!response.ok) {
+      if (response.status === 400){
+        return false;
+      }
+      // console.error("Error retrieving mute status");
+      throw new Error("Error retrieving mute status");
+    }
+    if (!response.headers.has("content-length")) {
+      return false;
+    }
+    const data = response.json();
     if(!data) {
       return false;
     }
@@ -300,4 +347,64 @@ export function putChannelType(userId: number, channelId: number) {
   .catch(error => {
     console.error("Error changing ChannelType of Channel: ", error);
   });
+}
+
+
+//Blocked Users
+
+export async function postBlockedUser(callerId: number, targetId: number): Promise<void> {
+  const requestOptions = {
+    method: 'POST',
+    headers: { 
+      "Accept": "*/*",
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      "userId": callerId,
+      "blockId": targetId.toString()
+    })
+  };
+  fetch(fetchAddress + 'blocked/', requestOptions)
+    .then(response => {
+      if (response.ok) {
+        console.log("ChannelUser with UserId :" + targetId +" blocked");
+      } else {
+        console.error("Error blocking User with UserId :" + targetId +":", response.status);
+        // alert("Error blocking User: " + response);
+        throw new Error ("Error blocking User");
+      }
+    })
+    .catch(error => {
+      console.error("Error blocking User with UserId :" + targetId +":", error);
+      // alert("Error blocking User: " + error);
+      throw error;
+    });
+}
+
+export async function getBlockedUser(callerId: number, targetId: number): Promise<boolean> {
+  const requestOptions = {
+    method: 'GET',
+    headers: { 
+      "Accept": "*/*",
+      "Content-Type": "application/json"
+    }
+  };
+  return fetch(fetchAddress + 'blocked/'+ callerId + "/" + targetId, requestOptions)
+    .then(response => response.json())
+    .then(data => {
+      if (data.hasOwnProperty('blockId')) {
+        console.log("ChannelUser with UserId :" + targetId +" blocked");
+        return true;
+      } else if (data.message === "No such blocked user") {
+        return false;
+      } else {
+        console.error("Error blocking User with UserId :" + targetId +":", data.status);
+        throw new Error ("Error blocking User");
+      }
+    })
+    .catch(error => {
+      console.error("Error blocking User with UserId :" + targetId +":", error);
+      // alert("Error blocking User: " + error);
+      throw error;
+    });
 }

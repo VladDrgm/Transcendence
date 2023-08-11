@@ -58,8 +58,13 @@ export function muteUserPopUp(props: &ChatProps) {
     addMuteButton.addEventListener('click', function() {
         var newMutedUserName = newMutedUserNameInput.value;
         var newMutedUserDuration = newMutedUserDurationInput.valueAsNumber;
-        addMuteUser(newMutedUserName, newMutedUserDuration, props);
-        popup?.close();
+        if (!isNaN(newMutedUserDuration)) { // Check if it's a valid number
+            addMuteUser(newMutedUserName, newMutedUserDuration, props);
+            popup?.close();
+        } else {
+            alert("Invalid duration. Please enter a valid number.");
+            popup?.close();
+        }
     });
     popup?.document.body.appendChild(addMuteButton)
 }
