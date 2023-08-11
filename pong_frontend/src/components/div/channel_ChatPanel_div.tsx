@@ -28,7 +28,16 @@ const ChatInput_Div: FC<chatInputProps> = ({
         placeholder="Loading..."
         />);
   //Checking if USer is Blocked from USing/Joining Channel
-  if (props.ChannelUserRoles.isBlocked) {
+  if(!props.currentChat.isChannel && !props.ChannelUserRoles.isBlocked){
+    return (
+      <TextBox
+      value={value}
+      onChange={onChange}
+      onKeyPress={onKeyPress}
+      placeholder="You can write something here"
+      />);
+  }
+  else if (props.ChannelUserRoles.isBlocked) {
     return (
         <TextBox
         placeholder="You are blocked from using the Channel"

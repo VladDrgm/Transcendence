@@ -7,7 +7,7 @@ import { io, Socket } from "socket.io-client";
 import immer, { Draft } from "immer";
 import "../../App.css";
 import {fetchChannelNames, copyChannelByName, fetchAllChannels, getUserIDByUserName} from "../div/channel_utils"
-import {postChannelUser, deleteChannelUser, getChannelUser, getChannelBlockedUser, getIsMuted, postPrivateChannelUser, getMutedStatus} from "../../api/channel/channel_user.api"
+import {postChannelUser, deleteChannelUser, getChannelUser, getChannelBlockedUser, getIsMuted, postPrivateChannelUser, getMutedStatus, postBlockedUser, getBlockedUser} from "../../api/channel/channel_user.api"
 import { Channel, ChannelUserRoles, ChatProps } from '../../interfaces/channel.interface';
 import { User } from '../../interfaces/user.interface';
 import { useUserContext } from '../context/UserContext';
@@ -263,6 +263,34 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID}) => {
 			});
 		}
 
+		function addBlockedUser(targetName: string | number){
+			getUserIDByUserName(targetName.toString())
+				.then((targetID) => {
+					if(targetID === undefined){
+						alert("User could not be found. Please try another Username.");
+						return;
+					}
+					postBlockedUser(userID, Number(targetID))
+					.then(() => {
+						console.log('User blocked with UserId:', targetID);
+						const data = {
+							callerId: userID,
+							targetId: Number(targetID)
+						};
+						socketRef.current?.emit('add blocked', data);
+					})
+					.catch(error => {
+						console.error("Error blocking user with Username:" , targetName);
+						alert("Error while blocking User" + error);
+					})
+				})
+				.catch(error => {
+					console.error('Error getting UserID from User:' ,error);
+					alert("Error while blocking User" + error);
+				});
+			}
+	
+
 		
 
 	function leaveRoom(chatName: ChatName) {
@@ -322,14 +350,47 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID}) => {
 	}
 
 	useEffect(() => {
-		handleUserInChannelCheck();
-		handleUserInChannelBlockedCheck();
-		handleUserInChannelMutedCheck();
-		handleAdminCheck();
-		handleOwnerCheck();
+		if (currentChat.isChannel){
+			handleUserInChannelCheck();
+			handleUserInChannelBlockedCheck();
+			handleUserInChannelMutedCheck();
+			handleAdminCheck();
+			handleOwnerCheck();
+		}
+		else if(!currentChat.isChannel){
+			handleUserDirektMessageStatus();
+		}
 		console.log("in effect currentChat:", currentChat);
 	}, [currentChat.chatName])
 	
+
+	const handleUserDirektMessageStatus = useCallback (async () => {
+		setCurrentRoles((prevState) => ({
+			...prevState,
+			isBlockedResolved: false
+		}));
+		if (!currentChat.isResolved){
+			return;
+		}
+		getUserIDByUserName(currentChat.chatName.toString())
+			.then((result) => {
+				if(result !== undefined){
+					getBlockedUser(userID, result)
+					.then((user) => {
+						setCurrentRoles((prevState) => ( {
+							...prevState,
+							isBlocked: user,
+							isBlockedResolved: true
+						}));
+					}).catch(error => {
+						console.log("Error blocking User:", error);
+						alert("Error while blocking User");
+					});
+				}
+			}).catch(error =>{
+			console.error('Error occured in handleUserChannelCheck:', error);
+			});
+	}, [currentChat.isResolved, currentChat.Channel.ChannelId]);
 
 	const handleUserInChannelCheck = useCallback (async () => {
 		setCurrentRoles((prevState) => ({
@@ -773,6 +834,7 @@ function handleMutedUserSocket(targetId: number, roomName: string) {
 			leaveRoom={leaveRoom}
 			deleteChatRoom={deleteChatRoom}
 			addChatRoom={addChatRoom}
+			addBlockedUser={addBlockedUser}
 			connectedRooms={connectedRooms}
 			currentChat={currentChat}
 			messages={messages[currentChat.chatName]}

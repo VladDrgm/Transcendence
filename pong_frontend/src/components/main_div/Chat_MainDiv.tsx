@@ -51,7 +51,29 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 			  </ChannelInfo>
 			)
 		  );
-		if (props.ChannelUserRoles.isBlocked || props.ChannelUserRoles.isMuted) {
+		if (!props.currentChat.isChannel){
+			setChannelpanel(
+				loadingChannelpanel ? (
+				  <div>Loading Channel Name...</div> // Show a loading spinner or placeholder
+				) : (
+				  <ChannelInfo>
+					{props.currentChat.chatName}
+					<div>
+					<button>
+						Invite for a Game
+					</button>
+					<button onClick={() => props.addBlockedUser(props.currentChat.chatName)}>
+						Block User
+					</button>
+					<button>
+						Add as Friend
+					</button>
+					</div>
+				  </ChannelInfo>
+				)
+			);
+		}
+		else if (props.ChannelUserRoles.isBlocked || props.ChannelUserRoles.isMuted) {
 			setChannelpanel(
 				loadingChannelpanel ? (
 				  <div>Loading Channel Name...</div> // Show a loading spinner or placeholder
@@ -77,7 +99,8 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 		} 
 		setChannelPanelLoaded(true);
 	}, [
-		props.ChannelUserRoles,
+		props.ChannelUserRoles, 
+		props.currentChat,
 		loadingChannelpanel,
 	]);
 

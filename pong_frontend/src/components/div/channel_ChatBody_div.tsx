@@ -13,6 +13,10 @@ const ChatBody_Div: React.FC<ChatBodyProps> = ({
   props,
   messages
 }) => {
+  if (!props.currentChat.isChannel){
+    return (
+      <Messages>{messages.map(renderMessages)}</Messages>);
+  }
   //Checking if everything is resolved
   if (!props.ChannelUserRoles.isAdminResolved || 
       !props.ChannelUserRoles.isBlockedResolved || 

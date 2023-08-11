@@ -348,3 +348,63 @@ export function putChannelType(userId: number, channelId: number) {
     console.error("Error changing ChannelType of Channel: ", error);
   });
 }
+
+
+//Blocked Users
+
+export async function postBlockedUser(callerId: number, targetId: number): Promise<void> {
+  const requestOptions = {
+    method: 'POST',
+    headers: { 
+      "Accept": "*/*",
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      "userId": callerId,
+      "blockId": targetId.toString()
+    })
+  };
+  fetch(fetchAddress + 'blocked/', requestOptions)
+    .then(response => {
+      if (response.ok) {
+        console.log("ChannelUser with UserId :" + targetId +" blocked");
+      } else {
+        console.error("Error blocking User with UserId :" + targetId +":", response.status);
+        // alert("Error blocking User: " + response);
+        throw new Error ("Error blocking User");
+      }
+    })
+    .catch(error => {
+      console.error("Error blocking User with UserId :" + targetId +":", error);
+      // alert("Error blocking User: " + error);
+      throw error;
+    });
+}
+
+export async function getBlockedUser(callerId: number, targetId: number): Promise<boolean> {
+  const requestOptions = {
+    method: 'GET',
+    headers: { 
+      "Accept": "*/*",
+      "Content-Type": "application/json"
+    }
+  };
+  return fetch(fetchAddress + 'blocked/'+ callerId + "/" + targetId, requestOptions)
+    .then(response => response.json())
+    .then(data => {
+      if (data.hasOwnProperty('blockId')) {
+        console.log("ChannelUser with UserId :" + targetId +" blocked");
+        return true;
+      } else if (data.message === "No such blocked user") {
+        return false;
+      } else {
+        console.error("Error blocking User with UserId :" + targetId +":", data.status);
+        throw new Error ("Error blocking User");
+      }
+    })
+    .catch(error => {
+      console.error("Error blocking User with UserId :" + targetId +":", error);
+      // alert("Error blocking User: " + error);
+      throw error;
+    });
+}
