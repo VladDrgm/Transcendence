@@ -302,6 +302,10 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID}) => {
 		socketRef.current?.emit('unban user', {targetId, roomName});
 	}
 
+	function muteUserSocket(targetId: number, roomName: string | number, muteDuration: number) {
+		socketRef.current?.emit('mute user', {targetId, roomName, muteDuration});
+	}
+
 	async function toggleChat(newCurrentChat: CurrentChat) {
 		socketRef.current?.emit("join room", newCurrentChat.chatName, (messages: any) => roomJoinCallback(messages, newCurrentChat.chatName));
 		
@@ -487,16 +491,71 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID}) => {
 	socketRef.current.on('user banned', (data) => {
 		const targetId = data.targetId;
 		const roomName = data.roomName;
-		console.log("Banned msg arrived");
+		// console.log("Banned msg arrived");
 		handleBannedUserSocket(targetId, roomName);
 	});
 	socketRef.current.on('user unbanned', (data) => {
 		const targetId = data.targetId;
 		const roomName = data.roomName;
-		console.log("Unbanned msg arrived");
+		// console.log("Unbanned msg arrived");
 		handleUnbannedUserSocket(targetId, roomName);
 	});
+	socketRef.current.on('user muted', (data) => {
+		const targetId = data.targetId;
+		const roomName = data.roomName;
+		console.log("Muted msg arrived");
+		handleMutedUserSocket(targetId, roomName);
+	});
+	socketRef.current.on('user unmuted', (data) => {
+		const targetId = data.targetId;
+		const roomName = data.roomName;
+		console.log("Muted msg arrived");
+		handleUnmutedUserSocket(targetId, roomName);
+	});
 }
+
+function handleUnmutedUserSocket(targetId: number, roomName: string) {
+	console.log("targetID", targetId);
+	console.log("userId", userID);
+	if (targetId === userID)
+	{
+		setCurrentChat((prevChat) => {
+		console.log("currenchat", prevChat.chatName);
+
+			if( prevChat.chatName === roomName){
+				setCurrentRoles((prevRoles) => ({
+					...prevRoles,
+					isMuted: false
+				}));
+				alert("You have been unmuted.");
+			}
+			return prevChat;
+		});
+		console.log("currenchat", currentChat.chatName);
+	}
+}
+
+function handleMutedUserSocket(targetId: number, roomName: string) {
+	console.log("targetID", targetId);
+	console.log("userId", userID);
+	if (targetId === userID)
+	{
+		setCurrentChat((prevChat) => {
+		console.log("currenchat", prevChat.chatName);
+
+			if( prevChat.chatName === roomName){
+				setCurrentRoles((prevRoles) => ({
+					...prevRoles,
+					isMuted: true
+				}));
+				alert("You have been muted.");
+			}
+			return prevChat;
+		});
+		console.log("currenchat", currentChat.chatName);
+	}
+}
+
 	function handleBannedUserSocket(targetId: number, roomName: string) {
 		console.log("targetID", targetId);
 		console.log("userId", userID);
@@ -708,6 +767,7 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID}) => {
 			addAdminRights={addAdminRights}
 			banUserSocket={banUserSocket}
 			unbanUserSocket={unbanUserSocket}
+			muteUserSocket={muteUserSocket}
 			username={username}
 			loadingChannelPanel = {false}
 		/>

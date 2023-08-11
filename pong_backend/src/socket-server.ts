@@ -49,6 +49,8 @@ const messages: { [key: string]: { sender: string; content: string }[] } = {
 	general: [],
 };
 
+const mutedUser = {};
+
 function addChatRoom(roomName: string) {
 	if (!messages.hasOwnProperty(roomName)) {
 	  messages[roomName] = [];
@@ -138,6 +140,30 @@ io.on('connection', (socket: Socket) => {
 		const targetId = data.targetId;
 		const roomName = data.roomName;
 		io.emit('user unbanned', {targetId, roomName });
+	});
+
+	socket.on('mute user', (data) => {
+		const targetId = data.targetId;
+		const roomName = data.roomName;
+		const muteDuration = data.muteDuration;
+
+		io.emit('user muted', {targetId, roomName });
+		if (mutedUser[targetId]) {
+			clearTimeout(mutedUser[targetId].timeout);
+			mutedUser[targetId].muteDuration =muteDuration;
+			mutedUser[targetId].timeout = setTimeout(() => {
+				io.emit('user unmuted', {targetId, roomName});
+				delete mutedUser[targetId];
+			}, muteDuration)
+		}
+		mutedUser[targetId] = {
+			roomName, 
+			muteDuration,
+			timeout: setTimeout(() => {
+				io.emit("user unmuted", {targetId, roomName});
+				delete mutedUser[targetId];
+			}, muteDuration)
+		}
 	});
 
 	socket.on('send message', ({ content, to, sender, chatName, isChannel }) => {

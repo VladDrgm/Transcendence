@@ -178,6 +178,8 @@ export async function addMuteUser(newBlockedUsername: string, duration:number, p
         {
             // console.log('User banned with UserId:', targetID);
             postMuteUser(props.userID, targetID, props.currentChat.Channel.ChannelId, duration);
+            const socketDuration = (duration * 60 * 1000) + 100;
+            props.muteUserSocket(targetID, props.currentChat.chatName, socketDuration);
     } else 
     console.error('Error muting User with Username:' , newBlockedUsername);
 }

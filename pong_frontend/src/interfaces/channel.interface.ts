@@ -21,6 +21,7 @@ export interface ChatProps {
 	addAdminRights: (TargetName: string, chatName: ChatName) => void;
 	banUserSocket: (targetId: number, chatName: ChatName) => void;
 	unbanUserSocket: (targetId: number, chatName: ChatName) => void;
+	muteUserSocket: (targetId: number, chatName: ChatName, mutedDuration: number) => void;
 	connectedRooms: string[];
 	messages: Message[];
 	joinRoom: (chatName: ChatName) => void;

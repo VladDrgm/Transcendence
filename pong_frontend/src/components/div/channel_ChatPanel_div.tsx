@@ -28,9 +28,17 @@ const ChatInput_Div: FC<chatInputProps> = ({
         placeholder="Loading..."
         />);
   //Checking if USer is Blocked from USing/Joining Channel
-  if (props.ChannelUserRoles.isBlocked || props.ChannelUserRoles.isMuted) {
+  if (props.ChannelUserRoles.isBlocked) {
     return (
-        <TextBox/>);
+        <TextBox
+        placeholder="You are blocked from using the Channel"
+        />);
+  }
+  else if (props.ChannelUserRoles.isMuted) {
+    return (
+        <TextBox
+        placeholder="You are muted here"
+        />);
   }
   // Switch for Private and Public Channels
   switch (props.currentChat.Channel.Type) {
