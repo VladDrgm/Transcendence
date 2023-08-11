@@ -172,17 +172,26 @@ export async function modBannedUser(add: boolean, newBlockedUsername: string, pr
 
 export async function addMuteUser(newBlockedUsername: string, duration:number, props: &ChatProps){
     //finding right UserId to the Username input from banUserPopUp
-    var targetID = await getUserIDByUserName(newBlockedUsername);
-    // console.log('TargetId:', targetID);
-    if (targetID)//changing the 1 to props.yourId or the real UserID of the caller
-        {
-            // console.log('User banned with UserId:', targetID);
-            postMuteUser(props.userID, targetID, props.currentChat.Channel.ChannelId, duration);
-            const socketDuration = (duration * 60 * 1000) + 100;
-            props.muteUserSocket(targetID, props.currentChat.chatName, socketDuration);
-    } else 
-    console.error('Error muting User with Username:' , newBlockedUsername);
+    getUserIDByUserName(newBlockedUsername)
+    .then((targetID) => {
+        if (targetID !== undefined) {
+            postMuteUser(props.userID, targetID, props.currentChat.Channel.ChannelId, duration)
+             .then(() => {
+                 const socketDuration = (duration * 60 * 1000) + 100;
+                 props.muteUserSocket(targetID, props.currentChat.chatName, socketDuration);
+             })
+
+        }
+        else {
+            console.error('Error muting User with Username:' , newBlockedUsername);
+            alert("Error muting User");
+        }
+    }).catch(error => {
+        alert("Error muting user: " + error.message);
+    })
 }
+
+
 export async function CreateChannel(props: ChatProps, channelName: string, password: string): Promise<boolean>{
     if(password === "")
         var channelType = "public";

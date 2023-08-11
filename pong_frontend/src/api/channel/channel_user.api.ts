@@ -197,29 +197,32 @@ export async function getChannelBlockedUser(userId: number, channelId: number): 
 
 
 export function postMuteUser(callerId: number, targetId: number, channelId: number, duration: number) {
+  return new Promise<void>((resolve, reject) => {
     const requestOptions = {
-      method: 'POST',
-      headers: { 
-        "Accept": "*/*",
-        "Container-Type": "application/json"
-      },
-      body:  ''
-    };
-    fetch(fetchAddress + 'channel/' + callerId +'/' + targetId + '/' + channelId + '/mute/' + duration, requestOptions)
-    .then(response => {
-      if (!response.ok) {
-        throw new Error('Request failed with status: ' + response.status);
-      }
-      return response.text();
-    })
-    .then(data => {
-      console.log("ChannelUser with UserId :" + targetId +" muted:");
-    })
-    .catch(error => {
-      console.log("Error muting ChannelUser with UserId :" + targetId +":", error);
+        method: 'POST',
+        headers: { 
+          "Accept": "*/*",
+          "Container-Type": "application/json"
+        },
+        body:  ''
+      };
+      fetch(fetchAddress + 'channel/' + callerId +'/' + targetId + '/' + channelId + '/mute/' + duration, requestOptions)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Request failed with status: ' + response.status);
+        }
+        return response.text();
+      })
+      .then(data => {
+        console.log("ChannelUser with UserId :" + targetId +" muted:");
+        resolve();
+      })
+      .catch(error => {
+        console.log("Error muting ChannelUser with UserId :" + targetId +":", error);
+        reject(error);
+      });  
     });  
-}
-
+  }
 interface ApiResponseItem {
   CUserId: number;
   UserId: number;
