@@ -56,7 +56,7 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID}) => {
 	const { user } = useUserContext()
 	/* chat utilities */
 	const [username, setUsername] = useState("");
-	const [connected, setConnected] = useState(false);
+	const [connected, setConnected] = useState(true);
 	const [currentChat, setCurrentChat] = useState<CurrentChat>({
 		isChannel: true,
 		chatName: "general",
@@ -132,20 +132,21 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID}) => {
 		}
 	}, []);
 
-	useEffect(() => {
-		const intervalID = setInterval(() => {
-			fetchAllChannels()
-				.then((channels) => {
-					setAllChannels(channels);
-				})
-				.catch((error) => {
-					console.error("Error fetching all Channels: ", error);
-				});
-		}, 30000);
-		return () => clearInterval(intervalID);
-	}, []);
+	// useEffect(() => {
+	// 	const intervalID = setInterval(() => {
+	// 		fetchAllChannels()
+	// 			.then((channels) => {
+	// 				setAllChannels(channels);
+	// 			})
+	// 			.catch((error) => {
+	// 				console.error("Error fetching all Channels: ", error);
+	// 			});
+	// 	}, 30000);
+	// 	return () => clearInterval(intervalID);
+	// }, []);
 
 	useEffect(() => {initializeMessagesState();},[]);
+
 	const [messages, setMessages] = useState<{
 		[key in ChatName]: { sender: string; content: string }[];
 	}>(initialMessagesState);
@@ -450,69 +451,82 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID}) => {
 		setUsername(e.target.value);
 	}
 
-	function connect() {
-	setConnected(true);
-	socketRef.current = io("http://localhost:4000", {
-	  transports: ["websocket"],
-	  withCredentials: true,
-	});
-	console.log("What is being sent as username is: " + username);
-	socketRef.current.emit("join server", username);
-	socketRef.current.emit("join room", "general", (messages: any) => roomJoinCallback(messages, "general"));
-	socketRef.current.on("new user", (allUsers: any) => {
-		setAllUsers(allUsers);
-	});
-	socketRef.current.on("new message", ({ content, sender, chatName }: { content: string; sender: string; chatName: ChatName }) => {
-		setMessages(messages => {
-			const newMessages = immer(messages, (draft: WritableDraft<typeof messages>) => {
-				if (draft[chatName]) {
-					draft[chatName].push({ content, sender });
-				} else {
-					draft[chatName] = [{ content, sender }];
-				}
+	useEffect(() => {
+
+		function connect() {
+			setConnected(true);
+			socketRef.current = io("http://localhost:4000", {
+			transports: ["websocket"],
+			withCredentials: true,
 			});
-			return newMessages;
-		});
-	});
-	socketRef.current.on('room deleted', (roomName) => {
-		handleDeletingChatRoom(roomName);
-	});
-	socketRef.current.on('room added', (roomName) => {
-		updateChannellist();
-	});
-	socketRef.current.on('room changed', (roomName) => {
-		updateChannellist();
-	});
-	socketRef.current.on('admin added', (data) => {
-		const newAdminUserID =data.newAdminUserID;
-		const roomName = data.roomName;
-		handleAdminRights(newAdminUserID, roomName);
-	});
-	socketRef.current.on('user banned', (data) => {
-		const targetId = data.targetId;
-		const roomName = data.roomName;
-		// console.log("Banned msg arrived");
-		handleBannedUserSocket(targetId, roomName);
-	});
-	socketRef.current.on('user unbanned', (data) => {
-		const targetId = data.targetId;
-		const roomName = data.roomName;
-		// console.log("Unbanned msg arrived");
-		handleUnbannedUserSocket(targetId, roomName);
-	});
-	socketRef.current.on('user muted', (data) => {
-		const targetId = data.targetId;
-		const roomName = data.roomName;
-		console.log("Muted msg arrived");
-		handleMutedUserSocket(targetId, roomName);
-	});
-	socketRef.current.on('user unmuted', (data) => {
-		const targetId = data.targetId;
-		const roomName = data.roomName;
-		console.log("Muted msg arrived");
-		handleUnmutedUserSocket(targetId, roomName);
-	});
-}
+			console.log("What is being sent as username is: " + user.username);
+			const data = {
+				username: user.username,
+				userId: user.userID,
+				};
+			socketRef.current.emit("join server", data);
+			socketRef.current.emit("join room", "general", (messages: any) => roomJoinCallback(messages, "general"));
+			socketRef.current.on("new user", (allUsers: any) => {
+				setAllUsers(allUsers);
+			});
+			socketRef.current.on("new message", ({ content, sender, chatName }: { content: string; sender: string; chatName: ChatName }) => {
+				setMessages(messages => {
+					const newMessages = immer(messages, (draft: WritableDraft<typeof messages>) => {
+						if (draft[chatName]) {
+							draft[chatName].push({ content, sender });
+						} else {
+							draft[chatName] = [{ content, sender }];
+						}
+					});
+					return newMessages;
+				});
+			});
+			socketRef.current.on('room deleted', (roomName) => {
+				handleDeletingChatRoom(roomName);
+			});
+			socketRef.current.on('room added', (roomName) => {
+				updateChannellist();
+			});
+			socketRef.current.on('room changed', (roomName) => {
+				updateChannellist();
+			});
+			socketRef.current.on('admin added', (data) => {
+				const newAdminUserID =data.newAdminUserID;
+				const roomName = data.roomName;
+				handleAdminRights(newAdminUserID, roomName);
+			});
+			socketRef.current.on('user banned', (data) => {
+				const targetId = data.targetId;
+				const roomName = data.roomName;
+				// console.log("Banned msg arrived");
+				handleBannedUserSocket(targetId, roomName);
+			});
+			socketRef.current.on('user unbanned', (data) => {
+				const targetId = data.targetId;
+				const roomName = data.roomName;
+				// console.log("Unbanned msg arrived");
+				handleUnbannedUserSocket(targetId, roomName);
+			});
+			socketRef.current.on('user muted', (data) => {
+				const targetId = data.targetId;
+				const roomName = data.roomName;
+				console.log("Muted msg arrived");
+				handleMutedUserSocket(targetId, roomName);
+			});
+			socketRef.current.on('user unmuted', (data) => {
+				const targetId = data.targetId;
+				const roomName = data.roomName;
+				console.log("Muted msg arrived");
+				handleUnmutedUserSocket(targetId, roomName);
+			});
+		}
+		connect();
+
+		return () => {
+			if (socketRef.current)
+				socketRef.current.disconnect();
+		}
+	}, []);
 
 function handleUnmutedUserSocket(targetId: number, roomName: string) {
 	console.log("targetID", targetId);
@@ -738,14 +752,13 @@ function handleMutedUserSocket(targetId: number, roomName: string) {
 
 	/* rendering condition */
 	let body;
-	if (connected) {
+	// if (connected) {
 		// console.log("before body:", currentChat);
 		body = (
 		<Chat_MainDiv
 			user={user}
 			userID={userID}
 			message={message}
-			// setMessage={setMessage}
 			handleMessageChange={handleMessageChange}
 			sendMessage={sendMessage}
 			yourId={socketRef.current ? socketRef.current.id : ""}
@@ -762,7 +775,6 @@ function handleMutedUserSocket(targetId: number, roomName: string) {
 			connectedRooms={connectedRooms}
 			currentChat={currentChat}
 			messages={messages[currentChat.chatName]}
-			// clearMessage = {clearMessage}
 			toggleChat={toggleChat}
 			ChannelUserRoles={currentRoles}
 			handleAdminCheck={handleAdminCheck}
@@ -774,15 +786,15 @@ function handleMutedUserSocket(targetId: number, roomName: string) {
 			loadingChannelPanel = {false}
 		/>
 		);
-	} else {
-		body = (
-		<Form
-			username={username}
-			onChange={handleChange}
-			connect={connect}
-		/>
-		);
-	}
+	// } else {
+	// 	body = (
+	// 	<Form
+	// 		username={username}
+	// 		onChange={handleChange}
+	// 		connect={connect}
+	// 	/>
+	// 	);
+	// }
 
 	let gameBody, gameBodyForm;
 	if (gameStatus === 1) {

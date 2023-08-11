@@ -253,7 +253,7 @@ export async function getMutedStatus(channelId: number, targetId: number): Promi
     }
     const result = hasUserId(data, targetId);
     return result;
-    console.log(result);
+    // console.log(result);
   } catch (error) {
       console.log("Error retrieving mute status of User" + targetId + " in channel " + channelId + ":", error);
       return false;
