@@ -172,11 +172,11 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID}) => {
 		console.log("message:", message);
 		console.log("Messages :", messages);
 		console.log("currentchat: ", currentChat);
-		console.log("username : ", username);
+		console.log("username : ", user.username);
 		const payload = {
 		content: message,
 		to: currentChat.isChannel ? currentChat.chatName : currentChat.receiverId,
-		sender: username,
+		sender: user.username,
 		chatName: currentChat.chatName,
 		isChannel: currentChat.isChannel
 		};
@@ -189,7 +189,7 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID}) => {
 				draft[currentChat.chatName] = [];
 			}
 			draft[currentChat.chatName].push({
-				sender: username,
+				sender: user.username,
 				content: message
 			});
 		});
@@ -470,6 +470,7 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID}) => {
 				setAllUsers(allUsers);
 			});
 			socketRef.current.on("new message", ({ content, sender, chatName }: { content: string; sender: string; chatName: ChatName }) => {
+				console.log("sender", sender);
 				setMessages(messages => {
 					const newMessages = immer(messages, (draft: WritableDraft<typeof messages>) => {
 						if (draft[chatName]) {
@@ -782,7 +783,7 @@ function handleMutedUserSocket(targetId: number, roomName: string) {
 			banUserSocket={banUserSocket}
 			unbanUserSocket={unbanUserSocket}
 			muteUserSocket={muteUserSocket}
-			username={username}
+			// username={username}
 			loadingChannelPanel = {false}
 		/>
 		);
