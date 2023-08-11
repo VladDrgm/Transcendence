@@ -233,7 +233,7 @@ export async function getIsMuted(channelId: number, callerId: number, targetId: 
     if (!response.headers.has("content-length")) {
       return false;
     }
-    const data = await response.json();
+    const data = response.json();
     if(!data) {
       return false;
     }
