@@ -150,6 +150,12 @@ io.on('connection', (socket: Socket) => {
 		io.emit('user unbanned', {targetId, roomName });
 	});
 
+	socket.on('block user', (data) => {
+		const targetId = data.targetId;
+		const username = data.username;
+		io.emit('user blocked', {targetId, username });
+	});
+
 	socket.on('mute user', (data) => {
 		const targetId = data.targetId;
 		const roomName = data.roomName;

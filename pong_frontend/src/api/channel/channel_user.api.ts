@@ -393,7 +393,7 @@ export async function getBlockedUser(callerId: number, targetId: number): Promis
     .then(response => response.json())
     .then(data => {
       if (data.hasOwnProperty('blockId')) {
-        console.log("ChannelUser with UserId :" + targetId +" blocked");
+        // console.log("ChannelUser with UserId :" + targetId +" blocked");
         return true;
       } else if (data.message === "No such blocked user") {
         return false;

@@ -273,11 +273,12 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID}) => {
 					postBlockedUser(userID, Number(targetID))
 					.then(() => {
 						console.log('User blocked with UserId:', targetID);
-						const data = {
-							callerId: userID,
-							targetId: Number(targetID)
-						};
-						socketRef.current?.emit('add blocked', data);
+						// const data = {
+						// 	callerId: userID,
+						// 	targetId: Number(targetID)
+						// };
+						// socketRef.current?.emit('block user', data);
+						blockUserSocket(Number(targetID), user.username);
 					})
 					.catch(error => {
 						console.error("Error blocking user with Username:" , targetName);
@@ -335,6 +336,10 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID}) => {
 		socketRef.current?.emit('mute user', {targetId, roomName, muteDuration});
 	}
 
+	function blockUserSocket(targetId: string | number, username: string) {
+		socketRef.current?.emit('block user', {targetId, username});
+	}
+
 	async function toggleChat(newCurrentChat: CurrentChat) {
 		socketRef.current?.emit("join room", newCurrentChat.chatName, (messages: any) => roomJoinCallback(messages, newCurrentChat.chatName));
 		
@@ -375,7 +380,7 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID}) => {
 		getUserIDByUserName(currentChat.chatName.toString())
 			.then((result) => {
 				if(result !== undefined){
-					getBlockedUser(userID, result)
+					getBlockedUser(result, userID)
 					.then((user) => {
 						setCurrentRoles((prevState) => ( {
 							...prevState,
@@ -390,7 +395,7 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID}) => {
 			}).catch(error =>{
 			console.error('Error occured in handleUserChannelCheck:', error);
 			});
-	}, [currentChat.isResolved, currentChat.Channel.ChannelId]);
+	}, [currentChat.isResolved, currentChat.chatName]);
 
 	const handleUserInChannelCheck = useCallback (async () => {
 		setCurrentRoles((prevState) => ({
@@ -532,6 +537,7 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID}) => {
 			});
 			socketRef.current.on("new message", ({ content, sender, chatName }: { content: string; sender: string; chatName: ChatName }) => {
 				console.log("sender", sender);
+				console.log("chatNAme", chatName);
 				setMessages(messages => {
 					const newMessages = immer(messages, (draft: WritableDraft<typeof messages>) => {
 						if (draft[chatName]) {
@@ -560,26 +566,28 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID}) => {
 			socketRef.current.on('user banned', (data) => {
 				const targetId = data.targetId;
 				const roomName = data.roomName;
-				// console.log("Banned msg arrived");
 				handleBannedUserSocket(targetId, roomName);
 			});
 			socketRef.current.on('user unbanned', (data) => {
 				const targetId = data.targetId;
 				const roomName = data.roomName;
-				// console.log("Unbanned msg arrived");
 				handleUnbannedUserSocket(targetId, roomName);
 			});
 			socketRef.current.on('user muted', (data) => {
 				const targetId = data.targetId;
 				const roomName = data.roomName;
-				console.log("Muted msg arrived");
 				handleMutedUserSocket(targetId, roomName);
 			});
+			// io.emit('user blocked', {userId, targetId });
 			socketRef.current.on('user unmuted', (data) => {
 				const targetId = data.targetId;
 				const roomName = data.roomName;
-				console.log("Muted msg arrived");
 				handleUnmutedUserSocket(targetId, roomName);
+			});
+			socketRef.current.on('user blocked', (data) => {
+				const targetId = data.targetId;
+				const username = data.username;
+				handleBlockedUserSocket(targetId, username);
 			});
 		}
 		connect();
@@ -589,6 +597,27 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID}) => {
 				socketRef.current.disconnect();
 		}
 	}, []);
+
+	function handleBlockedUserSocket(targetId: number, callerName: string) {
+		console.log("targetID", targetId);
+		console.log("userId", userID);
+		if (targetId === userID)
+		{
+			setCurrentChat((prevChat) => {
+			console.log("currenchat", prevChat.chatName);
+	
+				if( prevChat.chatName === callerName){
+					setCurrentRoles((prevRoles) => ({
+						...prevRoles,
+						isBlocked: true
+					}));
+					alert("You have been blocked by the User.");
+				}
+				return prevChat;
+			});
+			console.log("currenchat", currentChat.chatName);
+		}
+	}
 
 function handleUnmutedUserSocket(targetId: number, roomName: string) {
 	console.log("targetID", targetId);
