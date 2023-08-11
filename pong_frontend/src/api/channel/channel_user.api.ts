@@ -220,6 +220,44 @@ export function postMuteUser(callerId: number, targetId: number, channelId: numb
     });  
 }
 
+interface ApiResponseItem {
+  CUserId: number;
+  UserId: number;
+  ChannelId: number;
+  MutedUntil: string;
+}
+
+function hasUserId(array: ApiResponseItem[], targetUserId: number): boolean {
+  return (array.some(item => item.UserId === targetUserId));
+}
+
+export async function getMutedStatus(channelId: number, targetId: number): Promise<boolean> {
+  try {
+    const response = await fetch(fetchAddress + 'channel/' + channelId + '/mutedusers', {credentials: "include",})
+    if (!response.ok) {
+      if (response.status === 400){
+        return false;
+      }
+      // console.error("Error retrieving mute status");
+      throw new Error("Error retrieving mute status");
+    }
+    if (!response.headers.has("content-length")) {
+      return false;
+    }
+    const data = await response.json();
+    if(!data) {
+      return false;
+    }
+    const result = hasUserId(data, targetId);
+    return result;
+    console.log(result);
+  } catch (error) {
+      console.log("Error retrieving mute status of User" + targetId + " in channel " + channelId + ":", error);
+      return false;
+  }
+}
+
+
 export async function getIsMuted(channelId: number, callerId: number, targetId: number): Promise<boolean> {
   try {
     const response = await fetch(fetchAddress + 'channel/' + callerId + '/' + targetId + '/' + channelId + '/mute', {credentials: "include",})

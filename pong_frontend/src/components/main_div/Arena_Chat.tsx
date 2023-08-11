@@ -7,7 +7,7 @@ import { io, Socket } from "socket.io-client";
 import immer, { Draft } from "immer";
 import "../../App.css";
 import {fetchChannelNames, copyChannelByName, fetchAllChannels, getUserIDByUserName} from "../div/channel_utils"
-import {postChannelUser, deleteChannelUser, getChannelUser, getChannelBlockedUser, getIsMuted, postPrivateChannelUser} from "../../api/channel/channel_user.api"
+import {postChannelUser, deleteChannelUser, getChannelUser, getChannelBlockedUser, getIsMuted, postPrivateChannelUser, getMutedStatus} from "../../api/channel/channel_user.api"
 import { Channel, ChannelUserRoles, ChatProps } from '../../interfaces/channel.interface';
 import { User } from '../../interfaces/user.interface';
 import { useUserContext } from '../context/UserContext';
@@ -387,11 +387,11 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID}) => {
 			if (!currentChat.isResolved){
 				return;
 			}
-			getIsMuted(currentChat.Channel.ChannelId, userID, userID)
-				.then((user) => {
+			getMutedStatus(currentChat.Channel.ChannelId, userID)
+				.then((response) => {
 					setCurrentRoles((prevState) => ({
 						...prevState,
-						isMuted:	user,
+						isMuted:	response,
 						isMutedResolved: true
 					}));
 				})
