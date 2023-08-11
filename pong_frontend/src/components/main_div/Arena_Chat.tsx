@@ -582,9 +582,10 @@ function handleMutedUserSocket(targetId: number, roomName: string) {
 		if (targetId === userID)
 		{
 			setCurrentChat((prevChat) => {
-			console.log("currenchat", prevChat.chatName);
+			// console.log("currenchat", prevChat.chatName);
 
 				if( prevChat.chatName === roomName){
+					alert("You can use this Channel again.")
 					setCurrentRoles((prevRoles) => ({
 						...prevRoles,
 						isBlocked: false
@@ -592,16 +593,16 @@ function handleMutedUserSocket(targetId: number, roomName: string) {
 				}
 				return prevChat;
 			});
-			console.log("currenchat", currentChat.chatName);
+			// console.log("currenchat", currentChat.chatName);
 		}
 	}
 	function handleAdminRights(newAdminUserID: number, roomName: string) {
 		if (newAdminUserID === userID)
 		{
 			setCurrentChat((prevChat) => {
-			console.log("currenchat", prevChat.chatName);
-
+			// console.log("currenchat", prevChat.chatName);
 				if( prevChat.chatName === roomName){
+					alert("You are now an admin of this Channel.");
 					setCurrentRoles((prevRoles) => ({
 						...prevRoles,
 						isAdmin: true
@@ -609,7 +610,7 @@ function handleMutedUserSocket(targetId: number, roomName: string) {
 				}
 				return prevChat;
 			});
-			console.log("currenchat", currentChat.chatName);
+			// console.log("currenchat", currentChat.chatName);
 		}
 	}
 
@@ -617,6 +618,7 @@ function handleMutedUserSocket(targetId: number, roomName: string) {
 		updateChannellist();
 		setCurrentChat((prevChat) => {
 			if (prevChat.chatName === roomName) {
+				alert("The Chat has been deleted by the Owner.");
 			return generalChat;
 			} else {
 			return prevChat;
