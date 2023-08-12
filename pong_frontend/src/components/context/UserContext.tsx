@@ -6,6 +6,7 @@ const initialUser: User = {
 	username: '',
 	intraUsername: '',
 	userID: 0,
+	socketId: '',
 	avatarPath: '',
 	wins: 0,
 	losses: 0,

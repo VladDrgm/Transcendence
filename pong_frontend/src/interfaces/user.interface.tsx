@@ -5,6 +5,7 @@ export interface User {
 	username: string,
 	intraUsername: string,
 	userID: number,
+	socketId: string,
 	avatarPath: string,
 	wins: number,
 	losses: number,
