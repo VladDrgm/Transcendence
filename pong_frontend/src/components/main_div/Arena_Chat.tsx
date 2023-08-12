@@ -7,18 +7,21 @@ import { io, Socket } from "socket.io-client";
 import immer, { Draft } from "immer";
 import "../../App.css";
 import {fetchChannelNames, copyChannelByName, fetchAllChannels, getUserIDByUserName} from "../div/channel_utils"
-import {postChannelUser, deleteChannelUser, getChannelUser, getChannelBlockedUser, getIsMuted, postPrivateChannelUser, getMutedStatus, postBlockedUser, getBlockedUser, deleteBlockedUser} from "../../api/channel/channel_user.api"
+import {postChannelUser, deleteChannelUser, getChannelUser, getChannelBlockedUser, getIsMuted, postPrivateChannelUser, getMutedStatus, postBlockedUser, getBlockedUser, deleteBlockedUser, postFriend, deleteFriend, getIsFriend} from "../../api/channel/channel_user.api"
 import { Channel, ChannelUserRoles, ChatProps } from '../../interfaces/channel.interface';
 import { User } from '../../interfaces/user.interface';
 import { useUserContext } from '../context/UserContext';
 import { connected } from 'process';
 import { getIsAdmin, postAdmin } from '../../api/channel/channel_admin.api';
 import { error } from 'console';
+import { main_div_mode_t } from '../MainDivSelector';
 // import { Channel } from 'diagnostics_channel';
 
 interface ArenaDivProps
 {
   userID: number;
+  mode_set: React.Dispatch<React.SetStateAction<main_div_mode_t>>;
+  friend_set: React.Dispatch<React.SetStateAction<number>>;
 }
 
 type WritableDraft<T> = Draft<T>;
@@ -52,7 +55,7 @@ type CurrentChat = {
 	Channel: Channel;
 };
 
-const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID}) => {
+const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID, mode_set, friend_set}) => {
 	const { user } = useUserContext()
 	/* chat utilities */
 	const [username, setUsername] = useState("");
@@ -312,7 +315,78 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID}) => {
 				console.error('Error getting UserID from User:' ,error);
 				alert("Error while unblocking User" + error);
 			});
-		}	
+	}
+	
+	function addFriend(targetName: string | number){
+		getUserIDByUserName(targetName.toString())
+		.then((targetID) => {
+			if(targetID === undefined){
+				alert("User could not be found. Please try another Username.");
+				return;
+			}
+			getIsFriend(user.userID, Number(targetID))
+			.then((result) => {
+				if (result){
+					alert("User is already a Friend");
+					return;
+				}
+				postFriend(Number(targetID), user.userID)
+				.then(() => {
+					console.log('Friend added with UserId:', targetID);
+					alert("User "+ targetName + " added as Friend");
+					// blockUserSocket(Number(targetID), user.username);
+				})
+				.catch(error => {
+					console.error("Error adding user as Friend with Username:" , targetName);
+					alert("Error while adding User as Friend:" + error);
+				});
+			})
+			.catch(error => {
+				console.error("Error adding user as Friend with Username:" , targetName);
+				alert("Error while adding User as Friend:" + error);
+			});
+		})
+		.catch(error => {
+			console.error('Error getting UserID from User:' ,error);
+			alert("Error adding User as Friend" + error);
+		});
+	}
+
+	function removeFriend(targetName: string | number){
+		getUserIDByUserName(targetName.toString())
+		.then((targetID) => {
+			if(targetID === undefined){
+				alert("User could not be found. Please try another Username.");
+				return;
+			}
+			getIsFriend(user.userID, Number(targetID))
+			.then((result) => {
+				if (!result){
+					alert("User is not a Friend");
+					return;
+				}
+				deleteFriend(Number(targetID), user.userID)
+				.then(() => {
+					console.log('Friend removed with UserId:', targetID);
+					alert("User "+ targetName + " removed as Friend");
+					// blockUserSocket(Number(targetID), user.username);
+				})
+				.catch(error => {
+					console.error("Error removing user as Friend with Username:" , targetName);
+					alert("Error while removing User as Friend:" + error);
+				});
+			})
+			.catch(error => {
+				console.error('Error getting Friendship Status from User:' ,error);
+				alert("Error getting Friendship Status" + error);
+			})
+		})
+		.catch(error => {
+			console.error('Error getting UserID from User:' ,error);
+			alert("Error removing User as Friend" + error);
+		});
+	}
+
 
 	function leaveRoom(chatName: ChatName) {
 		// const newConnectedRooms = immer(connectedRooms, (draft: WritableDraft<typeof connectedRooms>) => {
@@ -920,6 +994,8 @@ function handleMutedUserSocket(targetId: number, roomName: string) {
 			deleteChatRoom={deleteChatRoom}
 			addChatRoom={addChatRoom}
 			addBlockedUser={addBlockedUser}
+			addFriend={addFriend}
+			removeFriend={removeFriend}
 			unblockUser={unblockUser}
 			connectedRooms={connectedRooms}
 			currentChat={currentChat}
@@ -933,6 +1009,8 @@ function handleMutedUserSocket(targetId: number, roomName: string) {
 			muteUserSocket={muteUserSocket}
 			loadingChannelPanel = {false}
 			invitePlayer={invitePlayer}
+			mode_set={mode_set}
+			friend_set={friend_set}
 		/>
 		);
 	// } else {

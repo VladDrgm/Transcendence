@@ -6,6 +6,8 @@ import ChatBody_Div from "../div/channel_ChatBody_div";
 import ChatInput_Div from "../div/channel_ChatPanel_div";
 import { ChatProps } from "../../interfaces/channel.interface";
 import { chatInputProps } from "../div/channel_ChatPanel_div";
+import { main_div_mode_t } from "../MainDivSelector";
+import { getUserIDByUserName } from "../div/channel_utils";
 
 
 const Chat_MainDiv: FC<ChatProps> = (props) => {
@@ -37,6 +39,18 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 			messages={messages}
 		/>);
 	}, [messages, props.ChannelUserRoles]);
+
+	const openFriend = (userName: string) => {
+		getUserIDByUserName(userName)
+		.then(result => {
+			if (result !== undefined) {
+				props.friend_set(result);
+				props.mode_set(main_div_mode_t.PUBLIC_PROFILE);
+			}
+		}).catch(error => {
+			console.error("Error retrieving UserID:", error);
+		})
+	  };
 	
 	const handleChannelPanel = useCallback(() =>{
 		setChannelpanel(
@@ -57,7 +71,10 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 				  <div>Loading Channel Name...</div> // Show a loading spinner or placeholder
 				) : (
 				  <ChannelInfo>
-					{props.currentChat.chatName}
+
+					<div onClick={() => openFriend(props.currentChat.chatName.toString())}>
+    					{props.currentChat.chatName}
+  					</div>
 					<div>
 					<button onClick={() => props.invitePlayer('')}>
 						Invite for a Game
@@ -68,8 +85,11 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 					<button onClick={() => props.unblockUser(props.currentChat.chatName)}>
 						Unblock User
 					</button>
-					<button>
+					<button onClick={() => props.addFriend(props.currentChat.chatName)}>
 						Add as Friend
+					</button>
+					<button onClick={() => props.removeFriend(props.currentChat.chatName)}>
+						Remove Friend
 					</button>
 					</div>
 				  </ChannelInfo>

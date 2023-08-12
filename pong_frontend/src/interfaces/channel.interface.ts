@@ -1,5 +1,6 @@
 import React, { FC, ChangeEvent, KeyboardEvent } from "react";
 import { User } from "./user.interface";
+import { main_div_mode_t } from "../components/MainDivSelector";
 
 export interface Channel {
 	ChannelId: number;
@@ -30,6 +31,9 @@ export interface ChatProps {
 	deleteChatRoom: (chatName: ChatName) => void;
 	addChatRoom: (chatName: ChatName) => void;
 	addBlockedUser: (targetName: ChatName) => void;
+	addFriend: (targetName: ChatName) => void;
+	removeFriend: (targetName: ChatName) => void;
+
 	unblockUser: (targetName: ChatName) => void;
 	changeChatRoom :(chatName: ChatName) => void;
 	updateChannellist: () => void;
@@ -42,6 +46,8 @@ export interface ChatProps {
 	generalChat: ChatData;
 	loadingChannelPanel: boolean;
 	invitePlayer:(sessionId: string) => void;
+	mode_set: React.Dispatch<React.SetStateAction<main_div_mode_t>>;
+  	friend_set: React.Dispatch<React.SetStateAction<number>>;
 }
 
  export type ChatData = {
