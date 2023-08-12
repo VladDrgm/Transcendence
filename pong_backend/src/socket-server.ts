@@ -2,6 +2,7 @@ import * as express from 'express';
 import { createServer, Server } from 'http';
 import { Server as SocketServer, Socket } from 'socket.io';
 import * as cors from 'cors';
+import fetch from 'node-fetch';
 
 const app = express();
 const server: Server = createServer(app);
@@ -20,10 +21,23 @@ interface GameState {
 	playerOne: { id: string | null; socket: any; position: { x: number; y: number }; score: number; left:number; right:number; top:number; bottom:number, size: { x: number; y: number } };
 	playerTwo: { id: string | null; socket: any; position: { x: number; y: number }; score: number; left:number; right:number; top:number; bottom:number, size: { x: number; y: number } };
 	ball: Ball;
-	timestamps: { start: number | null; end: number | null };
+	timestamps: { start: Date | null; end: Date | null };
 	dt: number;
 	resetNeeded: boolean;
 };
+
+interface MatchEntity {
+	Player1Id: number;
+	Player2Id: number;
+	Player1Points: number;
+	Player2Points: number;
+	GameType: string;
+	FinalResultString: string;
+	startTime: Date;
+	endTime: Date;
+	WinnerId: number;
+	WinningCondition: string;
+}
 
 interface Ball {
 	position: { x:number, y:number };
@@ -218,13 +232,15 @@ io.on('connection', (socket: Socket) => {
 	}
 
 	function createNewGameState(): GameState {
+		let currentTime: Date;
+		currentTime = new Date();
 		return {
 			sessionId: null,
 			gameStatus: 0,
 			playerOne: { id: null, socket: null, position: { x: 0, y: 0 }, score: 0, left: 0, right: 0, top: 0, bottom: 0, size: { x: 0, y: 0 } },
 			playerTwo: { id: null, socket: null, position: { x: 0, y: 0 }, score: 0, left: 0, right: 0, top: 0, bottom: 0, size: { x: 0, y: 0 } },
 			ball: { position: { x: 0, y: 0 }, vel: { x: 0, y: 0, len: 0 }, left: 0, right: 0, top: 0, bottom: 0, size: { x: 0, y: 0 } },
-			timestamps: { start: null, end: null },
+			timestamps: { start: currentTime, end: null },
 			dt: 0,
 			resetNeeded: false
 		};
@@ -413,7 +429,7 @@ io.on('connection', (socket: Socket) => {
 			// Check if the gameState, ball, and players exist and have correct shape
 			if (!session || !session.gameState || !session.gameState.ball || 
 				!session.gameState.playerOne || !session.gameState.playerTwo) {
-				console.error('Incorrect game state structure: did the session end?');
+				console.error('Incorrect game state structure: did the session end? (This is not an error, but a notification)');
 				clearInterval(intervalId);
 				return;
 			}
@@ -531,8 +547,26 @@ io.on('connection', (socket: Socket) => {
 		}
 	});
 
+
+
+	/* interface MatchEntity {
+		Player1Id: number;
+		Player2Id: number;
+		Player1Points: number;
+		Player2Points: number;
+		GameType: string;
+		FinalResultString: string;
+		startTime: Date;
+		endTime: Date;
+		WinnerId: number;
+		WinningCondition: string;
+	} */
+
+
+
 	socket.on('endSession', (gameState: GameState) => {
 		console.log("Reached endSession");
+		let matchResults = {} as MatchEntity;
 		
 		// Find the session the player is in
 		const session = gameSessions.find((session) =>
@@ -546,9 +580,35 @@ io.on('connection', (socket: Socket) => {
 	
 		// If the session is found
 		if (session && sessionIndex !== -1) {
-			// SEND SESSION DATA TO DB
-			console.log("Placeholder for: sending session data to DB");
-	
+			//Populate matchResults
+			matchResults.FinalResultString = "finished";
+			matchResults.GameType = "normal";
+			matchResults.Player1Id = 999;
+			matchResults.Player1Points = session.gameState.playerOne.score;
+			matchResults.Player2Id = 666;
+			matchResults.Player2Points = session.gameState.playerTwo.score;
+			matchResults.WinnerId = 666;
+			matchResults.WinningCondition = "game ended";
+			matchResults.endTime = new Date();
+			matchResults.startTime = session.gameState.timestamps.start;
+
+			console.log("matchResults is: " + JSON.stringify(matchResults) + "/n");
+
+			fetch('http://localhost:3000/match', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify(matchResults),
+			})
+			.then(response => response.json())
+			.then(data => {
+				console.log('Data sent successfully:', data);
+			})
+			.catch((error) => {
+				console.error('Error:', error);
+			});
+
 			// Unlink the gameState object by nullifying it
 			gameSessions[sessionIndex].gameState = null;
 			

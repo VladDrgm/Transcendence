@@ -35,7 +35,7 @@ interface GameState {
 	playerOne: { id: string | null; socket: any; position: { x: number; y: number }; score: number; left:number; right:number; top:number; bottom:number, size: { x: number; y: number } };
 	playerTwo: { id: string | null; socket: any; position: { x: number; y: number }; score: number; left:number; right:number; top:number; bottom:number, size: { x: number; y: number } };
 	ball: Ball;
-	timestamps: { start: number | null; end: number | null };
+	timestamps: { start: Date | null; end: Date | null };
 	dt: number;
 	resetNeeded: boolean;
 };
@@ -243,7 +243,7 @@ const Game: FC<GameProps> = (props) => {
 			playerOne: { id: null, socket: null, position: { x: 0, y: 0 }, score: 0, left: 0, right: 0, top: 0, bottom: 0, size: { x: 0, y: 0 } },
 			playerTwo: { id: null, socket: null, position: { x: 0, y: 0 }, score: 0, left: 0, right: 0, top: 0, bottom: 0, size: { x: 0, y: 0 } },
 			ball: { position: { x: 0, y: 0 }, vel: { x: 0, y: 0, len: 0 }, left: 0, right: 0, top: 0, bottom: 0, size: { x: 0, y: 0 } },
-			timestamps: { start: null, end: null },
+			timestamps: { start: new Date(), end: null },
 			dt: 0,
 			resetNeeded: false
 		};
