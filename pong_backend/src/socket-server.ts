@@ -698,7 +698,7 @@ io.on('connection', (socket: Socket) => {
 				//gameSessions = gameSessions.filter(session => session !== sessionOfDisconnectedUser);
 			}
 
-			io.sockets.emit('playerDisconnected');
+			//io.sockets.emit('playerDisconnected');
 			userCount--;
 			users = users.filter(u => u.socketId !== socket.id);
 			if (users.length !== 0) {

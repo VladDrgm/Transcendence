@@ -328,14 +328,13 @@ const Game: FC<GameProps> = (props) => {
 			pong = null;
 			return;
 		};
-		
+
 		socket.on('init', handleInit);
 		socket.on('updateGameState', updateGameState);
 		socket.on('playerDisconnected', playerDisconnected);
 		socket.on('endGame', endGame);
-		
-		
-		
+
+
 		/* update initial gameState */
 		gameState.playerOne.position = pong.players[0].position;
 		gameState.playerOne.size = pong.players[0].size;
@@ -377,7 +376,7 @@ const Game: FC<GameProps> = (props) => {
 		return () => {
 				socket.off('init', handleInit);
 				socket.off('updateGameState', updateGameState);
-				socket.off('playerDisconnected', endGame);
+				socket.off('playerDisconnected', playerDisconnected);
 				socket.off('endGame', endGame);
 				document.removeEventListener('keydown', handleRandomize);
 				document.removeEventListener('keydown', handlePowerup);
