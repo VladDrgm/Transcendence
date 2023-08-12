@@ -438,3 +438,56 @@ export async function getBlockedUser(callerId: number, targetId: number): Promis
 
 
 // Friends
+
+export function postFriend(targetId: number, userId: number) {
+  const requestOptions = {
+    method: 'POST',
+    headers: { 
+      "Accept": "*/*",
+      "Container-Type": "application/json"
+    },
+    body:  ''
+  };
+  return fetch(fetchAddress + 'friend/' + userId +'/friend' + targetId , requestOptions)
+    .then((response) =>{
+      if (response.ok){
+        return response.json();
+      } else {
+        throw new Error("Failed to add Friend");
+      }
+    })
+    .then(data => {
+      console.log("Friend with UserId :" + userId +" added:", data);
+    })
+    .catch(error => {
+      console.error("Error adding Friend with UserId :" + userId +":", error);
+      throw error;
+    });
+}
+
+export function deleteFriend(targetId: number, userId: number) {
+  const requestOptions = {
+    method: 'DELETE',
+    headers: { 
+      "Accept": "*/*",
+      "Container-Type": "application/json"
+    },
+    body:  ''
+  };
+  return fetch(fetchAddress + 'friend/' + userId +'/friend' + targetId , requestOptions)
+    .then((response) =>{
+      if (response.ok){
+        return response.json();
+      } else {
+        throw new Error("Failed to remove Friend");
+      }
+    })
+    .then(data => {
+      console.log("Friend with UserId :" + userId +" removed:", data);
+    })
+    .catch(error => {
+      console.error("Error removing Friend with UserId :" + userId +":", error);
+      throw error;
+    });
+}
+
