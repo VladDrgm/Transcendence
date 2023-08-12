@@ -448,7 +448,7 @@ export function postFriend(targetId: number, userId: number) {
     },
     body:  ''
   };
-  return fetch(fetchAddress + 'friend/' + userId +'/friend' + targetId , requestOptions)
+  return fetch(fetchAddress + 'friend/' + userId +'/friend/' + targetId , requestOptions)
     .then((response) =>{
       if (response.ok){
         return response.json();

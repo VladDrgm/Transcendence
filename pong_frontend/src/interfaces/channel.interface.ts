@@ -30,6 +30,7 @@ export interface ChatProps {
 	deleteChatRoom: (chatName: ChatName) => void;
 	addChatRoom: (chatName: ChatName) => void;
 	addBlockedUser: (targetName: ChatName) => void;
+	addFriend: (targetName: ChatName) => void;
 	unblockUser: (targetName: ChatName) => void;
 	changeChatRoom :(chatName: ChatName) => void;
 	updateChannellist: () => void;

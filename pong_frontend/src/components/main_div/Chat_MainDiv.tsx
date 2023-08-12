@@ -68,7 +68,7 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 					<button onClick={() => props.unblockUser(props.currentChat.chatName)}>
 						Unblock User
 					</button>
-					<button>
+					<button onClick={() => props.addFriend(props.currentChat.chatName)}>
 						Add as Friend
 					</button>
 					</div>
