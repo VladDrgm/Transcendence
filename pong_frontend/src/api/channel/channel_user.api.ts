@@ -438,3 +438,77 @@ export async function getBlockedUser(callerId: number, targetId: number): Promis
 
 
 // Friends
+
+export function postFriend(targetId: number, userId: number) {
+  const requestOptions = {
+    method: 'POST',
+    headers: { 
+      "Accept": "*/*",
+      "Container-Type": "application/json"
+    },
+    body:  ''
+  };
+  return fetch(fetchAddress + 'friend/' + userId +'/friend/' + targetId , requestOptions)
+    .then((response) =>{
+      if (response.ok){
+        return response.json();
+      } else {
+        throw new Error("Failed to add Friend");
+      }
+    })
+    .then(data => {
+      console.log("Friend with UserId :" + userId +" added:", data);
+    })
+    .catch(error => {
+      console.error("Error adding Friend with UserId :" + userId +":", error);
+      throw error;
+    });
+}
+
+export function deleteFriend(targetId: number, userId: number) {
+  const requestOptions = {
+    method: 'DELETE',
+    headers: { 
+      "Accept": "*/*",
+      "Container-Type": "application/json"
+    },
+    body:  ''
+  };
+  return fetch(fetchAddress + 'friend/' + userId +'/friend/' + targetId , requestOptions)
+    .then((response) =>{
+      if (response.ok){
+        return response.json();
+      } else {
+        throw new Error("Failed to remove Friend");
+      }
+    })
+    .then(data => {
+      console.log("Friend with UserId :" + userId +" removed:", data);
+    })
+    .catch(error => {
+      console.error("Error removing Friend with UserId :" + userId +":", error);
+      throw error;
+    });
+}
+
+export async function getIsFriend(callerId: number, targetId: number): Promise<boolean> {
+  const requestOptions = {
+    method: 'GET',
+    headers: { 
+      "Accept": "*/*",
+      "Content-Type": "application/json"
+    }
+  };
+  return fetch(fetchAddress + 'friend/'+ callerId + "/friend/" + targetId, requestOptions)
+    .then(response => {
+      if (response.ok)
+        return true;
+      else
+        return false;
+    })
+    .catch(error => {
+      console.error("Error retrieving Friendship status from UserId :" + targetId +":", error);
+      // alert("Error blocking User: " + error);
+      throw error;
+    });
+}
