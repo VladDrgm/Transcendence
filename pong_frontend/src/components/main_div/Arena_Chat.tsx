@@ -7,7 +7,7 @@ import { io, Socket } from "socket.io-client";
 import immer, { Draft } from "immer";
 import "../../App.css";
 import {fetchChannelNames, copyChannelByName, fetchAllChannels, getUserIDByUserName} from "../div/channel_utils"
-import {postChannelUser, deleteChannelUser, getChannelUser, getChannelBlockedUser, getIsMuted, postPrivateChannelUser, getMutedStatus, postBlockedUser, getBlockedUser} from "../../api/channel/channel_user.api"
+import {postChannelUser, deleteChannelUser, getChannelUser, getChannelBlockedUser, getIsMuted, postPrivateChannelUser, getMutedStatus, postBlockedUser, getBlockedUser, deleteBlockedUser} from "../../api/channel/channel_user.api"
 import { Channel, ChannelUserRoles, ChatProps } from '../../interfaces/channel.interface';
 import { User } from '../../interfaces/user.interface';
 import { useUserContext } from '../context/UserContext';
@@ -273,11 +273,12 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID}) => {
 					postBlockedUser(userID, Number(targetID))
 					.then(() => {
 						console.log('User blocked with UserId:', targetID);
-						const data = {
-							callerId: userID,
-							targetId: Number(targetID)
-						};
-						socketRef.current?.emit('add blocked', data);
+						// const data = {
+						// 	callerId: userID,
+						// 	targetId: Number(targetID)
+						// };
+						// socketRef.current?.emit('block user', data);
+						blockUserSocket(Number(targetID), user.username);
 					})
 					.catch(error => {
 						console.error("Error blocking user with Username:" , targetName);
@@ -289,9 +290,29 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID}) => {
 					alert("Error while blocking User" + error);
 				});
 			}
-	
 
-		
+	function unblockUser(targetName: string | number){
+		getUserIDByUserName(targetName.toString())
+			.then((targetID) => {
+				if(targetID === undefined){
+					alert("User could not be found. Please try another Username.");
+					return;
+				}
+				deleteBlockedUser(userID, Number(targetID))
+				.then(() => {
+					console.log('User unblocked with UserId:', targetID);
+					unblockUserSocket(Number(targetID), user.username);
+				})
+				.catch(error => {
+					console.error("Error unblocking user with Username:" , targetName);
+					alert("Error while unblocking User" + error);
+				})
+			})
+			.catch(error => {
+				console.error('Error getting UserID from User:' ,error);
+				alert("Error while unblocking User" + error);
+			});
+		}	
 
 	function leaveRoom(chatName: ChatName) {
 		// const newConnectedRooms = immer(connectedRooms, (draft: WritableDraft<typeof connectedRooms>) => {
@@ -335,6 +356,14 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID}) => {
 		socketRef.current?.emit('mute user', {targetId, roomName, muteDuration});
 	}
 
+	function blockUserSocket(targetId: string | number, username: string) {
+		socketRef.current?.emit('block user', {targetId, username});
+	}
+
+	function unblockUserSocket(targetId: string | number, username: string) {
+		socketRef.current?.emit('unblock user', {targetId, username});
+	}
+
 	async function toggleChat(newCurrentChat: CurrentChat) {
 		socketRef.current?.emit("join room", newCurrentChat.chatName, (messages: any) => roomJoinCallback(messages, newCurrentChat.chatName));
 		
@@ -375,7 +404,7 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID}) => {
 		getUserIDByUserName(currentChat.chatName.toString())
 			.then((result) => {
 				if(result !== undefined){
-					getBlockedUser(userID, result)
+					getBlockedUser(result, userID)
 					.then((user) => {
 						setCurrentRoles((prevState) => ( {
 							...prevState,
@@ -390,7 +419,7 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID}) => {
 			}).catch(error =>{
 			console.error('Error occured in handleUserChannelCheck:', error);
 			});
-	}, [currentChat.isResolved, currentChat.Channel.ChannelId]);
+	}, [currentChat.isResolved, currentChat.chatName]);
 
 	const handleUserInChannelCheck = useCallback (async () => {
 		setCurrentRoles((prevState) => ({
@@ -529,9 +558,12 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID}) => {
 			socketRef.current.emit("join room", "general", (messages: any) => roomJoinCallback(messages, "general"));
 			socketRef.current.on("new user", (allUsers: any) => {
 				setAllUsers(allUsers);
+				console.log(allUsers);
 			});
 			socketRef.current.on("new message", ({ content, sender, chatName }: { content: string; sender: string; chatName: ChatName }) => {
 				console.log("sender", sender);
+				console.log("chatNAme", chatName);
+				console.log("content:", content)
 				setMessages(messages => {
 					const newMessages = immer(messages, (draft: WritableDraft<typeof messages>) => {
 						if (draft[chatName]) {
@@ -560,26 +592,33 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID}) => {
 			socketRef.current.on('user banned', (data) => {
 				const targetId = data.targetId;
 				const roomName = data.roomName;
-				// console.log("Banned msg arrived");
 				handleBannedUserSocket(targetId, roomName);
 			});
 			socketRef.current.on('user unbanned', (data) => {
 				const targetId = data.targetId;
 				const roomName = data.roomName;
-				// console.log("Unbanned msg arrived");
 				handleUnbannedUserSocket(targetId, roomName);
 			});
 			socketRef.current.on('user muted', (data) => {
 				const targetId = data.targetId;
 				const roomName = data.roomName;
-				console.log("Muted msg arrived");
 				handleMutedUserSocket(targetId, roomName);
 			});
+			// io.emit('user blocked', {userId, targetId });
 			socketRef.current.on('user unmuted', (data) => {
 				const targetId = data.targetId;
 				const roomName = data.roomName;
-				console.log("Muted msg arrived");
 				handleUnmutedUserSocket(targetId, roomName);
+			});
+			socketRef.current.on('user blocked', (data) => {
+				const targetId = data.targetId;
+				const username = data.username;
+				handleBlockedUserSocket(targetId, username);
+			});
+			socketRef.current.on('user unblocked', (data) => {
+				const targetId = data.targetId;
+				const username = data.username;
+				handleunblockedUserSocket(targetId, username);
 			});
 		}
 		connect();
@@ -589,6 +628,48 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID}) => {
 				socketRef.current.disconnect();
 		}
 	}, []);
+
+	function handleBlockedUserSocket(targetId: number, callerName: string) {
+		console.log("targetID", targetId);
+		console.log("userId", userID);
+		if (targetId === userID)
+		{
+			setCurrentChat((prevChat) => {
+			console.log("currenchat", prevChat.chatName);
+	
+				if( prevChat.chatName === callerName){
+					setCurrentRoles((prevRoles) => ({
+						...prevRoles,
+						isBlocked: true
+					}));
+					alert("You have been blocked by the User.");
+				}
+				return prevChat;
+			});
+			// console.log("currenchat", currentChat.chatName);
+		}
+	}
+
+	function handleunblockedUserSocket(targetId: number, callerName: string) {
+		console.log("targetID", targetId);
+		console.log("userId", userID);
+		if (targetId === userID)
+		{
+			setCurrentChat((prevChat) => {
+			console.log("currenchat", prevChat.chatName);
+	
+				if( prevChat.chatName === callerName){
+					setCurrentRoles((prevRoles) => ({
+						...prevRoles,
+						isBlocked: false
+					}));
+					alert("You have been unblocked by the User.");
+				}
+				return prevChat;
+			});
+			// console.log("currenchat", currentChat.chatName);
+		}
+	}
 
 function handleUnmutedUserSocket(targetId: number, roomName: string) {
 	console.log("targetID", targetId);
@@ -721,6 +802,10 @@ function handleMutedUserSocket(targetId: number, roomName: string) {
 		});
 		
 		type RegisterHandler = () => void;
+
+		function invitePlayer() {
+
+		}
 	
 		function joinQueue(event: React.FormEvent) {
 			event.preventDefault(); // Prevent the default form submission behavior
@@ -835,6 +920,7 @@ function handleMutedUserSocket(targetId: number, roomName: string) {
 			deleteChatRoom={deleteChatRoom}
 			addChatRoom={addChatRoom}
 			addBlockedUser={addBlockedUser}
+			unblockUser={unblockUser}
 			connectedRooms={connectedRooms}
 			currentChat={currentChat}
 			messages={messages[currentChat.chatName]}
@@ -845,8 +931,8 @@ function handleMutedUserSocket(targetId: number, roomName: string) {
 			banUserSocket={banUserSocket}
 			unbanUserSocket={unbanUserSocket}
 			muteUserSocket={muteUserSocket}
-			// username={username}
 			loadingChannelPanel = {false}
+			invitePlayer={invitePlayer}
 		/>
 		);
 	// } else {

@@ -164,6 +164,18 @@ io.on('connection', (socket: Socket) => {
 		io.emit('user unbanned', {targetId, roomName });
 	});
 
+	socket.on('block user', (data) => {
+		const targetId = data.targetId;
+		const username = data.username;
+		io.emit('user blocked', {targetId, username });
+	});
+
+	socket.on('unblock user', (data) => {
+		const targetId = data.targetId;
+		const username = data.username;
+		io.emit('user unblocked', {targetId, username });
+	});
+
 	socket.on('mute user', (data) => {
 		const targetId = data.targetId;
 		const roomName = data.roomName;
@@ -189,12 +201,12 @@ io.on('connection', (socket: Socket) => {
 	});
 
 	socket.on('send message', ({ content, to, sender, chatName, isChannel }) => {
-		// console.log("content:", content);
-		// console.log("sender:", sender);
-		// console.log("chatName:", chatName);
-		// console.log("isChannel", isChannel);
-		// console.log("to:", to);
-		// console.log("Messages:", messages);
+		console.log("content:", content);
+		console.log("sender:", sender);
+		console.log("chatName:", chatName);
+		console.log("isChannel", isChannel);
+		console.log("to:", to);
+		console.log("Messages:", messages);
 		if (isChannel) {
 			const payload = {
 				content,

@@ -381,6 +381,33 @@ export async function postBlockedUser(callerId: number, targetId: number): Promi
     });
 }
 
+export async function deleteBlockedUser(callerId: number, targetId: number): Promise<void> {
+  const requestOptions = {
+    method: 'DELETE',
+    headers: { 
+      "Accept": "*/*",
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      "userId": callerId,
+      "blockId": targetId.toString()
+    })
+  };
+  fetch(fetchAddress + 'blocked/', requestOptions)
+    .then(response => {
+      if (response.ok) {
+        console.log("ChannelUser with UserId :" + targetId +" unblocked");
+      } else {
+        console.error("Error unblocking User with UserId :" + targetId +":", response.status);
+        throw new Error ("Error unblocking User");
+      }
+    })
+    .catch(error => {
+      console.error("Error unblocking User with UserId :" + targetId +":", error);
+      throw error;
+    });
+}
+
 export async function getBlockedUser(callerId: number, targetId: number): Promise<boolean> {
   const requestOptions = {
     method: 'GET',
@@ -393,7 +420,7 @@ export async function getBlockedUser(callerId: number, targetId: number): Promis
     .then(response => response.json())
     .then(data => {
       if (data.hasOwnProperty('blockId')) {
-        console.log("ChannelUser with UserId :" + targetId +" blocked");
+        // console.log("ChannelUser with UserId :" + targetId +" blocked");
         return true;
       } else if (data.message === "No such blocked user") {
         return false;
@@ -408,3 +435,6 @@ export async function getBlockedUser(callerId: number, targetId: number): Promis
       throw error;
     });
 }
+
+
+// Friends

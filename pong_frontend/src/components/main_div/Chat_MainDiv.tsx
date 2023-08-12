@@ -59,11 +59,14 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 				  <ChannelInfo>
 					{props.currentChat.chatName}
 					<div>
-					<button>
+					<button onClick={() => props.invitePlayer('')}>
 						Invite for a Game
 					</button>
 					<button onClick={() => props.addBlockedUser(props.currentChat.chatName)}>
 						Block User
+					</button>
+					<button onClick={() => props.unblockUser(props.currentChat.chatName)}>
+						Unblock User
 					</button>
 					<button>
 						Add as Friend

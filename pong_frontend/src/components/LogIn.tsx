@@ -180,6 +180,7 @@ const formFieldStyle: CSS.Properties = {
 			username: newUsername,
 			intraUsername: newUsername,
 			userID: 123,
+			socketId: '',
 			avatarPath: '',
 			wins: 0,
 			losses: 0,
