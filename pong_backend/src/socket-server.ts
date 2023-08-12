@@ -156,6 +156,12 @@ io.on('connection', (socket: Socket) => {
 		io.emit('user blocked', {targetId, username });
 	});
 
+	socket.on('unblock user', (data) => {
+		const targetId = data.targetId;
+		const username = data.username;
+		io.emit('user unblocked', {targetId, username });
+	});
+
 	socket.on('mute user', (data) => {
 		const targetId = data.targetId;
 		const roomName = data.roomName;
