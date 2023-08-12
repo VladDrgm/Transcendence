@@ -37,7 +37,8 @@ interface GameState {
 	ball: Ball;
 	timestamps: { start: Date | null; end: Date | null };
 	dt: number;
-	resetNeeded: boolean;
+	disconnected: boolean;
+	scoreOnDisconnect: { playerOne: number, playerTwo: number };
 };
 
 class Vec {
@@ -245,7 +246,8 @@ const Game: FC<GameProps> = (props) => {
 			ball: { position: { x: 0, y: 0 }, vel: { x: 0, y: 0, len: 0 }, left: 0, right: 0, top: 0, bottom: 0, size: { x: 0, y: 0 } },
 			timestamps: { start: new Date(), end: null },
 			dt: 0,
-			resetNeeded: false
+			disconnected: false,
+			scoreOnDisconnect: { playerOne: 0, playerTwo: 0 }
 		};
 
 		gameState.gameStatus = 1;
