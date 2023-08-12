@@ -23,7 +23,8 @@ interface GameState {
 	ball: Ball;
 	timestamps: { start: Date | null; end: Date | null };
 	dt: number;
-	resetNeeded: boolean;
+	disconnected: boolean;
+	scoreOnDisconnect: { playerOne: number, playerTwo: number };
 };
 
 interface MatchEntity {
@@ -254,7 +255,8 @@ io.on('connection', (socket: Socket) => {
 			ball: { position: { x: 0, y: 0 }, vel: { x: 0, y: 0, len: 0 }, left: 0, right: 0, top: 0, bottom: 0, size: { x: 0, y: 0 } },
 			timestamps: { start: currentTime, end: null },
 			dt: 0,
-			resetNeeded: false
+			disconnected: false, 
+			scoreOnDisconnect: { playerOne: 0, playerTwo: 0 }
 		};
 	}
 
@@ -585,9 +587,17 @@ io.on('connection', (socket: Socket) => {
 				matchResults.GameType = "normal";
 			}
 			matchResults.Player1Id = 999;
-			matchResults.Player1Points = session.gameState.playerOne.score;
+			if (session.gameState.disconnected === true) {
+				matchResults.Player1Points = session.gameState.scoreOnDisconnect.playerOne;
+				matchResults.Player2Points = session.gameState.scoreOnDisconnect.playerTwo;
+				matchResults.WinningCondition = "disconnected";
+			}
+			else {
+				matchResults.Player1Points = session.gameState.playerOne.score;
+				matchResults.Player2Points = session.gameState.playerTwo.score;
+				matchResults.WinningCondition = "game won";
+			}
 			matchResults.Player2Id = 666;
-			matchResults.Player2Points = session.gameState.playerTwo.score;
 			if (matchResults.Player1Points === matchResults.Player2Points) {
 				matchResults.WinnerId = 0;
 			}
@@ -598,7 +608,6 @@ io.on('connection', (socket: Socket) => {
 				matchResults.WinnerId = matchResults.Player2Id;
 			}
 			matchResults.WinnerId = 666;
-			matchResults.WinningCondition = "game ended";
 			matchResults.endTime = new Date();
 			matchResults.startTime = session.gameState.timestamps.start;
 
@@ -686,6 +695,10 @@ io.on('connection', (socket: Socket) => {
 			);
 
 			if (sessionOfDisconnectedUser) {
+				sessionOfDisconnectedUser.gameState.disconnected = true;
+				sessionOfDisconnectedUser.gameState.scoreOnDisconnect.playerOne = sessionOfDisconnectedUser.gameState.playerOne.score;
+				sessionOfDisconnectedUser.gameState.scoreOnDisconnect.playerTwo = sessionOfDisconnectedUser.gameState.playerTwo.score;
+
 				// Find the other user in the session
 				let otherUserId = sessionOfDisconnectedUser.playerIds.find(id => id !== socket.id);
 		
