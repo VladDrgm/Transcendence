@@ -560,22 +560,6 @@ io.on('connection', (socket: Socket) => {
 	});
 
 
-
-	/* interface MatchEntity {
-		Player1Id: number;
-		Player2Id: number;
-		Player1Points: number;
-		Player2Points: number;
-		GameType: string;
-		FinalResultString: string;
-		startTime: Date;
-		endTime: Date;
-		WinnerId: number;
-		WinningCondition: string;
-	} */
-
-
-
 	socket.on('endSession', (gameState: GameState) => {
 		console.log("Reached endSession");
 		let matchResults = {} as MatchEntity;
@@ -594,11 +578,25 @@ io.on('connection', (socket: Socket) => {
 		if (session && sessionIndex !== -1) {
 			//Populate matchResults
 			matchResults.FinalResultString = "finished";
-			matchResults.GameType = "normal";
+			if (session.invite) {
+				matchResults.GameType = "invite";
+			}
+			else {
+				matchResults.GameType = "normal";
+			}
 			matchResults.Player1Id = 999;
 			matchResults.Player1Points = session.gameState.playerOne.score;
 			matchResults.Player2Id = 666;
 			matchResults.Player2Points = session.gameState.playerTwo.score;
+			if (matchResults.Player1Points === matchResults.Player2Points) {
+				matchResults.WinnerId = 0;
+			}
+			else if (matchResults.Player1Points > matchResults.Player2Points) {
+				matchResults.WinnerId = matchResults.Player1Id;
+			}
+			else {
+				matchResults.WinnerId = matchResults.Player2Id;
+			}
 			matchResults.WinnerId = 666;
 			matchResults.WinningCondition = "game ended";
 			matchResults.endTime = new Date();
