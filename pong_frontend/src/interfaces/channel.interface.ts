@@ -30,6 +30,7 @@ export interface ChatProps {
 	deleteChatRoom: (chatName: ChatName) => void;
 	addChatRoom: (chatName: ChatName) => void;
 	addBlockedUser: (targetName: ChatName) => void;
+	unblockUser: (targetName: ChatName) => void;
 	changeChatRoom :(chatName: ChatName) => void;
 	updateChannellist: () => void;
 	sendMessage: () => void;
@@ -40,6 +41,7 @@ export interface ChatProps {
     allChannels: Channel[];
 	generalChat: ChatData;
 	loadingChannelPanel: boolean;
+	invitePlayer:(sessionId: string) => void;
 }
 
  export type ChatData = {
