@@ -39,7 +39,7 @@ const MainDivSelector: React.FC<MainDivProps> = ({onLogout, userID, mode, mode_s
     case main_div_mode_t.HOME_PAGE:
       return (<Welcome_MainDiv/>);
 	case main_div_mode_t.GAMEARENA:
-		return (<Arena_Chat_MainDiv userID={userID}/>)
+		return (<Arena_Chat_MainDiv userID={userID} mode_set={mode_set} friend_set={friend_set}/>)
 	case main_div_mode_t.PROFILE:
 		return (<Profile_MainDiv userID={userID} mode_set={mode_set} friend_set={friend_set}/>);
 	case main_div_mode_t.LEADERBORAD:
