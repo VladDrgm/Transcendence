@@ -63,7 +63,7 @@ export function renderUser(user: User, props: ChatProps) {
     const currentChat: ChatData = {
     chatName: user.username,
     isChannel: false,
-    receiverId: props.yourId,
+    receiverId: user.socketId,
     isResolved: true,
     Channel: {} as Channel,
     };
