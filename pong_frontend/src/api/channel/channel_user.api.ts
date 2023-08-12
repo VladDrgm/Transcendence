@@ -474,7 +474,7 @@ export function deleteFriend(targetId: number, userId: number) {
     },
     body:  ''
   };
-  return fetch(fetchAddress + 'friend/' + userId +'/friend' + targetId , requestOptions)
+  return fetch(fetchAddress + 'friend/' + userId +'/friend/' + targetId , requestOptions)
     .then((response) =>{
       if (response.ok){
         return response.json();
@@ -491,3 +491,24 @@ export function deleteFriend(targetId: number, userId: number) {
     });
 }
 
+export async function getIsFriend(callerId: number, targetId: number): Promise<boolean> {
+  const requestOptions = {
+    method: 'GET',
+    headers: { 
+      "Accept": "*/*",
+      "Content-Type": "application/json"
+    }
+  };
+  return fetch(fetchAddress + 'friend/'+ callerId + "/friend/" + targetId, requestOptions)
+    .then(response => {
+      if (response.ok)
+        return true;
+      else
+        return false;
+    })
+    .catch(error => {
+      console.error("Error retrieving Friendship status from UserId :" + targetId +":", error);
+      // alert("Error blocking User: " + error);
+      throw error;
+    });
+}
