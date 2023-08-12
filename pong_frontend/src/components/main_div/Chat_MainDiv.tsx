@@ -76,7 +76,7 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
     					{props.currentChat.chatName}
   					</div>
 					<div>
-					<button onClick={() => props.invitePlayer('')}>
+					<button onClick={() => props.invitePlayer(props.allUsers.find(user => user.username === props.currentChat.chatName))}>
 						Invite for a Game
 					</button>
 					<button onClick={() => props.addBlockedUser(props.currentChat.chatName)}>

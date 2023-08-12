@@ -877,7 +877,11 @@ function handleMutedUserSocket(targetId: number, roomName: string) {
 		
 		type RegisterHandler = () => void;
 
-		function invitePlayer() {
+		function invitePlayer(invitedUser: User | undefined) {
+			if (invitedUser){
+				const playerOneSocketId = invitedUser.socketId;
+				const playerTwoSocketId = user.socketId;
+			}
 
 		}
 	
