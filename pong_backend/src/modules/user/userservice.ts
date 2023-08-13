@@ -13,6 +13,7 @@ import { FileService } from '../fileservice/file.service';
 
 @Injectable()
 export class UserService {
+  findOneBy: any;
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
@@ -124,5 +125,10 @@ export class UserService {
     }
     userToUpdate.avatarPath = picturePath;
     await this.userRepository.save(userToUpdate);
+  }
+
+  async getAvatarPath(id: number): Promise<string | null> {
+    const user = await this.findOneBy({ userID: id });
+    return user ? user.avatarPath : null;
   }
 }
