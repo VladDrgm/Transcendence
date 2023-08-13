@@ -22,6 +22,12 @@ export interface User {
 	channels: Channel[],
 }
 
+export interface Invitation {
+	sessionId: 		null | string,
+	playerOneSocket: null | string,
+	playerTwoSocket: null | string,
+}
+
 interface UserContextProps {
   user: User | null;
   setUser: React.Dispatch<React.SetStateAction<User | null>>;

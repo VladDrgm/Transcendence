@@ -1,5 +1,5 @@
 import React, { FC, ChangeEvent, KeyboardEvent } from "react";
-import { User } from "./user.interface";
+import { Invitation, User } from "./user.interface";
 import { main_div_mode_t } from "../components/MainDivSelector";
 
 export interface Channel {
@@ -48,6 +48,7 @@ export interface ChatProps {
 	invitePlayer:(user: User | undefined) => void;
 	mode_set: React.Dispatch<React.SetStateAction<main_div_mode_t>>;
   	friend_set: React.Dispatch<React.SetStateAction<number>>;
+	invitation: Invitation[];
 }
 
  export type ChatData = {
