@@ -50,6 +50,12 @@ interface Ball {
 	size: { x:number, y:number };
 };
 
+interface Invitation {
+	sessionId: any | null;
+	playerOneSocket: string | null;
+	playerTwoSocket: string | null;
+};
+
 let gameSessions: { sessionId: string; invite: boolean; playerIds: string[]; gameState?: GameState}[] = [];
 let playerQueue: string[] = [];
 
@@ -334,7 +340,7 @@ io.on('connection', (socket: Socket) => {
 		}
 	});
 
-	socket.on('invite player', (newSessionId:any) => {
+	socket.on('invite player', (invitation:Invitation) => {
 		console.log("Invite Player was triggered");
 		let existingSession:any;
 
@@ -346,10 +352,10 @@ io.on('connection', (socket: Socket) => {
 			}
 		}
 
-		// Check if a session exists with the given newSessionId
-		if (newSessionId) {
+		// Check if a session exists with the given invitation.sessionId
+		if (invitation.sessionId) {
 			existingSession = gameSessions.find(
-				(session) => session.sessionId === newSessionId
+				(session) => session.sessionId === invitation.sessionId
 			);
 		}
 
@@ -371,6 +377,7 @@ io.on('connection', (socket: Socket) => {
 				sessionIdInput: newSessionId,
 				playerInput: 1
 			});
+			// ADD: SEND INVITE TO PLAYER TWO
 			playerQueue.push(socket.id);
 			console.log("Game sessions after joining as Player 1:", gameSessions);
 		} else {

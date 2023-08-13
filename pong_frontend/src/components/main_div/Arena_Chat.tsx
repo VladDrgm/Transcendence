@@ -24,6 +24,12 @@ interface ArenaDivProps
   friend_set: React.Dispatch<React.SetStateAction<number>>;
 }
 
+interface Invitation {
+	sessionId: any | null;
+	playerOneSocket: string | null;
+	playerTwoSocket: string | null;
+};
+
 type WritableDraft<T> = Draft<T>;
 
 
@@ -878,10 +884,28 @@ function handleMutedUserSocket(targetId: number, roomName: string) {
 		type RegisterHandler = () => void;
 
 		function invitePlayer(invitedUser: User | undefined) {
+			let invitation: Invitation = {
+				sessionId: null,
+				playerOneSocket: null,
+				playerTwoSocket: null,
+			};
 			if (invitedUser){
-				const playerOneSocketId = invitedUser.socketId;
-				const playerTwoSocketId = user.socketId;
+				invitation.playerOneSocket = user.socketId;
+				invitation.playerTwoSocket = invitedUser.socketId;
+				if (socketRef.current?.id && !gameSession.playerOne && !gameSession.playerTwo) {
+					console.log("Inviting player " + invitation.playerTwoSocket + " to session");
+					//console.log("Joining que emitting from Arena Chat, socketRef is: " + socketRef.current.id);
+					alert("Invite Triggered");
+					socketRef.current.emit('invite player', invitation);
+				}
+				else if (socketRef.current?.id && gameSession.playerOne && !gameSession.playerTwo) {
+					alert("You are already in the que as Player 1. Wait for Player 2.");
+				}
+				else if (socketRef.current?.id && gameSession.playerOne && gameSession.playerTwo) {
+					alert("Both players have joined your session, Player 1 can start the game.");
+				}
 			}
+
 
 		}
 	
