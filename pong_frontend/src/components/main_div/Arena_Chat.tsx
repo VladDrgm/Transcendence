@@ -881,34 +881,34 @@ function handleMutedUserSocket(targetId: number, roomName: string) {
 			playerTwo: null,
 		});
 		
+		let invitation: Invitation | null = {
+			sessionId: null,
+			playerOneSocket: null,
+			playerTwoSocket: null,
+		};
+
 		type RegisterHandler = () => void;
 
-		function invitePlayer(invitedUser: User | undefined) {
-			let invitation: Invitation = {
-				sessionId: null,
-				playerOneSocket: null,
-				playerTwoSocket: null,
-			};
-			if (invitedUser){
-				invitation.playerOneSocket = user.socketId;
-				invitation.playerTwoSocket = invitedUser.socketId;
-				if (socketRef.current?.id && !gameSession.playerOne && !gameSession.playerTwo) {
-					console.log("Inviting player " + invitation.playerTwoSocket + " to session");
-					//console.log("Joining que emitting from Arena Chat, socketRef is: " + socketRef.current.id);
-					alert("Invite Triggered");
-					socketRef.current.emit('invite player', invitation);
-				}
-				else if (socketRef.current?.id && gameSession.playerOne && !gameSession.playerTwo) {
-					alert("You are already in the que as Player 1. Wait for Player 2.");
-				}
-				else if (socketRef.current?.id && gameSession.playerOne && gameSession.playerTwo) {
-					alert("Both players have joined your session, Player 1 can start the game.");
-				}
+		function invitePlayer(invitationNew: Invitation) {
+			if (invitation?.sessionId === null) {
+				invitation.playerOneSocket = invitationNew?.playerOneSocket;
+				invitation.playerOneSocket = invitationNew?.playerOneSocket;
 			}
-
-
+			if (socketRef.current?.id && !gameSession.playerOne && !gameSession.playerTwo) {
+				console.log("Invite player " + invitation!.playerTwoSocket + " action triggered");
+				//console.log("Joining que emitting from Arena Chat, socketRef is: " + socketRef.current.id);
+				alert("Invite/Accept To Game Session");
+				socketRef.current.emit('invite player', invitation);
+			}
+			else if (socketRef.current?.id && gameSession.playerOne && !gameSession.playerTwo) {
+				alert("You are already in a que as Player 1.");
+			}
+			else if (socketRef.current?.id && gameSession.playerOne && gameSession.playerTwo) {
+				alert("You are in a session with two players, Player 1 can start the game.");
+			}
 		}
-	
+
+
 		function joinQueue(event: React.FormEvent) {
 			event.preventDefault(); // Prevent the default form submission behavior
 	
