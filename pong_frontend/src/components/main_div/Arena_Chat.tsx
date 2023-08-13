@@ -881,14 +881,15 @@ function handleMutedUserSocket(targetId: number, roomName: string) {
 			playerTwo: null,
 		});
 		
+		let invitation: Invitation = {
+			sessionId: null,
+			playerOneSocket: null,
+			playerTwoSocket: null,
+		};
+		
 		type RegisterHandler = () => void;
 
 		function invitePlayer(invitedUser: User | undefined) {
-			let invitation: Invitation = {
-				sessionId: null,
-				playerOneSocket: null,
-				playerTwoSocket: null,
-			};
 			if (invitedUser){
 				invitation.playerOneSocket = user.socketId;
 				invitation.playerTwoSocket = invitedUser.socketId;
@@ -1039,7 +1040,7 @@ function handleMutedUserSocket(targetId: number, roomName: string) {
 			invitePlayer={invitePlayer}
 			mode_set={mode_set}
 			friend_set={friend_set}
-			ivitation={ivitation}
+			invitation={invitation}
 		/>
 		);
 	// } else {

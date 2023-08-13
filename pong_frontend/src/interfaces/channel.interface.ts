@@ -45,10 +45,10 @@ export interface ChatProps {
     allChannels: Channel[];
 	generalChat: ChatData;
 	loadingChannelPanel: boolean;
-	invitePlayer:(user: User | undefined) => void;
+	invitePlayer:(invitation: Invitation) => void;
 	mode_set: React.Dispatch<React.SetStateAction<main_div_mode_t>>;
   	friend_set: React.Dispatch<React.SetStateAction<number>>;
-	invitation: Invitation[];
+	invitation: Invitation;
 }
 
  export type ChatData = {
