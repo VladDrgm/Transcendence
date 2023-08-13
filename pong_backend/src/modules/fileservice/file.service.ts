@@ -16,7 +16,10 @@ export class FileService {
 
   async saveAvatar(file: Express.Multer.File, id: number): Promise<string> {
     const avatarFolder = './avatars';
-    const modifiedFileName = file.filename + 'a';
+    const originalFileName = file.originalname;
+    const indexOfLastDot = originalFileName.lastIndexOf('.');
+    const fileNameWithoutExtension = originalFileName.slice(0, indexOfLastDot);
+    const modifiedFileName = fileNameWithoutExtension;
     const filePath = `${avatarFolder}/${modifiedFileName}${id}${extname(
       file.originalname,
     )}`;
