@@ -1039,6 +1039,7 @@ function handleMutedUserSocket(targetId: number, roomName: string) {
 			invitePlayer={invitePlayer}
 			mode_set={mode_set}
 			friend_set={friend_set}
+			invitation={invitation}
 		/>
 		);
 	// } else {

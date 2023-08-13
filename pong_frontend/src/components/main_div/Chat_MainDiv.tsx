@@ -8,6 +8,7 @@ import { ChatProps } from "../../interfaces/channel.interface";
 import { chatInputProps } from "../div/channel_ChatPanel_div";
 import { main_div_mode_t } from "../MainDivSelector";
 import { getUserIDByUserName } from "../div/channel_utils";
+import { User } from "../../interfaces/user.interface";
 
 
 const Chat_MainDiv: FC<ChatProps> = (props) => {
@@ -25,6 +26,20 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 		props.sendMessage();
 	// setLocalMessage('');
 		}
+	}
+
+	function inviteButton(invitedPlayer: User | undefined){
+		if( invitedPlayer) {
+			if (!props.invitation.playerOneSocket ||
+				 !props.invitation.playerTwoSocket ||
+				 !props.invitation.sessionId) {
+				props.invitation.playerOneSocket = props.user.socketId;
+				props.invitation.playerTwoSocket = invitedPlayer.socketId;
+			}
+			props.invitePlayer(props.invitation);
+		}
+		else 
+			alert("Error while inviting Player. Please try again");
 	}
 
 	const renderChatInput = (chatInputProps: chatInputProps) => {
@@ -76,7 +91,7 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
     					{props.currentChat.chatName}
   					</div>
 					<div>
-					<button onClick={() => props.invitePlayer(props.allUsers.find(user => user.username === props.currentChat.chatName))}>
+					<button onClick={() => inviteButton(props.allUsers.find(user => user.username === props.currentChat.chatName))}>
 						Invite for a Game
 					</button>
 					<button onClick={() => props.addBlockedUser(props.currentChat.chatName)}>
