@@ -176,7 +176,7 @@ return (
 		<p style={settingsTitleStyle}>Settings</p>
 		<img
 			className='user-card__image'
-			src={`http://localhost:3000/avatars/${user.avatarPath}`}
+			src={`http://localhost:3000${user.avatarPath.slice(1)}`}
 			alt='user.avatarPath'
 			onError={({ currentTarget }) => {
 				currentTarget.onerror = null;
@@ -184,10 +184,10 @@ return (
 			}}
 			style={profilePictureStyle}
 			/>
-		<form>
+			<br/>
 		  <input
 			type="text"
-			placeholder={user.intraUsername}
+			placeholder={user.username}
 			value={newUsername}
 			onChange={(e) => setNewUsername(e.target.value)} // Update state on change
 			style={FormFieldStyle}
@@ -196,8 +196,6 @@ return (
 		  <button style={updateButtonStyle} onClick={handleUpdateUsername}>
 			Update
 		  </button>
-		</form>
-		<form>
 		  <input
 			type="password"
 			placeholder="Type in new password"
@@ -209,14 +207,11 @@ return (
 		  <button style={updateButtonStyle} onClick={handleUpdatePassword}>
 			Update
 		  </button>
-		</form>
-		<form>
 		  <input type="file" onChange={handleAvatarChange} style={FormFieldStyle}/>
 		  {showUpdateAvatarSuccessMessage && <p>Successfully update the avatar</p>}
 		  <button style={updateButtonStyle} onClick={handleUpdateAvatar}>
 			Update
 		  </button>
-		</form>
 		<button style={logoutButtonStyle} onClick={OnLogoutButtonClick}>
 		  Logout
 		</button>

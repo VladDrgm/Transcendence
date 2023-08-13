@@ -2,8 +2,7 @@ import React, { useEffect, useState, ChangeEvent  } from 'react';
 import { PrivateProfile } from '../../interfaces/private_profile.interface';
 import { getPrivateProfile } from '../../api/profile.api';
 import { changeUsername } from '../../api/change_username';
-import defaultProfile from '../../default_profiile.jpg';
-import { serialize } from 'v8';
+import CSS from 'csstype';
 
 interface PrivateDivProps
 {
@@ -12,6 +11,15 @@ interface PrivateDivProps
 
 const Private_Div: React.FC<PrivateDivProps> = ({userID}) => {
   const [user, setUser] = useState<PrivateProfile>();
+
+  const profilePictureStyle: CSS.Properties = {
+    width: '120px',
+    height: '120px',
+    borderRadius: '50%',
+    objectFit: 'cover',
+    marginBottom: '20px',
+    border: '3px solid rgba(254, 8, 16, 1)',
+  };
 
   const getData = async () => {
     try{
@@ -81,25 +89,17 @@ const Private_Div: React.FC<PrivateDivProps> = ({userID}) => {
         <div>
           <h1>Personal profile</h1> 
           <h2>{user.username}</h2> 
-          <input
-          type="text"
-          value={inputText}
-          onChange={handleInputChange}
-          placeholder="Enter new username"
+          <img
+            className='user-card__image'
+            src={`http://localhost:3000${user.avatarPath.slice(1)}`}
+            alt='user.avatarPath'
+            onError={({ currentTarget }) => {
+              currentTarget.onerror = null;
+              currentTarget.src = '/default_pfp.png';
+            }}
+            style={profilePictureStyle}
           />
-          <button onClick={handleButtonClick}>Change Username</button>
           <br/>
-          {(user.avatarPath.substring(0, 5) != "https") && (
-            <img src={defaultProfile} alt="default profile" width="400" height="300"/>
-          )}
-          {(user.avatarPath.substring(0, 5) === "https") && (
-            <img src={user.avatarPath} alt={user.username} width="400" height="300"/>
-          )}
-          <div>
-            <input type="file" accept="image/*" onChange={handleImageChange} />
-            <button onClick={uploadImage}>Upload</button>
-            {imageUrl && <img src={imageUrl} alt="Uploaded" />}
-          </div>
           <p>Wins: {user.wins}</p>
           <p>Losses: {user.losses}</p>
           <p>Points: {user.points}</p>
