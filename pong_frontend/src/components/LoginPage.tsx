@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useState } from 'react';
 import { login, userLoginAPI, userSignupAPI } from '../api/authAPI';
 import { useNavigate } from 'react-router-dom';
 import gif from './assets/billy.png'
@@ -14,7 +14,6 @@ interface LoginPageProps
 }
 
 const LoginPage: React.FC<LoginPageProps> = ({onSignUp, userID_set, loginDone_set}) => {
-  const input_id = useRef<HTMLInputElement>(null);
 
 	const { user, setUser } = useUserContext();
 
@@ -76,6 +75,7 @@ const LoginPage: React.FC<LoginPageProps> = ({onSignUp, userID_set, loginDone_se
 			adminChannels: [],
 			blockedChannels: [],
 			channels: [],
+			socketId: '',
 		  };
 
 		try {

@@ -14,13 +14,13 @@ import { useUserContext } from '../context/UserContext';
 import { connected } from 'process';
 import { getIsAdmin, postAdmin } from '../../api/channel/channel_admin.api';
 import { error } from 'console';
-import { main_div_mode_t } from '../MainDivSelector';
+// import { main_div_mode_t } from '../MainDivSelector';
 // import { Channel } from 'diagnostics_channel';
 
 interface ArenaDivProps
 {
   userID: number;
-  mode_set: React.Dispatch<React.SetStateAction<main_div_mode_t>>;
+//   mode_set: React.Dispatch<React.SetStateAction<main_div_mode_t>>;
   friend_set: React.Dispatch<React.SetStateAction<number>>;
 }
 
@@ -55,7 +55,7 @@ type CurrentChat = {
 	Channel: Channel;
 };
 
-const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID, mode_set, friend_set}) => {
+const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID, friend_set}) => {
 	const { user } = useUserContext()
 	/* chat utilities */
 	const [username, setUsername] = useState("");
@@ -1009,7 +1009,7 @@ function handleMutedUserSocket(targetId: number, roomName: string) {
 			muteUserSocket={muteUserSocket}
 			loadingChannelPanel = {false}
 			invitePlayer={invitePlayer}
-			mode_set={mode_set}
+			// mode_set={mode_set}
 			friend_set={friend_set}
 		/>
 		);

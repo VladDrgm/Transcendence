@@ -35,7 +35,7 @@ const Private_Div: React.FC<PrivateDivProps> = ({userID}) => {
     getData();
   }, []);
 
-  if (profileUser != null) {
+  if (user != null) {
     return (
       <div>
         <div>

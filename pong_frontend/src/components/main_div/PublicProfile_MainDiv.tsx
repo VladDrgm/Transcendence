@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {main_div_mode_t} from '../MainDivSelector';
+// import {main_div_mode_t} from '../MainDivSelector';
 import Public_Div from '../div/public_div';
 import FriendList from '../div/friend_list_div';
 import Friend_Div from '../div/friend_div';
@@ -15,14 +15,14 @@ export enum ProfileType_t
 interface ProfileProps
 {
   userID: number;
-  mode_set: React.Dispatch<React.SetStateAction<main_div_mode_t>>;
+//   mode_set: React.Dispatch<React.SetStateAction<main_div_mode_t>>;
   friend_ID: number;
 }
 
-const PublicProfile_MainDiv: React.FC<ProfileProps> = ({userID, mode_set, friend_ID}) => {
+const PublicProfile_MainDiv: React.FC<ProfileProps> = ({userID, friend_ID}) => {
     const [type, set_type] = useState<ProfileType_t>(ProfileType_t.PUBLIC_PROFILE);
     const set_ownProfile = () => {
-        mode_set(main_div_mode_t.PROFILE);
+        // mode_set(main_div_mode_t.PROFILE);
       };
 
       const isFriend = async () => {

@@ -5,13 +5,12 @@ import { UserContextProvider, useUserContext } from './components/context/UserCo
 import LoginPage from './components/LoginPage';
 import CompleteProfilePage from './components/CompleteProfilePage';
 import HomePage from './components/mainPages/HomePage';
-import Arena_Chat_MainDiv from './components/mainPages/Arena_Chat';
+import Arena_Chat_MainDiv from './components/mainPages/Chat_MainDiv';
 import ProfilePage from './components/mainPages/ProfilePage';
 import UserStartPage from './components/UserStartPage';
-import Error_MainDiv from './components/mainPages/Error_MainDiv';
-import Game from './components/mainPages/Game';
 import LeaderboardPage from './components/mainPages/LeaderboardPage';
 import SettingsPage from './components/mainPages/SettingsPage';
+import Chat_MainDiv from './components/mainPages/Chat_MainDiv';
 
 const emptyUserObject: User = {
 	username: '',
@@ -67,10 +66,10 @@ const App = () => {
 				<Route path='*' element={ user ? <UserStartPage /> : <Navigate to="/login" />}>
 					{/* Below are the child pages of UserStartPage and their paths */}
 					<Route path="home" element={<HomePage />} />
-					<Route path="chat" element={<Arena_Chat_MainDiv userID={user.userID} />} />
+					{/* <Route path="chat" element={<Chat_MainDiv userID={user.userID} />} /> */}
 					{/* <Route path="game" element={<Game />} /> */}
-					<Route path="leaderboard" element={<LeaderboardPage />} />
-					<Route path="profile" element={<ProfilePage userID={user.userID} />} />
+					{/* <Route path="leaderboard" element={<LeaderboardPage />} /> */}
+					{/* <Route path="profile" element={<ProfilePage userID={user.userID} />} /> */}
 					<Route path="settings" element={<SettingsPage onLogout={handleLogout} userID={user.userID} />} />
 				</Route>
 				<Route path='/login' element={<LoginPage onSignUp={storeUserInCookies} userID_set={userID_set} loginDone_set={loged_in_set} />} />

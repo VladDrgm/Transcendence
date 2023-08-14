@@ -2,14 +2,10 @@ import React, {useState} from 'react';
 import { User } from '../../interfaces/user.interface';
 import { useUserContext } from '../context/UserContext';
 import { updateAvatarApi, updatePasswordApi, updateUsernameApi } from '../../api/userApi';
-<<<<<<< HEAD:pong_frontend/src/components/mainPages/SettingsPage.tsx
 import * as styles from './SettingsPageStyles';
+import { getPrivateProfile } from '../../api/profile.api';
 
 interface SettingsPageProps
-=======
-import { getPrivateProfile } from '../../api/profile.api';
-interface SettingsMainDivProps
->>>>>>> main:pong_frontend/src/components/main_div/Settings_MainDiv.tsx
 {
 	onLogout: () => void;
 	userID: number;
@@ -143,23 +139,12 @@ return (
 		  <button style={styles.updateButtonStyle} onClick={handleUpdatePassword}>
 			Update
 		  </button>
-<<<<<<< HEAD:pong_frontend/src/components/mainPages/SettingsPage.tsx
-		</form>
-		<form>
 		  <input type="file" onChange={handleAvatarChange} style={styles.formFieldStyle}/>
-=======
-		  <input type="file" onChange={handleAvatarChange} style={FormFieldStyle}/>
->>>>>>> main:pong_frontend/src/components/main_div/Settings_MainDiv.tsx
 		  {showUpdateAvatarSuccessMessage && <p>Successfully update the avatar</p>}
 		  <button style={styles.updateButtonStyle} onClick={handleUpdateAvatar}>
 			Update
 		  </button>
-<<<<<<< HEAD:pong_frontend/src/components/mainPages/SettingsPage.tsx
-		</form>
 		<button style={styles.logoutButtonStyle} onClick={OnLogoutButtonClick}>
-=======
-		<button style={logoutButtonStyle} onClick={OnLogoutButtonClick}>
->>>>>>> main:pong_frontend/src/components/main_div/Settings_MainDiv.tsx
 		  Logout
 		</button>
 	  </div>

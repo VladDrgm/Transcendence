@@ -49,8 +49,8 @@ const CompleteProfilePage: React.FC<CompleteProfilePageProps> = ({userID}) => {
 		  const formData = new FormData();
           formData.append('img', newAvatar);
 		  const userObject = await updateAvatarApi(userID, formData);
-		  setUpdatedUser(userObject);
-		  setUser(userObject);
+		//   setUpdatedUser(userObject);
+		//   setUser(userObject);
 		  localStorage.setItem('user', JSON.stringify(userObject));
 		  setShowUpdateAvatarSuccessMessage(true);
 		} catch (error) {
