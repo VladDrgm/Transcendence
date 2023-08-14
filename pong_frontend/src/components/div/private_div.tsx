@@ -2,17 +2,18 @@ import React, { useEffect, useState, ChangeEvent  } from 'react';
 import { PrivateProfile } from '../../interfaces/private_profile.interface';
 import { getPrivateProfile } from '../../api/profile.api';
 import defaultProfile from '../../default_profiile.jpg';
+
 import { serialize } from 'v8';
 
 
 
 const Private_Div = () => {
-  const [user, setUser] = useState<PrivateProfile>();
+  const [profileUser, setProfileUser] = useState<PrivateProfile>();
 
   const getData = async () => {
     try{
       const myProf = await getPrivateProfile();
-      setUser(myProf);
+      setProfileUser(myProf);
     }
     catch (error) {
       console.error(error);
@@ -44,11 +45,11 @@ const Private_Div = () => {
         setImageUrl(data.data.image.url);
         /* Insert API method for image change (POST image link to our database) */
       }
-      if (user != undefined)
+      if (profileUser != undefined)
       {
-        var temp:PrivateProfile = user;
+        var temp:PrivateProfile = profileUser;
         temp.avatar = imageUrl;
-        setUser(temp);
+        setProfileUser(temp);
       }
       
     }
@@ -61,27 +62,27 @@ const Private_Div = () => {
     getData();
   }, []);
 
-  if (user != null) {
+  if (profileUser != null) {
     return (
       <div>
         <div>
-          <h2>{user.nickname}</h2>
-          {(user.avatar.substring(0, 5) != "https") && (
+          <h2>{profileUser.nickname}</h2>
+          {(profileUser.avatar.substring(0, 5) != "https") && (
             <img src={defaultProfile} alt="default profile" width="400" height="300"/>
           )}
-          {(user.avatar.substring(0, 5) === "https") && (
-            <img src={user.avatar} alt={user.nickname} width="400" height="300"/>
+          {(profileUser.avatar.substring(0, 5) === "https") && (
+            <img src={profileUser.avatar} alt={profileUser.nickname} width="400" height="300"/>
           )}
           <div>
             <input type="file" accept="image/*" onChange={handleImageChange} />
             <button onClick={uploadImage}>Upload</button>
             {imageUrl && <img src={imageUrl} alt="Uploaded" />}
           </div>
-          <p>Wins: {user.wins}</p>
-          <p>Losses: {user.losses}</p>
-          <p>Points: {user.points}</p>
-          <p>Status: {user.status}</p>
-          <p>Achievements: {user.achievements}</p>
+          <p>Wins: {profileUser.wins}</p>
+          <p>Losses: {profileUser.losses}</p>
+          <p>Points: {profileUser.points}</p>
+          <p>Status: {profileUser.status}</p>
+          <p>Achievements: {profileUser.achievements}</p>
         </div>
       </div>
     );

@@ -11,7 +11,7 @@ export const exampleStyle: Properties = {
 }
 
 /* Usage:
-import * as styles from './ProfilePageStyles';
+import * as styles from './ChatPageStyles';
 
-<p style={styles.formFieldStyle}>Welcome</p>
+<p style={styles.exampleStyle}>Welcome</p>
 */
