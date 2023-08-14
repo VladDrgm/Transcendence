@@ -9,11 +9,11 @@ import * as styles from './LoginPageStyles';
 interface LoginPageProps
 {
 	onSignUp: (user: User) => void;
-  	userID_set: React.Dispatch<React.SetStateAction<number>>;
-  	loginDone_set: React.Dispatch<React.SetStateAction<boolean>>;
+  	// userID_set: React.Dispatch<React.SetStateAction<number>>;
+  	// loginDone_set: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const LoginPage: React.FC<LoginPageProps> = ({onSignUp, userID_set, loginDone_set}) => {
+const LoginPage: React.FC<LoginPageProps> = ({onSignUp}) => {
 
 	const { user, setUser } = useUserContext();
 
@@ -26,6 +26,8 @@ const LoginPage: React.FC<LoginPageProps> = ({onSignUp, userID_set, loginDone_se
 	const [newUsername, setNewUsername] = useState(''); // Sign up state for username input
 	const [newIntraUsername, setNewIntraUsername] = useState(''); // Sign up state for username input
 	const [newPassword, setNewPassword] = useState(''); // Sign up state for password input
+
+	const [error, setError] = useState<string | null>(null);
   
 	const OnSignUpButtonClick = async () => {
 		setShowSignupPopup(true);
@@ -82,10 +84,10 @@ const LoginPage: React.FC<LoginPageProps> = ({onSignUp, userID_set, loginDone_se
 			const newCreatedUser: User = await userSignupAPI(newUser);
 			onSignUp(newCreatedUser);
 			await login(newCreatedUser.userID);
-			userID_set(newCreatedUser.userID);
-			loginDone_set(true);
+			// userID_set(newCreatedUser.userID);
+			// loginDone_set(true);
 		} catch (error) {
-			throw new Error('Error creating a new user');
+			setError('Error creating a new user');
 		}
 		setShowSignupPopup(false)
 	};
@@ -105,7 +107,7 @@ const LoginPage: React.FC<LoginPageProps> = ({onSignUp, userID_set, loginDone_se
 		localStorage.setItem('user', userJSON);
 		setUser(loggedInUser);
 	} catch (error) {
-		throw new Error('Error logging in. Try again!');
+		setError('Error logging in. Try again!');
 	}
 	setShowLoginPopup(false)
   };
@@ -123,7 +125,8 @@ const LoginPage: React.FC<LoginPageProps> = ({onSignUp, userID_set, loginDone_se
 //       input_user_id = 0
 //     }
 //   };
-  return (<div style={styles.pageStyle}>
+	return (
+		<div style={styles.pageStyle}>
 			<img src={gif} style={styles.gifStyle} ></img>
             <p style={styles.welcomeTitleStyle}>Do you want to play a game?</p>
             <button style={styles.loginButtonStyle} onClick={OnLoginButtonClick}>Login</button>
@@ -178,7 +181,8 @@ const LoginPage: React.FC<LoginPageProps> = ({onSignUp, userID_set, loginDone_se
         		</div>
       		)}
 
-          </div>);
+        </div>
+	);
 };
 
 export default LoginPage;

@@ -11,9 +11,9 @@ export class RedirectController {
     }
 
     try {
-      const clientId = 'YOUR_CLIENT_ID';
-      const clientSecret = 'YOUR_CLIENT_SECRET';
-      const redirectUri = 'YOUR_REDIRECT_URI'; // Must match the redirect URI registered with 42 API
+      const clientId = 'u-s4t2ud-73a326211ee639e90086ae51357b3329c87424371ddde5beeb7ec62c91c29f4e';
+      const clientSecret = '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';
+      const redirectUri = 'http://localhost:3000/redirect'; // Must match the redirect URI registered with 42 API
 
       // Exchange the authorization code for an access token
       const tokenEndpoint = 'https://api.intra.42.fr/oauth/token';
@@ -56,10 +56,10 @@ export class RedirectController {
       // Now you have the user's information (userData) and the access token (accessToken)
       // You can proceed to implement user creation/update and authentication logic
       // For demonstration, let's simply redirect to a success page
-      res.redirect('YOUR_REACT_APP_URL/success'); // Replace with your success page URL
+      res.redirect('http://localhost:3001/complete_profile'); // Replace with your success page URL
     } catch (error) {
       console.error('Error during 42 API callback:', error);
-      res.redirect('YOUR_REACT_APP_URL/error'); // Replace with your error page URL
+    //   res.redirect('http://localhost:3000/error'); // Replace with your error page URL
     }
   }
 }

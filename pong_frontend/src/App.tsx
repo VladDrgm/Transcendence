@@ -35,9 +35,9 @@ const emptyUserObject: User = {
 
 const App = () => {
 	const { user, setUser } = useUserContext();
-  	const [userID, userID_set] = useState<number>(0);
+  	// const [userID, userID_set] = useState<number>(0);
 
-  	const [loged_in, loged_in_set] = useState<boolean>(false);
+  	// const [loged_in, loged_in_set] = useState<boolean>(false);
 
 	useEffect(() => {
 		const storedUser = localStorage.getItem('user');
@@ -63,7 +63,7 @@ const App = () => {
 		<UserContextProvider>
 		  <Router>
 			<Routes>
-				<Route path='*' element={ user ? <UserStartPage /> : <Navigate to="/login" />}>
+				<Route path='*' element={ user.userID > 0 ? <UserStartPage /> : <Navigate to="/login" />}>
 					{/* Below are the child pages of UserStartPage and their paths */}
 					<Route path="home" element={<HomePage />} />
 					{/* <Route path="chat" element={<Chat_MainDiv userID={user.userID} />} /> */}
@@ -72,7 +72,7 @@ const App = () => {
 					{/* <Route path="profile" element={<ProfilePage userID={user.userID} />} /> */}
 					<Route path="settings" element={<SettingsPage onLogout={handleLogout} userID={user.userID} />} />
 				</Route>
-				<Route path='/login' element={<LoginPage onSignUp={storeUserInCookies} userID_set={userID_set} loginDone_set={loged_in_set} />} />
+				<Route path='/login' element={<LoginPage onSignUp={storeUserInCookies} />} />
 				<Route path='/complete_profile' element={<CompleteProfilePage userID={user.userID} />} />
 			</Routes>
 		  </Router>
