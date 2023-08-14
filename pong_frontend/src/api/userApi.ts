@@ -66,15 +66,9 @@ export const updateAvatarApi = async (userID: number, formData: FormData) => {
 	  const response = await fetch(fetchUserAddress + userID + '/update/avatar', {
 		method: 'PUT',
 		body: formData,
-		headers: {
-			'Accept': 'application/json',
-			'Content-Type': 'multipart/form-data',
-		  }
 	  });
   
 	  if (response.ok) {
-		const userObject = await response.json();
-		return userObject;
 	  } else {
 		throw new Error(response.statusText);
 	  }

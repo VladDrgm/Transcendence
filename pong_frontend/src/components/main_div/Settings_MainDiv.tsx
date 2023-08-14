@@ -4,7 +4,7 @@ import CSS from 'csstype';
 import { User } from '../../interfaces/user.interface';
 import { useUserContext } from '../context/UserContext';
 import { updateAvatarApi, updatePasswordApi, updateUsernameApi } from '../../api/userApi';
-
+import { getPrivateProfile } from '../../api/profile.api';
 interface SettingsMainDivProps
 {
 	onLogout: () => void;
@@ -73,11 +73,12 @@ const Settings_MainDiv: React.FC<SettingsMainDivProps> = ({onLogout, userID, mod
 		  }
 	
 		  const formData = new FormData();
-          formData.append('img', newAvatar);
-		  const userObject = await updateAvatarApi(userID, formData);
-		  setUpdatedUser(userObject);
-		  setUser(userObject);
-		  localStorage.setItem('user', JSON.stringify(userObject));
+          formData.append('file', newAvatar);
+		  await updateAvatarApi(userID, formData);
+		  const myProf = await getPrivateProfile(userID);
+		  setUpdatedUser(myProf);
+		  setUser(myProf);
+		  localStorage.setItem('user', JSON.stringify(myProf));
 		  setShowUpdateAvatarSuccessMessage(true);
 		} catch (error) {
 		  throw new Error('Error updating avatar. Try again!');
