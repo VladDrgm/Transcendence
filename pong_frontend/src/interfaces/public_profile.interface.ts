@@ -1,7 +1,9 @@
 export interface PublicProfile {
-    userId: number;
-    nickname: string;
-    avatar: string;
-    ladderLevel: number;
-    achievements: string;
+    userID: number;
+    username: string;
+    avatarPath: string;
+    wins: number;
+    losses: number;
+    points: number;
+    achievementsCSV: string;
   }

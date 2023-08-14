@@ -42,15 +42,28 @@ const canvasWidth = 600;
 const canvasHeight = 300;
 
 /* Overall utilities */
-let users: { username: string; id: string }[] = []; // Array to store connected users
+let users: { username: string; socketId: string; userId: number }[] = []; // Array to store connected users
 
 /* Chatroom utilities */
 const messages: { [key: string]: { sender: string; content: string }[] } = {
 	general: [],
-	random: [],
-	jokes: [],
-	javascript: []
 };
+
+const mutedUser = {};
+
+function addChatRoom(roomName: string) {
+	if (!messages.hasOwnProperty(roomName)) {
+	  messages[roomName] = [];
+	  console.log("new mas array added");
+  }
+}
+
+function deleteChatRoom(roomName: string) {
+	if (messages.hasOwnProperty(roomName)) {
+	  delete messages[roomName];
+	  console.log("msg array deleted");
+  }
+}
 
 //let playerOneSocket: string, playerTwoSocket: string, audienceMemberSocket: string;
 let userCount = 0, userNr = 0;
@@ -63,36 +76,123 @@ io.on('connection', (socket: Socket) => {
 		data: 'hello!' 
 	});
 
-	socket.on('join server', (playerName) => {
+	socket.on('join server', (data) => {
+		// playerName: string, userId: number
+		const playerName = data.username;
+		const userId = data.userId;
 		console.log("Username in join server is: " + playerName);
-		const user = {
-			username: playerName,
-			id: socket.id
-		};
-		console.log("Will this be triggered when the 2nd user joins?");
-		if (user !== null) {
-			users.push(user);
-			io.emit('new user', users);
-			io.sockets.emit('playerConnected', users[userNr]);
-			userNr++;
+		const existingUser = users.find(user => user.username === playerName);
+		if(!existingUser) {
+			const user = {
+				username: playerName,
+				socketId: socket.id,
+				userId: userId
+			};
+			// console.log("Will this be triggered when the 2nd user joins?");
+				users.push(user);
+				io.emit('new user', users);
+				io.sockets.emit('playerConnected', users[userNr]);
+				userNr++;
 		} else {
-			console.log("Cannot join -> user variable is null")
+				// console.log("Cannot join -> user variable is null")
+			existingUser.userId = userId;
+			io.emit("new user", users);
+			io.sockets.emit('playerConnected', users[userNr]);
 		}
 	});
 
 	socket.on('join room', (roomName: string, cb: (messages: any[]) => void) => {
+		// addChatRoom(roomName);
+		if (!messages.hasOwnProperty(roomName)) {
+			messages[roomName] = [];
+		}
 		socket.join(roomName);
 		cb(messages[roomName]);
 	});
 
 	socket.on('update name', (username: string) => {
-		const user = users.find(u => u.id === socket.id);
+		const user = users.find(u => u.socketId === socket.id);
 		if (user) {
 			user.username = username;
 		}
 	});
 
+	socket.on('delete room', (roomName) => {
+		deleteChatRoom(roomName);
+		io.emit('room deleted', roomName);
+	});
+
+	socket.on('add room', (roomName) => {
+		addChatRoom(roomName);
+		io.emit('room added', roomName);
+	});
+
+	socket.on('change room', (roomName) => {
+		io.emit('room changed', roomName);
+	});
+
+	socket.on('add admin', (data) => {
+		const newAdminUserID = data.newAdminUserID;
+		const roomName  = data.roomName;
+		// console.log("admin event recieved");
+		io.emit('admin added', {newAdminUserID, roomName });
+	});
+
+	socket.on('ban user', (data) => {
+		const targetId = data.targetId;
+		const roomName = data.roomName;
+		io.emit('user banned', {targetId, roomName });
+	});
+
+	socket.on('unban user', (data) => {
+		const targetId = data.targetId;
+		const roomName = data.roomName;
+		io.emit('user unbanned', {targetId, roomName });
+	});
+
+	socket.on('block user', (data) => {
+		const targetId = data.targetId;
+		const username = data.username;
+		io.emit('user blocked', {targetId, username });
+	});
+
+	socket.on('unblock user', (data) => {
+		const targetId = data.targetId;
+		const username = data.username;
+		io.emit('user unblocked', {targetId, username });
+	});
+
+	socket.on('mute user', (data) => {
+		const targetId = data.targetId;
+		const roomName = data.roomName;
+		const muteDuration = data.muteDuration;
+
+		io.emit('user muted', {targetId, roomName });
+		if (mutedUser[targetId]) {
+			clearTimeout(mutedUser[targetId].timeout);
+			mutedUser[targetId].muteDuration =muteDuration;
+			mutedUser[targetId].timeout = setTimeout(() => {
+				io.emit('user unmuted', {targetId, roomName});
+				delete mutedUser[targetId];
+			}, muteDuration)
+		}
+		mutedUser[targetId] = {
+			roomName, 
+			muteDuration,
+			timeout: setTimeout(() => {
+				io.emit("user unmuted", {targetId, roomName});
+				delete mutedUser[targetId];
+			}, muteDuration)
+		}
+	});
+
 	socket.on('send message', ({ content, to, sender, chatName, isChannel }) => {
+		console.log("content:", content);
+		console.log("sender:", sender);
+		console.log("chatName:", chatName);
+		console.log("isChannel", isChannel);
+		console.log("to:", to);
+		console.log("Messages:", messages);
 		if (isChannel) {
 			const payload = {
 				content,
@@ -542,7 +642,7 @@ io.on('connection', (socket: Socket) => {
 
 			io.sockets.emit('playerDisconnected');
 			userCount--;
-			users = users.filter(u => u.id !== socket.id);
+			users = users.filter(u => u.socketId !== socket.id);
 			if (users.length !== 0) {
 				io.emit('new user', users);
 			}

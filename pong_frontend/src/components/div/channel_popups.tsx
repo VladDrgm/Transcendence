@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction } from 'react';
 import { Channel, ChatProps } from '../../interfaces/channel.interface';
-import { modBannedUser, addAdmin, CreateChannel, addMuteUser} from './channel_utils';
+import { modBannedUser, CreateChannel, addMuteUser, fetchAllChannels} from './channel_utils';
 import { deleteChannelPassword, postChannelUser, postMuteUser, postPrivateChannelUser, putChannelPassword, putChannelType } from '../../api/channel/channel_user.api';
 import { getChannel } from '../../api/channel/channel.api';
 
@@ -58,8 +58,13 @@ export function muteUserPopUp(props: &ChatProps) {
     addMuteButton.addEventListener('click', function() {
         var newMutedUserName = newMutedUserNameInput.value;
         var newMutedUserDuration = newMutedUserDurationInput.valueAsNumber;
-        addMuteUser(newMutedUserName, newMutedUserDuration, props);
-        popup?.close();
+        if (!isNaN(newMutedUserDuration)) { // Check if it's a valid number
+            addMuteUser(newMutedUserName, newMutedUserDuration, props);
+            popup?.close();
+        } else {
+            alert("Invalid duration. Please enter a valid number.");
+            popup?.close();
+        }
     });
     popup?.document.body.appendChild(addMuteButton)
 }
@@ -124,7 +129,8 @@ export function addAdminPopUp(props:  &ChatProps) {
     addAdminButton.addEventListener('click', function() {
         var newAdminUserName = newAdminUserNameInput.value;
 
-        addAdmin(newAdminUserName, props);
+        props.addAdminRights(newAdminUserName, props.currentChat.chatName);
+        // addAdmin(newAdminUserName, props);
         popup?.close();
     });
     popup?.document.body.appendChild(addAdminButton);
@@ -149,19 +155,44 @@ export function changePasswordPopUp(props:  &ChatProps) {
     changePwButton.addEventListener('click', function() {
         var newPw = newPwInput.value;
         if (newPw === ""){
-            deleteChannelPassword(props.userID, props.currentChat.Channel.ChannelId);
-            console.log("Password removed");
-            if (props.currentChat.Channel.Type === "private"){
-                putChannelType(props.userID, props.currentChat.Channel.ChannelId);
-                console.log("Channel Type changed to public");
+            deleteChannelPassword(props.userID, props.currentChat.Channel.ChannelId)
+            .then(() => {
+                props.changeChatRoom(props.currentChat.chatName);
+                console.log("Password removed");
+                if (props.currentChat.Channel.Type === "private"){
+                    putChannelType(props.userID, props.currentChat.Channel.ChannelId)
+                    .then(() => {
+                        props.changeChatRoom(props.currentChat.chatName);
+                        props.updateChannellist();
+                        console.log("Channel Type changed to public");
+                    })
+                    .catch(error => {
+                        console.error("Error changing channel Type:", error);
+                    });
+                }
+            })
+            .catch(error => {
+                console.error("Error removing Password:", error);
+            });
+        }
+        putChannelPassword(props.userID, props.currentChat.Channel.ChannelId, newPw)
+        .then(() => {
+            console.log("Password updated");
+            if (props.currentChat.Channel.Type === "public"){
+                putChannelType(props.userID, props.currentChat.Channel.ChannelId)
+                .then(() => {
+                    props.changeChatRoom(props.currentChat.chatName);
+                    props.updateChannellist();
+                    console.log("Channel Type changed to private");
+                })
+                .catch(error => {
+                    console.error("Error changing channele type:", error);
+                });
             }
-        }
-        putChannelPassword(props.userID, props.currentChat.Channel.ChannelId, newPw);
-        console.log("Password updated");
-        if (props.currentChat.Channel.Type === "public"){
-            putChannelType(props.userID, props.currentChat.Channel.ChannelId);
-            console.log("Channel Type changed to private");
-        }
+        })
+        .catch(error => {
+            console.error("Error changing Password:", error);
+        })
         popup?.close();
     });
     popup?.document.body.appendChild(changePwButton);
@@ -169,12 +200,25 @@ export function changePasswordPopUp(props:  &ChatProps) {
     var removePwButton = document.createElement('button');
     removePwButton.innerHTML = 'Remove Password';
     removePwButton.addEventListener('click', function() {
-        deleteChannelPassword(props.userID, props.currentChat.Channel.ChannelId);
-        console.log("Password removed");
-        if (props.currentChat.Channel.Type === "private"){
-            putChannelType(props.userID, props.currentChat.Channel.ChannelId);
-            console.log("Channel Type changed to public");
-        }
+        deleteChannelPassword(props.userID, props.currentChat.Channel.ChannelId)
+        .then(() => {
+            console.log("Password removed");
+            if (props.currentChat.Channel.Type === "private"){
+                putChannelType(props.userID, props.currentChat.Channel.ChannelId)
+                .then(() => {
+                    props.changeChatRoom(props.currentChat.chatName);
+                    props.updateChannellist();
+                    console.log("Channel Type changed to public");
+                })
+                .catch(error => {
+                    console.error("Error changing channel Type:", error);
+                });
+            }
+
+        })
+        .catch(error => {
+            console.error("Error changing Password:", error);
+        });
         popup?.close();
     });
     popup?.document.body.appendChild(removePwButton);
@@ -243,25 +287,24 @@ export function popUpCreateChannel(props: ChatProps){
     createButton.addEventListener('click', function() {
         var channelName = channelNameInput.value;
         var password = channelPasswordInput.value;
-
-        CreateChannel(props, channelName, password);
+        CreateChannel(props, channelName, password)
+        .then(result => {
+            if (result){
+                //updating Channelllists
+                props.addChatRoom(channelName);
+				props.updateChannellist();
+            }
+        })
+        .catch(error => {
+            console.error("Error creating Channel: ", error);
+        })
         popup?.close();
     });
     popup?.document.body.appendChild(createButton);
 }
 
 export async function popUpJoinPrivateChannel(props: ChatProps){
-    // Open Window
     var popup = window.open('', '_blank', 'width=500,height=300,menubar=no,toolbar=no');
-
-    // const channelNameLabel = document.createElement("h1");
-    // channelNameLabel.textContent = "Channel Name:";
-    // popup?.document.body.appendChild(channelNameLabel);
-
-    // var channelNameInput = document.createElement('input');
-    // channelNameInput.type = 'text';
-    // channelNameInput.placeholder = "Enter Channel Name you wnat to join";
-    // popup?.document.body.appendChild(channelNameInput);
 
     const channelPasswordLabel = document.createElement("h1");
     channelPasswordLabel.textContent = "Channel Password:";
@@ -275,17 +318,9 @@ export async function popUpJoinPrivateChannel(props: ChatProps){
     var createButton = document.createElement('button');
     createButton.innerHTML = 'Join';
     createButton.addEventListener('click', async function() {
-        // var channelName = channelNameInput.value;
         var password = channelPasswordInput.value;
-        postPrivateChannelUser(props.userID,props.currentChat.Channel.ChannelId, password);
-        // props.currentChat = await getChannel(props.currentChat.Channel.ChannelId);
-        // if (TargetChannel){
-        //     //adding a channel to the list of shown channels
-        //     setPrivateChannels((prevChannels) => [...prevChannels, TargetChannel]);
-        //     //does Channel creation adds an element to the channelarray of the chatsurface?
-        // }
+        props.joinPrivateRoom(props.currentChat.chatName, password);
         popup?.close();
-        // return TargetChannel;
     });
     popup?.document.body.appendChild(createButton);
 }

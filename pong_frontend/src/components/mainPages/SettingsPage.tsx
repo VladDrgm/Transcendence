@@ -2,9 +2,14 @@ import React, {useState} from 'react';
 import { User } from '../../interfaces/user.interface';
 import { useUserContext } from '../context/UserContext';
 import { updateAvatarApi, updatePasswordApi, updateUsernameApi } from '../../api/userApi';
+<<<<<<< HEAD:pong_frontend/src/components/mainPages/SettingsPage.tsx
 import * as styles from './SettingsPageStyles';
 
 interface SettingsPageProps
+=======
+import { getPrivateProfile } from '../../api/profile.api';
+interface SettingsMainDivProps
+>>>>>>> main:pong_frontend/src/components/main_div/Settings_MainDiv.tsx
 {
 	onLogout: () => void;
 	userID: number;
@@ -72,11 +77,12 @@ const SettingsPage: React.FC<SettingsPageProps> = ({onLogout, userID}) => {
 		  }
 	
 		  const formData = new FormData();
-          formData.append('img', newAvatar);
-		  const userObject = await updateAvatarApi(userID, formData);
-		  setUpdatedUser(userObject);
-		  setUser(userObject);
-		  localStorage.setItem('user', JSON.stringify(userObject));
+          formData.append('file', newAvatar);
+		  await updateAvatarApi(userID, formData);
+		  const myProf = await getPrivateProfile(userID);
+		  setUpdatedUser(myProf);
+		  setUser(myProf);
+		  localStorage.setItem('user', JSON.stringify(myProf));
 		  setShowUpdateAvatarSuccessMessage(true);
 		} catch (error) {
 		  throw new Error('Error updating avatar. Try again!');
@@ -106,7 +112,7 @@ return (
 		<p style={styles.settingsTitleStyle}>Settings</p>
 		<img
 			className='user-card__image'
-			src={`http://localhost:3000/avatars/${user.avatarPath}`}
+			src={`http://localhost:3000${user.avatarPath.slice(1)}`}
 			alt='user.avatarPath'
 			onError={({ currentTarget }) => {
 				currentTarget.onerror = null;
@@ -114,10 +120,10 @@ return (
 			}}
 			style={styles.profilePictureStyle}
 			/>
-		<form>
+			<br/>
 		  <input
 			type="text"
-			placeholder={user.intraUsername}
+			placeholder={user.username}
 			value={newUsername}
 			onChange={(e) => setNewUsername(e.target.value)} // Update state on change
 			style={styles.formFieldStyle}
@@ -126,8 +132,6 @@ return (
 		  <button style={styles.updateButtonStyle} onClick={handleUpdateUsername}>
 			Update
 		  </button>
-		</form>
-		<form>
 		  <input
 			type="password"
 			placeholder="Type in new password"
@@ -139,15 +143,23 @@ return (
 		  <button style={styles.updateButtonStyle} onClick={handleUpdatePassword}>
 			Update
 		  </button>
+<<<<<<< HEAD:pong_frontend/src/components/mainPages/SettingsPage.tsx
 		</form>
 		<form>
 		  <input type="file" onChange={handleAvatarChange} style={styles.formFieldStyle}/>
+=======
+		  <input type="file" onChange={handleAvatarChange} style={FormFieldStyle}/>
+>>>>>>> main:pong_frontend/src/components/main_div/Settings_MainDiv.tsx
 		  {showUpdateAvatarSuccessMessage && <p>Successfully update the avatar</p>}
 		  <button style={styles.updateButtonStyle} onClick={handleUpdateAvatar}>
 			Update
 		  </button>
+<<<<<<< HEAD:pong_frontend/src/components/mainPages/SettingsPage.tsx
 		</form>
 		<button style={styles.logoutButtonStyle} onClick={OnLogoutButtonClick}>
+=======
+		<button style={logoutButtonStyle} onClick={OnLogoutButtonClick}>
+>>>>>>> main:pong_frontend/src/components/main_div/Settings_MainDiv.tsx
 		  Logout
 		</button>
 	  </div>

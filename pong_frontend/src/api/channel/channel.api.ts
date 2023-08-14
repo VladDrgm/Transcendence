@@ -26,6 +26,9 @@ export function deleteChannel(props: ChatProps) {
   .then(response => {
     if (response.ok) {
       console.log("Channel deleted successfully.");
+      props.deleteChatRoom(props.currentChat.chatName);
+      props.updateChannellist();
+      props.toggleChat(props.generalChat);
     } else {
       console.error("Error deleting Channel:", response.status);
     }

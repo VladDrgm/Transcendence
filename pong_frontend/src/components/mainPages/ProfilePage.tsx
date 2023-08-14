@@ -1,57 +1,35 @@
 import React, {useState, useEffect} from 'react';
 import Private_Div from '../div/private_div';
 import FriendList from '../div/friend_list_div';
-import { getMyID } from '../../api/profile.api';
-import Friend_Div from '../div/friend_div';
+
+
+export enum ProfileType_t
+{
+  PERSONAL_PROFILE,
+  FRIEND_PROFILE,
+  PUBLIC_PROFILE
+}
 
 interface ProfilePageProps
 {
   userID: number;
+<<<<<<< HEAD:pong_frontend/src/components/mainPages/ProfilePage.tsx
 }
 
 const ProfilePage: React.FC<ProfilePageProps> = ({userID}) => {
+=======
+  mode_set: React.Dispatch<React.SetStateAction<main_div_mode_t>>;
+  friend_set: React.Dispatch<React.SetStateAction<number>>;
+}
+
+const Profile_MainDiv: React.FC<ProfileProps> = ({userID, mode_set, friend_set}) => {
+>>>>>>> main:pong_frontend/src/components/main_div/Profile_MainDiv.tsx
   const [idTxt, setid] = useState<string>();
-  const [idfriend, setFid] = useState<number>(-1);
-  const getData = async () => {
-    try{
-      const myProf = await getMyID();
-      setid(myProf);
-    }
-    catch (error) {
-      console.error(error);
-    // handle the error appropriately or ignore it
-    }
-  };
-
-  const set_ownProfile = () => {
-    setFid(-1);
-  };
-
-  useEffect(() => {
-    getData();
-  }, []);
-
-    switch (idfriend){
-      case (-1):
         return (<div>
-                  <div>
-                  <p>Welcome {userID}. This is your profile on server {idTxt}. </p> 
-                  </div>
-                  <Private_Div/>
+                  <Private_Div userID={userID}/>
                   <hr/>
-                  <FriendList userID={userID} friend_set={setFid}/>
+                  <FriendList userID={userID} mode_set={mode_set} friend_set={friend_set}/>
                 </div>)
-      default :
-        return (<div>
-          <div>
-            <p>This is friends porfile </p> 
-            <br/> 
-          </div>
-          <Friend_Div userID={userID} friendID={idfriend}/>
-          <hr/>
-          <button onClick={set_ownProfile}>Back to your profile</button>
-        </div>)
-    };
 };
 
 export default ProfilePage;

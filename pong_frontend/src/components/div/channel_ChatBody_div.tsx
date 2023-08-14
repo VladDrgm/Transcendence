@@ -5,64 +5,57 @@ import { popUpJoinPrivateChannel } from './channel_popups';
 
 interface ChatBodyProps {
   props: ChatProps;
-  isUserInChannelBlocked: boolean;
-  isUserInChannel: boolean;
-  isAdmin: boolean;
-  isAdminResolved: boolean;
-  loadingChatBody: boolean;
+  // loadingChatBody: boolean;
   messages: Message[];
 }
 
 const ChatBody_Div: React.FC<ChatBodyProps> = ({
   props,
-  isUserInChannelBlocked,
-  isUserInChannel,
-  isAdmin,
-  isAdminResolved,
-  loadingChatBody,
   messages
 }) => {
-  if (isUserInChannelBlocked) {
-    return loadingChatBody ? (
-      <div>Loading Chat...</div>
-    ) : (
-      <TextBox>You are blocked from using this Channel.</TextBox>
-    );
+  if (!props.currentChat.isChannel){
+    return (
+      <Messages>{messages.map(renderMessages)}</Messages>);
   }
-  console.log("Channel type: ", props.currentChat.Channel.Type);
+  //Checking if everything is resolved
+  if (!props.ChannelUserRoles.isAdminResolved || 
+      !props.ChannelUserRoles.isBlockedResolved || 
+      !props.ChannelUserRoles.isMutedResolved ||
+      !props.ChannelUserRoles.isOwnerResolved||
+      !props.ChannelUserRoles.isUserResolved)
+    return (
+      <div>Loading Chat...</div>);
+  //Checking if USer is Blocked from USing/Joining Channel
+  if (props.ChannelUserRoles.isBlocked && props.ChannelUserRoles.isBlockedResolved) {
+    return (
+      <div>You are blocked from using this Channel.</div>);
+  }
+  // Switch for Private and Public Channels
   switch (props.currentChat.Channel.Type) {
     case "private":
-      if (isUserInChannel) {
-        return loadingChatBody ? (
-          <div>Loading Chat...</div>
-        ) : (
-          <Messages>{messages.map(renderMessages)}</Messages>
-        );
+      if (props.ChannelUserRoles.isUser ||
+          props.ChannelUserRoles.isAdmin ||
+          !props.currentChat.isChannel
+        ) {
+        return (
+          <Messages>{messages.map(renderMessages)}</Messages>);
       } else {
-        return loadingChatBody ? (
-          <div>Loading Chat...</div>
-        ) : (
+        return (
           <button onClick={() => popUpJoinPrivateChannel(props)}>
             Join private Channel {props.currentChat.chatName}
-          </button>
-        );
+          </button>);
       }
     case "public":
       if (
-        isUserInChannel ||
-        !props.currentChat.isChannel ||
-        (isAdmin && isAdminResolved) ||
-        props.connectedRooms.includes(props.currentChat.chatName.toString())
+        props.ChannelUserRoles.isUser ||
+        props.ChannelUserRoles.isAdmin ||
+        !props.currentChat.isChannel 
       ) {
-        return loadingChatBody ? (
-          <div>Loading Chat...</div>
-        ) : (
+        return (
           <Messages>{messages.map(renderMessages)}</Messages>
         );
       } else {
-        return loadingChatBody ? (
-          <div>Loading Chat...</div>
-        ) : (
+        return (
           <button onClick={() => props.joinRoom(props.currentChat.chatName)}>
             Join {props.currentChat.chatName}
           </button>
@@ -70,74 +63,9 @@ const ChatBody_Div: React.FC<ChatBodyProps> = ({
       }
       default:
         return (
-         <div>Loading Chat...</div>);
+         <div>Loading Chat 2...</div>);
     }
 };
 
 export default ChatBody_Div;
 
-
-// const ChatBody_Div: React.FC<ChatBodyProps> = ({
-//   props,
-//   isUserInChannelBlocked,
-//   isUserInChannel,
-//   isAdmin,
-//   isAdminResolved,
-//   loadingChatBody,
-//   messages
-// }) => {
-//   if (isUserInChannelBlocked) {
-//     return ( 
-//       loadingChatBody ? (
-//       <div>Loading Chat...</div> // Show a loading spinner or placeholder
-//       ) : (
-//         <TextBox>
-//           You are blocked from using this Channel.
-//         </TextBox>
-//         // setLoadingChatBody(true);
-//       )
-//     );
-//   } else if(props.currentChat.Channel.Type === "private"){
-//     if (isUserInChannel){
-//       return(
-//         loadingChatBody ? (
-//           <div>Loading Chat...</div> // Show a loading spinner or placeholder
-//           ) :(  
-//           <Messages>
-//             {messages.map(renderMessages)}
-//           </Messages>       
-//         )
-//       )
-//     }
-//     return (
-//       loadingChatBody ? (
-//         <div>Loading Chat...</div> // Show a loading spinner or placeholder
-//         ) : (
-//         <button onClick={() => popUpJoinPrivateChannel(props)}>
-//           Join private Channel {props.currentChat.chatName}
-//         </button>
-//         )
-//   );
-//   }  else if ((isUserInChannel || !props.currentChat.isChannel) || (isAdmin && isAdminResolved) || props.connectedRooms.includes(props.currentChat.chatName.toString())) {
-//     return (
-//       loadingChatBody ? (
-//         <div>Loading Chat...</div> // Show a loading spinner or placeholder
-//         ) : (
-//         <Messages>
-//           {messages.map(renderMessages)}
-//         </Messages>)
-//       );
-//   }  else {
-//     return (
-//       loadingChatBody ? (
-//         <div>Loading Chat...</div> // Show a loading spinner or placeholder
-//         ) : (
-//         <button onClick={() => props.joinRoom(props.currentChat.chatName)}>
-//           Join {props.currentChat.chatName}
-//         </button>
-//         )
-//     );
-//   }
-// };
-
-// export default ChatBody_Div;
