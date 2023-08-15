@@ -38,8 +38,8 @@ const LoginPage: React.FC<LoginPageProps> = ({onSignUp}) => {
 	};
 
 	const OnLoginWith42ButtonClick = async () => {
-		const clientID = 'u-s4t2ud-5cd9e549c33e07468ded3a2cc3572e1a4c100c9c139d9c69edee2d7a856d2075';
-		const redirectURI = 'https://vlad-id-dev-transcendencedb.postgres.database.azure.com/redirect';
+		const clientID = 'u-s4t2ud-73a326211ee639e90086ae51357b3329c87424371ddde5beeb7ec62c91c29f4e';
+		const redirectURI = 'http://localhost:3000/redirect';
 
 		// Construct the URL for the 42 API authorization endpoint
 		const authEndpoint = 'https://api.intra.42.fr/oauth/authorize';
