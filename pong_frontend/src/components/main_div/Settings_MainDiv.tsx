@@ -19,9 +19,8 @@ const Settings_MainDiv: React.FC<SettingsMainDivProps> = ({onLogout, userID, mod
 	const [newUsername, setNewUsername] = useState(''); // Sign up state for password input
 	const [newAvatar, setNewAvatar] = useState<File | null>(null)
 
-	const [showUpdatePasswordSuccessMessage, setShowUpdatePasswordSuccessMessage] = useState(false);
-	const [showUpdateUsernameSuccessMessage, setShowUpdateUsernameSuccessMessage] = useState(false);
-	const [showUpdateAvatarSuccessMessage, setShowUpdateAvatarSuccessMessage] = useState(false);
+	const [showErrorMessage, setShowErrorMessage] = useState<boolean>(false);
+	const [ErrorMessage, setErrorMessage] = useState<string>('');
   
 	//   // Add a conditional rendering to check if user is available
 	//   if (!user || !user.avatarPath) {
@@ -38,12 +37,11 @@ const Settings_MainDiv: React.FC<SettingsMainDivProps> = ({onLogout, userID, mod
 		  setUpdatedUser(userObject);
 		  setUser(userObject);
 		  localStorage.setItem('user', JSON.stringify(userObject));
-	  
-		  setShowUpdatePasswordSuccessMessage(true);
+		  setShowErrorMessage(false);
 		} catch (error) {
-		  throw new Error('Error updating password. Try again!');
+		  setErrorMessage('Error updating password. Try again!');
+		  setShowErrorMessage(true);
 		}
-		setShowUpdatePasswordSuccessMessage(false);
 	  };
 
 	  const handleUpdateUsername = async () => {
@@ -58,12 +56,13 @@ const Settings_MainDiv: React.FC<SettingsMainDivProps> = ({onLogout, userID, mod
 	  
 		  // Clear the input field after successful update
 		  setNewUsername('');
-
-		  setShowUpdateUsernameSuccessMessage(true);
+		  setShowErrorMessage(false);
+		  
 		} catch (error) {
-		  throw new Error('Error updating username. Try again!');
+		  setErrorMessage('Error updating username. Try again!');
+		  setShowErrorMessage(true);
 		}
-		setShowUpdateUsernameSuccessMessage(false);
+		
 	  };
 
 	  const handleUpdateAvatar = async () => {
@@ -79,11 +78,13 @@ const Settings_MainDiv: React.FC<SettingsMainDivProps> = ({onLogout, userID, mod
 		  setUpdatedUser(myProf);
 		  setUser(myProf);
 		  localStorage.setItem('user', JSON.stringify(myProf));
-		  setShowUpdateAvatarSuccessMessage(true);
+		  setNewAvatar(null);
+		  setShowErrorMessage(false);
 		} catch (error) {
-		  throw new Error('Error updating avatar. Try again!');
+		  setErrorMessage('Error updating avatar. Try again!');
+		  setShowErrorMessage(true);
 		}
-		setShowUpdateAvatarSuccessMessage(false);
+
 	  };
 
 	   // Extract the filename from the File object and update the state
@@ -193,7 +194,6 @@ return (
 			onChange={(e) => setNewUsername(e.target.value)} // Update state on change
 			style={FormFieldStyle}
 		  />
-		  {showUpdateUsernameSuccessMessage && <p>Successfully update the username</p>}
 		  <button style={updateButtonStyle} onClick={handleUpdateUsername}>
 			Update
 		  </button>
@@ -204,15 +204,14 @@ return (
 			onChange={(e) => setNewPassword(e.target.value)} // Update state on change
 			style={FormFieldStyle}
 		  />
-		  {showUpdatePasswordSuccessMessage && <p>Successfully update the password</p>}
 		  <button style={updateButtonStyle} onClick={handleUpdatePassword}>
 			Update
 		  </button>
 		  <input type="file" onChange={handleAvatarChange} style={FormFieldStyle}/>
-		  {showUpdateAvatarSuccessMessage && <p>Successfully update the avatar</p>}
 		  <button style={updateButtonStyle} onClick={handleUpdateAvatar}>
 			Update
 		  </button>
+		  {showErrorMessage && <p>{ErrorMessage}</p>}
 		<button style={logoutButtonStyle} onClick={OnLogoutButtonClick}>
 		  Logout
 		</button>
