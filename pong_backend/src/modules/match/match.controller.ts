@@ -27,11 +27,6 @@ export class MatchController {
     return this.matchService.getMatchById(matchId);
   }
 
-  // @Get('user/:userId')
-  // async getMatchesByUser(@Param('userId') userId: number): Promise<Match[]> {
-  //   return this.matchService.getMatchesByUser(userId);
-  // }
-
   @Delete(':id')
   @ApiOperation({ summary: 'Delete a match by matchId' })
   async deleteMatch(@Param('id') matchId: number): Promise<void> {

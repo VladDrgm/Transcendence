@@ -4,7 +4,6 @@ import { ApiTags } from '@nestjs/swagger';
 @ApiTags('Redirect')
 @Controller('redirect')
 export class RedirectController {
-  //   constructor() { }
 
   @Get()
   getRedirect(): string {
