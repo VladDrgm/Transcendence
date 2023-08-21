@@ -2,6 +2,7 @@
 import { Link, Outlet } from 'react-router-dom';
 import { useUserContext } from './context/UserContext';
 import * as styles from './UserStartPageStyles';
+import HomePage from './mainPages/HomePage';
 
 // Page properties
 interface UserStartPageProps {
@@ -13,12 +14,12 @@ const UserStartPage: React.FC<UserStartPageProps> = ({/* Use UserStartPageProps 
 	const { user } = useUserContext();
 
 	const navigationLinks: { path: string; label: string}[] = [
-		{ path: '/home', label: 'Home'},
-		{ path: '/friends', label: 'Friends'},
-		{ path: '/chat', label: 'Chat'},
-		{ path: '/game', label: 'Game'},
-		{ path: '/profile', label: 'Profile'},
-		{ path: '/settings', label: 'Settings'},
+		{ path: 'app/home', label: 'Home'},
+		{ path: 'app/friends', label: 'Friends'},
+		{ path: 'app/chat', label: 'Chat'},
+		{ path: 'app/game', label: 'Game'},
+		{ path: 'app/profile', label: 'Profile'},
+		{ path: 'app/settings', label: 'Settings'},
 	];
 
 	return (

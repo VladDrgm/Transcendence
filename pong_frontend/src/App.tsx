@@ -5,7 +5,7 @@ import { UserContextProvider, useUserContext } from './components/context/UserCo
 import LoginPage from './components/LoginPage';
 import CompleteProfilePage from './components/CompleteProfilePage';
 import HomePage from './components/mainPages/HomePage';
-import Arena_Chat_MainDiv from './components/mainPages/Chat_MainDiv';
+// import Arena_Chat_MainDiv from './components/mainPages/Chat_MainDiv';
 import ProfilePage from './components/mainPages/ProfilePage';
 import UserStartPage from './components/UserStartPage';
 import LeaderboardPage from './components/mainPages/LeaderboardPage';
@@ -35,9 +35,6 @@ const emptyUserObject: User = {
 
 const App = () => {
 	const { user, setUser } = useUserContext();
-  	// const [userID, userID_set] = useState<number>(0);
-
-  	// const [loged_in, loged_in_set] = useState<boolean>(false);
 
 	useEffect(() => {
 		const storedUser = localStorage.getItem('user');
@@ -45,6 +42,7 @@ const App = () => {
 			// Deserialize the user object from JSON
 			const parsedUser: User = JSON.parse(storedUser);
 			setUser(parsedUser);
+			console.log("User Id from useEffect from localStorage", parsedUser.userID);
 		}
 	}, []);
 
@@ -52,18 +50,19 @@ const App = () => {
 		const userJSON = JSON.stringify(newUser);
 		localStorage.setItem('user', userJSON);
 		setUser(newUser);
+		console.log("Store new user in cookies callback", newUser.userID);
 	}
 
 	const handleLogout = () => {
 		localStorage.removeItem('user');
     	setUser(emptyUserObject);
 	}
- 
-	return (
-		<UserContextProvider>
-		  <Router>
-			<Routes>
-				<Route path='*' element={ user.userID > 0 ? <UserStartPage /> : <Navigate to="/login" />}>
+
+	let content;
+
+	if (user) {
+		content = (
+			<Route path="/" element={<UserStartPage />}>
 					{/* Below are the child pages of UserStartPage and their paths */}
 					<Route path="home" element={<HomePage />} />
 					{/* <Route path="chat" element={<Chat_MainDiv userID={user.userID} />} /> */}
@@ -72,8 +71,32 @@ const App = () => {
 					{/* <Route path="profile" element={<ProfilePage userID={user.userID} />} /> */}
 					<Route path="settings" element={<SettingsPage onLogout={handleLogout} userID={user.userID} />} />
 				</Route>
+		);
+	} else {
+		content = (
+			<>
 				<Route path='/login' element={<LoginPage onSignUp={storeUserInCookies} />} />
-				<Route path='/complete_profile' element={<CompleteProfilePage userID={user.userID} />} />
+				<Route path='/complete_profile' element={<CompleteProfilePage onSignUp={storeUserInCookies}/>} />
+			</>
+		);
+	}
+ 
+	return (
+		<UserContextProvider>
+		  <Router>
+			<Routes>
+				<Route path="/" element={ user.userID > 0 ? <Navigate to="/app" /> : <Navigate to="/login" />}/>
+					{/* Below are the child pages of UserStartPage and their paths */}
+					<Route path="/app" element={<HomePage />}>
+						<Route path="/app/home" element={<HomePage />} />
+						{/* <Route path="chat" element={<Chat_MainDiv userID={user.userID} />} /> */}
+						{/* <Route path="game" element={<Game />} /> */}
+						{/* <Route path="leaderboard" element={<LeaderboardPage />} /> */}
+						{/* <Route path="profile" element={<ProfilePage userID={user.userID} />} /> */}
+						<Route path="/app/settings" element={<SettingsPage onLogout={handleLogout} userID={user.userID} />} />
+					</Route>
+				<Route path='/login' element={<LoginPage onSignUp={storeUserInCookies} />} />
+				<Route path='/complete_profile' element={<CompleteProfilePage onSignUp={storeUserInCookies}/>} />
 			</Routes>
 		  </Router>
 		</UserContextProvider>
@@ -81,3 +104,4 @@ const App = () => {
 };
 
 export default App;
+

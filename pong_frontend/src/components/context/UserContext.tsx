@@ -8,7 +8,7 @@ interface UserContextValue {
 	setUser: (user: User) => void;
   }
 
-const initialUser: User = {
+const emptyUserObject: User = {
 	username: '',
 	intraUsername: '',
 	userID: 0,
@@ -30,7 +30,7 @@ const initialUser: User = {
   };
 
 const UserContext = createContext<UserContextValue>({
-	user: initialUser,
+	user: emptyUserObject,
 	setUser: () => {},
   });
   
@@ -43,6 +43,9 @@ const UserContext = createContext<UserContextValue>({
   }
   
   export const UserContextProvider: React.FC<UserContextProviderProps> = ({children}) => {
+	const storedUser = localStorage.getItem('user');
+	const initialUser: User = storedUser ? JSON.parse(storedUser) : emptyUserObject;
+
 	const [user, setUser] = useState<User>(initialUser);
   
 	return (

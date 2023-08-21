@@ -52,11 +52,13 @@ export class RedirectController {
       }
 
       const userData = userResponse.data;
+	  const intraName = userData.login;
 
       // Now you have the user's information (userData) and the access token (accessToken)
       // You can proceed to implement user creation/update and authentication logic
       // For demonstration, let's simply redirect to a success page
-      res.redirect('http://localhost:3001/complete_profile'); // Replace with your success page URL
+	  const completeProfileURL = `http://localhost:3001/complete_profile?intraName=${intraName}`;
+      res.redirect(completeProfileURL); // Replace with your success page URL
     } catch (error) {
       console.error('Error during 42 API callback:', error);
     //   res.redirect('http://localhost:3000/error'); // Replace with your error page URL

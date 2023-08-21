@@ -9,8 +9,6 @@ import * as styles from './LoginPageStyles';
 interface LoginPageProps
 {
 	onSignUp: (user: User) => void;
-  	// userID_set: React.Dispatch<React.SetStateAction<number>>;
-  	// loginDone_set: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const LoginPage: React.FC<LoginPageProps> = ({onSignUp}) => {
