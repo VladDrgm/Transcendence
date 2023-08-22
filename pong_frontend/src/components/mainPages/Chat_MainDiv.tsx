@@ -6,7 +6,7 @@ import ChatBody_Div from "../div/channel_ChatBody_div";
 import ChatInput_Div from "../div/channel_ChatPanel_div";
 import { ChatProps } from "../../interfaces/channel.interface";
 import { chatInputProps } from "../div/channel_ChatPanel_div";
-import { main_div_mode_t } from "../MainDivSelector";
+// import { main_div_mode_t } from "../MainDivSelector";
 import { getUserIDByUserName } from "../div/channel_utils";
 
 
@@ -45,7 +45,7 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 		.then(result => {
 			if (result !== undefined) {
 				props.friend_set(result);
-				props.mode_set(main_div_mode_t.PUBLIC_PROFILE);
+				// props.mode_set(main_div_mode_t.PUBLIC_PROFILE);
 			}
 		}).catch(error => {
 			console.error("Error retrieving UserID:", error);

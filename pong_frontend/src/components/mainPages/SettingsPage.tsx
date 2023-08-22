@@ -1,18 +1,18 @@
 import React, {useState} from 'react';
-import {main_div_mode_t} from '../MainDivSelector'
-import CSS from 'csstype';
 import { User } from '../../interfaces/user.interface';
 import { useUserContext } from '../context/UserContext';
 import { updateAvatarApi, updatePasswordApi, updateUsernameApi } from '../../api/userApi';
+import * as styles from './SettingsPageStyles';
 import { getPrivateProfile } from '../../api/profile.api';
-interface SettingsMainDivProps
+
+interface SettingsPageProps
 {
 	onLogout: () => void;
-  	userID: number;
-  	mode_set: React.Dispatch<React.SetStateAction<main_div_mode_t>>;
+	userID: number;
 }
 
-const Settings_MainDiv: React.FC<SettingsMainDivProps> = ({onLogout, userID, mode_set}) => {
+// Component
+const SettingsPage: React.FC<SettingsPageProps> = ({onLogout, userID}) => {
 	const { user, setUser } = useUserContext();
 	const [updatedUser, setUpdatedUser] = useState<User>(user);
 	const [newPassword, setNewPassword] = useState(''); // Sign up state for password input
@@ -103,79 +103,10 @@ const OnLogoutButtonClick = async () => {
 
 };
 
-  // CSS for the profile picture
-  const profilePictureStyle: CSS.Properties = {
-    width: '120px',
-    height: '120px',
-    borderRadius: '50%',
-    objectFit: 'cover',
-    marginBottom: '20px',
-    border: '3px solid rgba(254, 8, 16, 1)',
-  };
-
-const settingsTitleStyle: CSS.Properties = {
-	color: 'rgba(254, 8, 16, 1)',
-	position: 'relative',
-	textAlign: 'center',
-	top: '8px',
-	padding: '4px',
-	fontFamily: 'Shlop',
-	fontSize: '40px',
-}
-
-const FormFieldStyle: CSS.Properties = {
-    padding: '8px',
-    width: '250px',
-    fontSize: '18px',
-    borderRadius: '4px',
-    border: '1px solid #fff',
-	marginBottom: '15px',
-	fontFamily: 'Shlop',
-}
-
-const updateButtonStyle: CSS.Properties = {
-	backgroundColor: 'rgba(254, 8, 16, 1)',
-	position: 'relative',
-	height:'40px',
-	width:'80px',
-	fontFamily: 'Shlop',
-	fontSize: '14px',
-	alignSelf: 'center',
-	borderRadius: '6px',
-	border: 'none',
-	color:'white',
-	marginTop: '10px',
-	marginLeft: '20px',
-}
-
-// const successMessageStyle: CSS.Properties = {
-// 	color: 'rgba(254, 8, 16, 1)',
-// 	position: 'relative',
-// 	textAlign: 'center',
-// 	top: '8px',
-// 	padding: '4px',
-// 	fontFamily: 'Shlop',
-// 	fontSize: '12px',
-// }
-
-const logoutButtonStyle: CSS.Properties = {
-	backgroundColor: 'rgba(254, 8, 16, 1)',
-	position: 'relative',
-	height:'40px',
-	width:'160px',
-	fontFamily: 'Shlop',
-	fontSize: '24px',
-	display: 'block',
-	borderRadius: '6px',
-	border: 'none',
-	color:'white',
-	marginBottom: '0px',
-}
-
 return (
 	<div>
 	  <div>
-		<p style={settingsTitleStyle}>Settings</p>
+		<p style={styles.settingsTitleStyle}>Settings</p>
 		<img
 			className='user-card__image'
 			src={`http://localhost:3000${user.avatarPath.slice(1)}`}
@@ -184,7 +115,7 @@ return (
 				currentTarget.onerror = null;
 				currentTarget.src = '/default_pfp.png';
 			}}
-			style={profilePictureStyle}
+			style={styles.profilePictureStyle}
 			/>
 			<br/>
 		  <input
@@ -192,9 +123,9 @@ return (
 			placeholder={user.username}
 			value={newUsername}
 			onChange={(e) => setNewUsername(e.target.value)} // Update state on change
-			style={FormFieldStyle}
+			style={styles.formFieldStyle}
 		  />
-		  <button style={updateButtonStyle} onClick={handleUpdateUsername}>
+		  <button style={styles.updateButtonStyle} onClick={handleUpdateUsername}>
 			Update
 		  </button>
 		  <input
@@ -202,23 +133,22 @@ return (
 			placeholder="Type in new password"
 			value={newPassword}
 			onChange={(e) => setNewPassword(e.target.value)} // Update state on change
-			style={FormFieldStyle}
+			style={styles.formFieldStyle}
 		  />
-		  <button style={updateButtonStyle} onClick={handleUpdatePassword}>
+		  <button style={styles.updateButtonStyle} onClick={handleUpdatePassword}>
 			Update
 		  </button>
-		  <input type="file" onChange={handleAvatarChange} style={FormFieldStyle}/>
-		  <button style={updateButtonStyle} onClick={handleUpdateAvatar}>
+		  <input type="file" onChange={handleAvatarChange} style={styles.formFieldStyle}/>
+		  <button style={styles.updateButtonStyle} onClick={handleUpdateAvatar}>
 			Update
 		  </button>
 		  {showErrorMessage && <p>{ErrorMessage}</p>}
-		<button style={logoutButtonStyle} onClick={OnLogoutButtonClick}>
+		<button style={styles.logoutButtonStyle} onClick={OnLogoutButtonClick}>
 		  Logout
 		</button>
 	  </div>
 	</div>
   );
-  
 };
 
-export default Settings_MainDiv;
+export default SettingsPage;

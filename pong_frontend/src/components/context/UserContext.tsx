@@ -1,8 +1,14 @@
 // UserContext.tsx
 import { createContext, useContext, useState } from 'react';
 import { User } from '../../interfaces/user.interface';
+import React from 'react';
 
-const initialUser: User = {
+interface UserContextValue {
+	user: User;
+	setUser: (user: User) => void;
+  }
+
+const emptyUserObject: User = {
 	username: '',
 	intraUsername: '',
 	userID: 0,
@@ -23,12 +29,28 @@ const initialUser: User = {
 	channels: [],
   };
 
-export const UserContext = createContext<{
-	user: User;
-	setUser: React.Dispatch<React.SetStateAction<User>>;
-}>({
-	user: initialUser,
+const UserContext = createContext<UserContextValue>({
+	user: emptyUserObject,
 	setUser: () => {},
-});
+  });
+  
+  export function useUserContext() {
+	return useContext(UserContext);
+  }
 
-export const useUserContext = () => useContext(UserContext);
+  interface UserContextProviderProps {
+	children: React.ReactNode;
+  }
+  
+  export const UserContextProvider: React.FC<UserContextProviderProps> = ({children}) => {
+	const storedUser = localStorage.getItem('user');
+	const initialUser: User = storedUser ? JSON.parse(storedUser) : emptyUserObject;
+
+	const [user, setUser] = useState<User>(initialUser);
+  
+	return (
+	  <UserContext.Provider value={{ user, setUser }}>
+		{children}
+	  </UserContext.Provider>
+	);
+  };

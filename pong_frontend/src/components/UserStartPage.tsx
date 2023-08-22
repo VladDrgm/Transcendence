@@ -1,61 +1,41 @@
-import React, {useState} from 'react';
-import MainDivSelector, {main_div_mode_t} from './MainDivSelector';
-import CSS from 'csstype';
-import { User } from '../interfaces/user.interface';
+// Imports
+import { Link, Outlet } from 'react-router-dom';
 import { useUserContext } from './context/UserContext';
+import * as styles from './UserStartPageStyles';
+import HomePage from './mainPages/HomePage';
 
-
-interface StartPageProps
-{
-	onLogout: () => void;
-	id: number;
+// Page properties
+interface UserStartPageProps {
+	/* Declar page properties here if needed */
 }
 
-const UserStartPage: React.FC<StartPageProps> = ({onLogout, id}) => {
+// Component
+const UserStartPage: React.FC<UserStartPageProps> = ({/* Use UserStartPageProps here */}) => {
 	const { user } = useUserContext();
-  	const [mode, mode_set] = useState<main_div_mode_t>(main_div_mode_t.HOME_PAGE);
 
-  	const pageStyle: CSS.Properties = {
-		backgroundColor: 'rgba(3, 3, 3, 1)',
-		height: '100%',
-		width: '100%',
-		position: 'absolute',
-		alignItems: 'center',
-		flexDirection: 'column',
-		textAlign: 'center',
-		borderColor: 'green',
-		borderWidth: '5px',
-	}
+	const navigationLinks: { path: string; label: string}[] = [
+		{ path: 'app/home', label: 'Home'},
+		{ path: 'app/friends', label: 'Friends'},
+		{ path: 'app/chat', label: 'Chat'},
+		{ path: 'app/game', label: 'Game'},
+		{ path: 'app/profile', label: 'Profile'},
+		{ path: 'app/settings', label: 'Settings'},
+	];
 
-  	const buttonStyle: CSS.Properties = {
-		backgroundColor: 'rgba(254, 8, 16, 1)',
-		position: 'relative',
-		height:'40px',
-		width:'160px',
-		fontFamily: 'Shlop',
-		fontSize: '24px',
-		alignSelf: 'center',
-		borderRadius: '6px',
-		border: 'none',
-		color:'white',
-		top:'4px',
-		margin:'4px',
-	}
-
-  return (<div style={pageStyle}>
-            <header>
-              <button style={buttonStyle} onClick={() => mode_set(main_div_mode_t.HOME_PAGE)}>Home</button>
-              <button style={buttonStyle} onClick={() => mode_set(main_div_mode_t.GAMEARENA)}>GameArena</button>
-              {/* <button style={buttonStyle}>Play</button> */}
-              <button style={buttonStyle} onClick={() => mode_set(main_div_mode_t.PROFILE)}>Profile</button>
-			  <button style={buttonStyle} onClick={() => mode_set(main_div_mode_t.LEADERBORAD)}>Leaderboard</button>
-              <button style={buttonStyle} onClick={() => mode_set(main_div_mode_t.HISTORY)}>Match History</button>
-			  <button style={buttonStyle} onClick={() => mode_set(main_div_mode_t.SETTINGS)}>Settings</button>
-            </header>
-            <div style={{ width: '100%', height: '500px', backgroundColor: 'lightgray' }}>
-              <MainDivSelector onLogout={onLogout} userID={id} mode={mode} mode_set={mode_set} />
-            </div>
-          </div>);
+	return (
+		<div style={styles.pageStyle}>
+			<header>
+        		{
+					navigationLinks.map((link) => (
+          				<Link key={link.path} style={styles.buttonStyle} to={link.path}>{link.label}</Link>
+        			))
+				}
+      		</header>
+	  		<div style={styles.subPageDimensions}>
+	  			<Outlet /> {/* This will render the nested routes */}
+      		</div>
+		</div>
+	);
 };
 
 export default UserStartPage;

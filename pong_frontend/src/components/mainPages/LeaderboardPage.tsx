@@ -1,14 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { IUser } from '../../interfaces/interface';
 import { getLeaderboard } from '../../api/leaderboard.api';
-import {main_div_mode_t} from '../MainDivSelector';
 interface LeaderboardProps
 {
-  mode_set: React.Dispatch<React.SetStateAction<main_div_mode_t>>;
   friend_set: React.Dispatch<React.SetStateAction<number>>;
 }
 
-const Leaderboard_MainDiv: React.FC<LeaderboardProps>  = ({mode_set, friend_set}) => {
+const LeaderboardPage: React.FC<LeaderboardProps>  = ({friend_set}) => {
   const [leaderboard, setLeaderboard] = useState<IUser[]>([]);
   const [scoreMap, setScoreMap] = useState<Map<number, number>>(new Map());
 
@@ -23,7 +21,6 @@ const Leaderboard_MainDiv: React.FC<LeaderboardProps>  = ({mode_set, friend_set}
 
   const openFriend = (FID:number) => {
     friend_set(FID);
-    mode_set(main_div_mode_t.PUBLIC_PROFILE);
   };
 
   useEffect(() => {
@@ -66,4 +63,4 @@ const Leaderboard_MainDiv: React.FC<LeaderboardProps>  = ({mode_set, friend_set}
   );
 };
 
-export default Leaderboard_MainDiv;
+export default LeaderboardPage;
