@@ -4,7 +4,7 @@ import { getFriendList } from '../../api/friend_list.api';
 
 interface FriendProps
 {
-  userID: number;
+  userID: number | undefined;
   friend_set: React.Dispatch<React.SetStateAction<number>>;
 }
 

@@ -26,7 +26,7 @@ export async function getAdmins(channelId: number): Promise<any[]>{
   }
   
   //tested
-  export async function getIsAdmin(channelId: number, userId: number): Promise<boolean> {
+  export async function getIsAdmin(channelId: number, userId: number | undefined): Promise<boolean> {
     try {
       const response = await fetch(fetchAddress + 'channel/' + userId + '/' + channelId + '/admin', {credentials: "include",})
       if (!response.ok) {
@@ -55,7 +55,7 @@ export async function getAdmins(channelId: number): Promise<any[]>{
       .catch(error => {console.log("Error deleting Admin:", error);})
   }
   
-  export function postAdmin(channelId: number, targetId: number, userId: number) {
+  export function postAdmin(channelId: number, targetId: number, userId: number | undefined) {
     const requestOptions = {
       method: 'POST',
       headers: { 

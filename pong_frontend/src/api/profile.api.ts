@@ -4,7 +4,7 @@ export async function getFriendProfile(userID:number, friendID:number)  {
 	return json;
   }
 
-export async function getPrivateProfile(userID:number)  {
+export async function getPrivateProfile(userID:number | undefined)  {
   const response = await fetch('http://localhost:3000/user/user/' + userID);
   const json = (await response.json());
 return json;

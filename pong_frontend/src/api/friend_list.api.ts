@@ -1,4 +1,4 @@
-export const getFriendList = async (userID:number) => {
+export const getFriendList = async (userID:number | undefined) => {
     const response = await fetch('http://localhost:3000/friend/' + userID + '/friends');
     if (response.ok)
     {

@@ -11,8 +11,8 @@ export interface Channel {
 }
 
 export interface ChatProps {
-	userID: number; //userID from login process
-	user: User; //USer from login process
+	userID: number | undefined; //userID from login process
+	user: User | null; //USer from login process
 	toggleChat: (currentChat: ChatData) => void;
 	yourId: string | number;  //socketId from joining the game
 	// username: string; //name given in the game startpage
@@ -59,7 +59,7 @@ export interface ChatProps {
 };
 
 export interface Message {
-	sender: string;
+	sender: string | undefined;
 	content: string;
 }
 
