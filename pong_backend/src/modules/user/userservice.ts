@@ -33,6 +33,9 @@ export class UserService {
   }
 
   async create(user: User): Promise<User> {
+    const isUserInDb = await this.userRepository.findOneBy({ intraUsername: user.intraUsername });
+    if (isUserInDb) return isUserInDb;
+
     return this.userRepository.save(user);
   }
 
