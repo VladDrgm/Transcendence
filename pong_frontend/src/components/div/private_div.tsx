@@ -5,7 +5,7 @@ import CSS from 'csstype';
 
 interface PrivateDivProps
 {
-  userID: number;
+  userID: number | undefined;
 }
 
 const Private_Div: React.FC<PrivateDivProps> = ({userID}) => {

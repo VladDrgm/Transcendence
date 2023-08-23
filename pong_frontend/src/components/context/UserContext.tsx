@@ -4,33 +4,12 @@ import { User } from '../../interfaces/user.interface';
 import React from 'react';
 
 interface UserContextValue {
-	user: User;
-	setUser: (user: User) => void;
+	user: User | null;
+	setUser: (user: User | null) => void;
   }
 
-const emptyUserObject: User = {
-	username: '',
-	intraUsername: '',
-	userID: 0,
-	socketId: '',
-	avatarPath: '',
-	wins: 0,
-	losses: 0,
-	points: 0,
-	status: '',
-	achievementsCSV: '',
-	passwordHash: '',
-	friends: [],
-	befriendedBy: [],
-	blocked: [],
-	blockedBy: [],
-	adminChannels: [],
-	blockedChannels: [],
-	channels: [],
-  };
-
 const UserContext = createContext<UserContextValue>({
-	user: emptyUserObject,
+	user: null,
 	setUser: () => {},
   });
   
@@ -44,9 +23,10 @@ const UserContext = createContext<UserContextValue>({
   
   export const UserContextProvider: React.FC<UserContextProviderProps> = ({children}) => {
 	const storedUser = localStorage.getItem('user');
-	const initialUser: User = storedUser ? JSON.parse(storedUser) : emptyUserObject;
+	const initialUser: User | null = storedUser ? JSON.parse(storedUser) : null;
 
-	const [user, setUser] = useState<User>(initialUser);
+	
+	const [user, setUser] = useState<User | null>(initialUser);
   
 	return (
 	  <UserContext.Provider value={{ user, setUser }}>

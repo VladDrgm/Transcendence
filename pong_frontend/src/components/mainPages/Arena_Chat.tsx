@@ -19,7 +19,7 @@ import { error } from 'console';
 
 interface ArenaDivProps
 {
-  userID: number;
+  userID: number | undefined;
 //   mode_set: React.Dispatch<React.SetStateAction<main_div_mode_t>>;
   friend_set: React.Dispatch<React.SetStateAction<number>>;
 }
@@ -151,7 +151,7 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID, friend_set}) => {
 	useEffect(() => {initializeMessagesState();},[]);
 
 	const [messages, setMessages] = useState<{
-		[key in ChatName]: { sender: string; content: string }[];
+		[key in ChatName]: { sender: string | undefined; content: string }[];
 	}>(initialMessagesState);
 	// console.log('initialMessageState:', initialMessagesState);
 
@@ -175,11 +175,11 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID, friend_set}) => {
 		console.log("message:", message);
 		console.log("Messages :", messages);
 		console.log("currentchat: ", currentChat);
-		console.log("username : ", user.username);
+		console.log("username : ", user?.username);
 		const payload = {
 		content: message,
 		to: currentChat.isChannel ? currentChat.chatName : currentChat.receiverId,
-		sender: user.username,
+		sender: user?.username,
 		chatName: currentChat.chatName,
 		isChannel: currentChat.isChannel
 		};
@@ -192,7 +192,7 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID, friend_set}) => {
 				draft[currentChat.chatName] = [];
 			}
 			draft[currentChat.chatName].push({
-				sender: user.username,
+				sender: user?.username,
 				content: message
 			});
 		});
@@ -210,7 +210,7 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID, friend_set}) => {
 
 	function joinRoom(chatName: ChatName) {
 		console.log("Posting User ", userID, " in Channel:", currentChat.Channel.ChannelId);
-		postChannelUser(userID, currentChat.Channel.ChannelId)
+		postChannelUser(user?.userID, currentChat.Channel.ChannelId)
 			.then(()=> {
 			socketRef.current?.emit("join room", chatName, (messages: any) => roomJoinCallback(messages, chatName))
 			setCurrentRoles((prevState) => ({
@@ -223,7 +223,7 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID, friend_set}) => {
 	}
 
 	function joinPrivateRoom(chatName: ChatName, password: string) {
-		postPrivateChannelUser(userID, currentChat.Channel.ChannelId, password)
+		postPrivateChannelUser(user?.userID, currentChat.Channel.ChannelId, password)
 		.then(() => {
 				console.log("Posting User ", userID, " in Channel:", currentChat.Channel.ChannelId);
 				socketRef.current?.emit("join room", chatName, (messages: any) => roomJoinCallback(messages, chatName));
@@ -246,7 +246,7 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID, friend_set}) => {
 					alert("User could not be found. Please try another Username.");
 					return;
 				}
-				postAdmin(currentChat.Channel.ChannelId, Number(targetID), userID)
+				postAdmin(currentChat.Channel.ChannelId, Number(targetID), user?.userID)
 				.then(() => {
 					console.log('Admin added with UserId:', targetID);
 					const data = {
@@ -273,7 +273,7 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID, friend_set}) => {
 						alert("User could not be found. Please try another Username.");
 						return;
 					}
-					postBlockedUser(userID, Number(targetID))
+					postBlockedUser(user?.userID, Number(targetID))
 					.then(() => {
 						console.log('User blocked with UserId:', targetID);
 						// const data = {
@@ -281,7 +281,7 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID, friend_set}) => {
 						// 	targetId: Number(targetID)
 						// };
 						// socketRef.current?.emit('block user', data);
-						blockUserSocket(Number(targetID), user.username);
+						blockUserSocket(Number(targetID), user?.username);
 					})
 					.catch(error => {
 						console.error("Error blocking user with Username:" , targetName);
@@ -301,10 +301,10 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID, friend_set}) => {
 					alert("User could not be found. Please try another Username.");
 					return;
 				}
-				deleteBlockedUser(userID, Number(targetID))
+				deleteBlockedUser(user?.userID, Number(targetID))
 				.then(() => {
 					console.log('User unblocked with UserId:', targetID);
-					unblockUserSocket(Number(targetID), user.username);
+					unblockUserSocket(Number(targetID), user?.username);
 				})
 				.catch(error => {
 					console.error("Error unblocking user with Username:" , targetName);
@@ -324,13 +324,13 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID, friend_set}) => {
 				alert("User could not be found. Please try another Username.");
 				return;
 			}
-			getIsFriend(user.userID, Number(targetID))
+			getIsFriend(user?.userID, Number(targetID))
 			.then((result) => {
 				if (result){
 					alert("User is already a Friend");
 					return;
 				}
-				postFriend(Number(targetID), user.userID)
+				postFriend(Number(targetID), user?.userID)
 				.then(() => {
 					console.log('Friend added with UserId:', targetID);
 					alert("User "+ targetName + " added as Friend");
@@ -359,13 +359,13 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID, friend_set}) => {
 				alert("User could not be found. Please try another Username.");
 				return;
 			}
-			getIsFriend(user.userID, Number(targetID))
+			getIsFriend(user?.userID, Number(targetID))
 			.then((result) => {
 				if (!result){
 					alert("User is not a Friend");
 					return;
 				}
-				deleteFriend(Number(targetID), user.userID)
+				deleteFriend(Number(targetID), user?.userID)
 				.then(() => {
 					console.log('Friend removed with UserId:', targetID);
 					alert("User "+ targetName + " removed as Friend");
@@ -394,7 +394,7 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID, friend_set}) => {
 		// 	draft = draft.filter((room) => room !== chatNameString);
 		// });
 		console.log("Removing User ", userID, " from Channel:", currentChat.Channel.ChannelId);
-		deleteChannelUser(userID, currentChat.Channel.ChannelId);
+		deleteChannelUser(user?.userID, currentChat.Channel.ChannelId);
 		// setConnectedRooms(newConnectedRooms);
 	}
 
@@ -430,11 +430,11 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID, friend_set}) => {
 		socketRef.current?.emit('mute user', {targetId, roomName, muteDuration});
 	}
 
-	function blockUserSocket(targetId: string | number, username: string) {
+	function blockUserSocket(targetId: string | number, username: string | undefined) {
 		socketRef.current?.emit('block user', {targetId, username});
 	}
 
-	function unblockUserSocket(targetId: string | number, username: string) {
+	function unblockUserSocket(targetId: string | number, username: string | undefined) {
 		socketRef.current?.emit('unblock user', {targetId, username});
 	}
 
@@ -478,7 +478,7 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID, friend_set}) => {
 		getUserIDByUserName(currentChat.chatName.toString())
 			.then((result) => {
 				if(result !== undefined){
-					getBlockedUser(result, userID)
+					getBlockedUser(result, user?.userID)
 					.then((user) => {
 						setCurrentRoles((prevState) => ( {
 							...prevState,
@@ -512,7 +512,7 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID, friend_set}) => {
 			if (!currentChat.isResolved){
 				return;
 			}
-			getChannelUser(userID, currentChat.Channel.ChannelId)
+			getChannelUser(user?.userID, currentChat.Channel.ChannelId)
 				.then((user) => {
 					setCurrentRoles((prevState) => ( {
 						...prevState,
@@ -534,7 +534,7 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID, friend_set}) => {
 			if (!currentChat.isResolved){
 				return;
 			}
-			getChannelBlockedUser(userID, currentChat.Channel.ChannelId)
+			getChannelBlockedUser(user?.userID, currentChat.Channel.ChannelId)
 				.then((user) => {
 					setCurrentRoles((prevState) => ({
 						...prevState,
@@ -556,7 +556,7 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID, friend_set}) => {
 			if (!currentChat.isResolved){
 				return;
 			}
-			getMutedStatus(currentChat.Channel.ChannelId, userID)
+			getMutedStatus(currentChat.Channel.ChannelId, user?.userID)
 				.then((response) => {
 					setCurrentRoles((prevState) => ({
 						...prevState,
@@ -577,7 +577,7 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID, friend_set}) => {
 			if (!currentChat.isResolved){
 				return;
 			}
-			getIsAdmin(currentChat.Channel.ChannelId, userID)
+			getIsAdmin(currentChat.Channel.ChannelId, user?.userID)
 				.then((user) => {
 					setCurrentRoles((prevState) => ({
 						...prevState,
@@ -623,10 +623,10 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID, friend_set}) => {
 			transports: ["websocket"],
 			withCredentials: true,
 			});
-			console.log("What is being sent as username is: " + user.username);
+			console.log("What is being sent as username is: " + user?.username);
 			const data = {
-				username: user.username,
-				userId: user.userID,
+				username: user?.username,
+				userId: user?.userID,
 				};
 			socketRef.current.emit("join server", data);
 			socketRef.current.emit("join room", "general", (messages: any) => roomJoinCallback(messages, "general"));

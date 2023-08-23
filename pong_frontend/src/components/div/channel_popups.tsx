@@ -155,12 +155,12 @@ export function changePasswordPopUp(props:  &ChatProps) {
     changePwButton.addEventListener('click', function() {
         var newPw = newPwInput.value;
         if (newPw === ""){
-            deleteChannelPassword(props.userID, props.currentChat.Channel.ChannelId)
+            deleteChannelPassword(props?.userID, props.currentChat.Channel.ChannelId)
             .then(() => {
                 props.changeChatRoom(props.currentChat.chatName);
                 console.log("Password removed");
                 if (props.currentChat.Channel.Type === "private"){
-                    putChannelType(props.userID, props.currentChat.Channel.ChannelId)
+                    putChannelType(props?.userID, props.currentChat.Channel.ChannelId)
                     .then(() => {
                         props.changeChatRoom(props.currentChat.chatName);
                         props.updateChannellist();

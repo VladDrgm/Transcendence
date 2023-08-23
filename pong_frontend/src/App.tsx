@@ -11,40 +11,12 @@ import UserStartPage from './components/UserStartPage';
 import LeaderboardPage from './components/mainPages/LeaderboardPage';
 import SettingsPage from './components/mainPages/SettingsPage';
 import Chat_MainDiv from './components/mainPages/Chat_MainDiv';
-
-const emptyUserObject: User = {
-	username: '',
-	intraUsername: '',
-	userID: 0,
-	socketId: '',
-	avatarPath: '',
-	wins: 0,
-	losses: 0,
-	points: 0,
-	status: '',
-	achievementsCSV: '',
-	passwordHash: '',
-	friends: [],
-	befriendedBy: [],
-	blocked: [],
-	blockedBy: [],
-	adminChannels: [],
-	blockedChannels: [],
-	channels: [],
-  };
+import Arena_Chat_MainDiv from './components/mainPages/Arena_Chat';
 
 const App = () => {
 	const { user, setUser } = useUserContext();
 
-	useEffect(() => {
-		const storedUser = localStorage.getItem('user');
-		if (storedUser) {
-			// Deserialize the user object from JSON
-			const parsedUser: User = JSON.parse(storedUser);
-			setUser(parsedUser);
-			console.log("User Id from useEffect from localStorage", parsedUser.userID);
-		}
-	}, []);
+	const [friendID, friend_set] = useState<number>(-1);
 
 	const storeUserInCookies = (newUser: User) => {
 		const userJSON = JSON.stringify(newUser);
@@ -55,52 +27,25 @@ const App = () => {
 
 	const handleLogout = () => {
 		localStorage.removeItem('user');
-    	setUser(emptyUserObject);
+    	setUser(null);
 	}
 
-	let content;
-
-	if (user) {
-		content = (
-			<Route path="/" element={<UserStartPage />}>
-					{/* Below are the child pages of UserStartPage and their paths */}
-					<Route path="home" element={<HomePage />} />
-					{/* <Route path="chat" element={<Chat_MainDiv userID={user.userID} />} /> */}
-					{/* <Route path="game" element={<Game />} /> */}
-					{/* <Route path="leaderboard" element={<LeaderboardPage />} /> */}
-					{/* <Route path="profile" element={<ProfilePage userID={user.userID} />} /> */}
-					<Route path="settings" element={<SettingsPage onLogout={handleLogout} userID={user.userID} />} />
-				</Route>
-		);
-	} else {
-		content = (
-			<>
-				<Route path='/login' element={<LoginPage onSignUp={storeUserInCookies} />} />
-				<Route path='/complete_profile' element={<CompleteProfilePage onSignUp={storeUserInCookies}/>} />
-			</>
-		);
-	}
- 
 	return (
-		<UserContextProvider>
-		  <Router>
-			<Routes>
-				<Route path="/" element={ user.userID > 0 ? <Navigate to="/app" /> : <Navigate to="/login" />}/>
-					{/* Below are the child pages of UserStartPage and their paths */}
-					<Route path="/app" element={<HomePage />}>
-						<Route path="/app/home" element={<HomePage />} />
-						{/* <Route path="chat" element={<Chat_MainDiv userID={user.userID} />} /> */}
-						{/* <Route path="game" element={<Game />} /> */}
-						{/* <Route path="leaderboard" element={<LeaderboardPage />} /> */}
-						{/* <Route path="profile" element={<ProfilePage userID={user.userID} />} /> */}
-						<Route path="/app/settings" element={<SettingsPage onLogout={handleLogout} userID={user.userID} />} />
-					</Route>
-				<Route path='/login' element={<LoginPage onSignUp={storeUserInCookies} />} />
-				<Route path='/complete_profile' element={<CompleteProfilePage onSignUp={storeUserInCookies}/>} />
-			</Routes>
-		  </Router>
-		</UserContextProvider>
-	  );
+        <Router>
+            <Routes>
+                <Route path="/" element={user ? <Navigate to="/app" replace /> : <Navigate to="/login" replace />} />
+                <Route path="/login" element={<LoginPage onSignUp={storeUserInCookies} />} />
+                <Route path="/complete_profile" element={<CompleteProfilePage onSignUp={storeUserInCookies} />} />
+                <Route path="/app" element={<UserStartPage />}>
+                    <Route index element={<HomePage />} /> {/* Makes this route default for /app */}
+                    <Route path="chat" element={<Arena_Chat_MainDiv userID={user?.userID} friend_set={friend_set}/>} />
+                    <Route path="leaderboard" element={<LeaderboardPage friend_set={friend_set}/>} />
+                    <Route path="profile" element={<ProfilePage friend_set={friend_set} />} />
+                    <Route path="settings" element={<SettingsPage onLogout={handleLogout} />} />
+                </Route>
+            </Routes>
+        </Router>
+    );
 };
 
 export default App;

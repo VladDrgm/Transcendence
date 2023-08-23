@@ -20,7 +20,7 @@ export const createUser = async () => {
 	return json;
 };
 
-export const updatePasswordApi = async (userID: number, newPassword: string): Promise<User> => {
+export const updatePasswordApi = async (userID: number | undefined, newPassword: string): Promise<User> => {
 	try {
 	  // Make API call and get the response
 	  const response = await fetch(fetchUserAddress + userID + slash + newPassword + updatePasswordEndpoint, {
@@ -41,7 +41,7 @@ export const updatePasswordApi = async (userID: number, newPassword: string): Pr
 	}
   };
 
-  export const updateUsernameApi = async (userID: number, newUsername: string): Promise<User> => {
+  export const updateUsernameApi = async (userID: number | undefined, newUsername: string): Promise<User> => {
 	try {
 	  // Make API call and get the response
 	  const response = await fetch(fetchUserAddress + userID + updateUsernameEndpoint + newUsername, {
@@ -62,7 +62,7 @@ export const updatePasswordApi = async (userID: number, newPassword: string): Pr
 	}
   };
 
-export const updateAvatarApi = async (userID: number, formData: FormData) => {
+export const updateAvatarApi = async (userID: number | undefined, formData: FormData) => {
 	  const response = await fetch(fetchUserAddress + userID + '/update/avatar', {
 		method: 'PUT',
 		body: formData,

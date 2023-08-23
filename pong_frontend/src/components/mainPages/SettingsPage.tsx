@@ -1,4 +1,5 @@
 import React, {useState} from 'react';
+import { useNavigate } from 'react-router-dom';
 import { User } from '../../interfaces/user.interface';
 import { useUserContext } from '../context/UserContext';
 import { updateAvatarApi, updatePasswordApi, updateUsernameApi } from '../../api/userApi';
@@ -8,19 +9,22 @@ import { getPrivateProfile } from '../../api/profile.api';
 interface SettingsPageProps
 {
 	onLogout: () => void;
-	userID: number;
 }
 
 // Component
-const SettingsPage: React.FC<SettingsPageProps> = ({onLogout, userID}) => {
+const SettingsPage: React.FC<SettingsPageProps> = ({onLogout}) => {
 	const { user, setUser } = useUserContext();
-	const [updatedUser, setUpdatedUser] = useState<User>(user);
+	const [updatedUser, setUpdatedUser] = useState<User | null>(user);
 	const [newPassword, setNewPassword] = useState(''); // Sign up state for password input
 	const [newUsername, setNewUsername] = useState(''); // Sign up state for password input
 	const [newAvatar, setNewAvatar] = useState<File | null>(null)
 
 	const [showErrorMessage, setShowErrorMessage] = useState<boolean>(false);
 	const [ErrorMessage, setErrorMessage] = useState<string>('');
+
+	const userID = user?.userID;
+
+	const navigate = useNavigate();
   
 	//   // Add a conditional rendering to check if user is available
 	//   if (!user || !user.avatarPath) {
@@ -99,7 +103,8 @@ const SettingsPage: React.FC<SettingsPageProps> = ({onLogout, userID}) => {
 const OnLogoutButtonClick = async () => {
 	onLogout()
 
-	console.log('User avatarPath:', user.avatarPath);
+	console.log('User avatarPath:', user?.avatarPath);
+	navigate(`/`);
 
 };
 
@@ -109,7 +114,7 @@ return (
 		<p style={styles.settingsTitleStyle}>Settings</p>
 		<img
 			className='user-card__image'
-			src={`http://localhost:3000${user.avatarPath.slice(1)}`}
+			src={`http://localhost:3000${user?.avatarPath.slice(1)}`}
 			alt='user.avatarPath'
 			onError={({ currentTarget }) => {
 				currentTarget.onerror = null;
@@ -120,7 +125,7 @@ return (
 			<br/>
 		  <input
 			type="text"
-			placeholder={user.username}
+			placeholder={user?.username}
 			value={newUsername}
 			onChange={(e) => setNewUsername(e.target.value)} // Update state on change
 			style={styles.formFieldStyle}
