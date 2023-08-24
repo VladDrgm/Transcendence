@@ -46,7 +46,8 @@ export class ChannelService {
 
     channelDb.Name = channelDTO.Name;
     channelDb.OwnerId = callerId;
-    if (channelDTO.Password != null) {
+    console.log("Password is: " + channelDTO.Password);
+    if (channelDTO.Password != null && channelDTO.Password != '' && channelDTO.Password != undefined ) {
     channelDb.Password = await this.passwordService.hashPassword(
       channelDTO.Password);
     }
@@ -62,7 +63,7 @@ export class ChannelService {
 
     this.channelAdminRepository.save(adminCreate);
 
-    return this.channelRepository.save(channelDb);
+    return channelDb;
   }
 
   async remove(id: number): Promise<void> {
