@@ -65,6 +65,9 @@ export class ChannelService {
   }
 
   async remove(id: number): Promise<void> {
+    await this.channelAdminRepository.delete({ ChannelId: id });
+    await this.channelUserRepository.delete({ ChannelId: id });
+    await this.channelBlockedUserRepository.delete({ ChannelId: id });
     await this.channelRepository.delete(id);
   }
 
