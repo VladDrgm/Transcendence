@@ -46,9 +46,10 @@ export class ChannelService {
 
     channelDb.Name = channelDTO.Name;
     channelDb.OwnerId = callerId;
+    if (channelDTO.Password != null) {
     channelDb.Password = await this.passwordService.hashPassword(
-      channelDTO.Password,
-    );
+      channelDTO.Password);
+    }
     channelDb.Type = channelDTO.Type;
 
     const ChannelId = await this.channelRepository
