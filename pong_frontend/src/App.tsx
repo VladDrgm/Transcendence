@@ -37,7 +37,7 @@ const App = () => {
                 <Route path="/login" element={<LoginPage onSignUp={storeUserInCookies} />} />
                 <Route path="/complete_profile" element={<CompleteProfilePage onSignUp={storeUserInCookies} />} />
                 <Route path="/app" element={<UserStartPage />}>
-                    <Route index element={<HomePage />} /> {/* Makes this route default for /app */}
+                    <Route path='home' index element={<HomePage />} /> {/* Makes this route default for /app */}
                     <Route path="chat" element={<Arena_Chat_MainDiv userID={user?.userID} friend_set={friend_set}/>} />
                     <Route path="leaderboard" element={<LeaderboardPage friend_set={friend_set}/>} />
                     <Route path="profile" element={<ProfilePage friend_set={friend_set} />} />

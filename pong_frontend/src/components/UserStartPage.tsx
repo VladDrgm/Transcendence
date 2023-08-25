@@ -15,7 +15,6 @@ const UserStartPage: React.FC<UserStartPageProps> = ({/* Use UserStartPageProps 
 
 	const navigationLinks: { path: string; label: string}[] = [
 		{ path: '/app/home', label: 'Home'},
-		{ path: '/app/friends', label: 'Friends'},
 		{ path: '/app/chat', label: 'Arena'},
 		{ path: '/app/profile', label: 'Profile'},
 		{ path: '/app/settings', label: 'Settings'},
