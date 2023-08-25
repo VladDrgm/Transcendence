@@ -114,7 +114,7 @@ return (
 		<p style={styles.settingsTitleStyle}>Settings</p>
 		<img
 			className='user-card__image'
-			src={`http://localhost:3000${user?.avatarPath.slice(1)}`}
+			src={`http://localhost:3000${user?.avatarPath?.slice(1)}`}
 			alt='user.avatarPath'
 			onError={({ currentTarget }) => {
 				currentTarget.onerror = null;
