@@ -2,6 +2,7 @@ import React, { useEffect, useState, ChangeEvent  } from 'react';
 import { PrivateProfile } from '../../interfaces/private_profile.interface';
 import { getPrivateProfile } from '../../api/profile.api';
 import CSS from 'csstype';
+import { useUserContext } from '../context/UserContext';
 
 interface PrivateDivProps
 {
@@ -9,7 +10,7 @@ interface PrivateDivProps
 }
 
 const Private_Div: React.FC<PrivateDivProps> = ({userID}) => {
-  const [user, setUser] = useState<PrivateProfile>();
+	const { user, setUser } = useUserContext();
 
   const profilePictureStyle: CSS.Properties = {
     width: '120px',

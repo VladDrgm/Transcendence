@@ -27,6 +27,9 @@ const CompleteProfilePage: React.FC<CompleteProfilePageProps> = ({onSignUp}) => 
 	const navigate = useNavigate();
 
 	const handleCreatingUser = async () => {
+		if (!(newUsername.trim().length !== 0)) {
+			throw new Error('Please put in a username to continue!');
+		  }
 		const newUser: User = {
 			username: newUsername,
 			intraUsername: intraName!,
@@ -53,8 +56,6 @@ const CompleteProfilePage: React.FC<CompleteProfilePageProps> = ({onSignUp}) => 
 			onSignUp(newCreatedUser);
 			localStorage.setItem('user', JSON.stringify(newCreatedUser));
 			setUser(newCreatedUser);
-			console.log("User Id from right after creating user from complete profile page", newCreatedUser.userID);
-			// await login(newCreatedUser.userID);
 			navigate(`/`);
 		} catch (error) {
 			setError('Error creating a new user');
