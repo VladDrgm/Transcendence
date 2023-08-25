@@ -1,17 +1,15 @@
-import React, {useState, useEffect} from 'react';
-import { redirect, useLocation, useNavigate } from 'react-router-dom';
-import { login, userSignupAPI } from '../api/authAPI';
+import React, { useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { userSignupAPI } from '../api/authAPI';
 import { useUserContext } from './context/UserContext';
 import * as styles from './CompleteProfilePageStyles';
 import { User } from '../interfaces/user.interface';
 import { updateAvatarApi, updateUsernameApi } from '../api/userApi';
 
-// Page props
 interface CompleteProfilePageProps {
 	onSignUp: (user: User) => void;
 }
 
-// Component
 const CompleteProfilePage: React.FC<CompleteProfilePageProps> = ({onSignUp}) => {
 	const { user, setUser } = useUserContext();
 	const navigate = useNavigate();
