@@ -1,5 +1,17 @@
 import { Properties } from 'csstype';
 
+export const pageStyle: Properties = {
+	backgroundColor: 'rgba(3, 3, 3, 1)',
+	height: '100%',
+	width: '100%',
+	position: 'absolute',
+	alignItems: 'center',
+	flexDirection: 'column',
+	textAlign: 'center',
+	borderColor: 'green',
+	borderWidth: '5px',
+}
+
 export const pageTitleStyle: Properties = {
 	color: 'rgba(254, 8, 16, 1)',
 	position: 'relative',

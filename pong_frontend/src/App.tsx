@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Route, BrowserRouter as Router, Navigate, Routes } from 'react-router-dom';
-import { User } from './interfaces/user.interface';
 import { useUserContext } from './components/context/UserContext';
 import LoginPage from './components/LoginPage';
 import CompleteProfilePage from './components/CompleteProfilePage';
@@ -16,13 +15,6 @@ const App = () => {
 
 	const [friendID, friend_set] = useState<number>(-1);
 
-	const storeUserInCookies = (newUser: User) => {
-		const userJSON = JSON.stringify(newUser);
-		localStorage.setItem('user', userJSON);
-		setUser(newUser);
-		console.log("Store new user in cookies callback", newUser.userID);
-	}
-
 	const handleLogout = () => {
 		localStorage.removeItem('user');
     	setUser(null);
@@ -33,7 +25,7 @@ const App = () => {
             <Routes>
                 <Route path="/" element={user ? <Navigate to="/app" replace /> : <Navigate to="/login" replace />} />
                 <Route path="/login" element={<LoginPage />} />
-                <Route path="/complete_profile" element={<CompleteProfilePage onSignUp={storeUserInCookies} />} />
+                <Route path="/complete_profile" element={<CompleteProfilePage />} />
                 <Route path="/app" element={<UserStartPage />}>
                     <Route path='home' index element={<HomePage />} />
                     <Route path="chat" element={<Arena_Chat_MainDiv userID={user?.userID} friend_set={friend_set}/>} />

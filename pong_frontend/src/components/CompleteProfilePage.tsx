@@ -7,10 +7,10 @@ import { User } from '../interfaces/user.interface';
 import { updateAvatarApi, updateUsernameApi } from '../api/userApi';
 
 interface CompleteProfilePageProps {
-	onSignUp: (user: User) => void;
+	/* Declare page properties here if needed */
 }
 
-const CompleteProfilePage: React.FC<CompleteProfilePageProps> = ({onSignUp}) => {
+const CompleteProfilePage: React.FC<CompleteProfilePageProps> = ({/* Use CompleteProfilePageProps here */}) => {
 	const { user, setUser } = useUserContext();
 	const navigate = useNavigate();
 	const location = useLocation();
@@ -62,7 +62,6 @@ const CompleteProfilePage: React.FC<CompleteProfilePageProps> = ({onSignUp}) => 
 
 		try {
 			const newCreatedUser: User = await userSignupAPI(newUser);
-			onSignUp(newCreatedUser);
 			localStorage.setItem('user', JSON.stringify(newCreatedUser));
 			setUser(newCreatedUser);
 			navigate(`/`);
@@ -88,34 +87,34 @@ const CompleteProfilePage: React.FC<CompleteProfilePageProps> = ({onSignUp}) => 
 	// 	}
 	//   };
 
-    return (<div>
-				<div>
-					<p style={styles.settingsTitleStyle}>Complete your profile {intraName}</p>
-					<img
-						className='user-card__image'
-						src={`http://localhost:3000/avatars/${user?.avatarPath}`}
-						alt='user.avatarPath'
-						onError={({ currentTarget }) => {
-							currentTarget.onerror = null;
-							currentTarget.src = '/default_pfp.png';
-						}}
-						style={styles.profilePictureStyle}
-						/>
-					<form>
-					<input
-						type="text"
-						placeholder={user?.intraUsername}
-						value={newUsername}
-						onChange={(e) => setNewUsername(e.target.value)} // Update state on change
-						style={styles.formFieldStyle}
-					/>
-					</form>
-					<form>
-					<input type="file" onChange={handleAvatarChange} style={styles.formFieldStyle}/>
-					</form>
-					<button style={styles.updateButtonStyle} onClick={handleCreatingUser}>Complete profile</button>
-				</div>
-            </div>)
+    return (
+		<div style={styles.pageStyle} >
+			<p style={styles.settingsTitleStyle}>Complete your profile {intraName}</p>
+			<img
+				className='user-card__image'
+				src={`http://localhost:3000/avatars/${user?.avatarPath}`}
+				alt='user.avatarPath'
+				onError={({ currentTarget }) => {
+					currentTarget.onerror = null;
+					currentTarget.src = '/default_pfp.png';
+				}}
+				style={styles.profilePictureStyle}
+				/>
+			<form>
+			<input
+				type="text"
+				placeholder={user?.intraUsername}
+				value={newUsername}
+				onChange={(e) => setNewUsername(e.target.value)} // Update state on change
+				style={styles.formFieldStyle}
+			/>
+			</form>
+			<form>
+			<input type="file" onChange={handleAvatarChange} style={styles.formFieldStyle}/>
+			</form>
+			<button style={styles.updateButtonStyle} onClick={handleCreatingUser}>Complete profile</button>
+		</div>
+	)
 };
 
 export default CompleteProfilePage;

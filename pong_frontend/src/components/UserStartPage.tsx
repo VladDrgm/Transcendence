@@ -2,7 +2,7 @@ import { Link, Outlet } from 'react-router-dom';
 import * as styles from './UserStartPageStyles';
 
 interface UserStartPageProps {
-	/* Declar page properties here if needed */
+	/* Declare page properties here if needed */
 }
 
 const UserStartPage: React.FC<UserStartPageProps> = ({/* Use UserStartPageProps here */}) => {
