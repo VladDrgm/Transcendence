@@ -42,9 +42,21 @@ const Private_Div: React.FC<PrivateDivProps> = ({userID}) => {
 					style={styles.profilePictureStyle}
 				/>
 				<br/>
-				<p>Wins: {user.wins}</p>
-				<p>Losses: {user.losses}</p>
-				<p>Points: {user.points}</p>
+				<ul style={styles.statListContainerStyle}>
+					<li style={styles.statListStyle}>
+						<p style={styles.statListItemStyle}>Wins: {user.wins}</p>
+					</li>
+					<li style={styles.statListStyle}>
+						<p style={styles.statListItemStyle}>Losses: {user.losses}</p>
+					</li>
+					<li style={styles.statListStyle}>
+						<p style={styles.statListItemStyle}>Points: {user.points}</p>
+					</li>
+					<li style={styles.statListStyle}>
+					</li>
+					<li style={styles.statListStyle}>
+					</li>
+				</ul>
 				<p>Status: {user.status}</p>
 				<p>Achievements: {user.achievementsCSV}</p>
 			</div>

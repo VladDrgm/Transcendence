@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import * as styles from './ProfilePageStyles';
 import Private_Div from '../div/private_div';
 import FriendList from '../div/friend_list_div';
