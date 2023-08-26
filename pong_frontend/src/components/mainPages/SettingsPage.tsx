@@ -4,6 +4,7 @@ import { User } from '../../interfaces/user.interface';
 import { useUserContext } from '../context/UserContext';
 import { updateAvatarApi, updatePasswordApi, updateUsernameApi } from '../../api/userApi';
 import * as styles from './SettingsPageStyles';
+import imageAssetUploadAvatar from '../assets/uploadAvatar.png'
 import { getPrivateProfile } from '../../api/profile.api';
 
 interface SettingsPageProps
@@ -90,7 +91,7 @@ const SettingsPage: React.FC<SettingsPageProps> = ({onLogout}) => {
 		console.log('User avatarPath:', user?.avatarPath);
 		navigate(`/`);
 	};
-
+	
 	return (
 		<div style={styles.pageStyle}>
 			<p style={styles.settingsTitleStyle}>Settings</p>
@@ -104,6 +105,12 @@ const SettingsPage: React.FC<SettingsPageProps> = ({onLogout}) => {
 				}}
 				style={styles.profilePictureStyle}
 			/>
+			<label style={styles.customAvatarUploadButtonStyle}>
+		  		<input type="file" onChange={handleAvatarChange} style={styles.avatarInputFieldStyle}/>
+				<img src={imageAssetUploadAvatar} style={styles.imageUploadButtonIconStyle}></img>
+				Upload file from computer
+			</label>
+			<button style={styles.updateButtonStyle} onClick={handleUpdateAvatar}>Update avatar</button>
 			<br/>
 		  	<input
 				type="text"
@@ -113,8 +120,6 @@ const SettingsPage: React.FC<SettingsPageProps> = ({onLogout}) => {
 				style={styles.formFieldStyle}
 		  	/>
 		  	<button style={styles.updateButtonStyle} onClick={handleUpdateUsername}>Update</button>
-		  	<input type="file" onChange={handleAvatarChange} style={styles.formFieldStyle}/>
-		  	<button style={styles.updateButtonStyle} onClick={handleUpdateAvatar}>Update</button>
 			{showErrorMessage && <p>{ErrorMessage}</p>}
 			<button style={styles.logoutButtonStyle} onClick={OnLogoutButtonClick}>Logout</button>
 	  	</div>

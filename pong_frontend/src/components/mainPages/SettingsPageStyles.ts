@@ -23,8 +23,32 @@ export const profilePictureStyle: Properties = {
     height: '120px',
     borderRadius: '50%',
     objectFit: 'cover',
-    marginBottom: '20px',
+    marginBottom: '10px',
     border: '3px solid rgba(254, 8, 16, 1)',
+}
+
+export const customAvatarUploadButtonStyle: Properties = {
+	backgroundColor: 'white',
+	color:'black',
+	display: 'inline-block',
+	padding: '4px',
+    width: '140px',
+    fontSize: '12px',
+    borderRadius: '4px',
+	marginBottom: '8px',
+	fontFamily: 'Shlop',
+}
+
+export const imageUploadButtonIconStyle: Properties = {
+	display: 'inline-block',
+	paddingRight: '3px',
+	verticalAlign: 'middle',
+	height: '16px',
+	width: '16px',
+}
+
+export const avatarInputFieldStyle: Properties = {
+	display: 'none',
 }
 
 export const formFieldStyle: Properties = {
@@ -33,13 +57,14 @@ export const formFieldStyle: Properties = {
     fontSize: '18px',
     borderRadius: '4px',
     border: '1px solid #fff',
-	marginBottom: '4px',
+	marginBottom: '8px',
 	fontFamily: 'Shlop',
 }
 
 export const updateButtonStyle: Properties = {
 	backgroundColor: 'rgba(254, 8, 16, 1)',
 	position: 'relative',
+	display: 'inline-block',
 	height:'40px',
 	width:'80px',
 	fontFamily: 'Shlop',
@@ -48,8 +73,6 @@ export const updateButtonStyle: Properties = {
 	borderRadius: '6px',
 	border: 'none',
 	color:'white',
-	marginTop: '10px',
-	marginLeft: '20px',
 	marginBottom: '30px',
 }
 
