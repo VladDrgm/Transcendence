@@ -62,14 +62,20 @@ export const updatePasswordApi = async (userID: number | undefined, newPassword:
 	}
   };
 
-export const updateAvatarApi = async (userID: number | undefined, formData: FormData) => {
+export const updateAvatarApi = async (userID: number | undefined, formData: FormData): Promise<User> => {
+	try {
 	  const response = await fetch(fetchUserAddress + userID + '/update/avatar', {
 		method: 'PUT',
 		body: formData,
 	  });
   
 	  if (response.ok) {
+		const userObject: User = await response.json();
+		return userObject;
 	  } else {
 		throw new Error(response.statusText);
 	  }
+	} catch (error) {
+		throw new Error('Error uploading avatar. Try again!');
+	}
   };

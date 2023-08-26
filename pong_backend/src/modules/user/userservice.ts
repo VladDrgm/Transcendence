@@ -36,7 +36,8 @@ export class UserService {
     const isUserInDb = await this.userRepository.findOneBy({ intraUsername: user.intraUsername });
     if (isUserInDb) return isUserInDb;
 
-    user.username = user.intraUsername.toLowerCase();
+    user.username = user.username.toLowerCase();
+	user.intraUsername = user.intraUsername.toLowerCase();
     return this.userRepository.save(user);
   }
 

@@ -36,4 +36,5 @@ export const buttonStyle: Properties = {
 	color:'white',
 	top:'4px',
 	margin:'4px',
+	WebkitTapHighlightColor: 'black',
 }

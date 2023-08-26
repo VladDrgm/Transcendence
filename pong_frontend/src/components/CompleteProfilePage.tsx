@@ -3,8 +3,9 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { userSignupAPI } from '../api/authAPI';
 import { useUserContext } from './context/UserContext';
 import * as styles from './CompleteProfilePageStyles';
+import imageAssetUploadAvatar from './assets/uploadAvatar.png';
 import { User } from '../interfaces/user.interface';
-import { updateAvatarApi, updateUsernameApi } from '../api/userApi';
+import { updateAvatarApi } from '../api/userApi';
 
 interface CompleteProfilePageProps {
 	/* Declare page properties here if needed */
@@ -35,15 +36,11 @@ const CompleteProfilePage: React.FC<CompleteProfilePageProps> = ({/* Use Complet
 		if (!(newUsername.trim().length !== 0)) {
 			throw new Error('Please put in a username to continue!');
 		}
-		if (newAvatar) {
-			const formData = new FormData();
-			formData.append('img', newAvatar);
-		}
 		const newUser: User = {
 			username: newUsername,
 			intraUsername: intraName!,
 			userID: 0,
-			avatarPath: newAvatar?.name,
+			avatarPath: '',
 			wins: 0,
 			losses: 0,
 			points: 0,
@@ -61,7 +58,17 @@ const CompleteProfilePage: React.FC<CompleteProfilePageProps> = ({/* Use Complet
 		};
 
 		try {
-			const newCreatedUser: User = await userSignupAPI(newUser);
+			var newCreatedUser: User = await userSignupAPI(newUser);
+			if (newAvatar) {
+				try {
+					const formData = new FormData();
+					formData.append('img', newAvatar);
+					const userObjectWithAvatar = await updateAvatarApi(newCreatedUser.userID, formData);
+					newCreatedUser = userObjectWithAvatar;
+				} catch (error) {
+					setError('Error uploading avatar');
+				}
+			}
 			localStorage.setItem('user', JSON.stringify(newCreatedUser));
 			setUser(newCreatedUser);
 			navigate(`/`);
@@ -89,7 +96,7 @@ const CompleteProfilePage: React.FC<CompleteProfilePageProps> = ({/* Use Complet
 
     return (
 		<div style={styles.pageStyle} >
-			<p style={styles.settingsTitleStyle}>Complete your profile {intraName}</p>
+			<p style={styles.pageTitleStyle}>Complete your profile {intraName}</p>
 			<img
 				className='user-card__image'
 				src={`http://localhost:3000/avatars/${user?.avatarPath}`}
@@ -101,18 +108,22 @@ const CompleteProfilePage: React.FC<CompleteProfilePageProps> = ({/* Use Complet
 				style={styles.profilePictureStyle}
 				/>
 			<form>
+				<label style={styles.customAvatarUploadButtonStyle}>
+					<input type="file" onChange={handleAvatarChange} style={styles.avatarInputFieldStyle}/>
+					<img src={imageAssetUploadAvatar} style={styles.imageUploadButtonIconStyle}></img>
+					Upload file from computer
+				</label>
+			</form>
+			<form>
 			<input
 				type="text"
-				placeholder={user?.intraUsername}
+				placeholder='Type in a username'
 				value={newUsername}
 				onChange={(e) => setNewUsername(e.target.value)} // Update state on change
 				style={styles.formFieldStyle}
 			/>
 			</form>
-			<form>
-			<input type="file" onChange={handleAvatarChange} style={styles.formFieldStyle}/>
-			</form>
-			<button style={styles.updateButtonStyle} onClick={handleCreatingUser}>Complete profile</button>
+			<button style={styles.completeProfileButtonStyle} onClick={handleCreatingUser}>Complete profile</button>
 		</div>
 	)
 };
