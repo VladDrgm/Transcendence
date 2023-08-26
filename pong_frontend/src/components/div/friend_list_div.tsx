@@ -9,29 +9,29 @@ interface FriendProps
 }
 
 const FriendList: FC<FriendProps> = ({userID, friend_set}) => {
-  const [friends, setFriends] = useState<FriendProfile[]>([]);
+	const [friends, setFriends] = useState<FriendProfile[]>([]);
 
-  const getData = async() => {
-    const users = await getFriendList(userID);
-    setFriends(users);
-  }
+  	const getData = async() => {
+    	const users = await getFriendList(userID);
+    	setFriends(users);
+  	}
 
-  useEffect(() => {
-    getData()
-  }, [])
+  	useEffect(() => {
+    	getData()
+  	}, [])
   
-  const openFriend = (FID:number) => {
-    friend_set(FID);
-  };
+  	const openFriend = (FID:number) => {
+    	friend_set(FID);
+  	};
 
-  return (
-    <div>
-      <h3>Friend List</h3>
-        {friends?.map((friend) => (
-            <p onClick={() => openFriend(friend.userID)}>{friend.username}: {friend.status}</p>
-        ))}
-    </div>
-  );
+  	return (
+    	<div>
+      		<h3>Friend List</h3>
+        	{friends?.map((friend) => (
+            	<p onClick={() => openFriend(friend.userID)}>{friend.username}: {friend.status}</p>
+        	))}
+    	</div>
+  	);
 };
 
 export default FriendList;

@@ -1,4 +1,5 @@
-import React, {useState, useEffect} from 'react';
+import React from 'react';
+import * as styles from './ProfilePageStyles';
 import Private_Div from '../div/private_div';
 import FriendList from '../div/friend_list_div';
 import { useUserContext } from '../context/UserContext';
@@ -17,15 +18,15 @@ interface ProfilePageProps
 }
 
 const ProfilePage: React.FC<ProfilePageProps> = ({friend_set}) => {
-
 	const { user } = useUserContext();
-
-  const [idTxt, setid] = useState<string>();
-        return (<div>
-                  <Private_Div userID={user?.userID}/>
-                  <hr/>
-                  <FriendList userID={user?.userID} friend_set={friend_set}/>
-                </div>)
+        
+	return (
+		<div style={styles.pageStyle}>
+            <Private_Div userID={user?.userID}/>
+            <hr/>
+            <FriendList userID={user?.userID} friend_set={friend_set}/>
+        </div>
+	)
 };
 
 export default ProfilePage;
