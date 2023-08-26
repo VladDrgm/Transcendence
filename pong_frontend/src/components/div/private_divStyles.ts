@@ -13,11 +13,10 @@ export const profilePictureStyle: Properties = {
 	height: '120px',
 	borderRadius: '50%',
 	objectFit: 'cover',
-	marginBottom: '20px',
 	border: '3px solid rgba(254, 8, 16, 1)',
 }
 
-export const statListContainerStyle: Properties = {
+export const listContainerStyle: Properties = {
 	listStyleType: 'none',
 	margin: '0px',
 	padding: '0px',
@@ -27,7 +26,7 @@ export const statListContainerStyle: Properties = {
 	width: '500px',
 }
 
-export const statListStyle: Properties = {
+export const listStyle: Properties = {
 	float: 'left',
 }
 
@@ -40,4 +39,11 @@ export const statListItemStyle: Properties = {
 	paddingRight: '50px',
 	paddingBottom: '5px',
 	textDecoration: 'none',
+}
+
+export const achievementListItemStyle: Properties = {
+	position: 'relative',
+	padding: '24px',
+	width:'60px',
+	height:'60px', 
 }

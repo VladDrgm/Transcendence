@@ -1,4 +1,4 @@
-import gif from './assets/billy.png'
+import imageAssetBilly from './assets/billy.png'
 import * as styles from './LoginPageStyles';
 
 interface LoginPageProps
@@ -28,7 +28,7 @@ const LoginPage: React.FC<LoginPageProps> = ({/* Use LoginPageProps here */}) =>
 
 	return (
 		<div style={styles.pageStyle}>
-			<img src={gif} style={styles.gifStyle} ></img>
+			<img src={imageAssetBilly} style={styles.gifStyle} ></img>
             <p style={styles.welcomeTitleStyle}>Do you want to play a game?</p>
             <button style={styles.signupButtonStyle} onClick={OnLoginWith42ButtonClick}>Sign up with 42</button>
         </div>

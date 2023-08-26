@@ -3,6 +3,7 @@ import * as styles from './private_divStyles';
 import { PrivateProfile } from '../../interfaces/private_profile.interface';
 import { getPrivateProfile } from '../../api/profile.api';
 import { useUserContext } from '../context/UserContext';
+import imageAssetAchievement1 from '../assets/achievement1.png'
 
 interface PrivateDivProps
 {
@@ -41,24 +42,29 @@ const Private_Div: React.FC<PrivateDivProps> = ({userID}) => {
 					}}
 					style={styles.profilePictureStyle}
 				/>
+				<p>Status: {user.status}</p>
 				<br/>
-				<ul style={styles.statListContainerStyle}>
-					<li style={styles.statListStyle}>
+				<ul style={styles.listContainerStyle}>
+					<li style={styles.listStyle}>
 						<p style={styles.statListItemStyle}>Wins: {user.wins}</p>
 					</li>
-					<li style={styles.statListStyle}>
+					<li style={styles.listStyle}>
 						<p style={styles.statListItemStyle}>Losses: {user.losses}</p>
 					</li>
-					<li style={styles.statListStyle}>
+					<li style={styles.listStyle}>
 						<p style={styles.statListItemStyle}>Points: {user.points}</p>
 					</li>
-					<li style={styles.statListStyle}>
+					<li style={styles.listStyle}>
 					</li>
-					<li style={styles.statListStyle}>
+					<li style={styles.listStyle}>
 					</li>
 				</ul>
-				<p>Status: {user.status}</p>
 				<p>Achievements: {user.achievementsCSV}</p>
+				<ul style={styles.listContainerStyle}>
+					<li style={styles.listStyle}>
+						<img style={styles.achievementListItemStyle} src={imageAssetAchievement1}></img>
+					</li>
+				</ul>
 			</div>
     	);
   	} else {
