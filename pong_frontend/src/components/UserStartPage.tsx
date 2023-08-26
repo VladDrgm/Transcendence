@@ -16,7 +16,7 @@ const UserStartPage: React.FC<UserStartPageProps> = ({/* Use UserStartPageProps 
 
 	return (
 		<div style={styles.pageStyle}>
-			<header>
+			<header style={styles.headerStyle}>
         		{
 					navigationLinks.map((link) => (
           				<Link key={link.path} style={styles.buttonStyle} to={link.path}>{link.label}</Link>

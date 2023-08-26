@@ -10,6 +10,14 @@ export const exampleStyle: Properties = {
 	fontSize: '40px',
 }
 
+export const pageStyle: Properties = {
+	backgroundColor: 'lightgray',
+	height: '1000px',
+	display: 'flex',
+	flexDirection: 'column',
+	alignItems: 'center',
+}
+
 /* Usage:
 import * as styles from './ProfilePageStyles';
 

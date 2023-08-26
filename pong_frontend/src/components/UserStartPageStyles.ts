@@ -12,6 +12,11 @@ export const pageStyle: Properties = {
 	borderWidth: '5px',
 }
 
+export const headerStyle: Properties = {
+	height: '40px',
+	width: '100%',
+}
+
 export const subPageDimensions: Properties = {
 	width: '100%',
 	height: '500px',
