@@ -17,7 +17,7 @@ export class Channel {
   @Column()
   Type: string;
 
-  @Column()
+  @Column({ nullable: true })
   Password: string;
 
   @OneToMany(() => ChannelUser, (channelUsers) => channelUsers.channel)
