@@ -56,7 +56,7 @@ export async function login(userID:number)  { //placeholder for real login
     // const response = await fetch(process.env.REACT_APP_BASE_URL + 'user/login/' + userID, {credentials: 'include',});
     // const response = await fetch('http://localhost:3000/user/login/' + userID, {credentials: 'include',});
     // const response = await fetch('https://transcendence-server.azurewebsites.net/user/login' + userID, {credentials: 'include',})
-    const response = await fetch(`${process.env.REACT_APP_BASE_URL}` + 'user/login/' + userID, {credentials: 'include',})
+    const response = await fetch(`${process.env.REACT_APP_BASE_URL}user/login/${userID}`, {credentials: 'include',})
     const setCookieHeader = await response.headers.get("Set-Cookie");
     if (setCookieHeader) {
       document.cookie = setCookieHeader;
