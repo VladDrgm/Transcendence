@@ -5,7 +5,10 @@ import { Response } from 'express';
 @Controller('redirect')
 export class RedirectController {
   @Get()
-  async handleCallback(@Query('code') code: string, @Res() res: Response): Promise<void> {
+  async handleCallback(
+    @Query('code') code: string,
+    @Res() res: Response,
+  ): Promise<void> {
     if (!code) {
       throw new NotFoundException('Authorization code not provided.');
     }
@@ -33,7 +36,7 @@ export class RedirectController {
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
           },
-        }
+        },
       );
 
       if (!response.data.access_token) {
@@ -55,7 +58,7 @@ export class RedirectController {
       }
 
       const userData = userResponse.data;
-	  const intraName = userData.login;
+      const intraName = userData.login;
 
       // Now you have the user's information (userData) and the access token (accessToken)
       // You can proceed to implement user creation/update and authentication logic
@@ -65,7 +68,7 @@ export class RedirectController {
       res.redirect(completeProfileURL); // Replace with your success page URL
     } catch (error) {
       console.error('Error during 42 API callback:', error);
-    //   res.redirect('http://localhost:3000/error'); // Replace with your error page URL
+      //   res.redirect('http://localhost:3000/error'); // Replace with your error page URL
     }
   }
 }
