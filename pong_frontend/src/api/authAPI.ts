@@ -2,7 +2,8 @@ import { User } from "../interfaces/user.interface";
 
 // var newFetchAddress = process.env.REACT_APP_SRVR_URL ||  'http://localhost:3000/';
 // var fetchAddress = 'http://localhost:3000/';
-var fetchAddress = 'https://transcendence-server.azurewebsites.net/';
+// var fetchAddress = 'https://transcendence-server.azurewebsites.net/';
+var fetchAddress = process.env.REACT_APP_BASE_URL;
 var signUpEndpoint = 'user';
 var loginEndpoint1 = 'user/'; // Replace later with user/login
 var endpointSlash = '/'
@@ -52,8 +53,9 @@ export const userLoginAPI = async (username: string, password: string): Promise<
 };
 
 export async function login(userID:number)  { //placeholder for real login
-    // const response = await fetch('http://localhost:3000/user/login/' + userID, {credentials: 'include',});
-    const response = await fetch('https://transcendence-server.azurewebsites.net/user/login' + userID, {credentials: 'include',})
+    // const response = await fetch(process.env.REACT_APP_BASE_URL + 'user/login/' + userID, {credentials: 'include',});
+    const response = await fetch('http://localhost:3000/user/login/' + userID, {credentials: 'include',});
+    // const response = await fetch('https://transcendence-server.azurewebsites.net/user/login' + userID, {credentials: 'include',})
     const setCookieHeader = await response.headers.get("Set-Cookie");
     if (setCookieHeader) {
       document.cookie = setCookieHeader;
