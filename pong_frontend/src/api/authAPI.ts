@@ -3,7 +3,7 @@ import { User } from "../interfaces/user.interface";
 // var newFetchAddress = process.env.REACT_APP_SRVR_URL ||  'http://localhost:3000/';
 // var fetchAddress = 'http://localhost:3000/';
 // var fetchAddress = 'https://transcendence-server.azurewebsites.net/';
-var fetchAddress = process.env.REACT_APP_BASE_URL;
+var fetchAddress = `${process.env.REACT_APP_BASE_URL}`;
 var signUpEndpoint = 'user';
 var loginEndpoint1 = 'user/'; // Replace later with user/login
 var endpointSlash = '/'
