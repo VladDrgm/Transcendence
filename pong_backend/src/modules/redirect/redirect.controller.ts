@@ -16,8 +16,9 @@ export class RedirectController {
     //   const clientSecret = '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';
     const clientSecret = `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`;
     //   const redirectUri = 'http://localhost:3000/redirect'; // Must match the redirect URI registered with 42 API
-        const redirectUri = process.env.REDIRECT_URI; // Must match the redirect URI registered with 42 API
-      // Exchange the authorization code for an access token
+        // const redirectUri = process.env.REDIRECT_URI; // Must match the redirect URI registered with 42 API
+    const redirectUri = `https://transcendence-server.azurewebsites.net/redirect`;
+        // Exchange the authorization code for an access token
       const tokenEndpoint = 'https://api.intra.42.fr/oauth/token';
       const response = await axios.post(
         tokenEndpoint,
