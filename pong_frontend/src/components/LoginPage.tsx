@@ -14,7 +14,7 @@ const LoginPage: React.FC<LoginPageProps> = ({/* Use LoginPageProps here */}) =>
         // const clientID=`u-s4t2ud-5cd9e549c33e07468ded3a2cc3572e1a4c100c9c139d9c69edee2d7a856d2075`;
 		// const redirectURI = 'http://localhost:3000/redirect';
         // const redirectURI = 'https://transcendence-server.azurewebsites.net/redirect'
-        const redirectURI=`${process.env.REACT_APP_REDIRECT_URI}` || '';
+        const redirectURI=`${process.env.REACT_APP_BASE_URL}redirect` || '';
 
 		// Construct the URL for the 42 API authorization endpoint
 		const authEndpoint = 'https://api.intra.42.fr/oauth/authorize';
