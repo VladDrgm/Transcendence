@@ -33,7 +33,7 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 			if (!props.invitation.playerOneSocket ||
 				 !props.invitation.playerTwoSocket ||
 				 !props.invitation.sessionId) {
-				props.invitation.playerOneSocket = props.user.socketId;
+				props.invitation.playerOneSocket = props.user!.socketId;
 				props.invitation.playerTwoSocket = invitedPlayer.socketId;
 			}
 			props.invitePlayer(props.invitation);

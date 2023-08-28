@@ -901,7 +901,7 @@ function handleMutedUserSocket(targetId: number, roomName: string) {
 				socketRef.current.emit('invite player', invitation);
 			}
 			else if (socketRef.current?.id && gameSession.playerOne && !gameSession.playerTwo) {
-				alert("You are already in a que as Player 1.");
+				alert("You are already in a queue as Player 1.");
 			}
 			else if (socketRef.current?.id && gameSession.playerOne && gameSession.playerTwo) {
 				alert("You are in a session with two players, Player 1 can start the game.");
