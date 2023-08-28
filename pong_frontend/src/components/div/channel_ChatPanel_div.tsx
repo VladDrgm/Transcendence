@@ -1,7 +1,8 @@
 import React, { FC, KeyboardEvent, useEffect, useState } from 'react';
 import { ChatProps, Message } from '../../interfaces/channel.interface';
-import { Messages, TextBox, renderMessages } from './chat_utils';
+import { renderMessages } from './chat_utils';
 import { popUpJoinPrivateChannel } from './channel_popups';
+import { TextBox } from '../mainPages/ChatPageStyles';
 
 export interface chatInputProps {
   props: ChatProps;
