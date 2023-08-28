@@ -438,8 +438,66 @@ io.on('connection', (socket: Socket) => {
 		}
 	});
 
-	socket.on('remove invite', ((invitation:Invitation)) => {
+	socket.on('remove invite', (invitation:Invitation) => {
+		console.log("Remove Invite was triggered");
+		let existingSession:any;
+
+		// Check if a session exists with the given invitation.sessionId
+		if (invitation.sessionId) {
+			existingSession = gameSessions.find(
+				(session) => session.sessionId === invitation.sessionId
+			);
+		}
+
+		if (existingSession) {
+			// If the existing session exists, Player 1 has to be quit
+			console.log("Quitting Player 1 has been triggered");
+			if (existingSession.playerIds[0]) {
+				io.to(existingSession.playerIds[0]).emit('clean queue');
+			}
+			existingSession.sessionId = null;
+			existingSession.invite = false;
+
+			// Get the index of the session
+			const sessionIndex = gameSessions.indexOf(existingSession);
+
+			// Unlink the gameState object by nullifying it
+			if (gameSessions[sessionIndex].gameState) {
+				gameSessions[sessionIndex].gameState = null;
+			}
+			
+			// Nullify the playerIds
+			gameSessions[sessionIndex].playerIds = null;
+			gameSessions.splice(sessionIndex, 1);
+
+			// Remove the player from the queue if they were waiting
+			playerQueue = playerQueue.filter(playerId => playerId !== socket.id);
+		}
+	});
+
+	socket.on('quit game', (sessionId) => {
+		console.log('A user quit the game');
+			// Check if the provided sessionId exists in the gameSessions array
+			const sessionOfDisconnectedUser = gameSessions.find((session) => session.sessionId === sessionId);
+
+			if (sessionOfDisconnectedUser) {
+				sessionOfDisconnectedUser.gameState.disconnected = true;
+				sessionOfDisconnectedUser.gameState.scoreOnDisconnect.playerOne = sessionOfDisconnectedUser.gameState.playerOne.score;
+				sessionOfDisconnectedUser.gameState.scoreOnDisconnect.playerTwo = sessionOfDisconnectedUser.gameState.playerTwo.score;
+
+				// Find the users in the session
+				let firstUserId = sessionOfDisconnectedUser.playerIds.find(id => id === socket.id);
+				let otherUserId = sessionOfDisconnectedUser.playerIds.find(id => id !== socket.id);
 		
+				if (firstUserId) {
+					// Emit to the quitting user in the session that the game is ending
+					io.to(firstUserId).emit('playerDisconnected');
+				}
+				if (otherUserId) {
+					// Emit to the other user in the session that the player has left
+					io.to(otherUserId).emit('playerDisconnected');
+				}
+			}
 	});
 
 	socket.on('quit queue', (sessionId) => {

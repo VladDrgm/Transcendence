@@ -1010,10 +1010,15 @@ function handleMutedUserSocket(targetId: number, roomName: string) {
 				if (invitation?.sessionId != null) {
 					alert("Cancelling active invitation");
 					socketRef.current?.emit('remove invite', invitation);
+					if (invitation.sessionId) {
+						invitation.playerOneSocket = null;
+						invitation.playerTwoSocket = null;
+						invitation.sessionId = null;
+					}
 				}
-				if (invitation?.sessionId === null && gameStatus === 0) {
-					alert("Nothing to quit");
-				}
+			}
+			else {
+				alert("Nothing to quit");
 			}
 		}
 	
