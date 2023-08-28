@@ -19,7 +19,7 @@ export const headerStyle: Properties = {
 
 export const subPageDimensions: Properties = {
 	width: '100%',
-	height: '500px',
+	height: '100%',
 	backgroundColor: 'lightgray'
 }
 

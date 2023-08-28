@@ -14,7 +14,7 @@ export const GameContainerStyle: Properties = {
 	// backgroundColor: 'gray',
 	// flex: '1',
 	position: 'relative',
-	// height: '100vh',
+	height: '100%',
   	width: '50%',
   	// display: 'flex',
 	fontFamily: 'Shlop',
