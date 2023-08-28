@@ -81,7 +81,7 @@ const ChatInput_Div: FC<chatInputProps> = ({
             value={value}
             onChange={onChange}
             onKeyPress={onKeyPress}
-            placeholder="You can write somehting here"
+            placeholder="You can write something here"
             />
         );
       } else {

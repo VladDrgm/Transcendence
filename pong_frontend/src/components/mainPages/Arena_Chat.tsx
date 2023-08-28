@@ -1039,7 +1039,8 @@ function handleMutedUserSocket(targetId: number, roomName: string) {
 			/>
 			);
 		}
-	} else {
+	} 
+	else {
 		gameBody = <canvas width={600} height={300} style={{ backgroundColor: 'black' }} />;
 	}
 
