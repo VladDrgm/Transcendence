@@ -2,7 +2,9 @@
   "dependencies": {
     "@nestjs/common": "^9.4.0",
     "@nestjs/typeorm": "^9.0.1",
+    "axios": "^1.4.0",
     "pg": "^8.10.0",
+    "react-router-dom": "^6.15.0",
     "socket.io-client": "^4.7.0",
     "typeorm": "^0.3.15"
   }

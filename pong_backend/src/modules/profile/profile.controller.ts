@@ -40,10 +40,7 @@ export class ProfileController {
       throw new HttpException('User not found', HttpStatus.NOT_FOUND);
     else return ret;
   }
-  @Get('public/:id')
-  getPublicProfile(): string {
-    return 'This is your friends profile. But cookies are not implemented yet';
-  }
+
 
   @Get('myID')
   getMyID(@Session() session: Record<string, any>): string {

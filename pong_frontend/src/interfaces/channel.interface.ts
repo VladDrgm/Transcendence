@@ -1,6 +1,6 @@
 import React, { FC, ChangeEvent, KeyboardEvent } from "react";
-import { Invitation, User } from "./user.interface";
-import { main_div_mode_t } from "../components/MainDivSelector";
+import { User } from "./user.interface";
+// import { main_div_mode_t } from "../components/MainDivSelector";
 
 export interface Channel {
 	ChannelId: number;
@@ -11,8 +11,8 @@ export interface Channel {
 }
 
 export interface ChatProps {
-	userID: number; //userID from login process
-	user: User; //USer from login process
+	userID: number | undefined; //userID from login process
+	user: User | null; //USer from login process
 	toggleChat: (currentChat: ChatData) => void;
 	yourId: string | number;  //socketId from joining the game
 	// username: string; //name given in the game startpage
@@ -45,8 +45,8 @@ export interface ChatProps {
     allChannels: Channel[];
 	generalChat: ChatData;
 	loadingChannelPanel: boolean;
-	invitePlayer:(invitation: Invitation) => void;
-	mode_set: React.Dispatch<React.SetStateAction<main_div_mode_t>>;
+	invitePlayer:(sessionId: string) => void;
+	// mode_set: React.Dispatch<React.SetStateAction<main_div_mode_t>>;
   	friend_set: React.Dispatch<React.SetStateAction<number>>;
 	invitation: Invitation;
 }
@@ -60,7 +60,7 @@ export interface ChatProps {
 };
 
 export interface Message {
-	sender: string;
+	sender: string | undefined;
 	content: string;
 }
 

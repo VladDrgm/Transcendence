@@ -46,9 +46,10 @@ export class ChannelService {
 
     channelDb.Name = channelDTO.Name;
     channelDb.OwnerId = callerId;
+    if (channelDTO.Password != null && channelDTO.Password != '' && channelDTO.Password != undefined ) {
     channelDb.Password = await this.passwordService.hashPassword(
-      channelDTO.Password,
-    );
+      channelDTO.Password);
+    }
     channelDb.Type = channelDTO.Type;
 
     const ChannelId = await this.channelRepository
@@ -61,10 +62,13 @@ export class ChannelService {
 
     this.channelAdminRepository.save(adminCreate);
 
-    return this.channelRepository.save(channelDb);
+    return channelDb;
   }
 
   async remove(id: number): Promise<void> {
+    await this.channelAdminRepository.delete({ ChannelId: id });
+    await this.channelUserRepository.delete({ ChannelId: id });
+    await this.channelBlockedUserRepository.delete({ ChannelId: id });
     await this.channelRepository.delete(id);
   }
 

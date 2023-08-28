@@ -1,70 +1,42 @@
-// import dotenv from 'dotenv';
-// dotenv.config();
-
-import React, {useState, useEffect} from 'react';
-import LogIn from './components/LogIn';
+import React, { useState } from 'react';
+import { Route, BrowserRouter as Router, Navigate, Routes } from 'react-router-dom';
+import { useUserContext } from './components/context/UserContext';
+import LoginPage from './components/LoginPage';
+import CompleteProfilePage from './components/CompleteProfilePage';
 import UserStartPage from './components/UserStartPage';
-import { User } from './interfaces/user.interface';
-import { UserContext } from './components/context/UserContext';
-
-const emptyUserObject: User = {
-	username: '',
-	intraUsername: '',
-	userID: 0,
-	socketId: '',
-	avatarPath: '',
-	wins: 0,
-	losses: 0,
-	points: 0,
-	status: '',
-	achievementsCSV: '',
-	passwordHash: '',
-	friends: [],
-	befriendedBy: [],
-	blocked: [],
-	blockedBy: [],
-	adminChannels: [],
-	blockedChannels: [],
-	channels: [],
-  };
+import HomePage from './components/mainPages/HomePage';
+import Arena_Chat_MainDiv from './components/mainPages/Arena_Chat';
+import LeaderboardPage from './components/mainPages/LeaderboardPage';
+import ProfilePage from './components/mainPages/ProfilePage';
+import SettingsPage from './components/mainPages/SettingsPage';
 
 const App = () => {
-	const [user, setUser] = useState<User>(emptyUserObject);
-  	const [userID, userID_set] = useState<number>(0);
+	const { user, setUser } = useUserContext();
 
-  	const [loged_in, loged_in_set] = useState<boolean>(false);
-
-	const storeUserInCookies = (newUser: User) => {
-		const userJSON = JSON.stringify(newUser);
-		localStorage.setItem('user', userJSON);
-		setUser(newUser);
-	}
+	const [friendID, friend_set] = useState<number>(-1);
 
 	const handleLogout = () => {
 		localStorage.removeItem('user');
-    	setUser(emptyUserObject);
+    	setUser(null);
 	}
 
-	useEffect(() => {
-		const storedUser = localStorage.getItem('user');
-		if (storedUser) {
-			// Deserialize the user object from JSON
-			const parsedUser: User = JSON.parse(storedUser);
-			setUser(parsedUser);
-		}
-	  }, []);
- 
-return (
-	<UserContext.Provider value={{ user, setUser }}>
-		<div>
-			{user.userID <= 0
-				? (<LogIn onSignUp={storeUserInCookies} userID_set={userID_set} loginDone_set={loged_in_set} />)
-				: (<UserStartPage onLogout={handleLogout} id={userID} />)
-			}
-		</div>
-	</UserContext.Provider>
-)
-  
+	return (
+        <Router>
+            <Routes>
+                <Route path="/" element={user ? <Navigate to="/app" replace /> : <Navigate to="/login" replace />} />
+                <Route path="/login" element={<LoginPage />} />
+                <Route path="/complete_profile" element={<CompleteProfilePage />} />
+                <Route path="/app" element={<UserStartPage />}>
+                    <Route path='home' index element={<HomePage />} />
+                    <Route path="chat" element={<Arena_Chat_MainDiv userID={user?.userID} friend_set={friend_set}/>} />
+                    <Route path="leaderboard" element={<LeaderboardPage friend_set={friend_set}/>} />
+                    <Route path="profile" element={<ProfilePage friend_set={friend_set} />} />
+                    <Route path="settings" element={<SettingsPage onLogout={handleLogout} />} />
+                </Route>
+            </Routes>
+        </Router>
+    );
 };
 
 export default App;
+

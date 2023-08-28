@@ -22,7 +22,7 @@ export async function getChannelUsers(channelId: number):  Promise<any[]> {
 }
 
 //to be tested
-export async function getChannelUser(userId: number, channelId: number): Promise<any> {
+export async function getChannelUser(userId: number | undefined, channelId: number): Promise<any> {
   if (userId === undefined || channelId === undefined) {
     throw new Error("Invalid userId or channelId");
   }
@@ -48,7 +48,7 @@ export async function getChannelUser(userId: number, channelId: number): Promise
 }
 
 
-export function deleteChannelUser(userId: number, channelId: number) {
+export function deleteChannelUser(userId: number | undefined, channelId: number) {
     fetch(fetchAddress + 'channel/' + userId + '/' + channelId + '/user', {method: 'DELETE'})
       .then(response => response.json())
       .then(data => {console.log("ChannelUser" + userId + " deleted:", data);})
@@ -57,7 +57,7 @@ export function deleteChannelUser(userId: number, channelId: number) {
   
   //to be tested
   // adds a user to the Channeluser table of a channel with channelId
-export async function postChannelUser(userId: number, channelId: number): Promise<void> {
+export async function postChannelUser(userId: number | undefined, channelId: number): Promise<void> {
     const requestOptions = {
       method: 'POST',
       headers: { 
@@ -81,7 +81,7 @@ export async function postChannelUser(userId: number, channelId: number): Promis
       });
 }
 
-export function postPrivateChannelUser(userId: number, channelId: number, password: string) {
+export function postPrivateChannelUser(userId: number | undefined, channelId: number, password: string) {
   const requestOptions = {
     method: 'POST',
     headers: { 
@@ -123,7 +123,7 @@ export async function getChannelUserBlocked(userId: number, channelId: number): 
 }
   
   //works fine
-export function deleteChannelUserBlocked(callerId: number, targetId: number, channelId: number) {
+export function deleteChannelUserBlocked(callerId: number | undefined, targetId: number, channelId: number) {
     return fetch(fetchAddress + 'channel/' + targetId + '/' + channelId + '/blocked', {method: 'DELETE'})
     .then(response => {
       if (!response.ok) {
@@ -141,7 +141,7 @@ export function deleteChannelUserBlocked(callerId: number, targetId: number, cha
 }
   
   //to be tested
-export function postChannelUserBlocked(callerId: number, targetId: number, channelId: number) {
+export function postChannelUserBlocked(callerId: number | undefined, targetId: number, channelId: number) {
     const requestOptions = {
       method: 'POST',
       headers: { 
@@ -170,7 +170,7 @@ export function postChannelUserBlocked(callerId: number, targetId: number, chann
 //to be tested#
 // checks if userId is on the list of blocked Users in Channel with ChannelId
 // returns the User json, if blocked and false if not or an error occured
-export async function getChannelBlockedUser(userId: number, channelId: number): Promise<any> {
+export async function getChannelBlockedUser(userId: number | undefined, channelId: number): Promise<any> {
     if (userId === undefined || channelId === undefined) {
       throw new Error("Invalid userId or channelId");
     }
@@ -196,7 +196,7 @@ export async function getChannelBlockedUser(userId: number, channelId: number): 
 }
 
 
-export function postMuteUser(callerId: number, targetId: number, channelId: number, duration: number) {
+export function postMuteUser(callerId: number | undefined, targetId: number, channelId: number, duration: number) {
   return new Promise<void>((resolve, reject) => {
     const requestOptions = {
         method: 'POST',
@@ -230,11 +230,11 @@ interface ApiResponseItem {
   MutedUntil: string;
 }
 
-function hasUserId(array: ApiResponseItem[], targetUserId: number): boolean {
+function hasUserId(array: ApiResponseItem[], targetUserId: number | undefined): boolean {
   return (array.some(item => item.UserId === targetUserId));
 }
 
-export async function getMutedStatus(channelId: number, targetId: number): Promise<boolean> {
+export async function getMutedStatus(channelId: number, targetId: number | undefined): Promise<boolean> {
   try {
     const response = await fetch(fetchAddress + 'channel/' + channelId + '/mutedusers', {credentials: "include",})
     if (!response.ok) {
@@ -288,7 +288,7 @@ export async function getIsMuted(channelId: number, callerId: number, targetId: 
 
 //Password protection
 
-export function deleteChannelPassword(userId: number, channelId: number) {
+export function deleteChannelPassword(userId: number| undefined, channelId: number) {
   return fetch(fetchAddress + 'channel/' + userId + '/' + channelId + '/password', {method: 'DELETE'})
   .then(response => {
     if (response.ok) {
@@ -303,7 +303,7 @@ export function deleteChannelPassword(userId: number, channelId: number) {
 }
 
 
-export function putChannelPassword(userId: number, channelId: number, password: string) {
+export function putChannelPassword(userId: number | undefined, channelId: number, password: string) {
   const requestOptions = {
     method: 'PUT',
     headers: { 
@@ -327,7 +327,7 @@ export function putChannelPassword(userId: number, channelId: number, password: 
 
 
 // changes the Channeltype from public to private and the other way around
-export function putChannelType(userId: number, channelId: number) {
+export function putChannelType(userId: number | undefined, channelId: number) {
   const requestOptions = {
     method: 'PUT',
     headers: { 
@@ -352,7 +352,7 @@ export function putChannelType(userId: number, channelId: number) {
 
 //Blocked Users
 
-export async function postBlockedUser(callerId: number, targetId: number): Promise<void> {
+export async function postBlockedUser(callerId: number | undefined, targetId: number): Promise<void> {
   const requestOptions = {
     method: 'POST',
     headers: { 
@@ -381,7 +381,7 @@ export async function postBlockedUser(callerId: number, targetId: number): Promi
     });
 }
 
-export async function deleteBlockedUser(callerId: number, targetId: number): Promise<void> {
+export async function deleteBlockedUser(callerId: number | undefined, targetId: number): Promise<void> {
   const requestOptions = {
     method: 'DELETE',
     headers: { 
@@ -408,7 +408,7 @@ export async function deleteBlockedUser(callerId: number, targetId: number): Pro
     });
 }
 
-export async function getBlockedUser(callerId: number, targetId: number): Promise<boolean> {
+export async function getBlockedUser(callerId: number, targetId: number | undefined): Promise<boolean> {
   const requestOptions = {
     method: 'GET',
     headers: { 
@@ -439,7 +439,7 @@ export async function getBlockedUser(callerId: number, targetId: number): Promis
 
 // Friends
 
-export function postFriend(targetId: number, userId: number) {
+export function postFriend(targetId: number, userId: number | undefined) {
   const requestOptions = {
     method: 'POST',
     headers: { 
@@ -465,7 +465,7 @@ export function postFriend(targetId: number, userId: number) {
     });
 }
 
-export function deleteFriend(targetId: number, userId: number) {
+export function deleteFriend(targetId: number, userId: number | undefined) {
   const requestOptions = {
     method: 'DELETE',
     headers: { 
@@ -491,7 +491,7 @@ export function deleteFriend(targetId: number, userId: number) {
     });
 }
 
-export async function getIsFriend(callerId: number, targetId: number): Promise<boolean> {
+export async function getIsFriend(callerId: number | undefined, targetId: number | undefined): Promise<boolean> {
   const requestOptions = {
     method: 'GET',
     headers: { 

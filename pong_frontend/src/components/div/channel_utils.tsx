@@ -7,7 +7,7 @@ import styled from "styled-components";
 import {IUser} from '../../interfaces/interface';
 import { fetchAddress } from './channel_div';
 import { Row } from './chat_utils';
-import { getChannelFromChannellist } from '../main_div/Arena_Chat';
+import { getChannelFromChannellist } from '../mainPages/Arena_Chat';
 
 export function mapChannel(item: any) {
     const { ChannelId, OwnerId, Name, Type, Password } = item;
@@ -147,7 +147,7 @@ export async function modBannedUser(add: boolean, newBlockedUsername: string, pr
     if (targetID !== undefined)
         {
             if (add === true)
-                postChannelUserBlocked(props.userID, targetID, props.currentChat.Channel.ChannelId)
+                postChannelUserBlocked(props?.userID, targetID, props.currentChat.Channel.ChannelId)
                 .then(() => {
                     props.banUserSocket(targetID, props.currentChat.chatName);
                 })
@@ -156,7 +156,7 @@ export async function modBannedUser(add: boolean, newBlockedUsername: string, pr
                     alert("Error unbanning User");
                 })
             else
-                deleteChannelUserBlocked(props.userID, targetID, props.currentChat.Channel.ChannelId)
+                deleteChannelUserBlocked(props?.userID, targetID, props.currentChat.Channel.ChannelId)
                 .then(() => {
                     props.unbanUserSocket(targetID, props.currentChat.chatName);
                 })
@@ -175,7 +175,7 @@ export async function addMuteUser(newBlockedUsername: string, duration:number, p
     getUserIDByUserName(newBlockedUsername)
     .then((targetID) => {
         if (targetID !== undefined) {
-            postMuteUser(props.userID, targetID, props.currentChat.Channel.ChannelId, duration)
+            postMuteUser(props?.userID, targetID, props.currentChat.Channel.ChannelId, duration)
              .then(() => {
                  const socketDuration = (duration * 60 * 1000) + 100;
                  props.muteUserSocket(targetID, props.currentChat.chatName, socketDuration);

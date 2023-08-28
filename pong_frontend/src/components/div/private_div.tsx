@@ -1,117 +1,75 @@
 import React, { useEffect, useState, ChangeEvent  } from 'react';
+import * as styles from './private_divStyles';
 import { PrivateProfile } from '../../interfaces/private_profile.interface';
 import { getPrivateProfile } from '../../api/profile.api';
-import { changeUsername } from '../../api/change_username';
-import defaultProfile from '../../default_profiile.jpg';
-import { serialize } from 'v8';
+import { useUserContext } from '../context/UserContext';
+import imageAssetAchievement1 from '../assets/achievement1.png'
 
 interface PrivateDivProps
 {
-  userID: number;
+  userID: number | undefined;
 }
 
 const Private_Div: React.FC<PrivateDivProps> = ({userID}) => {
-  const [user, setUser] = useState<PrivateProfile>();
+	const { user, setUser } = useUserContext();
 
-  const getData = async () => {
-    try{
-      const myProf = await getPrivateProfile(userID);
-      setUser(myProf);
-    }
-    catch (error) {
-      console.error(error);
-    // handle the error appropriately or ignore it
-    }
-  };
-  const [image, setImage] = useState<File | null>(null);
-  const [imageUrl, setImageUrl] = useState<string>('');
-  const [inputText, setInputText] = useState<string>('');
+  	const getData = async () => {
+    	try {
+      		const myProf = await getPrivateProfile(userID);
+      		setUser(myProf);
+    	} catch (error) {
+      		console.error(error);
+    		// handle the error appropriately or ignore it
+    	}
+  	};
 
-  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setInputText(e.target.value);
-  };
+  	useEffect(() => {
+   		getData();
+  	}, []);
 
-  const handleButtonClick = () => {
-    const data = { text: inputText };
-    changeUsername(userID, data.text);
-    setInputText(''); // Clear the input field after submitting
-  };
-  const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files && e.target.files[0];
-    setImage(file || null);
-  };
-  const uploadImage = async () => {
-    if (!image) return;
-
-    const formData = new FormData();
-    formData.append('image', image);
-
-    try {
-      const response = await fetch('https://api.imgbb.com/1/upload?key=6e1ea064ae12a72d44cf9fa845c2c6f6', {
-        method: 'POST',
-        body: formData,
-      });
-
-      const data = await response.json();
-
-      if (data && data.data && data.data.image && data.data.image.url) {
-        setImageUrl(data.data.image.url);
-        /* Insert API method for image change (POST image link to our database) */
-      }
-      if (user != undefined)
-      {
-        var temp:PrivateProfile = user;
-        temp.avatarPath = imageUrl;
-        setUser(temp);
-      }
-      
-    }
-    catch (error) {
-      console.error('Error uploading image:', error);
-    }
-  };
-
-  useEffect(() => {
-    getData();
-  }, [handleButtonClick]);
-
-  if (user != null) {
-    return (
-      <div>
-        <div>
-          <h1>Personal profile</h1> 
-          <h2>{user.username}</h2> 
-          <input
-          type="text"
-          value={inputText}
-          onChange={handleInputChange}
-          placeholder="Enter new username"
-          />
-          <button onClick={handleButtonClick}>Change Username</button>
-          <br/>
-          {(user.avatarPath.substring(0, 5) != "https") && (
-            <img src={defaultProfile} alt="default profile" width="400" height="300"/>
-          )}
-          {(user.avatarPath.substring(0, 5) === "https") && (
-            <img src={user.avatarPath} alt={user.username} width="400" height="300"/>
-          )}
-          <div>
-            <input type="file" accept="image/*" onChange={handleImageChange} />
-            <button onClick={uploadImage}>Upload</button>
-            {imageUrl && <img src={imageUrl} alt="Uploaded" />}
-          </div>
-          <p>Wins: {user.wins}</p>
-          <p>Losses: {user.losses}</p>
-          <p>Points: {user.points}</p>
-          <p>Status: {user.status}</p>
-          <p>Achievements: {user.achievementsCSV}</p>
-        </div>
-      </div>
-    );
-  } 
-  else {
-    return <div></div>;
-  }
+  	if (user != null) {
+    	return (
+			<div>
+				<h1>Personal profile</h1> 
+				<h2>{user.username}</h2> 
+					<img
+					className='user-card__image'
+					src={`http://localhost:3000${user.avatarPath?.slice(1)}`}
+					alt='user.avatarPath'
+					onError={({ currentTarget }) => {
+						currentTarget.onerror = null;
+						currentTarget.src = '/default_pfp.png';
+					}}
+					style={styles.profilePictureStyle}
+				/>
+				<p>Status: {user.status}</p>
+				<br/>
+				<ul style={styles.listContainerStyle}>
+					<li style={styles.listStyle}>
+						<p style={styles.statListItemStyle}>Wins: {user.wins}</p>
+					</li>
+					<li style={styles.listStyle}>
+						<p style={styles.statListItemStyle}>Losses: {user.losses}</p>
+					</li>
+					<li style={styles.listStyle}>
+						<p style={styles.statListItemStyle}>Points: {user.points}</p>
+					</li>
+					<li style={styles.listStyle}>
+					</li>
+					<li style={styles.listStyle}>
+					</li>
+				</ul>
+				<p>Achievements: {user.achievementsCSV}</p>
+				<ul style={styles.listContainerStyle}>
+					<li style={styles.listStyle}>
+						<img style={styles.achievementListItemStyle} src={imageAssetAchievement1}></img>
+					</li>
+				</ul>
+			</div>
+    	);
+  	} else {
+    	return <div></div>;
+  	}
 };
 
 export default Private_Div;

@@ -4,7 +4,7 @@ import { MatchHistoryItem } from '../../interfaces/matchHistory.interface';
 import { UsernameItem } from '../../interfaces/username_list.interface';
 import { getGlobalMatchHistory, getPersonalMatchHistory } from '../../api/matchHistory.api';
 import { getUserList } from '../../api/user_list.api';
-import {main_div_mode_t} from '../MainDivSelector';
+// import {main_div_mode_t} from '../MainDivSelector';
 
 const ITEMS_PER_PAGE = 3;
 
@@ -17,11 +17,11 @@ enum matchHistoryType_t {
 interface MatchHistoryProps
 {
   userID: number;
-  mode_set: React.Dispatch<React.SetStateAction<main_div_mode_t>>;
+//   mode_set: React.Dispatch<React.SetStateAction<main_div_mode_t>>;
   friend_set: React.Dispatch<React.SetStateAction<number>>;
 }
 
-const MatchHistory_MainDiv: React.FC<MatchHistoryProps>  = ({userID, mode_set, friend_set}) => {
+const MatchHistory_MainDiv: React.FC<MatchHistoryProps>  = ({userID, friend_set}) => {
   const [jsonData, setJsonData] = useState<MatchHistoryItem[]>([]);
   const [usernameList, setusernameList] = useState<UsernameItem[]>([]);
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -67,11 +67,11 @@ const MatchHistory_MainDiv: React.FC<MatchHistoryProps>  = ({userID, mode_set, f
 
   const openFriend = (FID:number) => {
     friend_set(FID);
-    mode_set(main_div_mode_t.PUBLIC_PROFILE);
+    // mode_set(main_div_mode_t.PUBLIC_PROFILE);
   };
 
   const openProfile = () => {
-    mode_set(main_div_mode_t.PROFILE);
+    // mode_set(main_div_mode_t.PROFILE);
   }
 
   const findUsername = (idToFind: number): string | undefined => {

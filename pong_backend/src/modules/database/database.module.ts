@@ -13,8 +13,6 @@ import { ChannelUser } from '../../models/orm_models/channel_user.entity';
 
 config();
 
-//!!!!!please check with Vlad for database connection information
-
 @Module({
   imports: [
     TypeOrmModule.forRoot({
@@ -36,7 +34,7 @@ config();
         Channel,
         ChannelUser,
       ],
-      synchronize: true, // set to false in production -> THIS SETS UP THE DATABASE AUTOMATICALLY BASED ON THE ORM MODELS
+      synchronize: true, // set to false in production; true in development
       ssl: true,
       extra: {
         ssl: {

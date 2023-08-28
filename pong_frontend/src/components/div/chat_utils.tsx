@@ -53,7 +53,7 @@ export const Messages = styled.div`
 
 
 export function renderUser(user: User, props: ChatProps) {
-    if (user.username === props.user.username) {
+    if (user.username === props.user?.username) {
       return (
           <Row key={user.userID}>
           You: {user.username}

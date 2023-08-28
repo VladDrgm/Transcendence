@@ -8,7 +8,7 @@ on:
     branches:
       - main
     paths:
-      - ./pong_backend/**
+      - pong_backend/**
       - .github/workflows/main_transcendence-server.yml
   workflow_dispatch:
 

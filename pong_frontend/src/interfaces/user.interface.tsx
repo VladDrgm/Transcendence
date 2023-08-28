@@ -6,7 +6,7 @@ export interface User {
 	intraUsername: string,
 	userID: number,
 	socketId: string,
-	avatarPath: string,
+	avatarPath: string | undefined,
 	wins: number,
 	losses: number,
 	points: number,

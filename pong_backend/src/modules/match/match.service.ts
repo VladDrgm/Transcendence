@@ -11,7 +11,7 @@ export class MatchService {
     @InjectRepository(Match)
     private readonly matchRepository: Repository<Match>,
     @InjectRepository(MatchHistory)
-    private readonly matchHistoryRepository: Repository<MatchHistory>,
+    private readonly matchHistoryRepository: Repository<MatchHistory>
   ) {}
 
   async createMatch(matchDTO: MatchDTO): Promise<Match> {
@@ -49,6 +49,8 @@ export class MatchService {
   }
 
   async deleteMatch(matchId: number): Promise<void> {
+    await this.matchHistoryRepository.delete({ MatchId: matchId });
+
     await this.matchRepository.delete(matchId);
   }
 

@@ -5,7 +5,8 @@ import {renderRooms, fetchPublicChannels, fetchPrivateChannels} from './channel_
 import { popUpJoinPrivateChannel, popUpCreateChannel } from './channel_popups';
 
 // export var fetchAddress = 'http://localhost:3000/';
-export var fetchAddress = process.env.REACT_APP_SRVR_URL || 'http://localhost:3000/';
+// export var fetchAddress = process.env.REACT_APP_SRVR_URL || 'http://localhost:3000/';
+export var fetchAddress= `${process.env.REACT_APP_BASE_URL}` 
 
 // export async function isChannelUser(userId: number, channelId: number): Promise<boolean> {
 //     try {

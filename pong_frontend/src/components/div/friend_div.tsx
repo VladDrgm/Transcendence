@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { FriendProfile } from '../../interfaces/friend_profile.interface';
 import { getFriendProfile } from '../../api/profile.api';
 import defaultProfile from '../../default_profiile.jpg';
+import CSS from 'csstype';
 
 interface FriendProps {
   userID: number;
@@ -10,6 +11,15 @@ interface FriendProps {
 
 const Friend_Div: React.FC<FriendProps> = ({ userID, friendID }) => {
   const [user, setFriend] = useState<FriendProfile>();
+
+  const profilePictureStyle: CSS.Properties = {
+    width: '120px',
+    height: '120px',
+    borderRadius: '50%',
+    objectFit: 'cover',
+    marginBottom: '20px',
+    border: '3px solid rgba(254, 8, 16, 1)',
+  };
 
   const getData = async () => {
     if (friendID > 0)
@@ -34,12 +44,16 @@ const Friend_Div: React.FC<FriendProps> = ({ userID, friendID }) => {
       <div>
         <div>
           <h2>{user.username}</h2>
-          {(user.avatarPath.substring(0, 5) != "https") && (
-            <img src={defaultProfile} alt="default profile" width="400" height="300"/>
-          )}
-          {(user.avatarPath.substring(0, 5) === "https")  && (
-            <img src={user.avatarPath} alt={user.username} width="400" height="300"/>
-          )}
+          <img
+            className='user-card__image'
+            src={`http://localhost:3000${user.avatarPath.slice(1)}`}
+            alt='user.avatarPath'
+            onError={({ currentTarget }) => {
+              currentTarget.onerror = null;
+              currentTarget.src = '/default_pfp.png';
+            }}
+            style={profilePictureStyle}
+          />
           <p>Wins: {user.wins}</p>
           <p>Losses: {user.losses}</p>
           <p>Points: {user.points}</p>
