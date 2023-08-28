@@ -304,7 +304,10 @@ const Game: FC<GameProps> = (props) => {
 		
 		function endGame(gameStateUpdated: GameState) {
 			console.log("End game reached");
-			if (socket.id === gameSession.playerOne && gameState.playerOne.score > gameState.playerTwo.score ) {
+			if (gameState.playerOne.score === 0 && gameState.playerTwo.score === 0) {
+				
+			}
+			else if (socket.id === gameSession.playerOne && gameState.playerOne.score > gameState.playerTwo.score ) {
 				alert("You won!");
 			}
 			else if (socket.id === gameSession.playerOne && gameState.playerOne.score < gameState.playerTwo.score ) {

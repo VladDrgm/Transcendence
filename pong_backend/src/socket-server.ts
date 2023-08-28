@@ -438,6 +438,41 @@ io.on('connection', (socket: Socket) => {
 		}
 	});
 
+	socket.on('remove invite', ((invitation:Invitation)) => {
+		
+	});
+
+	socket.on('quit queue', (sessionId) => {
+		// Check if the provided sessionId exists in the gameSessions array
+		const session = gameSessions.find((session) => session.sessionId === sessionId);
+
+		if (session) {
+			if (session.playerIds[0]) {
+				io.to(session.playerIds[0]).emit('clean queue');
+			}
+			if (session.playerIds[1]) {
+				io.to(session.playerIds[1]).emit('clean queue');
+			}
+			session.sessionId = null;
+			session.invite = false;
+
+			// Get the index of the session
+			const sessionIndex = gameSessions.indexOf(session);
+
+			// Unlink the gameState object by nullifying it
+			if (gameSessions[sessionIndex].gameState) {
+				gameSessions[sessionIndex].gameState = null;
+			}
+			
+			// Nullify the playerIds
+			gameSessions[sessionIndex].playerIds = null;
+			gameSessions.splice(sessionIndex, 1);
+
+			// Remove the player from the queue if they were waiting
+			playerQueue = playerQueue.filter(playerId => playerId !== socket.id);
+		}
+	});
+
 
 	/* Updating Gameplay Sessions */
 

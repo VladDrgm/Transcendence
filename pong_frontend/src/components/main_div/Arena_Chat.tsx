@@ -892,7 +892,7 @@ function handleMutedUserSocket(targetId: number, roomName: string) {
 		function invitePlayer(invitationNew: Invitation) {
 			if (invitation?.sessionId === null) {
 				invitation.playerOneSocket = invitationNew?.playerOneSocket;
-				invitation.playerOneSocket = invitationNew?.playerOneSocket;
+				invitation.playerTwoSocket = invitationNew?.playerTwoSocket;
 			}
 			if (socketRef.current?.id && !gameSession.playerOne && !gameSession.playerTwo) {
 				console.log("Invite player " + invitation!.playerTwoSocket + " action triggered");
@@ -924,42 +924,59 @@ function handleMutedUserSocket(targetId: number, roomName: string) {
 				alert("Both players have joined your session, Player 1 can start the game.");
 			}
 		}
+
+
 	
-			socketRef.current?.on('session joined', ({ sessionIdInput, playerInput }) => {
-				console.log("reached Session Joined");
-				if (playerInput === 1) {
-					setGameSession((prevSession) => ({
-						...prevSession,
-						sessionId: sessionIdInput,
-						player: playerInput,
-						playerOne: socketRef.current?.id || '',
-					}));
-					console.log("Player 1 set");
-					alert("Joined a Session as Player 1");
-				} else if (playerInput === 2) {
-					setGameSession((prevSession) => ({
-						...prevSession,
-						sessionId: sessionIdInput,
-						player: playerInput,
-						playerTwo: socketRef.current?.id || '',
-					}));
-					console.log("Player 2 set");
-					alert("Joined a session as Player 2");
-				}
-			});
-	
-			socketRef.current?.on('opponent joined', (opponentSocketId: string) => {
-				console.log('Opponent joined with socketId:', opponentSocketId);
-			
-				// If player 2, save its socket ID for player 1 and vice versa
-				if (gameSession.player === 2) {
-					gameSession.playerOne = opponentSocketId;
-				}
-				if (gameSession.player === 1) {
-					gameSession.playerTwo = opponentSocketId;
-					alert("Player 2 joined your session");
-				}
-			});
+		socketRef.current?.on('session joined', ({ sessionIdInput, playerInput }) => {
+			console.log("reached Session Joined");
+			if (playerInput === 1) {
+				setGameSession((prevSession) => ({
+					...prevSession,
+					sessionId: sessionIdInput,
+					player: playerInput,
+					playerOne: socketRef.current?.id || '',
+				}));
+				console.log("Player 1 set");
+				alert("Joined a Session as Player 1");
+			} else if (playerInput === 2) {
+				setGameSession((prevSession) => ({
+					...prevSession,
+					sessionId: sessionIdInput,
+					player: playerInput,
+					playerTwo: socketRef.current?.id || '',
+				}));
+				console.log("Player 2 set");
+				alert("Joined a session as Player 2");
+			}
+		});
+
+		socketRef.current?.on('opponent joined', (opponentSocketId: string) => {
+			console.log('Opponent joined with socketId:', opponentSocketId);
+		
+			// If player 2, save its socket ID for player 1 and vice versa
+			if (gameSession.player === 2) {
+				gameSession.playerOne = opponentSocketId;
+			}
+			if (gameSession.player === 1) {
+				gameSession.playerTwo = opponentSocketId;
+				alert("Player 2 joined your session");
+			}
+		});
+
+		socketRef.current?.on('clean queue', cleanQueue);
+
+		function cleanQueue() {
+			gameSession.playerOne = null;
+			gameSession.playerTwo = null;
+			gameSession.sessionId = null;
+			gameSession.player = null;
+			if (invitation) {
+				invitation.playerOneSocket = null;
+				invitation.playerTwoSocket = null;
+				invitation.sessionId = null;
+			}
+			alert("Left session/queue. You can join a new queue or invite someone to play.");
+		};
 	
 		let updateGameStatus = (newStatus:number) => {
 			setGameStatus(newStatus);
@@ -979,6 +996,26 @@ function handleMutedUserSocket(targetId: number, roomName: string) {
 				}
 			}
 		}
+
+		function quitGame(event: React.FormEvent) {
+			console.log("Reached quitGame, data is - playerOne: " + gameSession.playerOne + " and playerTwo: " + gameSession.playerTwo);
+			// Check if both player 1 and/or player 2 are assigned
+			if (gameSession.playerOne || gameSession.playerTwo || invitation?.sessionId) {
+				if ((socketRef.current?.id === gameSession.playerOne || socketRef.current?.id === gameSession.playerTwo) && gameStatus === 0) {
+					socketRef.current?.emit('quit queue', gameSession.sessionId);
+				}
+				if ((socketRef.current?.id === gameSession.playerOne || socketRef.current?.id === gameSession.playerTwo) && gameStatus === 1) {
+					socketRef.current?.emit('quit game', gameSession.sessionId);
+				}
+				if (invitation?.sessionId != null) {
+					alert("Cancelling active invitation");
+					socketRef.current?.emit('remove invite', invitation);
+				}
+				if (invitation?.sessionId === null && gameStatus === 0) {
+					alert("Nothing to quit");
+				}
+			}
+		}
 	
 		socketRef.current?.on('waiting for opponent', () => {
 			console.log('Waiting for opponent...');
@@ -992,6 +1029,11 @@ function handleMutedUserSocket(targetId: number, roomName: string) {
 			socketRef.current?.on('game starting', () => {
 				setGameStatus(1);
 				setIsGameStarting(true); // Set isGameStarting to true immediately
+				if (invitation != null) {
+					invitation.playerOneSocket = null;
+					invitation.playerTwoSocket = null;
+					invitation.sessionId = null;
+				}
 			});
 		
 		function handleGameChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -1074,6 +1116,7 @@ function handleMutedUserSocket(targetId: number, roomName: string) {
 		<GameForm
 			joinQueue={joinQueue as RegisterHandler}
 			startGame={startGame as RegisterHandler}
+			quitGame={quitGame as RegisterHandler}
 			gameSession={gameSession}
 			isConnected={connected}
 		/>
