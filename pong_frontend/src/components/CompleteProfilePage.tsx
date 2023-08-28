@@ -62,7 +62,7 @@ const CompleteProfilePage: React.FC<CompleteProfilePageProps> = ({/* Use Complet
 			if (newAvatar) {
 				try {
 					const formData = new FormData();
-					formData.append('img', newAvatar);
+					formData.append('file', newAvatar);
 					const userObjectWithAvatar = await updateAvatarApi(newCreatedUser.userID, formData);
 					newCreatedUser = userObjectWithAvatar;
 				} catch (error) {
