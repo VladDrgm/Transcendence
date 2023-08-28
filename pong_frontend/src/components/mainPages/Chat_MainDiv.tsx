@@ -1,6 +1,6 @@
 import React, { FC, useEffect, useState, useCallback, useMemo} from "react";
 import { renderUser} from "../div/chat_utils"; 
-import {BodyContainer, ChannelInfo, ChatPanel, Container, SideBar, TextBox } from "./ChatPageStyles";
+import {ChatContainerStyle, BodyContainer, ChannelInfo, ChatPanel, Container, SideBar, TextBox } from "./ChatPageStyles";
 import Channel_Div from '../div/channel_div';
 import { ChannelAdmin_Buttons_Div, ChannelOwner_Buttons_Div } from "../div/channel_buttons_div";
 import ChatBody_Div from "../div/channel_ChatBody_div";
@@ -150,35 +150,35 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 	}, [props.currentChat, handleBody, handleChannelPanel, loadingChannelpanel, props.ChannelUserRoles]);
 
 	return (
-		<Container>
-		<SideBar>
-			<Channel_Div{...props}/>
-			<h3>All Users</h3>
-			{props.allUsers.map((user) => renderUser(user, props))}
-		</SideBar>
-		<ChatPanel>
-			<ChannelInfo>
-				{channelpanel}
-			</ChannelInfo>
-			<BodyContainer>
-			{body}
-			</BodyContainer>
-			{/* {chatInput}
-			<TextBox
-            value={props.message}
-            onChange={props.handleMessageChange}
-            onKeyPress={handleKeyPress}
-            placeholder="You can write something here"
-            /> */}
-			  {/* </BodyContainer> */}
-			{renderChatInput({
-				props: props,
-				value: props.message,
-				onChange: props.handleMessageChange,
-				onKeyPress: handleKeyPress
-			})}
-		</ChatPanel>
-		</Container>
+		<div style={ChatContainerStyle}>
+			<SideBar>
+				<Channel_Div{...props}/>
+				<h3>All Users</h3>
+				{props.allUsers.map((user) => renderUser(user, props))}
+			</SideBar>
+			<ChatPanel>
+				<ChannelInfo>
+					{channelpanel}
+				</ChannelInfo>
+				<BodyContainer>
+				{body}
+				</BodyContainer>
+				{/* {chatInput}
+				<TextBox
+				value={props.message}
+				onChange={props.handleMessageChange}
+				onKeyPress={handleKeyPress}
+				placeholder="You can write something here"
+				/> */}
+				{/* </BodyContainer> */}
+				{renderChatInput({
+					props: props,
+					value: props.message,
+					onChange: props.handleMessageChange,
+					onKeyPress: handleKeyPress
+				})}
+			</ChatPanel>
+		</div>
 	);
 };
 

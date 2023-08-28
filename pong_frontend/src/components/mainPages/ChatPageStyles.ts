@@ -13,9 +13,27 @@ export const exampleStyle: Properties = {
 
 export const Container = styled.div`
   height: 100vh;
-  width: 100%;
+  width: 50%;
   display: flex;
+  border: '2px solid',
+	color:'white',
 `;
+
+export const ChatContainerStyle: Properties = {
+	backgroundColor: 'gray',
+	position: 'static',
+	height: '100vh',
+  	width: '100vh',
+  	display: 'flex',
+	fontFamily: 'Shlop',
+	fontSize: '12px',
+	alignSelf: 'center',
+	borderRadius: '6px',
+	border: '2px solid',
+	color:'white',
+	// marginTop: '100px',
+	marginBottom: '0px',
+}
 
 export const SideBar = styled.div`
   height: 100%;
@@ -57,6 +75,21 @@ export const Messages = styled.div`
   flex-direction: column;
   align-items: flex-start;
 `;
+
+export const chatButtonsStyle: Properties = {
+	backgroundColor: 'rgba(254, 8, 16, 1)',
+	position: 'relative',
+	// height:'40px',
+	// width:'160px',
+	fontFamily: 'Shlop',
+	fontSize: '12px',
+	alignSelf: 'center',
+	borderRadius: '6px',
+	border: '2px solid',
+	color:'white',
+	// marginTop: '100px',
+	marginBottom: '0px',
+}
 
 /* Usage:
 import * as styles from './ChatPageStyles';
