@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { FriendProfile } from '../../interfaces/friend_profile.interface';
 import { getFriendProfile } from '../../api/profile.api';
 import defaultProfile from '../../default_profiile.jpg';
+import { fetchAddress } from './channel_div';
 import CSS from 'csstype';
 
 interface FriendProps {
@@ -46,7 +47,7 @@ const Friend_Div: React.FC<FriendProps> = ({ userID, friendID }) => {
           <h2>{user.username}</h2>
           <img
             className='user-card__image'
-            src={`http://localhost:3000${user.avatarPath.slice(1)}`}
+            src={fetchAddress.slice(0,-1) + `${user.avatarPath.slice(1)}`}
             alt='user.avatarPath'
             onError={({ currentTarget }) => {
               currentTarget.onerror = null;

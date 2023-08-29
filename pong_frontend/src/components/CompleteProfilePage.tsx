@@ -6,6 +6,7 @@ import * as styles from './CompleteProfilePageStyles';
 import imageAssetUploadAvatar from './assets/uploadAvatar.png';
 import { User } from '../interfaces/user.interface';
 import { updateAvatarApi, updateUsernameApi } from '../api/userApi';
+import { fetchAddress } from './div/channel_div';
 
 interface CompleteProfilePageProps {
 	/* Declare page properties here if needed */
@@ -107,7 +108,7 @@ const CompleteProfilePage: React.FC<CompleteProfilePageProps> = ({/* Use Complet
 			<p style={styles.pageTitleStyle}>Complete your profile {intraName}</p>
 			<img
 				className='user-card__image'
-				src={`http://localhost:3000/avatars/${user?.avatarPath}`}
+				src={fetchAddress + `/avatars/${user?.avatarPath}`}
 				alt='user.avatarPath'
 				onError={({ currentTarget }) => {
 					currentTarget.onerror = null;

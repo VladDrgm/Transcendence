@@ -6,7 +6,7 @@ import { postChannelUserBlocked, deleteChannelUserBlocked, getUsers, postChannel
 import styled from "styled-components";
 import {IUser} from '../../interfaces/interface';
 import { fetchAddress } from './channel_div';
-import { Row } from './chat_utils';
+import { Row } from '../mainPages/ChatPageStyles';
 import { getChannelFromChannellist } from '../mainPages/Arena_Chat';
 
 export function mapChannel(item: any) {

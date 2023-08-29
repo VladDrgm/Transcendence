@@ -4,6 +4,7 @@ import { PrivateProfile } from '../../interfaces/private_profile.interface';
 import { getPrivateProfile } from '../../api/profile.api';
 import { useUserContext } from '../context/UserContext';
 import imageAssetAchievement1 from '../assets/achievement1.png'
+import { fetchAddress } from './channel_div';
 
 interface PrivateDivProps
 {
@@ -34,7 +35,7 @@ const Private_Div: React.FC<PrivateDivProps> = ({userID}) => {
 				<h2>{user.username}</h2> 
 					<img
 					className='user-card__image'
-					src={`http://localhost:3000${user.avatarPath?.slice(1)}`}
+					src={fetchAddress.slice(0, -1) + `${user.avatarPath?.slice(1)}`}
 					alt='user.avatarPath'
 					onError={({ currentTarget }) => {
 						currentTarget.onerror = null;
