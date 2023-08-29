@@ -15,7 +15,7 @@ import { connected } from 'process';
 import { getIsAdmin, postAdmin } from '../../api/channel/channel_admin.api';
 import { error } from 'console';
 import { GameContainerStyle } from './GamePageStyles';
-import { ChatContainerStyle } from './ChatPageStyles';
+import { ArenaStyle, ChatContainerStyle } from './ChatPageStyles';
 // import { main_div_mode_t } from '../MainDivSelector';
 // import { Channel } from 'diagnostics_channel';
 
@@ -1054,7 +1054,8 @@ function handleMutedUserSocket(targetId: number, roomName: string) {
 	);
 
 	return (
-		<div className="App">
+		<div
+		style={ArenaStyle}>
 			<div>
 				{body}
 			</div>

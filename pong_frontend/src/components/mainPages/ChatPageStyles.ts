@@ -22,14 +22,34 @@ export const Container = styled.div`
 export const ChatContainerStyle: Properties = {
 	backgroundColor: 'gray',
 	position: 'static',
-	height: '100vh',
-  	width: '100vh',
+	flexGrow: '1',
+	// height: '100%',
+  	width: '50vw',
   	display: 'flex',
+	flexDirection: 'row',
 	fontFamily: 'Shlop',
 	fontSize: '12px',
 	alignSelf: 'center',
 	borderRadius: '6px',
 	border: '2px solid',
+	color:'white',
+	// marginTop: '100px',
+	marginBottom: '0px',
+}
+
+export const ArenaStyle: Properties = {
+	backgroundColor: 'lightgray',
+	position: 'static',
+	flexGrow: '1',
+	// height: '100vh',
+  	width: '100%',
+  	display: 'flex',
+	flexDirection: 'row',
+	fontFamily: 'Shlop',
+	fontSize: '12px',
+	alignSelf: 'center',
+	// borderRadius: '6px',
+	// border: '2px solid',
 	color:'white',
 	// marginTop: '100px',
 	marginBottom: '0px',
@@ -42,8 +62,8 @@ export const SideBar = styled.div`
 `;
 
 export const ChatPanel = styled.div`
-  height: 50%;
-  width: 85%;
+  height: 100vh;
+  width: 80%;
   display: flex;
   flex-direction: column;
 `;
@@ -52,18 +72,20 @@ export const BodyContainer = styled.div`
   width: 100%;
   height: 75%;
   overflow: scroll;
+//   display: flex;
+
   border-bottom: 1px solid black;
 `;
 
 export const TextBox = styled.textarea`
-  height: 15%;
-  width: 100%;
+  height: 10%;
+  width: 105%;
 `;
 
 export const ChannelInfo = styled.div`
-  height: 10%;
+  height: 15%;
   width: 100%;
-  border-bottom: 1px solid black;
+//   border-bottom: 1px solid black;
 `;
 
 export const Row = styled.div`
