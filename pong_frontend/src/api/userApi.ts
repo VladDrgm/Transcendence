@@ -1,7 +1,8 @@
 import { User } from "../interfaces/user.interface";
+import { fetchAddress } from "../components/div/channel_div";
 
-var fetchAddress = 'http://localhost:3000/';
-var fetchUserAddress = 'http://localhost:3000/user/';
+// var fetchAddress = 'http://localhost:3000/';
+var fetchUserAddress = fetchAddress + 'user/';
 const slash = '/';
 const updatePasswordEndpoint = '/update/password';
 const updateUsernameEndpoint = '/update/username/';
