@@ -700,6 +700,12 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID, friend_set}) => {
 				const username = data.username;
 				handleunblockedUserSocket(targetId, username);
 			});
+			socketRef.current.on('invitation alert playertwo', (data) => {
+				const sessionId = data.sessionId;
+				const playerOneSocket = data.playerOneSocket;
+				const playerTwoSocket = data.playerTwoSocket;
+				handlePlayerTwoInvite(sessionId, playerOneSocket, playerTwoSocket);
+			});
 		}
 		connect();
 
@@ -709,6 +715,18 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID, friend_set}) => {
 		}
 	}, []);
 
+
+	function handlePlayerTwoInvite(sessionId: string, playerOneSocket: string, playerTwoSocket: string) {
+		// getting user name of playerOne
+		const playerOneName = allUsers.find(user => user.socketId === playerOneSocket);
+
+		//allerting playerTwo to join the game
+		if (playerOneName) {
+			alert("You have been invited to a game by User: " + playerOneName 
+			+ "please go to your private conversation to join the game via the invite/start button");
+		}
+	}
+	
 	function handleBlockedUserSocket(targetId: number, callerName: string) {
 		console.log("targetID", targetId);
 		console.log("userId", userID);

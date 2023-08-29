@@ -377,7 +377,11 @@ io.on('connection', (socket: Socket) => {
 				sessionIdInput: newSessionId,
 				playerInput: 1
 			});
-			// ADD: SEND INVITE TO PLAYER TWO
+
+			// SEND INVITE TO PLAYER TWO
+			socket.to(invitation.playerTwoSocket).emit('invitation alert playertwo', invitation);
+
+
 			playerQueue.push(socket.id);
 			console.log("Game sessions after joining as Player 1:", gameSessions);
 		} else {
