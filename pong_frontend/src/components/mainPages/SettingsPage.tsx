@@ -15,7 +15,7 @@ interface SettingsPageProps
 // Component
 const SettingsPage: React.FC<SettingsPageProps> = ({onLogout}) => {
 	const { user, setUser } = useUserContext();
-	const [updatedUser, setUpdatedUser] = useState<User | undefined>(user);
+	// const [updatedUser, setUpdatedUser] = useState<User | undefined>(user);
 	const [newUsername, setNewUsername] = useState(''); // Sign up state for password input
 	const [newAvatar, setNewAvatar] = useState<File | null>(null)
 
@@ -34,7 +34,7 @@ const SettingsPage: React.FC<SettingsPageProps> = ({onLogout}) => {
 
 	const handleUpdateUsername = async () => {
 		
-		let updatedUser;
+		let updatedUser =  null;
 		try {
 			// Call the API function and get the updated user object
 			updatedUser = await updateUsernameApi(userID, newUsername);
@@ -50,11 +50,10 @@ const SettingsPage: React.FC<SettingsPageProps> = ({onLogout}) => {
 			setErrorMessage('Error updating username. Try again!');
 			setShowErrorMessage(true);
 		}
-		setUpdatedUser(updatedUser);
+		// setUpdatedUser(updatedUser);
 		setUser(updatedUser);
 		localStorage.setItem('user', JSON.stringify(updatedUser));
-		
-	  };
+	};
 
 	const handleUpdateAvatar = async () => {
 		try {
@@ -73,7 +72,7 @@ const SettingsPage: React.FC<SettingsPageProps> = ({onLogout}) => {
 			setShowErrorMessage(true);
 		}
 		const myProf = await getPrivateProfile(userID);
-		setUpdatedUser(myProf);
+		// setUpdatedUser(myProf);
 		setUser(myProf);
 		localStorage.setItem('user', JSON.stringify(myProf));
 	};
