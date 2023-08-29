@@ -15,7 +15,7 @@ interface SettingsPageProps
 // Component
 const SettingsPage: React.FC<SettingsPageProps> = ({onLogout}) => {
 	const { user, setUser } = useUserContext();
-	const [updatedUser, setUpdatedUser] = useState<User | null>(user);
+	const [updatedUser, setUpdatedUser] = useState<User | undefined>(user);
 	const [newUsername, setNewUsername] = useState(''); // Sign up state for password input
 	const [newAvatar, setNewAvatar] = useState<File | null>(null)
 
@@ -33,14 +33,14 @@ const SettingsPage: React.FC<SettingsPageProps> = ({onLogout}) => {
 	//   }
 
 	const handleUpdateUsername = async () => {
+		
+		let updatedUser;
 		try {
 			// Call the API function and get the updated user object
-			const updatedUser = await updateUsernameApi(userID, newUsername);
+			updatedUser = await updateUsernameApi(userID, newUsername);
 	  
 			// Update the state and local storage with the updated user object
-			setUpdatedUser(updatedUser);
-			setUser(updatedUser);
-			localStorage.setItem('user', JSON.stringify(updatedUser));
+			
 	  
 			// Clear the input field after successful update
 			setNewUsername('');
@@ -50,6 +50,9 @@ const SettingsPage: React.FC<SettingsPageProps> = ({onLogout}) => {
 			setErrorMessage('Error updating username. Try again!');
 			setShowErrorMessage(true);
 		}
+		setUpdatedUser(updatedUser);
+		setUser(updatedUser);
+		localStorage.setItem('user', JSON.stringify(updatedUser));
 		
 	  };
 
@@ -63,17 +66,16 @@ const SettingsPage: React.FC<SettingsPageProps> = ({onLogout}) => {
 			formData.append('file', newAvatar);
 			await updateAvatarApi(userID, formData);
 
-			const myProf = await getPrivateProfile(userID);
-			setUpdatedUser(myProf);
-			setUser(myProf);
-			localStorage.setItem('user', JSON.stringify(myProf));
-
 			setNewAvatar(null);
 			setShowErrorMessage(false);
 		} catch (error) {
 			setErrorMessage('Error updating avatar. Try again!');
 			setShowErrorMessage(true);
 		}
+		const myProf = await getPrivateProfile(userID);
+		setUpdatedUser(myProf);
+		setUser(myProf);
+		localStorage.setItem('user', JSON.stringify(myProf));
 	};
 
 	   // Extract the filename from the File object and update the state
