@@ -6,6 +6,7 @@ import { updateAvatarApi, updatePasswordApi, updateUsernameApi } from '../../api
 import * as styles from './SettingsPageStyles';
 import imageAssetUploadAvatar from '../assets/uploadAvatar.png'
 import { getPrivateProfile } from '../../api/profile.api';
+import { fetchAddress } from '../div/channel_div';
 
 interface SettingsPageProps
 {
@@ -97,7 +98,7 @@ const SettingsPage: React.FC<SettingsPageProps> = ({onLogout}) => {
 			<p style={styles.settingsTitleStyle}>Settings</p>
 			<img
 				className='user-card__image'
-				src={`http://localhost:3000${user?.avatarPath?.slice(1)}`}
+				src={fetchAddress.slice(0, -1) + `${user?.avatarPath?.slice(1)}`}
 				alt='user.avatarPath'
 				onError={({ currentTarget }) => {
 					currentTarget.onerror = null;
