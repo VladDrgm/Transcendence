@@ -5,12 +5,14 @@ import Channel_Div from '../div/channel_div';
 import { ChannelAdmin_Buttons_Div, ChannelOwner_Buttons_Div } from "../div/channel_buttons_div";
 import ChatBody_Div from "../div/channel_ChatBody_div";
 import ChatInput_Div from "../div/channel_ChatPanel_div";
-import { ChatProps } from "../../interfaces/channel.interface";
+import { ChannelUserRoles, ChatName, ChatProps } from "../../interfaces/channel.interface";
 import { chatInputProps } from "../div/channel_ChatPanel_div";
 // import { main_div_mode_t } from "../MainDivSelector";
 import { getUserIDByUserName } from "../div/channel_utils";
 import { User } from "../../interfaces/user.interface";
-
+import { postChannelUser } from "../../api/channel/channel_user.api";
+import { WritableDraft, initialMessagesState, initializeMessagesState } from "./Arena_Chat";
+import immer, { Draft } from "immer";
 
 const Chat_MainDiv: FC<ChatProps> = (props) => {
 	const [body, setBody] = useState<JSX.Element | null>(null);
@@ -19,14 +21,100 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 	const [loadingChannelpanel, setLoadingChannelpanel] = useState(true);
 	const [channelPanelLoaded, setChannelPanelLoaded] = useState(false);
 
-	const messages = useMemo(() =>
-		props.messages || [], [props.messages])
+	//MESSAGES
+	useEffect(() => {initializeMessagesState();},[]);
+
+	const [messages, setMessages] = useState<{
+		[key in ChatName]: { sender: string | undefined; content: string }[];
+	}>(initialMessagesState);
+		// console.log('initialMessageState:', initialMessagesState);
+
+	const [message, setMessage] = useState("");
+
+	function handleMessageChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
+		setMessage(e.target.value);
+	}
+
+	useEffect(() => {
+    	setMessage(message.trim());
+  	}, [message]);
+
+	function sendMessage() {
+		console.log("message:", message);
+		console.log("Messages :", messages);
+		console.log("currentchat: ", props.currentChat);
+		console.log("username : ", props.user?.username);
+		const payload = {
+		content: message,
+		to: props.currentChat.isChannel ? props.currentChat.chatName : props.currentChat.receiverId,
+		sender: props.user?.username,
+		chatName: props.currentChat.chatName,
+		isChannel: props.currentChat.isChannel
+		};
+
+		props.socketRef.current?.emit("send message", payload);
+		const newMessages = immer(messages, (draft: WritableDraft<typeof messages>) => {
+		//if the element doesn't exist, an empty one will be added
+		// console.log('Inside Immer callback');
+			if(!draft[props.currentChat.chatName]) {
+				draft[props.currentChat.chatName] = [];
+			}
+			draft[props.currentChat.chatName].push({
+				sender: props.user?.username,
+				content: message
+			});
+		});
+		console.log('New Messages:', newMessages);
+		setMessages(newMessages);
+		setMessage("");
+	}
+
+
+		// const messages = useMemo(() =>
+		// 	props.messages || [], [props.messages])
 
 	function handleKeyPress(e: React.KeyboardEvent<HTMLTextAreaElement>) {
 		if (e.key === "Enter") {
-		props.sendMessage();
-	// setLocalMessage('');
+		sendMessage();
+		// setLocalMessage('');
 		}
+	}
+
+	
+	// currentRoles states and functions
+
+	const [currentRoles, setCurrentRoles] = useState<ChannelUserRoles>({
+		isUser: 			true,
+		isUserResolved: 	true,
+		isAdmin: 			false,
+		isAdminResolved: 	true,
+		isOwner:			false,
+		isOwnerResolved:	true,
+		isBlocked:			false,
+		isBlockedResolved:	true,
+		isMuted:			false,
+		isMutedResolved:	true
+	});
+
+	function joinRoom(chatName: ChatName) {
+		console.log("Posting User ", props.user?.userID, " in Channel:", props.currentChat.Channel.ChannelId);
+		postChannelUser(props.user?.userID, props.currentChat.Channel.ChannelId)
+			.then(()=> {
+			props.socketRef.current?.emit("join room", chatName, (messages: any) => roomJoinCallback(messages, chatName))
+			setCurrentRoles((prevState) => ({
+				...prevState,
+				isUser: true
+			}))
+			}).catch(error => {
+				console.error("Error in joinRoom when adding User to Channel: ", error);
+			});
+	}
+
+	function roomJoinCallback(incomingMessages: any, room: keyof typeof messages) {
+		const newMessages = immer(messages, (draft: WritableDraft<typeof messages>) => {
+			draft[room] = incomingMessages;
+		});
+		setMessages(newMessages);
 	}
 
 	function inviteButton(invitedPlayer: User | undefined){
@@ -52,9 +140,11 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 	const handleBody = useCallback (() =>{
 		setBody(<ChatBody_Div
 			props = {props}
-			messages={messages}
+			messages={messages[props.currentChat.chatName]}
+			joinRoom={joinRoom}
+			ChannelUserRoles={currentRoles}
 		/>);
-	}, [messages, props.ChannelUserRoles]);
+	}, [messages, currentRoles]);
 
 	const openFriend = (userName: string) => {
 		getUserIDByUserName(userName)
@@ -112,7 +202,7 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 				)
 			);
 		}
-		else if (props.ChannelUserRoles.isBlocked || props.ChannelUserRoles.isMuted) {
+		else if (currentRoles.isBlocked || currentRoles.isMuted) {
 			setChannelpanel(
 				loadingChannelpanel ? (
 				  <div>Loading Channel Name...</div> // Show a loading spinner or placeholder
@@ -126,26 +216,26 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 				)
 			);
 		}
-		else if (props.ChannelUserRoles.isOwner){
+		else if (currentRoles.isOwner){
 			  setChannelpanel(
 				  <ChannelOwner_Buttons_Div{...props} loadingChannelPanel={loadingChannelpanel}/>
 			  );
 		  }
-		else if (props.ChannelUserRoles.isAdmin && props.ChannelUserRoles.isAdminResolved) {
+		else if (currentRoles.isAdmin && currentRoles.isAdminResolved) {
 			setChannelpanel(
 				<ChannelAdmin_Buttons_Div{...props} loadingChannelPanel={loadingChannelpanel}/>
 			);
 		} 
 		setChannelPanelLoaded(true);
 	}, [
-		props.ChannelUserRoles, 
+		currentRoles, 
 		props.currentChat,
 		loadingChannelpanel,
 	]);
 
 	useEffect(() => {
 		setLoadingChannelpanel(false);
-	}, [props.currentChat, props.currentChat.isResolved, props.messages]);
+	}, [props.currentChat, props.currentChat.isResolved, messages]);
 
 	useEffect(() => {
 		if (channelPanelLoaded) {
@@ -162,7 +252,7 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 		handleChannelPanel();
 		handleBody();
 		// setChatInput(<ChatInput_Div props = {props}/>);
-	}, [props.currentChat, handleBody, handleChannelPanel, loadingChannelpanel, props.ChannelUserRoles]);
+	}, [props.currentChat, handleBody, handleChannelPanel, loadingChannelpanel, currentRoles]);
 
 	return (
 		<div style={ChatContainerStyle}>
@@ -188,8 +278,8 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 				{/* </BodyContainer> */}
 				{renderChatInput({
 					props: props,
-					value: props.message,
-					onChange: props.handleMessageChange,
+					value: message,
+					onChange: handleMessageChange,
 					onKeyPress: handleKeyPress
 				})}
 			</ChatPanel>

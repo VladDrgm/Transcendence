@@ -32,16 +32,16 @@ interface Invitation {
 	playerTwoSocket: string | null;
 };
 
-type WritableDraft<T> = Draft<T>;
+export type WritableDraft<T> = Draft<T>;
 
 
 
-let initialMessagesState: {
+export let initialMessagesState: {
 	[key: string]: { sender: string; content: string }[];
 } = {};
 
 //Using fetched Channel Names to add as keys to the initialMessageState object
-async function initializeMessagesState() {
+export async function initializeMessagesState() {
 	const channelNames = await fetchChannelNames();
 	channelNames.forEach((channelName) => {
 		initialMessagesState[channelName] = [];
@@ -97,18 +97,7 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID, friend_set}) => {
 	
 
 	
-	const [currentRoles, setCurrentRoles] = useState<ChannelUserRoles>({
-		isUser: 			true,
-		isUserResolved: 	true,
-		isAdmin: 			false,
-		isAdminResolved: 	true,
-		isOwner:			false,
-		isOwnerResolved:	true,
-		isBlocked:			false,
-		isBlockedResolved:	true,
-		isMuted:			false,
-		isMutedResolved:	true
-	});
+	
 	
 	const [connectedRooms, setConnectedRooms] = useState<string[]>(["general"]);
 	const [allUsers, setAllUsers] = useState<any[]>([]);
@@ -156,80 +145,13 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID, friend_set}) => {
 	// 	return () => clearInterval(intervalID);
 	// }, []);
 
-	useEffect(() => {initializeMessagesState();},[]);
-
-	const [messages, setMessages] = useState<{
-		[key in ChatName]: { sender: string | undefined; content: string }[];
-	}>(initialMessagesState);
-	// console.log('initialMessageState:', initialMessagesState);
-
-	const [message, setMessage] = useState("");
-
 	let [playerOne, setPlayerOne] = useState<string>("");
 	let [playerTwo, setPlayerTwo] = useState<string>("");
 	let [audience, setAudience] = useState<string>("");
 
 	const socketRef = useRef<Socket | null>(null!);
 
-	function handleMessageChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
-		setMessage(e.target.value);
-	}
-
-	useEffect(() => {
-    	setMessage(message.trim());
-  	}, [message]);
-
-	function sendMessage() {
-		console.log("message:", message);
-		console.log("Messages :", messages);
-		console.log("currentchat: ", currentChat);
-		console.log("username : ", user?.username);
-		const payload = {
-		content: message,
-		to: currentChat.isChannel ? currentChat.chatName : currentChat.receiverId,
-		sender: user?.username,
-		chatName: currentChat.chatName,
-		isChannel: currentChat.isChannel
-		};
-
-		socketRef.current?.emit("send message", payload);
-		const newMessages = immer(messages, (draft: WritableDraft<typeof messages>) => {
-		//if the element doesn't exist, an empty one will be added
-		console.log('Inside Immer callback');
-			if(!draft[currentChat.chatName]) {
-				draft[currentChat.chatName] = [];
-			}
-			draft[currentChat.chatName].push({
-				sender: user?.username,
-				content: message
-			});
-		});
-		console.log('New Messages:', newMessages);
-		setMessages(newMessages);
-		setMessage("");
-	}
-
-	function roomJoinCallback(incomingMessages: any, room: keyof typeof messages) {
-	const newMessages = immer(messages, (draft: WritableDraft<typeof messages>) => {
-		draft[room] = incomingMessages;
-	});
-	setMessages(newMessages);
-	}
-
-	function joinRoom(chatName: ChatName) {
-		console.log("Posting User ", userID, " in Channel:", currentChat.Channel.ChannelId);
-		postChannelUser(user?.userID, currentChat.Channel.ChannelId)
-			.then(()=> {
-			socketRef.current?.emit("join room", chatName, (messages: any) => roomJoinCallback(messages, chatName))
-			setCurrentRoles((prevState) => ({
-				...prevState,
-				isUser: true
-			}))
-			}).catch(error => {
-				console.error("Error in joinRoom when adding User to Channel: ", error);
-			});
-	}
-
+	
 	function joinPrivateRoom(chatName: ChatName, password: string) {
 		postPrivateChannelUser(user?.userID, currentChat.Channel.ChannelId, password)
 		.then(() => {
@@ -1074,15 +996,15 @@ function handleMutedUserSocket(targetId: number, roomName: string) {
 		<Chat_MainDiv
 			user={user}
 			userID={userID}
-			message={message}
-			handleMessageChange={handleMessageChange}
-			sendMessage={sendMessage}
+			// message={message}
+			// handleMessageChange={handleMessageChange}
+			// sendMessage={sendMessage}
 			yourId={socketRef.current ? socketRef.current.id : ""}
 			allUsers={allUsers}
 			allChannels={allChannels}
 			updateChannellist={updateChannellist}
 			generalChat={generalChat}
-			joinRoom={joinRoom}
+			// joinRoom={joinRoom}
 			joinPrivateRoom={joinPrivateRoom}
 			changeChatRoom={changeChatRoom}
 			leaveRoom={leaveRoom}
@@ -1094,9 +1016,9 @@ function handleMutedUserSocket(targetId: number, roomName: string) {
 			unblockUser={unblockUser}
 			connectedRooms={connectedRooms}
 			currentChat={currentChat}
-			messages={messages[currentChat.chatName]}
+			// messages={messages[currentChat.chatName]}
 			toggleChat={toggleChat}
-			ChannelUserRoles={currentRoles}
+			// ChannelUserRoles={currentRoles}
 			handleAdminCheck={handleAdminCheck}
 			addAdminRights={addAdminRights}
 			banUserSocket={banUserSocket}
@@ -1107,6 +1029,7 @@ function handleMutedUserSocket(targetId: number, roomName: string) {
 			// mode_set={mode_set}
 			friend_set={friend_set}
 			invitation={invitation}
+			socketRef={socketRef}
 		/>
 		);
 	// } else {

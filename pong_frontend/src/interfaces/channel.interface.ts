@@ -1,5 +1,6 @@
 import React, { FC, ChangeEvent, KeyboardEvent } from "react";
 import { Invitation, User } from "./user.interface";
+import { Socket } from "socket.io-client";
 // import { main_div_mode_t } from "../components/MainDivSelector";
 
 export interface Channel {
@@ -17,15 +18,15 @@ export interface ChatProps {
 	yourId: string | number;  //socketId from joining the game
 	// username: string; //name given in the game startpage
 	currentChat: ChatData;
-	ChannelUserRoles: ChannelUserRoles;
+	// ChannelUserRoles: ChannelUserRoles;
 	handleAdminCheck: () => void;
 	addAdminRights: (TargetName: string, chatName: ChatName) => void;
 	banUserSocket: (targetId: number, chatName: ChatName) => void;
 	unbanUserSocket: (targetId: number, chatName: ChatName) => void;
 	muteUserSocket: (targetId: number, chatName: ChatName, mutedDuration: number) => void;
 	connectedRooms: string[];
-	messages: Message[];
-	joinRoom: (chatName: ChatName) => void;
+	// messages: Message[];
+	// joinRoom: (chatName: ChatName) => void;
 	joinPrivateRoom: (chatName: ChatName, password: string) => void;
 	leaveRoom: (chatName: ChatName) => void;
 	deleteChatRoom: (chatName: ChatName) => void;
@@ -37,9 +38,9 @@ export interface ChatProps {
 	unblockUser: (targetName: ChatName) => void;
 	changeChatRoom :(chatName: ChatName) => void;
 	updateChannellist: () => void;
-	sendMessage: () => void;
-	handleMessageChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
-	message: string;
+	// sendMessage: () => void;
+	// handleMessageChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
+	// message: string;
 	// setMessage: React.Dispatch<React.SetStateAction<string>>;
 	allUsers: User[];
     allChannels: Channel[];
@@ -49,6 +50,7 @@ export interface ChatProps {
 	// mode_set: React.Dispatch<React.SetStateAction<main_div_mode_t>>;
   	friend_set: React.Dispatch<React.SetStateAction<number>>;
 	invitation: Invitation;
+	socketRef: React.MutableRefObject<Socket | null>;
 }
 
  export type ChatData = {

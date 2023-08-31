@@ -1,5 +1,5 @@
 import React, { KeyboardEvent } from 'react';
-import { ChatProps, Message } from '../../interfaces/channel.interface';
+import { ChannelUserRoles, ChatName, ChatProps, Message } from '../../interfaces/channel.interface';
 import {renderMessages } from './chat_utils';
 import { popUpJoinPrivateChannel } from './channel_popups';
 import { Messages } from '../mainPages/ChatPageStyles';
@@ -8,34 +8,38 @@ interface ChatBodyProps {
   props: ChatProps;
   // loadingChatBody: boolean;
   messages: Message[];
+  ChannelUserRoles: ChannelUserRoles;
+  joinRoom: (chatName: ChatName) => void;
 }
 
 const ChatBody_Div: React.FC<ChatBodyProps> = ({
   props,
-  messages
+  messages,
+  ChannelUserRoles,
+  joinRoom
 }) => {
   if (!props.currentChat.isChannel){
     return (
       <Messages>{messages.map(renderMessages)}</Messages>);
   }
   //Checking if everything is resolved
-  if (!props.ChannelUserRoles.isAdminResolved || 
-      !props.ChannelUserRoles.isBlockedResolved || 
-      !props.ChannelUserRoles.isMutedResolved ||
-      !props.ChannelUserRoles.isOwnerResolved||
-      !props.ChannelUserRoles.isUserResolved)
+  if (!ChannelUserRoles.isAdminResolved || 
+      !ChannelUserRoles.isBlockedResolved || 
+      !ChannelUserRoles.isMutedResolved ||
+      !ChannelUserRoles.isOwnerResolved||
+      !ChannelUserRoles.isUserResolved)
     return (
       <div>Loading Chat...</div>);
   //Checking if USer is Blocked from USing/Joining Channel
-  if (props.ChannelUserRoles.isBlocked && props.ChannelUserRoles.isBlockedResolved) {
+  if (ChannelUserRoles.isBlocked && ChannelUserRoles.isBlockedResolved) {
     return (
       <div>You are blocked from using this Channel.</div>);
   }
   // Switch for Private and Public Channels
   switch (props.currentChat.Channel.Type) {
     case "private":
-      if (props.ChannelUserRoles.isUser ||
-          props.ChannelUserRoles.isAdmin ||
+      if (ChannelUserRoles.isUser ||
+          ChannelUserRoles.isAdmin ||
           !props.currentChat.isChannel
         ) {
         return (
@@ -48,8 +52,8 @@ const ChatBody_Div: React.FC<ChatBodyProps> = ({
       }
     case "public":
       if (
-        props.ChannelUserRoles.isUser ||
-        props.ChannelUserRoles.isAdmin ||
+        ChannelUserRoles.isUser ||
+        ChannelUserRoles.isAdmin ||
         !props.currentChat.isChannel 
       ) {
         return (
@@ -57,7 +61,7 @@ const ChatBody_Div: React.FC<ChatBodyProps> = ({
         );
       } else {
         return (
-          <button onClick={() => props.joinRoom(props.currentChat.chatName)}>
+          <button onClick={() => joinRoom(props.currentChat.chatName)}>
             Join {props.currentChat.chatName}
           </button>
         );
