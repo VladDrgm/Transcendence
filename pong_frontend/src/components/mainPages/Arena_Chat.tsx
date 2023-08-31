@@ -55,7 +55,7 @@ export function getChannelFromChannellist(channelList: Channel[], channelName: s
 
 export type ChatName = keyof typeof initialMessagesState;
 
-type CurrentChat = {
+export type CurrentChat = {
 	isChannel: boolean;
 	chatName: ChatName;
 	receiverId: string | number;
@@ -68,70 +68,10 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID, friend_set}) => {
 	/* chat utilities */
 	const [username, setUsername] = useState("");
 	const [connected, setConnected] = useState(true);
-	const [currentChat, setCurrentChat] = useState<CurrentChat>({
-		isChannel: true,
-		chatName: "general",
-		receiverId: "",
-		isResolved: true,
-		Channel: {
-			ChannelId: 41,
-			OwnerId: 1,
-			Name: 'general',
-			Type: "public",
-			Password: ""
-		} as Channel,
-	});
-	const[generalChat, setGeneralChat] = useState<CurrentChat>({
-		isChannel: true,
-		chatName: "general",
-		receiverId: "",
-		isResolved: true,
-		Channel: {
-			ChannelId: 41,
-			OwnerId: 1,
-			Name: 'general',
-			Type: "public",
-			Password: ""
-		} as Channel,
-	});
-	
-
-	
-	
-	
 	const [connectedRooms, setConnectedRooms] = useState<string[]>(["general"]);
 	const [allUsers, setAllUsers] = useState<any[]>([]);
-	const [allChannels, setAllChannels] = useState<any[]>([]);
 
-	//Populating the Channellist at Mount of Arena
-	//Filling Channel of currentChat variable with the fetched Channel Object
-	useEffect(() => {
-		try {
-			fetchAllChannels()
-				.then((channels) => {
-					setAllChannels(channels);
-					const currentChannel = getChannelFromChannellist(channels, "general");
-					console.log("Channels: ", currentChannel);
-					if (currentChannel) {
-						// console.log("gotChannel");
-						setCurrentChat((prevState) => ( {
-							...prevState,
-							Channel: currentChannel,
-						}));
-						setGeneralChat((prevState) => ({
-							...prevState,
-							Channel:currentChannel
-						}));
-					}
-				})
-				.catch((error) => {
-					console.error("Error fetching all Channels: ", error);
-				});
-		} catch(error) {
-			console.error('Error fetching all Channels:', error);
-		}
-	}, []);
-
+	
 	// useEffect(() => {
 	// 	const intervalID = setInterval(() => {
 	// 		fetchAllChannels()
@@ -150,51 +90,6 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID, friend_set}) => {
 	let [audience, setAudience] = useState<string>("");
 
 	const socketRef = useRef<Socket | null>(null!);
-
-	
-	function joinPrivateRoom(chatName: ChatName, password: string) {
-		postPrivateChannelUser(user?.userID, currentChat.Channel.ChannelId, password)
-		.then(() => {
-				console.log("Posting User ", userID, " in Channel:", currentChat.Channel.ChannelId);
-				socketRef.current?.emit("join room", chatName, (messages: any) => roomJoinCallback(messages, chatName));
-				setCurrentRoles((prevState) => ({
-					...prevState,
-					isUser: true
-				}));
-			})
-			.catch(error => {
-				console.error("Error in joinPrivateRoom when adding User to Channel: ", error);
-				alert("Wrong Password. Pleayse try again");
-			});
-	}
-
-
-	function addAdminRights(newAdminUsername: string, roomName: string | number){
-		getUserIDByUserName(newAdminUsername)
-			.then((targetID) => {
-				if(targetID === undefined){
-					alert("User could not be found. Please try another Username.");
-					return;
-				}
-				postAdmin(currentChat.Channel.ChannelId, Number(targetID), user?.userID)
-				.then(() => {
-					console.log('Admin added with UserId:', targetID);
-					const data = {
-						newAdminUserID: Number(targetID),
-						roomName: roomName
-					};
-					socketRef.current?.emit('add admin', data);
-				})
-				.catch(error => {
-					console.error("Error posting admin with Username:" , newAdminUsername);
-					alert("Error while adding User as Admin");
-				})
-			})
-			.catch(error => {
-				console.error('Error getting UerID from User:' ,error);
-				alert("Error while adding User as Admin");
-			});
-		}
 
 		function addBlockedUser(targetName: string | number){
 			getUserIDByUserName(targetName.toString())
@@ -317,24 +212,6 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID, friend_set}) => {
 		});
 	}
 
-
-	function leaveRoom(chatName: ChatName) {
-		// const newConnectedRooms = immer(connectedRooms, (draft: WritableDraft<typeof connectedRooms>) => {
-		// 	const chatNameString = String(chatName); // Convert chatName to string
-		// 	draft = draft.filter((room) => room !== chatNameString);
-		// });
-		console.log("Removing User ", userID, " from Channel:", currentChat.Channel.ChannelId);
-		deleteChannelUser(user?.userID, currentChat.Channel.ChannelId);
-		// setConnectedRooms(newConnectedRooms);
-	}
-
-	function updateChannellist(){
-		fetchAllChannels()
-		.then((channels) => {
-			setAllChannels(channels);
-		});
-	}
-
 	function deleteChatRoom(roomName: string | number) {
 		socketRef.current?.emit('delete room', roomName);
 	}
@@ -368,33 +245,6 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID, friend_set}) => {
 		socketRef.current?.emit('unblock user', {targetId, username});
 	}
 
-	async function toggleChat(newCurrentChat: CurrentChat) {
-		socketRef.current?.emit("join room", newCurrentChat.chatName, (messages: any) => roomJoinCallback(messages, newCurrentChat.chatName));
-		
-		if (!messages[newCurrentChat.chatName]) {
-		const newMessages = immer(messages, (draft: WritableDraft<typeof messages>) => {
-			draft[newCurrentChat.chatName] = [];
-			console.log("newEmpty");
-		});
-		
-		setMessages(newMessages);
-		}
-		setCurrentChat(newCurrentChat);
-	}
-
-	useEffect(() => {
-		if (currentChat.isChannel){
-			handleUserInChannelCheck();
-			handleUserInChannelBlockedCheck();
-			handleUserInChannelMutedCheck();
-			handleAdminCheck();
-			handleOwnerCheck();
-		}
-		else if(!currentChat.isChannel){
-			handleUserDirektMessageStatus();
-		}
-		console.log("in effect currentChat:", currentChat);
-	}, [currentChat.chatName])
 	
 
 	const handleUserDirektMessageStatus = useCallback (async () => {

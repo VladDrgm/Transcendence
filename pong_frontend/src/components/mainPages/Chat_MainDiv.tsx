@@ -5,14 +5,15 @@ import Channel_Div from '../div/channel_div';
 import { ChannelAdmin_Buttons_Div, ChannelOwner_Buttons_Div } from "../div/channel_buttons_div";
 import ChatBody_Div from "../div/channel_ChatBody_div";
 import ChatInput_Div from "../div/channel_ChatPanel_div";
-import { ChannelUserRoles, ChatName, ChatProps } from "../../interfaces/channel.interface";
+import { Channel, ChannelUserRoles, ChatName, ChatProps } from "../../interfaces/channel.interface";
 import { chatInputProps } from "../div/channel_ChatPanel_div";
 // import { main_div_mode_t } from "../MainDivSelector";
-import { getUserIDByUserName } from "../div/channel_utils";
+import { fetchAllChannels, getUserIDByUserName } from "../div/channel_utils";
 import { User } from "../../interfaces/user.interface";
-import { postChannelUser } from "../../api/channel/channel_user.api";
-import { WritableDraft, initialMessagesState, initializeMessagesState } from "./Arena_Chat";
+import { deleteChannelUser, postChannelUser, postPrivateChannelUser } from "../../api/channel/channel_user.api";
+import { CurrentChat, WritableDraft, getChannelFromChannellist, initialMessagesState, initializeMessagesState } from "./Arena_Chat";
 import immer, { Draft } from "immer";
+import { postAdmin } from "../../api/channel/channel_admin.api";
 
 const Chat_MainDiv: FC<ChatProps> = (props) => {
 	const [body, setBody] = useState<JSX.Element | null>(null);
@@ -20,7 +21,72 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 	const [channelpanel, setChannelpanel] = useState<JSX.Element | null>(null);
 	const [loadingChannelpanel, setLoadingChannelpanel] = useState(true);
 	const [channelPanelLoaded, setChannelPanelLoaded] = useState(false);
+	const [allChannels, setAllChannels] = useState<any[]>([]);
+	const [currentChat, setCurrentChat] = useState<CurrentChat>({
+		isChannel: true,
+		chatName: "general",
+		receiverId: "",
+		isResolved: true,
+		Channel: {
+			ChannelId: 41,
+			OwnerId: 1,
+			Name: 'general',
+			Type: "public",
+			Password: ""
+		} as Channel,
+	});
+	const[generalChat, setGeneralChat] = useState<CurrentChat>({
+		isChannel: true,
+		chatName: "general",
+		receiverId: "",
+		isResolved: true,
+		Channel: {
+			ChannelId: 41,
+			OwnerId: 1,
+			Name: 'general',
+			Type: "public",
+			Password: ""
+		} as Channel,
+	});
 
+	//CHANNELS
+		//Populating the Channellist at Mount of Arena
+		//Filling Channel of currentChat variable with the fetched Channel Object
+	useEffect(() => {
+		try {
+			fetchAllChannels()
+				.then((channels) => {
+					setAllChannels(channels);
+					const currentChannel = getChannelFromChannellist(channels, "general");
+					console.log("Channels: ", currentChannel);
+					if (currentChannel) {
+						// console.log("gotChannel");
+						setCurrentChat((prevState) => ( {
+							...prevState,
+							Channel: currentChannel,
+						}));
+						setGeneralChat((prevState) => ({
+							...prevState,
+							Channel:currentChannel
+						}));
+					}
+				})
+				.catch((error) => {
+					console.error("Error fetching all Channels: ", error);
+				});
+		} catch(error) {
+			console.error('Error fetching all Channels:', error);
+		}
+	}, []);
+
+	function updateChannellist(){
+		fetchAllChannels()
+		.then((channels) => {
+			setAllChannels(channels);
+		});
+	}
+
+	
 	//MESSAGES
 	useEffect(() => {initializeMessagesState();},[]);
 
@@ -96,6 +162,21 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 		isMutedResolved:	true
 	});
 
+	useEffect(() => {
+		if (currentChat.isChannel){
+			handleUserInChannelCheck();
+			handleUserInChannelBlockedCheck();
+			handleUserInChannelMutedCheck();
+			handleAdminCheck();
+			handleOwnerCheck();
+		}
+		else if(!currentChat.isChannel){
+			handleUserDirektMessageStatus();
+		}
+		console.log("in effect currentChat:", currentChat);
+	}, [currentChat.chatName])
+
+	// FUNKTIONS FOR CHATROOMS
 	function joinRoom(chatName: ChatName) {
 		console.log("Posting User ", props.user?.userID, " in Channel:", props.currentChat.Channel.ChannelId);
 		postChannelUser(props.user?.userID, props.currentChat.Channel.ChannelId)
@@ -110,12 +191,77 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 			});
 	}
 
+	function leaveRoom(chatName: ChatName) {
+		console.log("Removing User ", props.user?.userID, " from Channel:", currentChat.Channel.ChannelId);
+		deleteChannelUser(props.user?.userID, currentChat.Channel.ChannelId);
+	}
+
 	function roomJoinCallback(incomingMessages: any, room: keyof typeof messages) {
 		const newMessages = immer(messages, (draft: WritableDraft<typeof messages>) => {
 			draft[room] = incomingMessages;
 		});
 		setMessages(newMessages);
 	}
+
+	function joinPrivateRoom(chatName: ChatName, password: string) {
+		postPrivateChannelUser(props.user?.userID, props.currentChat.Channel.ChannelId, password)
+		.then(() => {
+				console.log("Posting User ", props.user?.userID, " in Channel:", props.currentChat.Channel.ChannelId);
+				props.socketRef.current?.emit("join room", chatName, (messages: any) => roomJoinCallback(messages, chatName));
+				setCurrentRoles((prevState) => ({
+					...prevState,
+					isUser: true
+				}));
+			})
+			.catch(error => {
+				console.error("Error in joinPrivateRoom when adding User to Channel: ", error);
+				alert("Wrong Password. Pleayse try again");
+			});
+	}
+
+	async function toggleChat(newCurrentChat: CurrentChat) {
+		props.socketRef.current?.emit("join room", newCurrentChat.chatName, (messages: any) => roomJoinCallback(messages, newCurrentChat.chatName));
+		
+		if (!messages[newCurrentChat.chatName]) {
+		const newMessages = immer(messages, (draft: WritableDraft<typeof messages>) => {
+			draft[newCurrentChat.chatName] = [];
+			console.log("newEmpty");
+		});
+		
+		setMessages(newMessages);
+		}
+		setCurrentChat(newCurrentChat);
+	}
+
+	function addAdminRights(newAdminUsername: string, roomName: string | number){
+		getUserIDByUserName(newAdminUsername)
+			.then((targetID) => {
+				if(targetID === undefined){
+					alert("User could not be found. Please try another Username.");
+					return;
+				}
+				postAdmin(currentChat.Channel.ChannelId, Number(targetID), user?.userID)
+				.then(() => {
+					console.log('Admin added with UserId:', targetID);
+					const data = {
+						newAdminUserID: Number(targetID),
+						roomName: roomName
+					};
+					props.socketRef.current?.emit('add admin', data);
+				})
+				.catch(error => {
+					console.error("Error posting admin with Username:" , newAdminUsername);
+					alert("Error while adding User as Admin");
+				})
+			})
+			.catch(error => {
+				console.error('Error getting UerID from User:' ,error);
+				alert("Error while adding User as Admin");
+			});
+	}
+
+
+
 
 	function inviteButton(invitedPlayer: User | undefined){
 		if( invitedPlayer) {
