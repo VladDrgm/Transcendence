@@ -619,14 +619,14 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 	  };
 
 	const handleBody = useCallback (() =>{
-		setBody(<ChatBody_Div
-			props = {props}
-			messages={messages[currentChat.chatName]}
-			joinRoom={joinRoom}
-			ChannelUserRoles={currentRoles}
-			currentChat={currentChat}
-			joinPrivateRoom={joinPrivateRoom}
-		/>);
+		// setBody(<ChatBody_Div
+		// 	props = {props}
+		// 	messages={messages[currentChat.chatName]}
+		// 	joinRoom={joinRoom}
+		// 	ChannelUserRoles={currentRoles}
+		// 	currentChat={currentChat}
+		// 	joinPrivateRoom={joinPrivateRoom}
+		// />);
 	}, [messages, currentRoles]);
 
 	const openFriend = (userName: string) => {
@@ -701,12 +701,26 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 		}
 		else if (currentRoles.isOwner){
 			  setChannelpanel(
-				  <ChannelOwner_Buttons_Div{...props} loadingChannelPanel={loadingChannelpanel}/>
+				  <ChannelOwner_Buttons_Div 
+				  	chatProps={props} 
+					loadingChannelPanel={loadingChannelpanel} 
+					currentChat={currentChat}
+					updateChannellist={updateChannellist}
+					addAdminRights={addAdminRights}
+					toggleChat={toggleChat}
+					generalChat={generalChat} />
 			  );
 		  }
 		else if (currentRoles.isAdmin && currentRoles.isAdminResolved) {
 			setChannelpanel(
-				<ChannelAdmin_Buttons_Div{...props} loadingChannelPanel={loadingChannelpanel}/>
+				<ChannelAdmin_Buttons_Div
+				chatProps={props} 
+				loadingChannelPanel={loadingChannelpanel} 
+				currentChat={currentChat}
+				updateChannellist={updateChannellist}
+				addAdminRights={addAdminRights}
+				toggleChat={toggleChat}
+				generalChat={generalChat} />
 			);
 		} 
 		setChannelPanelLoaded(true);
@@ -768,7 +782,7 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 					value: message,
 					onChange: handleMessageChange,
 					onKeyPress: handleKeyPress,
-					ChannelUserRoles: currentRoles,
+					currentRoles: currentRoles,
 					currentChat: currentChat
 				})}
 			</ChatPanel>

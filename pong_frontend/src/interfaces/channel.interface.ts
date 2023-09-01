@@ -45,7 +45,7 @@ export interface ChatProps {
 	allUsers: User[];
     // allChannels: Channel[];
 	// generalChat: ChatData;
-	loadingChannelPanel: boolean;
+	// loadingChannelPanel: boolean;
 	invitePlayer:(invitation:Invitation) => void;
 	// mode_set: React.Dispatch<React.SetStateAction<main_div_mode_t>>;
   	friend_set: React.Dispatch<React.SetStateAction<number>>;

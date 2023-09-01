@@ -9,7 +9,7 @@ export interface chatInputProps {
   value: string;
   onChange: (event: React.ChangeEvent<HTMLTextAreaElement>) => void;
   onKeyPress: (event: KeyboardEvent<HTMLTextAreaElement>) => void;
-  ChannelUserRoles: ChannelUserRoles;
+  currentRoles: ChannelUserRoles;
   currentChat: ChatData
 }
 
@@ -18,22 +18,22 @@ const ChatInput_Div: FC<chatInputProps> = ({
   value, 
   onChange,
   onKeyPress,
-  ChannelUserRoles,
+  currentRoles,
   currentChat
 }) => {
 
   // //Checking if everything is resolved
-  if (!ChannelUserRoles.isAdminResolved ||
-      !ChannelUserRoles.isBlockedResolved ||
-      !ChannelUserRoles.isMutedResolved ||
-      !ChannelUserRoles.isOwnerResolved||
-      !ChannelUserRoles.isUserResolved)
+  if (!currentRoles.isAdminResolved ||
+      !currentRoles.isBlockedResolved ||
+      !currentRoles.isMutedResolved ||
+      !currentRoles.isOwnerResolved||
+      !currentRoles.isUserResolved)
     return (
         <TextBox
         placeholder="Loading..."
         />);
   //Checking if USer is Blocked from USing/Joining Channel
-  if(!currentChat.isChannel && !ChannelUserRoles.isBlocked){
+  if(!currentChat.isChannel && !currentRoles.isBlocked){
     return (
       <TextBox
       value={value}
@@ -42,13 +42,13 @@ const ChatInput_Div: FC<chatInputProps> = ({
       placeholder="You can write something here"
       />);
   }
-  else if (ChannelUserRoles.isBlocked) {
+  else if (currentRoles.isBlocked) {
     return (
         <TextBox
         placeholder="You are blocked from using the Channel"
         />);
   }
-  else if (ChannelUserRoles.isMuted) {
+  else if (currentRoles.isMuted) {
     return (
         <TextBox
         placeholder="You are muted here"
@@ -57,8 +57,8 @@ const ChatInput_Div: FC<chatInputProps> = ({
   // Switch for Private and Public Channels
   switch (currentChat.Channel.Type) {
     case "private":
-      if (ChannelUserRoles.isUser ||
-          ChannelUserRoles.isAdmin ||
+      if (currentRoles.isUser ||
+        currentRoles.isAdmin ||
           !currentChat.isChannel
         ) {
         return (
@@ -76,8 +76,8 @@ const ChatInput_Div: FC<chatInputProps> = ({
       }
     case "public":
       if (
-        ChannelUserRoles.isUser ||
-        ChannelUserRoles.isAdmin ||
+        currentRoles.isUser ||
+        currentRoles.isAdmin ||
         !currentChat.isChannel
       ) {
         return (

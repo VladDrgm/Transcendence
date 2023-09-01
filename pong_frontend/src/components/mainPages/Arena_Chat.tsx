@@ -604,7 +604,7 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID, friend_set}) => {
 			banUserSocket={banUserSocket}
 			unbanUserSocket={unbanUserSocket}
 			muteUserSocket={muteUserSocket}
-			loadingChannelPanel = {false}
+			// loadingChannelPanel = {false}
 			invitePlayer={invitePlayer}
 			// mode_set={mode_set}
 			friend_set={friend_set}

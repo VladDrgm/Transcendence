@@ -11,16 +11,19 @@ export interface LoadingProps {
 
 export interface ownerButtonProps {
     chatProps: ChatProps;
+    loadingChannelPanel: boolean;
     currentChat: ChatData;
     updateChannellist: () => void;
     addAdminRights: (TargetName: string, chatName: ChatName) => void
+    toggleChat: (currentChat: ChatData) => void;
+    generalChat: ChatData;
   }
 
 
 
 export const ChannelOwner_Buttons_Div: React.FC<ownerButtonProps> = (props ) => {
     return (
-        props.chatProps.loadingChannelPanel ? (
+        props.loadingChannelPanel ? (
             <div>Loading Channel Name and Buttons...</div> // Show a loading spinner or placeholder
         ) : (
             <ChannelInfo>
@@ -28,7 +31,7 @@ export const ChannelOwner_Buttons_Div: React.FC<ownerButtonProps> = (props ) => 
                 <div>
                     <button
                     style={chatButtonsStyle}
-                    onClick={() => deleteChannel(props.chatProps)}>
+                    onClick={() => deleteChannel(props.chatProps, props.currentChat, props.updateChannellist, props.toggleChat, props.generalChat)}>
                     Delete Channel
                     </button>
                     <button
@@ -66,7 +69,7 @@ export const ChannelOwner_Buttons_Div: React.FC<ownerButtonProps> = (props ) => 
 
 export const ChannelAdmin_Buttons_Div: React.FC<ownerButtonProps> = (props) => {
     return (
-        props.chatProps.loadingChannelPanel ? (
+        props.loadingChannelPanel ? (
             <div>Loading Channel Name and Buttons...</div> // Show a loading spinner or placeholder
         ) : (
             <ChannelInfo>
