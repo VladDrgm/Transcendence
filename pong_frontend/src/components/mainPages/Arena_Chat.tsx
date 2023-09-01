@@ -70,7 +70,19 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID, friend_set}) => {
 	const [connected, setConnected] = useState(true);
 	const [connectedRooms, setConnectedRooms] = useState<string[]>(["general"]);
 	const [allUsers, setAllUsers] = useState<any[]>([]);
-
+	let chatMainDivRef = useRef<{ 
+		roomJoinCallback: any;
+		newMessages: any;
+		handleDeletingChatRoom: any;
+		updateChannellist:any;
+		handleAdminRights: any;
+		handleBannedUserSocket: any;
+		handleUnbannedUserSocket: any;
+		handleMutedUserSocket: any;
+		handleUnmutedUserSocket: any;
+		handleBlockedUserSocket: any;
+		handleunblockedUserSocket: any;
+	} | null>(null);
 	
 	// useEffect(() => {
 	// 	const intervalID = setInterval(() => {
@@ -247,153 +259,18 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID, friend_set}) => {
 
 	
 
-	const handleUserDirektMessageStatus = useCallback (async () => {
-		setCurrentRoles((prevState) => ({
-			...prevState,
-			isBlockedResolved: false
-		}));
-		if (!currentChat.isResolved){
-			return;
-		}
-		getUserIDByUserName(currentChat.chatName.toString())
-			.then((result) => {
-				if(result !== undefined){
-					getBlockedUser(result, user?.userID)
-					.then((user) => {
-						setCurrentRoles((prevState) => ( {
-							...prevState,
-							isBlocked: user,
-							isBlockedResolved: true
-						}));
-					}).catch(error => {
-						console.log("Error blocking User:", error);
-						alert("Error while blocking User");
-					});
-				}
-			}).catch(error =>{
-			console.error('Error occured in handleUserChannelCheck:', error);
-			});
-	}, [currentChat.isResolved, currentChat.chatName]);
 
-	const handleUserInChannelCheck = useCallback (async () => {
-		setCurrentRoles((prevState) => ({
-			...prevState,
-			isUserResolved: false
-		}));
-		if(currentChat.chatName === "general"){
-			setCurrentRoles((prevState) => ({
-				...prevState,
-				isUser: true,
-				isUserResolved: true
-			}))
-			return;
-		}
-		try {
-			if (!currentChat.isResolved){
-				return;
-			}
-			getChannelUser(user?.userID, currentChat.Channel.ChannelId)
-				.then((user) => {
-					setCurrentRoles((prevState) => ( {
-						...prevState,
-						isUser: !!user,
-						isUserResolved: true
-					}));
-				})
-		}catch (error){
-			console.error('Error occured in handleUserChannelCheck:', error);
-		}
-	}, [currentChat.isResolved, currentChat.Channel.ChannelId]);
-
-	const handleUserInChannelBlockedCheck = useCallback (async () => {
-		setCurrentRoles((prevState) => ({
-			...prevState,
-			isBlockedResolved: false
-		}));
-		try {
-			if (!currentChat.isResolved){
-				return;
-			}
-			getChannelBlockedUser(user?.userID, currentChat.Channel.ChannelId)
-				.then((user) => {
-					setCurrentRoles((prevState) => ({
-						...prevState,
-						isBlocked:	user,
-						isBlockedResolved: true
-					}));
-				})
-		}catch (error){
-			console.error('Error occured in handleUserChannelMutedCheck:', error);}
-	}, [currentChat.isResolved, currentChat.Channel.ChannelId]);
+	
 
 
-	const handleUserInChannelMutedCheck = useCallback (async () => {
-		setCurrentRoles((prevState) => ({
-			...prevState,
-			isMutedResolved: false
-		}));
-		try {
-			if (!currentChat.isResolved){
-				return;
-			}
-			getMutedStatus(currentChat.Channel.ChannelId, user?.userID)
-				.then((response) => {
-					setCurrentRoles((prevState) => ({
-						...prevState,
-						isMuted:	response,
-						isMutedResolved: true
-					}));
-				})
-		}catch (error){
-			console.error('Error occured in handleUserChannelBlockedCheck:', error);}
-	}, [currentChat.isResolved, currentChat.Channel.ChannelId]);
-
-	const handleAdminCheck = useCallback (async () => {
-		setCurrentRoles((prevState) => ({
-			...prevState,
-			isAdminResolved: false
-		}));
-		try {
-			if (!currentChat.isResolved){
-				return;
-			}
-			getIsAdmin(currentChat.Channel.ChannelId, user?.userID)
-				.then((user) => {
-					setCurrentRoles((prevState) => ({
-						...prevState,
-						isAdmin:	user,
-						isAdminResolved: true
-					}));
-				})
-		}catch (error){
-					console.error('Error occured in handleAdminCheck:', error);}
-	}, [currentChat.isResolved, currentChat.Channel.ChannelId]);
-
-	const handleOwnerCheck = useCallback (async () => {
-		setCurrentRoles((prevState) => ({
-			...prevState,
-			isOwnerResolved: false
-		}));
-		if (!currentChat.isResolved)
-			return;
-		var ownerStatus = false;
-		if (currentChat.Channel.OwnerId === userID){
-			ownerStatus = true;
-			// console.log("true UserID:", userID , "owner:", ownerStatus);
-		} else {
-			ownerStatus = false;
-			// console.log("false UserID:", userID , "owner:", ownerStatus);
-		};
-		setCurrentRoles((prevState) => ({
-			...prevState,
-			isOwner:	ownerStatus,
-			isOwnerResolved: true
-		}));		
-	}, [currentChat.isResolved, currentChat.Channel.ChannelId]);
-
+	
+	
+	
 	function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
 		setUsername(e.target.value);
 	}
+
+
 
 	useEffect(() => {
 
@@ -409,7 +286,9 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID, friend_set}) => {
 				userId: user?.userID,
 				};
 			socketRef.current.emit("join server", data);
-			socketRef.current.emit("join room", "general", (messages: any) => roomJoinCallback(messages, "general"));
+			if (chatMainDivRef.current?.roomJoinCallback){
+				socketRef.current.emit("join room", "general", (messages: any) => chatMainDivRef.current?.roomJoinCallback(messages, "general"));
+			}
 			socketRef.current.on("new user", (allUsers: any) => {
 				setAllUsers(allUsers);
 				console.log(allUsers);
@@ -418,61 +297,63 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID, friend_set}) => {
 				console.log("sender", sender);
 				console.log("chatNAme", chatName);
 				console.log("content:", content)
-				setMessages(messages => {
-					const newMessages = immer(messages, (draft: WritableDraft<typeof messages>) => {
-						if (draft[chatName]) {
-							draft[chatName].push({ content, sender });
-						} else {
-							draft[chatName] = [{ content, sender }];
-						}
-					});
-					return newMessages;
-				});
+				if (chatMainDivRef.current?.newMessages)
+					chatMainDivRef.current.newMessages(content, sender, chatName);
 			});
 			socketRef.current.on('room deleted', (roomName) => {
-				handleDeletingChatRoom(roomName);
+				if(chatMainDivRef.current?.handleDeletingChatRoom)
+					chatMainDivRef.current.handleDeletingChatRoom(roomName);
 			});
 			socketRef.current.on('room added', (roomName) => {
-				updateChannellist();
+				if(chatMainDivRef.current?.updateChannellist)
+					chatMainDivRef.current.updateChannellist();
 			});
 			socketRef.current.on('room changed', (roomName) => {
-				updateChannellist();
+				if(chatMainDivRef.current?.updateChannellist)
+					chatMainDivRef.current.updateChannellist();
 			});
 			socketRef.current.on('admin added', (data) => {
 				const newAdminUserID =data.newAdminUserID;
 				const roomName = data.roomName;
-				handleAdminRights(newAdminUserID, roomName);
+				if(chatMainDivRef.current?.handleAdminRights)
+					chatMainDivRef.current.handleAdminRights(newAdminUserID, roomName);
 			});
 			socketRef.current.on('user banned', (data) => {
 				const targetId = data.targetId;
 				const roomName = data.roomName;
-				handleBannedUserSocket(targetId, roomName);
+				if(chatMainDivRef.current?.handleBannedUserSocket)
+					chatMainDivRef.current.handleBannedUserSocket(targetId, roomName);
 			});
 			socketRef.current.on('user unbanned', (data) => {
 				const targetId = data.targetId;
 				const roomName = data.roomName;
-				handleUnbannedUserSocket(targetId, roomName);
+				if(chatMainDivRef.current?.handleUnbannedUserSocket)
+					chatMainDivRef.current.handleUnbannedUserSocket(targetId, roomName);
 			});
 			socketRef.current.on('user muted', (data) => {
 				const targetId = data.targetId;
 				const roomName = data.roomName;
-				handleMutedUserSocket(targetId, roomName);
+				if (chatMainDivRef.current?.handleMutedUserSocket)
+					chatMainDivRef.current.handleMutedUserSocket(targetId, roomName);
 			});
 			// io.emit('user blocked', {userId, targetId });
 			socketRef.current.on('user unmuted', (data) => {
 				const targetId = data.targetId;
 				const roomName = data.roomName;
-				handleUnmutedUserSocket(targetId, roomName);
+				if (chatMainDivRef.current?.handleUnmutedUserSocket)
+					chatMainDivRef.current.handleUnmutedUserSocket(targetId, roomName);
 			});
 			socketRef.current.on('user blocked', (data) => {
 				const targetId = data.targetId;
 				const username = data.username;
-				handleBlockedUserSocket(targetId, username);
+				if(chatMainDivRef.current?.handleBlockedUserSocket)
+					chatMainDivRef.current.handleBlockedUserSocket(targetId, username);
 			});
 			socketRef.current.on('user unblocked', (data) => {
 				const targetId = data.targetId;
 				const username = data.username;
-				handleunblockedUserSocket(targetId, username);
+				if(chatMainDivRef.current?.handleunblockedUserSocket)
+					chatMainDivRef.current.handleunblockedUserSocket(targetId, username);
 			});
 			socketRef.current.on('invitation alert playertwo', (data) => {
 				const sessionId = data.sessionId;
@@ -501,159 +382,8 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID, friend_set}) => {
 		}
 	}
 	
-	function handleBlockedUserSocket(targetId: number, callerName: string) {
-		console.log("targetID", targetId);
-		console.log("userId", userID);
-		if (targetId === userID)
-		{
-			setCurrentChat((prevChat) => {
-			console.log("currenchat", prevChat.chatName);
 	
-				if( prevChat.chatName === callerName){
-					setCurrentRoles((prevRoles) => ({
-						...prevRoles,
-						isBlocked: true
-					}));
-					alert("You have been blocked by the User.");
-				}
-				return prevChat;
-			});
-			// console.log("currenchat", currentChat.chatName);
-		}
-	}
 
-	function handleunblockedUserSocket(targetId: number, callerName: string) {
-		console.log("targetID", targetId);
-		console.log("userId", userID);
-		if (targetId === userID)
-		{
-			setCurrentChat((prevChat) => {
-			console.log("currenchat", prevChat.chatName);
-	
-				if( prevChat.chatName === callerName){
-					setCurrentRoles((prevRoles) => ({
-						...prevRoles,
-						isBlocked: false
-					}));
-					alert("You have been unblocked by the User.");
-				}
-				return prevChat;
-			});
-			// console.log("currenchat", currentChat.chatName);
-		}
-	}
-
-function handleUnmutedUserSocket(targetId: number, roomName: string) {
-	console.log("targetID", targetId);
-	console.log("userId", userID);
-	if (targetId === userID)
-	{
-		setCurrentChat((prevChat) => {
-		console.log("currenchat", prevChat.chatName);
-
-			if( prevChat.chatName === roomName){
-				setCurrentRoles((prevRoles) => ({
-					...prevRoles,
-					isMuted: false
-				}));
-				alert("You have been unmuted.");
-			}
-			return prevChat;
-		});
-		console.log("currenchat", currentChat.chatName);
-	}
-}
-
-function handleMutedUserSocket(targetId: number, roomName: string) {
-	console.log("targetID", targetId);
-	console.log("userId", userID);
-	if (targetId === userID)
-	{
-		setCurrentChat((prevChat) => {
-		console.log("currenchat", prevChat.chatName);
-
-			if( prevChat.chatName === roomName){
-				setCurrentRoles((prevRoles) => ({
-					...prevRoles,
-					isMuted: true
-				}));
-				alert("You have been muted.");
-			}
-			return prevChat;
-		});
-		console.log("currenchat", currentChat.chatName);
-	}
-}
-
-	function handleBannedUserSocket(targetId: number, roomName: string) {
-		console.log("targetID", targetId);
-		console.log("userId", userID);
-		if (targetId === userID)
-		{
-			setCurrentChat((prevChat) => {
-			console.log("currenchat", prevChat.chatName);
-
-				if( prevChat.chatName === roomName){
-					setCurrentRoles((prevRoles) => ({
-						...prevRoles,
-						isBlocked: true
-					}));
-				}
-				return prevChat;
-			});
-			console.log("currenchat", currentChat.chatName);
-		}
-	}
-
-	function handleUnbannedUserSocket(targetId: number, roomName: string) {
-		console.log("targetID", targetId);
-		console.log("userId", userID);
-		if (targetId === userID)
-		{
-			setCurrentChat((prevChat) => {
-			// console.log("currenchat", prevChat.chatName);
-
-				if( prevChat.chatName === roomName){
-					alert("You can use this Channel again.")
-					setCurrentRoles((prevRoles) => ({
-						...prevRoles,
-						isBlocked: false
-					}));
-				}
-				return prevChat;
-			});
-			// console.log("currenchat", currentChat.chatName);
-		}
-	}
-	function handleAdminRights(newAdminUserID: number, roomName: string) {
-		if (newAdminUserID === userID)
-		{
-			setCurrentChat((prevChat) => {
-			// console.log("currenchat", prevChat.chatName);
-				if( prevChat.chatName === roomName){
-					alert("You are now an admin of this Channel.");
-					setCurrentRoles((prevRoles) => ({
-						...prevRoles,
-						isAdmin: true
-					}));
-				}
-				return prevChat;
-			});
-			// console.log("currenchat", currentChat.chatName);
-		}
-	}
-
-	function handleDeletingChatRoom(roomName: string | number){
-		updateChannellist();
-		setCurrentChat((prevChat) => {
-			if (prevChat.chatName === roomName) {
-				alert("The Chat has been deleted by the Owner.");
-			return generalChat;
-			} else {
-			return prevChat;
-			}
-		});
-	}
 
 
 		/* game utilities */
@@ -851,13 +581,13 @@ function handleMutedUserSocket(targetId: number, roomName: string) {
 			// sendMessage={sendMessage}
 			yourId={socketRef.current ? socketRef.current.id : ""}
 			allUsers={allUsers}
-			allChannels={allChannels}
-			updateChannellist={updateChannellist}
-			generalChat={generalChat}
+			// allChannels={allChannels}
+			// updateChannellist={updateChannellist}
+			// generalChat={generalChat}
 			// joinRoom={joinRoom}
-			joinPrivateRoom={joinPrivateRoom}
+			// joinPrivateRoom={joinPrivateRoom}
 			changeChatRoom={changeChatRoom}
-			leaveRoom={leaveRoom}
+			// leaveRoom={leaveRoom}
 			deleteChatRoom={deleteChatRoom}
 			addChatRoom={addChatRoom}
 			addBlockedUser={addBlockedUser}
@@ -865,12 +595,12 @@ function handleMutedUserSocket(targetId: number, roomName: string) {
 			removeFriend={removeFriend}
 			unblockUser={unblockUser}
 			connectedRooms={connectedRooms}
-			currentChat={currentChat}
+			// currentChat={currentChat}
 			// messages={messages[currentChat.chatName]}
-			toggleChat={toggleChat}
+			// toggleChat={toggleChat}
 			// ChannelUserRoles={currentRoles}
-			handleAdminCheck={handleAdminCheck}
-			addAdminRights={addAdminRights}
+			// handleAdminCheck={handleAdminCheck}
+			// addAdminRights={addAdminRights}
 			banUserSocket={banUserSocket}
 			unbanUserSocket={unbanUserSocket}
 			muteUserSocket={muteUserSocket}
@@ -880,6 +610,7 @@ function handleMutedUserSocket(targetId: number, roomName: string) {
 			friend_set={friend_set}
 			invitation={invitation}
 			socketRef={socketRef}
+			chatMainDivRef={chatMainDivRef}
 		/>
 		);
 	// } else {

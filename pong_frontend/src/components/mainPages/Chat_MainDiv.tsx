@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState, useCallback, useMemo} from "react";
+import React, { FC, useEffect, useState, useCallback, useMemo, useReducer, useRef} from "react";
 import { renderUser} from "../div/chat_utils"; 
 import {ChatContainerStyle, BodyContainer, ChannelInfo, ChatPanel, Container, SideBar, TextBox } from "./ChatPageStyles";
 import Channel_Div from '../div/channel_div';
@@ -10,10 +10,10 @@ import { chatInputProps } from "../div/channel_ChatPanel_div";
 // import { main_div_mode_t } from "../MainDivSelector";
 import { fetchAllChannels, getUserIDByUserName } from "../div/channel_utils";
 import { User } from "../../interfaces/user.interface";
-import { deleteChannelUser, postChannelUser, postPrivateChannelUser } from "../../api/channel/channel_user.api";
+import { deleteChannelUser, getBlockedUser, getChannelBlockedUser, getChannelUser, getMutedStatus, postChannelUser, postPrivateChannelUser } from "../../api/channel/channel_user.api";
 import { CurrentChat, WritableDraft, getChannelFromChannellist, initialMessagesState, initializeMessagesState } from "./Arena_Chat";
 import immer, { Draft } from "immer";
-import { postAdmin } from "../../api/channel/channel_admin.api";
+import { getIsAdmin, postAdmin } from "../../api/channel/channel_admin.api";
 
 const Chat_MainDiv: FC<ChatProps> = (props) => {
 	const [body, setBody] = useState<JSX.Element | null>(null);
@@ -108,24 +108,24 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 	function sendMessage() {
 		console.log("message:", message);
 		console.log("Messages :", messages);
-		console.log("currentchat: ", props.currentChat);
+		console.log("currentchat: ", currentChat);
 		console.log("username : ", props.user?.username);
 		const payload = {
 		content: message,
-		to: props.currentChat.isChannel ? props.currentChat.chatName : props.currentChat.receiverId,
+		to: currentChat.isChannel ? currentChat.chatName : currentChat.receiverId,
 		sender: props.user?.username,
-		chatName: props.currentChat.chatName,
-		isChannel: props.currentChat.isChannel
+		chatName: currentChat.chatName,
+		isChannel: currentChat.isChannel
 		};
 
 		props.socketRef.current?.emit("send message", payload);
 		const newMessages = immer(messages, (draft: WritableDraft<typeof messages>) => {
 		//if the element doesn't exist, an empty one will be added
 		// console.log('Inside Immer callback');
-			if(!draft[props.currentChat.chatName]) {
-				draft[props.currentChat.chatName] = [];
+			if(!draft[currentChat.chatName]) {
+				draft[currentChat.chatName] = [];
 			}
-			draft[props.currentChat.chatName].push({
+			draft[currentChat.chatName].push({
 				sender: props.user?.username,
 				content: message
 			});
@@ -144,6 +144,19 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 		sendMessage();
 		// setLocalMessage('');
 		}
+	}
+
+	function newMessages(content: string, sender: string, chatName: ChatName ){
+		setMessages(messages => {
+			const newMessages = immer(messages, (draft: WritableDraft<typeof messages>) => {
+				if (draft[chatName]) {
+					draft[chatName].push({ content, sender });
+				} else {
+					draft[chatName] = [{ content, sender }];
+				}
+			});
+			return newMessages;
+		});
 	}
 
 	
@@ -176,10 +189,156 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 		console.log("in effect currentChat:", currentChat);
 	}, [currentChat.chatName])
 
+
+	const handleUserDirektMessageStatus = useCallback (async () => {
+		setCurrentRoles((prevState) => ({
+			...prevState,
+			isBlockedResolved: false
+		}));
+		if (!currentChat.isResolved){
+			return;
+		}
+		getUserIDByUserName(currentChat.chatName.toString())
+			.then((result) => {
+				if(result !== undefined){
+					getBlockedUser(result, props.user?.userID)
+					.then((user) => {
+						setCurrentRoles((prevState) => ( {
+							...prevState,
+							isBlocked: user,
+							isBlockedResolved: true
+						}));
+					}).catch(error => {
+						console.log("Error blocking User:", error);
+						alert("Error while blocking User");
+					});
+				}
+			}).catch(error =>{
+			console.error('Error occured in handleUserChannelCheck:', error);
+			});
+	}, [currentChat.isResolved, currentChat.chatName]);
+
+	const handleUserInChannelCheck = useCallback (async () => {
+		setCurrentRoles((prevState) => ({
+			...prevState,
+			isUserResolved: false
+		}));
+		if(currentChat.chatName === "general"){
+			setCurrentRoles((prevState) => ({
+				...prevState,
+				isUser: true,
+				isUserResolved: true
+			}))
+			return;
+		}
+		try {
+			if (!currentChat.isResolved){
+				return;
+			}
+			getChannelUser(props.user?.userID, currentChat.Channel.ChannelId)
+				.then((user) => {
+					setCurrentRoles((prevState) => ( {
+						...prevState,
+						isUser: !!user,
+						isUserResolved: true
+					}));
+				})
+		}catch (error){
+			console.error('Error occured in handleUserChannelCheck:', error);
+		}
+	}, [currentChat.isResolved, currentChat.Channel.ChannelId]);
+
+
+
+	const handleUserInChannelBlockedCheck = useCallback (async () => {
+		setCurrentRoles((prevState) => ({
+			...prevState,
+			isBlockedResolved: false
+		}));
+		try {
+			if (!currentChat.isResolved){
+				return;
+			}
+			getChannelBlockedUser(props.user?.userID, currentChat.Channel.ChannelId)
+				.then((user) => {
+					setCurrentRoles((prevState) => ({
+						...prevState,
+						isBlocked:	user,
+						isBlockedResolved: true
+					}));
+				})
+		}catch (error){
+			console.error('Error occured in handleUserChannelMutedCheck:', error);}
+	}, [currentChat.isResolved, currentChat.Channel.ChannelId]);
+
+	const handleUserInChannelMutedCheck = useCallback (async () => {
+		setCurrentRoles((prevState) => ({
+			...prevState,
+			isMutedResolved: false
+		}));
+		try {
+			if (!currentChat.isResolved){
+				return;
+			}
+			getMutedStatus(currentChat.Channel.ChannelId, props.user?.userID)
+				.then((response) => {
+					setCurrentRoles((prevState) => ({
+						...prevState,
+						isMuted:	response,
+						isMutedResolved: true
+					}));
+				})
+		}catch (error){
+			console.error('Error occured in handleUserChannelBlockedCheck:', error);}
+	}, [currentChat.isResolved, currentChat.Channel.ChannelId]);
+
+	const handleAdminCheck = useCallback (async () => {
+		setCurrentRoles((prevState) => ({
+			...prevState,
+			isAdminResolved: false
+		}));
+		try {
+			if (!currentChat.isResolved){
+				return;
+			}
+			getIsAdmin(currentChat.Channel.ChannelId, props.user?.userID)
+				.then((user) => {
+					setCurrentRoles((prevState) => ({
+						...prevState,
+						isAdmin:	user,
+						isAdminResolved: true
+					}));
+				})
+		}catch (error){
+					console.error('Error occured in handleAdminCheck:', error);}
+	}, [currentChat.isResolved, currentChat.Channel.ChannelId]);
+
+	const handleOwnerCheck = useCallback (async () => {
+		setCurrentRoles((prevState) => ({
+			...prevState,
+			isOwnerResolved: false
+		}));
+		if (!currentChat.isResolved)
+			return;
+		var ownerStatus = false;
+		if (currentChat.Channel.OwnerId === props.user?.userID){
+			ownerStatus = true;
+			// console.log("true UserID:", userID , "owner:", ownerStatus);
+		} else {
+			ownerStatus = false;
+			// console.log("false UserID:", userID , "owner:", ownerStatus);
+		};
+		setCurrentRoles((prevState) => ({
+			...prevState,
+			isOwner:	ownerStatus,
+			isOwnerResolved: true
+		}));		
+	}, [currentChat.isResolved, currentChat.Channel.ChannelId]);
+
 	// FUNKTIONS FOR CHATROOMS
 	function joinRoom(chatName: ChatName) {
-		console.log("Posting User ", props.user?.userID, " in Channel:", props.currentChat.Channel.ChannelId);
-		postChannelUser(props.user?.userID, props.currentChat.Channel.ChannelId)
+		console.log("Posting User ", props.user?.userID, " in Channel:", currentChat.Channel.ChannelId);
+		postChannelUser(props.user?.userID, currentChat.Channel.ChannelId)
 			.then(()=> {
 			props.socketRef.current?.emit("join room", chatName, (messages: any) => roomJoinCallback(messages, chatName))
 			setCurrentRoles((prevState) => ({
@@ -203,10 +362,30 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 		setMessages(newMessages);
 	}
 
+	props.chatMainDivRef.current = {
+		roomJoinCallback: roomJoinCallback,
+		newMessages: newMessages,
+		handleDeletingChatRoom: handleDeletingChatRoom,
+		updateChannellist: updateChannellist,
+		handleAdminRights: handleAdminRights,
+		handleBannedUserSocket: handleBannedUserSocket,
+		handleUnbannedUserSocket: handleUnbannedUserSocket,
+		handleMutedUserSocket: handleMutedUserSocket,
+		handleUnmutedUserSocket: handleUnmutedUserSocket,
+		handleBlockedUserSocket: handleBlockedUserSocket,
+		handleunblockedUserSocket: handleunblockedUserSocket,
+
+
+	};
+	// const proroomJoinCallbackRef = useRef<(incomingMessages: any, room: keyof typeof messages) => void>(roomJoinCallback);
+
+
+
+
 	function joinPrivateRoom(chatName: ChatName, password: string) {
-		postPrivateChannelUser(props.user?.userID, props.currentChat.Channel.ChannelId, password)
+		postPrivateChannelUser(props.user?.userID, currentChat.Channel.ChannelId, password)
 		.then(() => {
-				console.log("Posting User ", props.user?.userID, " in Channel:", props.currentChat.Channel.ChannelId);
+				console.log("Posting User ", props.user?.userID, " in Channel:", currentChat.Channel.ChannelId);
 				props.socketRef.current?.emit("join room", chatName, (messages: any) => roomJoinCallback(messages, chatName));
 				setCurrentRoles((prevState) => ({
 					...prevState,
@@ -217,6 +396,18 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 				console.error("Error in joinPrivateRoom when adding User to Channel: ", error);
 				alert("Wrong Password. Pleayse try again");
 			});
+	}
+
+	function handleDeletingChatRoom(roomName: string | number){
+		updateChannellist();
+		setCurrentChat((prevChat) => {
+			if (prevChat.chatName === roomName) {
+				alert("The Chat has been deleted by the Owner.");
+			return generalChat;
+			} else {
+			return prevChat;
+			}
+		});
 	}
 
 	async function toggleChat(newCurrentChat: CurrentChat) {
@@ -240,7 +431,7 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 					alert("User could not be found. Please try another Username.");
 					return;
 				}
-				postAdmin(currentChat.Channel.ChannelId, Number(targetID), user?.userID)
+				postAdmin(currentChat.Channel.ChannelId, Number(targetID), props.user?.userID)
 				.then(() => {
 					console.log('Admin added with UserId:', targetID);
 					const data = {
@@ -260,6 +451,150 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 			});
 	}
 
+	function handleAdminRights(newAdminUserID: number, roomName: string) {
+		if (newAdminUserID === props.user?.userID)
+		{
+			setCurrentChat((prevChat) => {
+			// console.log("currenchat", prevChat.chatName);
+				if( prevChat.chatName === roomName){
+					alert("You are now an admin of this Channel.");
+					setCurrentRoles((prevRoles) => ({
+						...prevRoles,
+						isAdmin: true
+					}));
+				}
+				return prevChat;
+			});
+			// console.log("currenchat", currentChat.chatName);
+		}
+	}
+
+	function handleBannedUserSocket(targetId: number, roomName: string) {
+		console.log("targetID", targetId);
+		console.log("userId", props.user?.userID);
+		if (targetId === props.user?.userID)
+		{
+			setCurrentChat((prevChat) => {
+			console.log("currenchat", prevChat.chatName);
+
+				if( prevChat.chatName === roomName){
+					setCurrentRoles((prevRoles) => ({
+						...prevRoles,
+						isBlocked: true
+					}));
+				}
+				return prevChat;
+			});
+			console.log("currenchat", currentChat.chatName);
+		}
+	}
+
+	function handleUnbannedUserSocket(targetId: number, roomName: string) {
+		console.log("targetID", targetId);
+		console.log("userId", props.user?.userID);
+		if (targetId === props.user?.userID)
+		{
+			setCurrentChat((prevChat) => {
+			// console.log("currenchat", prevChat.chatName);
+
+				if( prevChat.chatName === roomName){
+					alert("You can use this Channel again.")
+					setCurrentRoles((prevRoles) => ({
+						...prevRoles,
+						isBlocked: false
+					}));
+				}
+				return prevChat;
+			});
+			// console.log("currenchat", currentChat.chatName);
+		}
+	}
+
+	function handleUnmutedUserSocket(targetId: number, roomName: string) {
+		console.log("targetID", targetId);
+		console.log("userId", props.user?.userID);
+		if (targetId === props.user?.userID)
+		{
+			setCurrentChat((prevChat) => {
+			console.log("currenchat", prevChat.chatName);
+	
+				if( prevChat.chatName === roomName){
+					setCurrentRoles((prevRoles) => ({
+						...prevRoles,
+						isMuted: false
+					}));
+					alert("You have been unmuted.");
+				}
+				return prevChat;
+			});
+			console.log("currenchat", currentChat.chatName);
+		}
+	}
+	
+	function handleMutedUserSocket(targetId: number, roomName: string) {
+		console.log("targetID", targetId);
+		console.log("userId", props.user?.userID);
+		if (targetId === props.user?.userID)
+		{
+			setCurrentChat((prevChat) => {
+			console.log("currenchat", prevChat.chatName);
+	
+				if( prevChat.chatName === roomName){
+					setCurrentRoles((prevRoles) => ({
+						...prevRoles,
+						isMuted: true
+					}));
+					alert("You have been muted.");
+				}
+				return prevChat;
+			});
+			console.log("currenchat", currentChat.chatName);
+		}
+	}
+
+	function handleBlockedUserSocket(targetId: number, callerName: string) {
+		console.log("targetID", targetId);
+		console.log("userId", props.user?.userID);
+		if (targetId === props.user?.userID)
+		{
+			setCurrentChat((prevChat) => {
+			console.log("currenchat", prevChat.chatName);
+	
+				if( prevChat.chatName === callerName){
+					setCurrentRoles((prevRoles) => ({
+						...prevRoles,
+						isBlocked: true
+					}));
+					alert("You have been blocked by the User.");
+				}
+				return prevChat;
+			});
+			// console.log("currenchat", currentChat.chatName);
+		}
+	}
+
+	function handleunblockedUserSocket(targetId: number, callerName: string) {
+		console.log("targetID", targetId);
+		console.log("userId", props.user?.userID);
+		if (targetId === props.user?.userID)
+		{
+			setCurrentChat((prevChat) => {
+			console.log("currenchat", prevChat.chatName);
+	
+				if( prevChat.chatName === callerName){
+					setCurrentRoles((prevRoles) => ({
+						...prevRoles,
+						isBlocked: false
+					}));
+					alert("You have been unblocked by the User.");
+				}
+				return prevChat;
+			});
+			// console.log("currenchat", currentChat.chatName);
+		}
+	}
+
+	
 
 
 
@@ -286,9 +621,10 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 	const handleBody = useCallback (() =>{
 		setBody(<ChatBody_Div
 			props = {props}
-			messages={messages[props.currentChat.chatName]}
+			messages={messages[currentChat.chatName]}
 			joinRoom={joinRoom}
 			ChannelUserRoles={currentRoles}
+			currentChat={currentChat}
 		/>);
 	}, [messages, currentRoles]);
 
@@ -310,37 +646,37 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 			  <div>Loading Channel Name...</div> // Show a loading spinner or placeholder
 			) : (
 			  <ChannelInfo>
-				{props.currentChat.chatName}
+				{currentChat.chatName}
 				{/* <button onClick={() => props.leaveRoom(props.currentChat.chatName)}>
 						Leave {props.currentChat.chatName}
 					</button> */}
 			  </ChannelInfo>
 			)
 		  );
-		if (!props.currentChat.isChannel){
+		if (!currentChat.isChannel){
 			setChannelpanel(
 				loadingChannelpanel ? (
 				  <div>Loading Channel Name...</div> // Show a loading spinner or placeholder
 				) : (
 				  <ChannelInfo>
 
-					<div onClick={() => openFriend(props.currentChat.chatName.toString())}>
-    					{props.currentChat.chatName}
+					<div onClick={() => openFriend(currentChat.chatName.toString())}>
+    					{currentChat.chatName}
   					</div>
 					<div>
-					<button onClick={() => inviteButton(props.allUsers.find(user => user.username === props.currentChat.chatName))}>
+					<button onClick={() => inviteButton(props.allUsers.find(user => user.username === currentChat.chatName))}>
 						Invite for a Game
 					</button>
-					<button onClick={() => props.addBlockedUser(props.currentChat.chatName)}>
+					<button onClick={() => props.addBlockedUser(currentChat.chatName)}>
 						Block User
 					</button>
-					<button onClick={() => props.unblockUser(props.currentChat.chatName)}>
+					<button onClick={() => props.unblockUser(currentChat.chatName)}>
 						Unblock User
 					</button>
-					<button onClick={() => props.addFriend(props.currentChat.chatName)}>
+					<button onClick={() => props.addFriend(currentChat.chatName)}>
 						Add as Friend
 					</button>
-					<button onClick={() => props.removeFriend(props.currentChat.chatName)}>
+					<button onClick={() => props.removeFriend(currentChat.chatName)}>
 						Remove Friend
 					</button>
 					</div>
@@ -354,7 +690,7 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 				  <div>Loading Channel Name...</div> // Show a loading spinner or placeholder
 				) : (
 				  <ChannelInfo>
-					{props.currentChat.chatName}
+					{currentChat.chatName}
 					{/* <button onClick={() => props.leaveRoom(props.currentChat.chatName)}>
 							Leave {props.currentChat.chatName}
 						</button> */}
@@ -375,13 +711,13 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 		setChannelPanelLoaded(true);
 	}, [
 		currentRoles, 
-		props.currentChat,
+		currentChat,
 		loadingChannelpanel,
 	]);
 
 	useEffect(() => {
 		setLoadingChannelpanel(false);
-	}, [props.currentChat, props.currentChat.isResolved, messages]);
+	}, [currentChat, currentChat.isResolved, messages]);
 
 	useEffect(() => {
 		if (channelPanelLoaded) {
@@ -398,7 +734,7 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 		handleChannelPanel();
 		handleBody();
 		// setChatInput(<ChatInput_Div props = {props}/>);
-	}, [props.currentChat, handleBody, handleChannelPanel, loadingChannelpanel, currentRoles]);
+	}, [currentChat, handleBody, handleChannelPanel, loadingChannelpanel, currentRoles]);
 
 	return (
 		<div style={ChatContainerStyle}>

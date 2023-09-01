@@ -1,5 +1,5 @@
 import React, { KeyboardEvent } from 'react';
-import { ChannelUserRoles, ChatName, ChatProps, Message } from '../../interfaces/channel.interface';
+import { ChannelUserRoles, ChatData, ChatName, ChatProps, Message } from '../../interfaces/channel.interface';
 import {renderMessages } from './chat_utils';
 import { popUpJoinPrivateChannel } from './channel_popups';
 import { Messages } from '../mainPages/ChatPageStyles';
@@ -10,15 +10,17 @@ interface ChatBodyProps {
   messages: Message[];
   ChannelUserRoles: ChannelUserRoles;
   joinRoom: (chatName: ChatName) => void;
+  currentChat: ChatData;
 }
 
 const ChatBody_Div: React.FC<ChatBodyProps> = ({
   props,
   messages,
   ChannelUserRoles,
-  joinRoom
+  joinRoom,
+  currentChat
 }) => {
-  if (!props.currentChat.isChannel){
+  if (!currentChat.isChannel){
     return (
       <Messages>{messages.map(renderMessages)}</Messages>);
   }
@@ -36,33 +38,33 @@ const ChatBody_Div: React.FC<ChatBodyProps> = ({
       <div>You are blocked from using this Channel.</div>);
   }
   // Switch for Private and Public Channels
-  switch (props.currentChat.Channel.Type) {
+  switch (currentChat.Channel.Type) {
     case "private":
       if (ChannelUserRoles.isUser ||
           ChannelUserRoles.isAdmin ||
-          !props.currentChat.isChannel
+          !currentChat.isChannel
         ) {
         return (
           <Messages>{messages.map(renderMessages)}</Messages>);
       } else {
         return (
           <button onClick={() => popUpJoinPrivateChannel(props)}>
-            Join private Channel {props.currentChat.chatName}
+            Join private Channel {currentChat.chatName}
           </button>);
       }
     case "public":
       if (
         ChannelUserRoles.isUser ||
         ChannelUserRoles.isAdmin ||
-        !props.currentChat.isChannel 
+        !currentChat.isChannel 
       ) {
         return (
           <Messages>{messages.map(renderMessages)}</Messages>
         );
       } else {
         return (
-          <button onClick={() => joinRoom(props.currentChat.chatName)}>
-            Join {props.currentChat.chatName}
+          <button onClick={() => joinRoom(currentChat.chatName)}>
+            Join {currentChat.chatName}
           </button>
         );
       }

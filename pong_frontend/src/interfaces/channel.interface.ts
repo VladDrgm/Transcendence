@@ -14,21 +14,21 @@ export interface Channel {
 export interface ChatProps {
 	userID: number | undefined; //userID from login process
 	user: User | null; //USer from login process
-	toggleChat: (currentChat: ChatData) => void;
+	// toggleChat: (currentChat: ChatData) => void;
 	yourId: string | number;  //socketId from joining the game
 	// username: string; //name given in the game startpage
-	currentChat: ChatData;
+	// currentChat: ChatData;
 	// ChannelUserRoles: ChannelUserRoles;
-	handleAdminCheck: () => void;
-	addAdminRights: (TargetName: string, chatName: ChatName) => void;
+	// // handleAdminCheck: () => void;
+	// addAdminRights: (TargetName: string, chatName: ChatName) => void;
 	banUserSocket: (targetId: number, chatName: ChatName) => void;
 	unbanUserSocket: (targetId: number, chatName: ChatName) => void;
 	muteUserSocket: (targetId: number, chatName: ChatName, mutedDuration: number) => void;
 	connectedRooms: string[];
 	// messages: Message[];
 	// joinRoom: (chatName: ChatName) => void;
-	joinPrivateRoom: (chatName: ChatName, password: string) => void;
-	leaveRoom: (chatName: ChatName) => void;
+	// joinPrivateRoom: (chatName: ChatName, password: string) => void;
+	// leaveRoom: (chatName: ChatName) => void;
 	deleteChatRoom: (chatName: ChatName) => void;
 	addChatRoom: (chatName: ChatName) => void;
 	addBlockedUser: (targetName: ChatName) => void;
@@ -37,20 +37,21 @@ export interface ChatProps {
 
 	unblockUser: (targetName: ChatName) => void;
 	changeChatRoom :(chatName: ChatName) => void;
-	updateChannellist: () => void;
+	// updateChannellist: () => void;
 	// sendMessage: () => void;
 	// handleMessageChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
 	// message: string;
 	// setMessage: React.Dispatch<React.SetStateAction<string>>;
 	allUsers: User[];
-    allChannels: Channel[];
-	generalChat: ChatData;
+    // allChannels: Channel[];
+	// generalChat: ChatData;
 	loadingChannelPanel: boolean;
 	invitePlayer:(invitation:Invitation) => void;
 	// mode_set: React.Dispatch<React.SetStateAction<main_div_mode_t>>;
   	friend_set: React.Dispatch<React.SetStateAction<number>>;
 	invitation: Invitation;
 	socketRef: React.MutableRefObject<Socket | null>;
+	chatMainDivRef: any;
 }
 
  export type ChatData = {
