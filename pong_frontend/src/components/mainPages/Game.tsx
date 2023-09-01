@@ -35,9 +35,10 @@ interface GameState {
 	playerOne: { id: string | null; socket: any; position: { x: number; y: number }; score: number; left:number; right:number; top:number; bottom:number, size: { x: number; y: number } };
 	playerTwo: { id: string | null; socket: any; position: { x: number; y: number }; score: number; left:number; right:number; top:number; bottom:number, size: { x: number; y: number } };
 	ball: Ball;
-	timestamps: { start: number | null; end: number | null };
+	timestamps: { start: Date | null; end: Date | null };
 	dt: number;
-	resetNeeded: boolean;
+	disconnected: boolean;
+	scoreOnDisconnect: { playerOne: number, playerTwo: number };
 };
 
 class Vec {
@@ -243,9 +244,10 @@ const Game: FC<GameProps> = (props) => {
 			playerOne: { id: null, socket: null, position: { x: 0, y: 0 }, score: 0, left: 0, right: 0, top: 0, bottom: 0, size: { x: 0, y: 0 } },
 			playerTwo: { id: null, socket: null, position: { x: 0, y: 0 }, score: 0, left: 0, right: 0, top: 0, bottom: 0, size: { x: 0, y: 0 } },
 			ball: { position: { x: 0, y: 0 }, vel: { x: 0, y: 0, len: 0 }, left: 0, right: 0, top: 0, bottom: 0, size: { x: 0, y: 0 } },
-			timestamps: { start: null, end: null },
+			timestamps: { start: new Date(), end: null },
 			dt: 0,
-			resetNeeded: false
+			disconnected: false,
+			scoreOnDisconnect: { playerOne: 0, playerTwo: 0 }
 		};
 
 		gameState.gameStatus = 1;
@@ -302,7 +304,10 @@ const Game: FC<GameProps> = (props) => {
 		
 		function endGame(gameStateUpdated: GameState) {
 			console.log("End game reached");
-			if (socket.id === gameSession.playerOne && gameState.playerOne.score > gameState.playerTwo.score ) {
+			if (gameState.playerOne.score === 0 && gameState.playerTwo.score === 0) {
+				
+			}
+			else if (socket.id === gameSession.playerOne && gameState.playerOne.score > gameState.playerTwo.score ) {
 				alert("You won!");
 			}
 			else if (socket.id === gameSession.playerOne && gameState.playerOne.score < gameState.playerTwo.score ) {
@@ -328,14 +333,13 @@ const Game: FC<GameProps> = (props) => {
 			pong = null;
 			return;
 		};
-		
+
 		socket.on('init', handleInit);
 		socket.on('updateGameState', updateGameState);
 		socket.on('playerDisconnected', playerDisconnected);
 		socket.on('endGame', endGame);
-		
-		
-		
+
+
 		/* update initial gameState */
 		gameState.playerOne.position = pong.players[0].position;
 		gameState.playerOne.size = pong.players[0].size;
@@ -377,7 +381,7 @@ const Game: FC<GameProps> = (props) => {
 		return () => {
 				socket.off('init', handleInit);
 				socket.off('updateGameState', updateGameState);
-				socket.off('playerDisconnected', endGame);
+				socket.off('playerDisconnected', playerDisconnected);
 				socket.off('endGame', endGame);
 				document.removeEventListener('keydown', handleRandomize);
 				document.removeEventListener('keydown', handlePowerup);

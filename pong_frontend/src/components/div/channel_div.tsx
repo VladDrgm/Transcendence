@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Channel } from '../../interfaces/channel.interface';
+import { Channel, Channel_Div_props } from '../../interfaces/channel.interface';
 import  {ChatProps} from '../../interfaces/channel.interface';
 import {renderRooms, fetchPublicChannels, fetchPrivateChannels} from './channel_utils';
 import { popUpJoinPrivateChannel, popUpCreateChannel } from './channel_popups';
@@ -28,7 +28,7 @@ export var fetchAddress= `${process.env.REACT_APP_BASE_URL}`
 //     }
 // }
 
-const Channel_Div: React.FC<ChatProps> = (props) => {
+const Channel_Div: React.FC<Channel_Div_props> = (props) => {
     const [publicChannels, setPublicChannels] = useState<Channel[]>([]);
     const [privateChannels, setPrivateChannels] = useState<Channel[]>([]);
     const [loading, setLoading] = useState(true);
@@ -43,16 +43,16 @@ const Channel_Div: React.FC<ChatProps> = (props) => {
     return (
         <div>
             <h3>Channels</h3>
-            <button onClick={() => popUpCreateChannel(props)}>
+            <button onClick={() => popUpCreateChannel(props.ChatProps, props.updateChannellist(), props.addChatRoom)}>
 			Create Channel
 		    </button>
             {/* <button onClick={() => popUpJoinPrivateChannel(props)}>
 			Join private Channel
 		    </button> */}
             <h3>Public Channels</h3>
-            {publicChannels.length > 0 ? publicChannels.map((room) => renderRooms(props, room)) : 'no public Channels'}
+            {publicChannels.length > 0 ? publicChannels.map((room) => renderRooms(props.ChatProps, room, props.toggleChat)) : 'no public Channels'}
             <h3>Private Channels</h3>
-            {privateChannels.length > 0 ? privateChannels.map((room) => renderRooms(props, room)) : 'no privat Channels joined'}
+            {privateChannels.length > 0 ? privateChannels.map((room) => renderRooms(props.ChatProps, room, props.toggleChat)) : 'no privat Channels joined'}
             </div>
     );
 

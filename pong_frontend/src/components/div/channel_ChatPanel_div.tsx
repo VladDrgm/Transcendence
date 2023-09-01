@@ -1,5 +1,5 @@
 import React, { FC, KeyboardEvent, useEffect, useState } from 'react';
-import { ChatProps, Message } from '../../interfaces/channel.interface';
+import { ChannelUserRoles, ChatData, ChatProps, Message } from '../../interfaces/channel.interface';
 import { renderMessages } from './chat_utils';
 import { popUpJoinPrivateChannel } from './channel_popups';
 import { TextBox } from '../mainPages/ChatPageStyles';
@@ -9,27 +9,31 @@ export interface chatInputProps {
   value: string;
   onChange: (event: React.ChangeEvent<HTMLTextAreaElement>) => void;
   onKeyPress: (event: KeyboardEvent<HTMLTextAreaElement>) => void;
+  currentRoles: ChannelUserRoles;
+  currentChat: ChatData
 }
 
 const ChatInput_Div: FC<chatInputProps> = ({
   props,
   value, 
   onChange,
-  onKeyPress
+  onKeyPress,
+  currentRoles,
+  currentChat
 }) => {
 
   // //Checking if everything is resolved
-  if (!props.ChannelUserRoles.isAdminResolved ||
-      !props.ChannelUserRoles.isBlockedResolved ||
-      !props.ChannelUserRoles.isMutedResolved ||
-      !props.ChannelUserRoles.isOwnerResolved||
-      !props.ChannelUserRoles.isUserResolved)
+  if (!currentRoles.isAdminResolved ||
+      !currentRoles.isBlockedResolved ||
+      !currentRoles.isMutedResolved ||
+      !currentRoles.isOwnerResolved||
+      !currentRoles.isUserResolved)
     return (
         <TextBox
         placeholder="Loading..."
         />);
   //Checking if USer is Blocked from USing/Joining Channel
-  if(!props.currentChat.isChannel && !props.ChannelUserRoles.isBlocked){
+  if(!currentChat.isChannel && !currentRoles.isBlocked){
     return (
       <TextBox
       value={value}
@@ -38,24 +42,24 @@ const ChatInput_Div: FC<chatInputProps> = ({
       placeholder="You can write something here"
       />);
   }
-  else if (props.ChannelUserRoles.isBlocked) {
+  else if (currentRoles.isBlocked) {
     return (
         <TextBox
         placeholder="You are blocked from using the Channel"
         />);
   }
-  else if (props.ChannelUserRoles.isMuted) {
+  else if (currentRoles.isMuted) {
     return (
         <TextBox
         placeholder="You are muted here"
         />);
   }
   // Switch for Private and Public Channels
-  switch (props.currentChat.Channel.Type) {
+  switch (currentChat.Channel.Type) {
     case "private":
-      if (props.ChannelUserRoles.isUser ||
-          props.ChannelUserRoles.isAdmin ||
-          !props.currentChat.isChannel
+      if (currentRoles.isUser ||
+        currentRoles.isAdmin ||
+          !currentChat.isChannel
         ) {
         return (
             <TextBox
@@ -72,9 +76,9 @@ const ChatInput_Div: FC<chatInputProps> = ({
       }
     case "public":
       if (
-        props.ChannelUserRoles.isUser ||
-        props.ChannelUserRoles.isAdmin ||
-        !props.currentChat.isChannel
+        currentRoles.isUser ||
+        currentRoles.isAdmin ||
+        !currentChat.isChannel
       ) {
         return (
             <TextBox

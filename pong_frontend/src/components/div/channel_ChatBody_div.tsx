@@ -1,5 +1,5 @@
 import React, { KeyboardEvent } from 'react';
-import { ChatProps, Message } from '../../interfaces/channel.interface';
+import { ChannelUserRoles, ChatData, ChatName, ChatProps, Message } from '../../interfaces/channel.interface';
 import {renderMessages } from './chat_utils';
 import { popUpJoinPrivateChannel } from './channel_popups';
 import { Messages } from '../mainPages/ChatPageStyles';
@@ -8,57 +8,65 @@ interface ChatBodyProps {
   props: ChatProps;
   // loadingChatBody: boolean;
   messages: Message[];
+  ChannelUserRoles: ChannelUserRoles;
+  joinRoom: (chatName: ChatName) => void;
+	joinPrivateRoom: (chatName: ChatName, password: string) => void;
+  currentChat: ChatData;
 }
 
 const ChatBody_Div: React.FC<ChatBodyProps> = ({
   props,
-  messages
+  messages,
+  ChannelUserRoles,
+  joinRoom,
+  currentChat,
+  joinPrivateRoom
 }) => {
-  if (!props.currentChat.isChannel){
+  if (!currentChat.isChannel){
     return (
       <Messages>{messages.map(renderMessages)}</Messages>);
   }
   //Checking if everything is resolved
-  if (!props.ChannelUserRoles.isAdminResolved || 
-      !props.ChannelUserRoles.isBlockedResolved || 
-      !props.ChannelUserRoles.isMutedResolved ||
-      !props.ChannelUserRoles.isOwnerResolved||
-      !props.ChannelUserRoles.isUserResolved)
+  if (!ChannelUserRoles.isAdminResolved || 
+      !ChannelUserRoles.isBlockedResolved || 
+      !ChannelUserRoles.isMutedResolved ||
+      !ChannelUserRoles.isOwnerResolved||
+      !ChannelUserRoles.isUserResolved)
     return (
       <div>Loading Chat...</div>);
   //Checking if USer is Blocked from USing/Joining Channel
-  if (props.ChannelUserRoles.isBlocked && props.ChannelUserRoles.isBlockedResolved) {
+  if (ChannelUserRoles.isBlocked && ChannelUserRoles.isBlockedResolved) {
     return (
       <div>You are blocked from using this Channel.</div>);
   }
   // Switch for Private and Public Channels
-  switch (props.currentChat.Channel.Type) {
+  switch (currentChat.Channel.Type) {
     case "private":
-      if (props.ChannelUserRoles.isUser ||
-          props.ChannelUserRoles.isAdmin ||
-          !props.currentChat.isChannel
+      if (ChannelUserRoles.isUser ||
+          ChannelUserRoles.isAdmin ||
+          !currentChat.isChannel
         ) {
         return (
-          <Messages>{messages.map(renderMessages)}</Messages>);
+          <Messages>{messages?.map(renderMessages)}</Messages>);
       } else {
         return (
-          <button onClick={() => popUpJoinPrivateChannel(props)}>
-            Join private Channel {props.currentChat.chatName}
+          <button onClick={() => popUpJoinPrivateChannel(props, currentChat, joinPrivateRoom)}>
+            Join private Channel {currentChat.chatName}
           </button>);
       }
     case "public":
       if (
-        props.ChannelUserRoles.isUser ||
-        props.ChannelUserRoles.isAdmin ||
-        !props.currentChat.isChannel 
+        ChannelUserRoles.isUser ||
+        ChannelUserRoles.isAdmin ||
+        !currentChat.isChannel 
       ) {
         return (
-          <Messages>{messages.map(renderMessages)}</Messages>
+          <Messages>{messages?.map(renderMessages)}</Messages>
         );
       } else {
         return (
-          <button onClick={() => props.joinRoom(props.currentChat.chatName)}>
-            Join {props.currentChat.chatName}
+          <button onClick={() => joinRoom(currentChat.chatName)}>
+            Join {currentChat.chatName}
           </button>
         );
       }
