@@ -11,7 +11,6 @@ interface ChatBodyProps {
   ChannelUserRoles: ChannelUserRoles;
   joinRoom: (chatName: ChatName) => void;
 	joinPrivateRoom: (chatName: ChatName, password: string) => void;
-  
   currentChat: ChatData;
 }
 
@@ -48,7 +47,7 @@ const ChatBody_Div: React.FC<ChatBodyProps> = ({
           !currentChat.isChannel
         ) {
         return (
-          <Messages>{messages.map(renderMessages)}</Messages>);
+          <Messages>{messages?.map(renderMessages)}</Messages>);
       } else {
         return (
           <button onClick={() => popUpJoinPrivateChannel(props, currentChat, joinPrivateRoom)}>
@@ -62,7 +61,7 @@ const ChatBody_Div: React.FC<ChatBodyProps> = ({
         !currentChat.isChannel 
       ) {
         return (
-          <Messages>{messages.map(renderMessages)}</Messages>
+          <Messages>{messages?.map(renderMessages)}</Messages>
         );
       } else {
         return (

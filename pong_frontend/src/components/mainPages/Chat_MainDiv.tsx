@@ -619,14 +619,16 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 	  };
 
 	const handleBody = useCallback (() =>{
-		// setBody(<ChatBody_Div
-		// 	props = {props}
-		// 	messages={messages[currentChat.chatName]}
-		// 	joinRoom={joinRoom}
-		// 	ChannelUserRoles={currentRoles}
-		// 	currentChat={currentChat}
-		// 	joinPrivateRoom={joinPrivateRoom}
-		// />);
+		setBody(<ChatBody_Div
+			props = {props}
+			messages={messages[currentChat.chatName]}
+			joinRoom={joinRoom}
+			ChannelUserRoles={currentRoles}
+			currentChat={currentChat}
+			joinPrivateRoom={joinPrivateRoom}
+		/>);
+		console.log(currentChat.chatName);
+		console.log(messages[currentChat.chatName]);
 	}, [messages, currentRoles]);
 
 	const openFriend = (userName: string) => {
