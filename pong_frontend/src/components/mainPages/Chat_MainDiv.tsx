@@ -741,7 +741,7 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 			<SideBar>
 				<Channel_Div{...props}/>
 				<h3>All Users</h3>
-				{props.allUsers.map((user) => renderUser(user, props))}
+				{props.allUsers.map((user) => renderUser(user, props, toggleChat))}
 			</SideBar>
 			<ChatPanel>
 				<ChannelInfo>

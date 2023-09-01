@@ -51,7 +51,7 @@ import { Row } from "../mainPages/ChatPageStyles";
 
 
 
-export function renderUser(user: User, props: ChatProps) {
+export function renderUser(user: User, props: ChatProps, toggleChat: any) {
     if (user.username === props.user?.username) {
       return (
           <Row key={user.userID}>
@@ -68,7 +68,7 @@ export function renderUser(user: User, props: ChatProps) {
     };
     return (
     <Row onClick={() => {
-        props.toggleChat(currentChat);
+        toggleChat(currentChat);
     }} key={user.userID}>
         {user.username}
     </Row>
