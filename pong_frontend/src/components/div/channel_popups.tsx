@@ -4,7 +4,7 @@ import { modBannedUser, CreateChannel, addMuteUser, fetchAllChannels} from './ch
 import { deleteChannelPassword, postChannelUser, postMuteUser, postPrivateChannelUser, putChannelPassword, putChannelType } from '../../api/channel/channel_user.api';
 import { getChannel } from '../../api/channel/channel.api';
 
-export function banUserPopUp(props: &ChatProps, currentChat: ChatData) {
+export function banUserPopUp(props: &ChatProps, currentChat: ChatData, banUserSocket: any, unbanUserSocket: any) {
     
     var popup = window.open('', '_blank', 'width=500,height=300,menubar=no,toolbar=no');
 
@@ -22,7 +22,7 @@ export function banUserPopUp(props: &ChatProps, currentChat: ChatData) {
     addBlockButton.addEventListener('click', function() {
         var newBlockedUserName = newBlockedUserNameInput.value;
         var newBlockedUserName = newBlockedUserNameInput.value;
-        modBannedUser(true, newBlockedUserName, props, currentChat);
+        modBannedUser(true, newBlockedUserName, props, currentChat, banUserSocket, unbanUserSocket);
         popup?.close();
     });
     popup?.document.body.appendChild(addBlockButton);
@@ -30,13 +30,13 @@ export function banUserPopUp(props: &ChatProps, currentChat: ChatData) {
     addUnblockButton.innerHTML = 'Unban';
     addUnblockButton.addEventListener('click', function() {
         var newUnblockedUserName = newBlockedUserNameInput.value;
-        modBannedUser(false, newUnblockedUserName, props, currentChat);
+        modBannedUser(false, newUnblockedUserName, props, currentChat, banUserSocket, unbanUserSocket);
         popup?.close();
     });
     popup?.document.body.appendChild(addUnblockButton);
 }
 
-export function muteUserPopUp(props: &ChatProps, currentChat: ChatData) {
+export function muteUserPopUp(props: &ChatProps, currentChat: ChatData, muteUserSocket: any) {
     var popup = window.open('', '_blank', 'width=500,height=300,menubar=no,toolbar=no');
 
     const newBlockedLabel = document.createElement("h1");
@@ -59,7 +59,7 @@ export function muteUserPopUp(props: &ChatProps, currentChat: ChatData) {
         var newMutedUserName = newMutedUserNameInput.value;
         var newMutedUserDuration = newMutedUserDurationInput.valueAsNumber;
         if (!isNaN(newMutedUserDuration)) { // Check if it's a valid number
-            addMuteUser(newMutedUserName, newMutedUserDuration, props, currentChat);
+            addMuteUser(newMutedUserName, newMutedUserDuration, props, currentChat, muteUserSocket);
             popup?.close();
         } else {
             alert("Invalid duration. Please enter a valid number.");
@@ -69,7 +69,7 @@ export function muteUserPopUp(props: &ChatProps, currentChat: ChatData) {
     popup?.document.body.appendChild(addMuteButton)
 }
 
-export function kickUserPopUp(props: &ChatProps, currenchat: ChatData) {
+export function kickUserPopUp(props: &ChatProps, currenchat: ChatData, banUserSocket: any, unbanUserSocket: any) {
     
     // Open Window
     var popup = window.open('', '_blank', 'width=500,height=300,menubar=no,toolbar=no');
@@ -87,11 +87,11 @@ export function kickUserPopUp(props: &ChatProps, currenchat: ChatData) {
     addKickFiveButton.innerHTML = 'Kick 5min';
     addKickFiveButton.addEventListener('click', function() {
         var newUnblockedUserName = newBlockedUserNameInput.value;
-        modBannedUser(true, newUnblockedUserName, props, currenchat);
+        modBannedUser(true, newUnblockedUserName, props, currenchat, banUserSocket, unbanUserSocket);
         popup?.close();
         const fiveMin = 5 * 60 * 1000;
         setTimeout(() => {
-            modBannedUser(false, newUnblockedUserName, props, currenchat);
+            modBannedUser(false, newUnblockedUserName, props, currenchat, banUserSocket, unbanUserSocket);
         }, fiveMin);
     });
     popup?.document.body.appendChild(addKickFiveButton);
@@ -100,11 +100,11 @@ export function kickUserPopUp(props: &ChatProps, currenchat: ChatData) {
     addKickFifteenButton.innerHTML = 'Kick 15min';
     addKickFifteenButton.addEventListener('click', function() {
         var newUnblockedUserName = newBlockedUserNameInput.value;
-        modBannedUser(true, newUnblockedUserName, props, currenchat);
+        modBannedUser(true, newUnblockedUserName, props, currenchat, banUserSocket, unbanUserSocket);
         popup?.close();
         const fifteenMin = 15 * 60 * 1000;
         setTimeout(() => {
-            modBannedUser(false, newUnblockedUserName, props, currenchat);
+            modBannedUser(false, newUnblockedUserName, props, currenchat, banUserSocket, unbanUserSocket);
         }, fifteenMin);
     });
     popup?.document.body.appendChild(addKickFifteenButton);
@@ -137,7 +137,11 @@ export function addAdminPopUp(props:  &ChatProps, addAdminRights:(TargetName: st
 
 }
 
-export function changePasswordPopUp(props:  &ChatProps, currentChat: ChatData, updateChannellist: () => void) {
+export function changePasswordPopUp(
+    props:  &ChatProps,
+    currentChat: ChatData,
+    updateChannellist: () => void,
+    changeChatRoom: (chatName: ChatName) => void) {
     // Open Window
     var popup = window.open('', '_blank', 'width=500,height=300,menubar=no,toolbar=no');
 
@@ -157,12 +161,12 @@ export function changePasswordPopUp(props:  &ChatProps, currentChat: ChatData, u
         if (newPw === ""){
             deleteChannelPassword(props?.userID, currentChat.Channel.ChannelId)
             .then(() => {
-                props.changeChatRoom(currentChat.chatName);
+                changeChatRoom(currentChat.chatName);
                 console.log("Password removed");
                 if (currentChat.Channel.Type === "private"){
                     putChannelType(props?.userID, currentChat.Channel.ChannelId)
                     .then(() => {
-                        props.changeChatRoom(currentChat.chatName);
+                        changeChatRoom(currentChat.chatName);
                         updateChannellist();
                         console.log("Channel Type changed to public");
                     })
@@ -181,7 +185,7 @@ export function changePasswordPopUp(props:  &ChatProps, currentChat: ChatData, u
             if (currentChat.Channel.Type === "public"){
                 putChannelType(props.userID, currentChat.Channel.ChannelId)
                 .then(() => {
-                    props.changeChatRoom(currentChat.chatName);
+                    changeChatRoom(currentChat.chatName);
                     updateChannellist();
                     console.log("Channel Type changed to private");
                 })
@@ -206,7 +210,7 @@ export function changePasswordPopUp(props:  &ChatProps, currentChat: ChatData, u
             if (currentChat.Channel.Type === "private"){
                 putChannelType(props.userID, currentChat.Channel.ChannelId)
                 .then(() => {
-                    props.changeChatRoom(currentChat.chatName);
+                    changeChatRoom(currentChat.chatName);
                     updateChannellist();
                     console.log("Channel Type changed to public");
                 })
@@ -225,42 +229,12 @@ export function changePasswordPopUp(props:  &ChatProps, currentChat: ChatData, u
 
 }
 
-// export function blockUserPopUp(props: &ChatProps) {
-    
-//     // Open Window
-//     var popup = window.open('', '_blank', 'width=500,height=300,menubar=no,toolbar=no');
 
-//     const newBlockedLabel = document.createElement("h1");
-//     newBlockedLabel.textContent = "User to be Blocked/Unblocked";
-//     popup?.document.body.appendChild(newBlockedLabel);
-
-//     var newBlockedUserNameInput = document.createElement('input');
-//     newBlockedUserNameInput.type = 'text';
-//     newBlockedUserNameInput.placeholder = "Enter new Admin Username";
-//     popup?.document.body.appendChild(newBlockedUserNameInput);
-
-//     var addBlockButton = document.createElement('button');
-//     addBlockButton.innerHTML = 'Block';
-//     addBlockButton.addEventListener('click', function() {
-//         var newBlockedUserName = newBlockedUserNameInput.value;
-//         //waiting for getUSerID by Username
-//         // postChannelUserBlocked(getUserID(newBlockedUserName), props.currentChat.Channel.ChannelId);
-//         popup?.close();
-//     });
-//     var addUnblockButton = document.createElement('button');
-//     addUnblockButton.innerHTML = 'Unblock';
-//     addUnblockButton.addEventListener('click', function() {
-//         var newUnblockedUserName = newBlockedUserNameInput.value;
-//         //waiting for getUSerID by Username
-//         // deleteChannelUserBlocked(getUserID(newBlockedUserName), props.currentChat.Channel.ChannelId);
-//         popup?.close();
-//     });
-//     popup?.document.body.appendChild(addBlockButton);
-//     popup?.document.body.appendChild(addUnblockButton);
-// }
-
-
-export function popUpCreateChannel(props: ChatProps, updateChannellist: any){
+export function popUpCreateChannel(
+    props: ChatProps,
+    updateChannellist: any,
+    addChatRoom: (chatName: ChatName) => void
+    ){
     // Open Window
     var popup = window.open('', '_blank', 'width=500,height=300,menubar=no,toolbar=no');
 
@@ -291,7 +265,7 @@ export function popUpCreateChannel(props: ChatProps, updateChannellist: any){
         .then(result => {
             if (result){
                 //updating Channelllists
-                props.addChatRoom(channelName);
+                addChatRoom(channelName);
 				updateChannellist();
             }
         })

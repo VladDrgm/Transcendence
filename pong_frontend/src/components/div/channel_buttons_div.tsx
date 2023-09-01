@@ -17,6 +17,11 @@ export interface ownerButtonProps {
     addAdminRights: (TargetName: string, chatName: ChatName) => void
     toggleChat: (currentChat: ChatData) => void;
     generalChat: ChatData;
+    changeChatRoom: (chatName: ChatName) => void;
+    banUserSocket: (targetId: number, chatName: ChatName) => void;
+    unbanUserSocket: (targetId: number, chatName: ChatName) => void;
+    muteUserSocket: (targetId: number, chatName: ChatName, mutedDuration: number) => void;
+    deleteChatRoom: (chatName: ChatName) => void;
   }
 
 
@@ -31,12 +36,18 @@ export const ChannelOwner_Buttons_Div: React.FC<ownerButtonProps> = (props ) => 
                 <div>
                     <button
                     style={chatButtonsStyle}
-                    onClick={() => deleteChannel(props.chatProps, props.currentChat, props.updateChannellist, props.toggleChat, props.generalChat)}>
+                    onClick={() => deleteChannel(
+                        props.chatProps,
+                        props.currentChat,
+                        props.updateChannellist,
+                        props.toggleChat,
+                        props.generalChat,
+                        props.deleteChatRoom)}>
                     Delete Channel
                     </button>
                     <button
                     style={chatButtonsStyle}
-                    onClick={() => changePasswordPopUp(props.chatProps, props.currentChat, props.updateChannellist)}>
+                    onClick={() => changePasswordPopUp(props.chatProps, props.currentChat, props.updateChannellist, props.changeChatRoom)}>
                     Change Password protection
                     </button>
                     <button
@@ -46,17 +57,28 @@ export const ChannelOwner_Buttons_Div: React.FC<ownerButtonProps> = (props ) => 
                     </button>
                     <button
                     style={chatButtonsStyle}
-                    onClick={() => banUserPopUp(props.chatProps, props.currentChat)}>
+                    onClick={() => banUserPopUp(
+                        props.chatProps,
+                        props.currentChat,
+                        props.banUserSocket,
+                        props.unbanUserSocket)}>
                     Ban User
                     </button>
                     <button
                     style={chatButtonsStyle}
-                    onClick={() => kickUserPopUp(props.chatProps, props.currentChat)}>
+                    onClick={() => kickUserPopUp(
+                        props.chatProps,
+                        props.currentChat,
+                        props.banUserSocket,
+                        props.unbanUserSocket)}>
                     Kick User
                     </button>
                     <button
                     style={chatButtonsStyle}
-                    onClick={() => muteUserPopUp(props.chatProps, props.currentChat)}>
+                    onClick={() => muteUserPopUp(
+                        props.chatProps,
+                        props.currentChat,
+                        props.muteUserSocket)}>
                     Mute User
                     </button>
                 </div>
@@ -77,17 +99,28 @@ export const ChannelAdmin_Buttons_Div: React.FC<ownerButtonProps> = (props) => {
                 <div>
                     <button
                     style={chatButtonsStyle}
-                    onClick={() => banUserPopUp(props.chatProps, props.currentChat)}>
+                    onClick={() => banUserPopUp(
+                        props.chatProps,
+                        props.currentChat,
+                        props.banUserSocket,
+                        props.unbanUserSocket)}>
                     Ban User
                     </button>
                     <button
                     style={chatButtonsStyle}
-                    onClick={() => kickUserPopUp(props.chatProps, props.currentChat)}>
+                    onClick={() => kickUserPopUp(
+                        props.chatProps,
+                        props.currentChat,
+                        props.banUserSocket,
+                        props.unbanUserSocket)}>
                     Kick User
                     </button>
                     <button
                     style={chatButtonsStyle}
-                    onClick={() => muteUserPopUp(props.chatProps, props.currentChat)}>
+                    onClick={() => muteUserPopUp(
+                        props.chatProps,
+                        props.currentChat,
+                        props.muteUserSocket)}>
                     Mute User
                     </button>
                 </div>

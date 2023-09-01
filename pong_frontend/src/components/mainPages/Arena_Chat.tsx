@@ -68,7 +68,6 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID, friend_set}) => {
 	/* chat utilities */
 	const [username, setUsername] = useState("");
 	const [connected, setConnected] = useState(true);
-	const [connectedRooms, setConnectedRooms] = useState<string[]>(["general"]);
 	const [allUsers, setAllUsers] = useState<any[]>([]);
 	let chatMainDivRef = useRef<{ 
 		roomJoinCallback: any;
@@ -83,192 +82,16 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID, friend_set}) => {
 		handleBlockedUserSocket: any;
 		handleunblockedUserSocket: any;
 	} | null>(null);
-	
-	// useEffect(() => {
-	// 	const intervalID = setInterval(() => {
-	// 		fetchAllChannels()
-	// 			.then((channels) => {
-	// 				setAllChannels(channels);
-	// 			})
-	// 			.catch((error) => {
-	// 				console.error("Error fetching all Channels: ", error);
-	// 			});
-	// 	}, 30000);
-	// 	return () => clearInterval(intervalID);
-	// }, []);
 
 	let [playerOne, setPlayerOne] = useState<string>("");
 	let [playerTwo, setPlayerTwo] = useState<string>("");
 	let [audience, setAudience] = useState<string>("");
 
 	const socketRef = useRef<Socket | null>(null!);
-
-		function addBlockedUser(targetName: string | number){
-			getUserIDByUserName(targetName.toString())
-				.then((targetID) => {
-					if(targetID === undefined){
-						alert("User could not be found. Please try another Username.");
-						return;
-					}
-					postBlockedUser(user?.userID, Number(targetID))
-					.then(() => {
-						console.log('User blocked with UserId:', targetID);
-						// const data = {
-						// 	callerId: userID,
-						// 	targetId: Number(targetID)
-						// };
-						// socketRef.current?.emit('block user', data);
-						blockUserSocket(Number(targetID), user?.username);
-					})
-					.catch(error => {
-						console.error("Error blocking user with Username:" , targetName);
-						alert("Error while blocking User" + error);
-					})
-				})
-				.catch(error => {
-					console.error('Error getting UserID from User:' ,error);
-					alert("Error while blocking User" + error);
-				});
-			}
-
-	function unblockUser(targetName: string | number){
-		getUserIDByUserName(targetName.toString())
-			.then((targetID) => {
-				if(targetID === undefined){
-					alert("User could not be found. Please try another Username.");
-					return;
-				}
-				deleteBlockedUser(user?.userID, Number(targetID))
-				.then(() => {
-					console.log('User unblocked with UserId:', targetID);
-					unblockUserSocket(Number(targetID), user?.username);
-				})
-				.catch(error => {
-					console.error("Error unblocking user with Username:" , targetName);
-					alert("Error while unblocking User" + error);
-				})
-			})
-			.catch(error => {
-				console.error('Error getting UserID from User:' ,error);
-				alert("Error while unblocking User" + error);
-			});
-	}
 	
-	function addFriend(targetName: string | number){
-		getUserIDByUserName(targetName.toString())
-		.then((targetID) => {
-			if(targetID === undefined){
-				alert("User could not be found. Please try another Username.");
-				return;
-			}
-			getIsFriend(user?.userID, Number(targetID))
-			.then((result) => {
-				if (result){
-					alert("User is already a Friend");
-					return;
-				}
-				postFriend(Number(targetID), user?.userID)
-				.then(() => {
-					console.log('Friend added with UserId:', targetID);
-					alert("User "+ targetName + " added as Friend");
-					// blockUserSocket(Number(targetID), user.username);
-				})
-				.catch(error => {
-					console.error("Error adding user as Friend with Username:" , targetName);
-					alert("Error while adding User as Friend:" + error);
-				});
-			})
-			.catch(error => {
-				console.error("Error adding user as Friend with Username:" , targetName);
-				alert("Error while adding User as Friend:" + error);
-			});
-		})
-		.catch(error => {
-			console.error('Error getting UserID from User:' ,error);
-			alert("Error adding User as Friend" + error);
-		});
-	}
-
-	function removeFriend(targetName: string | number){
-		getUserIDByUserName(targetName.toString())
-		.then((targetID) => {
-			if(targetID === undefined){
-				alert("User could not be found. Please try another Username.");
-				return;
-			}
-			getIsFriend(user?.userID, Number(targetID))
-			.then((result) => {
-				if (!result){
-					alert("User is not a Friend");
-					return;
-				}
-				deleteFriend(Number(targetID), user?.userID)
-				.then(() => {
-					console.log('Friend removed with UserId:', targetID);
-					alert("User "+ targetName + " removed as Friend");
-					// blockUserSocket(Number(targetID), user.username);
-				})
-				.catch(error => {
-					console.error("Error removing user as Friend with Username:" , targetName);
-					alert("Error while removing User as Friend:" + error);
-				});
-			})
-			.catch(error => {
-				console.error('Error getting Friendship Status from User:' ,error);
-				alert("Error getting Friendship Status" + error);
-			})
-		})
-		.catch(error => {
-			console.error('Error getting UserID from User:' ,error);
-			alert("Error removing User as Friend" + error);
-		});
-	}
-
-	function deleteChatRoom(roomName: string | number) {
-		socketRef.current?.emit('delete room', roomName);
-	}
-
-
-	function addChatRoom(roomName: string | number) {
-		socketRef.current?.emit('add room', roomName);
-	}
-
-	function changeChatRoom(roomName: string | number) {
-		socketRef.current?.emit('change room', roomName);
-	}
-
-	function banUserSocket(targetId: number, roomName: string | number) {
-		socketRef.current?.emit('ban user', {targetId, roomName});
-	}
-
-	function unbanUserSocket(targetId: number, roomName: string | number) {
-		socketRef.current?.emit('unban user', {targetId, roomName});
-	}
-
-	function muteUserSocket(targetId: number, roomName: string | number, muteDuration: number) {
-		socketRef.current?.emit('mute user', {targetId, roomName, muteDuration});
-	}
-
-	function blockUserSocket(targetId: string | number, username: string | undefined) {
-		socketRef.current?.emit('block user', {targetId, username});
-	}
-
-	function unblockUserSocket(targetId: string | number, username: string | undefined) {
-		socketRef.current?.emit('unblock user', {targetId, username});
-	}
-
-	
-
-
-	
-
-
-	
-	
-	
-	function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
-		setUsername(e.target.value);
-	}
+	// function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
+	// 	setUsername(e.target.value);
+	// }
 
 
 
@@ -568,60 +391,20 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID, friend_set}) => {
 		}
 	
 
-	/* rendering condition */
 	let body;
-	// if (connected) {
-		// console.log("before body:", currentChat);
-		body = (
+	body = (
 		<Chat_MainDiv
 			user={user}
 			userID={userID}
-			// message={message}
-			// handleMessageChange={handleMessageChange}
-			// sendMessage={sendMessage}
 			yourId={socketRef.current ? socketRef.current.id : ""}
 			allUsers={allUsers}
-			// allChannels={allChannels}
-			// updateChannellist={updateChannellist}
-			// generalChat={generalChat}
-			// joinRoom={joinRoom}
-			// joinPrivateRoom={joinPrivateRoom}
-			changeChatRoom={changeChatRoom}
-			// leaveRoom={leaveRoom}
-			deleteChatRoom={deleteChatRoom}
-			addChatRoom={addChatRoom}
-			addBlockedUser={addBlockedUser}
-			addFriend={addFriend}
-			removeFriend={removeFriend}
-			unblockUser={unblockUser}
-			connectedRooms={connectedRooms}
-			// currentChat={currentChat}
-			// messages={messages[currentChat.chatName]}
-			// toggleChat={toggleChat}
-			// ChannelUserRoles={currentRoles}
-			// handleAdminCheck={handleAdminCheck}
-			// addAdminRights={addAdminRights}
-			banUserSocket={banUserSocket}
-			unbanUserSocket={unbanUserSocket}
-			muteUserSocket={muteUserSocket}
-			// loadingChannelPanel = {false}
 			invitePlayer={invitePlayer}
-			// mode_set={mode_set}
 			friend_set={friend_set}
 			invitation={invitation}
 			socketRef={socketRef}
 			chatMainDivRef={chatMainDivRef}
 		/>
-		);
-	// } else {
-	// 	body = (
-	// 	<Form
-	// 		username={username}
-	// 		onChange={handleChange}
-	// 		connect={connect}
-	// 	/>
-	// 	);
-	// }
+	);
 
 	let gameBody, gameBodyForm;
 	if (gameStatus === 1) {

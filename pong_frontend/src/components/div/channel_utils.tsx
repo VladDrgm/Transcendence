@@ -7,7 +7,7 @@ import styled from "styled-components";
 import {IUser} from '../../interfaces/interface';
 import { fetchAddress } from './channel_div';
 import { Row } from '../mainPages/ChatPageStyles';
-import { getChannelFromChannellist } from '../mainPages/Arena_Chat';
+import { ChatName, getChannelFromChannellist } from '../mainPages/Arena_Chat';
 
 export function mapChannel(item: any) {
     const { ChannelId, OwnerId, Name, Type, Password } = item;
@@ -142,14 +142,21 @@ export async function fetchChannelNames(): Promise<string[]> {
     }
 };
 
-export async function modBannedUser(add: boolean, newBlockedUsername: string, props: &ChatProps, currentChat: ChatData){
+export async function modBannedUser(
+    add: boolean,
+    newBlockedUsername: string,
+    props: &ChatProps,
+    currentChat: ChatData,
+    banUserSocket: (targetId: number, chatName: ChatName) => void,
+    unbanUserSocket: (targetId: number, chatName: ChatName) => void,
+    ){
     const targetID = await getUserIDByUserName(newBlockedUsername);
     if (targetID !== undefined)
         {
             if (add === true)
                 postChannelUserBlocked(props?.userID, targetID, currentChat.Channel.ChannelId)
                 .then(() => {
-                    props.banUserSocket(targetID, currentChat.chatName);
+                    banUserSocket(targetID, currentChat.chatName);
                 })
                 .catch(error => {
                     console.error("Error banning User:", error);
@@ -158,7 +165,7 @@ export async function modBannedUser(add: boolean, newBlockedUsername: string, pr
             else
                 deleteChannelUserBlocked(props?.userID, targetID, currentChat.Channel.ChannelId)
                 .then(() => {
-                    props.unbanUserSocket(targetID, currentChat.chatName);
+                    unbanUserSocket(targetID, currentChat.chatName);
                 })
                 .catch(error => {
                     console.error("Error unbanning User:", error);
@@ -170,7 +177,13 @@ export async function modBannedUser(add: boolean, newBlockedUsername: string, pr
     }
 }
 
-export async function addMuteUser(newBlockedUsername: string, duration:number, props: &ChatProps, currentChat: ChatData){
+export async function addMuteUser(
+    newBlockedUsername: string,
+    duration:number,
+    props: &ChatProps,
+    currentChat: ChatData,
+    muteUserSocket: (targetId: number, chatName: ChatName, mutedDuration: number) => void
+    ){
     //finding right UserId to the Username input from banUserPopUp
     getUserIDByUserName(newBlockedUsername)
     .then((targetID) => {
@@ -178,7 +191,7 @@ export async function addMuteUser(newBlockedUsername: string, duration:number, p
             postMuteUser(props?.userID, targetID, currentChat.Channel.ChannelId, duration)
              .then(() => {
                  const socketDuration = (duration * 60 * 1000) + 100;
-                 props.muteUserSocket(targetID, currentChat.chatName, socketDuration);
+                 muteUserSocket(targetID, currentChat.chatName, socketDuration);
              })
 
         }

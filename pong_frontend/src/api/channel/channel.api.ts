@@ -1,4 +1,4 @@
-import { Channel, ChatData, ChatProps } from "../../interfaces/channel.interface";
+import { Channel, ChatData, ChatName, ChatProps } from "../../interfaces/channel.interface";
 import { fetchAddress } from "../../components/div/channel_div";
 
 export async function getChannels():  Promise<Channel[]> {
@@ -21,7 +21,9 @@ export function deleteChannel(
   currentChat: ChatData,
   updateChannellist: () => void,
   toggleChat: (currentChat: ChatData) => void,
-  generalChat: ChatData) {
+  generalChat: ChatData,
+  deleteChatRoom: (chatName: ChatName) => void
+  ) {
   if (currentChat.Channel.ChannelId === 41)
   {
     console.error("Error: Don't delete general Channel");
@@ -31,7 +33,7 @@ export function deleteChannel(
   .then(response => {
     if (response.ok) {
       console.log("Channel deleted successfully.");
-      props.deleteChatRoom(currentChat.chatName);
+      deleteChatRoom(currentChat.chatName);
       updateChannellist();
       toggleChat(generalChat);
     } else {

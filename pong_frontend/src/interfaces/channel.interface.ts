@@ -21,22 +21,22 @@ export interface ChatProps {
 	// ChannelUserRoles: ChannelUserRoles;
 	// // handleAdminCheck: () => void;
 	// addAdminRights: (TargetName: string, chatName: ChatName) => void;
-	banUserSocket: (targetId: number, chatName: ChatName) => void;
-	unbanUserSocket: (targetId: number, chatName: ChatName) => void;
-	muteUserSocket: (targetId: number, chatName: ChatName, mutedDuration: number) => void;
-	connectedRooms: string[];
+	// banUserSocket: (targetId: number, chatName: ChatName) => void;
+	// unbanUserSocket: (targetId: number, chatName: ChatName) => void;
+	// muteUserSocket: (targetId: number, chatName: ChatName, mutedDuration: number) => void;
+	// connectedRooms: string[];
 	// messages: Message[];
 	// joinRoom: (chatName: ChatName) => void;
 	// joinPrivateRoom: (chatName: ChatName, password: string) => void;
 	// leaveRoom: (chatName: ChatName) => void;
-	deleteChatRoom: (chatName: ChatName) => void;
-	addChatRoom: (chatName: ChatName) => void;
-	addBlockedUser: (targetName: ChatName) => void;
-	addFriend: (targetName: ChatName) => void;
-	removeFriend: (targetName: ChatName) => void;
+	// deleteChatRoom: (chatName: ChatName) => void;
+	// addChatRoom: (chatName: ChatName) => void;
+	// addBlockedUser: (targetName: ChatName) => void;
+	// addFriend: (targetName: ChatName) => void;
+	// removeFriend: (targetName: ChatName) => void;
 
-	unblockUser: (targetName: ChatName) => void;
-	changeChatRoom :(chatName: ChatName) => void;
+	// unblockUser: (targetName: ChatName) => void;
+	// changeChatRoom :(chatName: ChatName) => void;
 	// updateChannellist: () => void;
 	// sendMessage: () => void;
 	// handleMessageChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
@@ -73,6 +73,7 @@ export interface Channel_Div_props {
 	// joinRoom: (chatName: ChatName) => void;
 	toggleChat: (currentChat: ChatData) => void;
 	updateChannellist: () => void;
+	addChatRoom: (chatName: ChatName) => void;
 	
 }
 

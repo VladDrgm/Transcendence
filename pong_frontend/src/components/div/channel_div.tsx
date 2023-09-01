@@ -43,7 +43,7 @@ const Channel_Div: React.FC<Channel_Div_props> = (props) => {
     return (
         <div>
             <h3>Channels</h3>
-            <button onClick={() => popUpCreateChannel(props.ChatProps, props.updateChannellist())}>
+            <button onClick={() => popUpCreateChannel(props.ChatProps, props.updateChannellist(), props.addChatRoom)}>
 			Create Channel
 		    </button>
             {/* <button onClick={() => popUpJoinPrivateChannel(props)}>

@@ -10,7 +10,7 @@ import { chatInputProps } from "../div/channel_ChatPanel_div";
 // import { main_div_mode_t } from "../MainDivSelector";
 import { fetchAllChannels, getUserIDByUserName } from "../div/channel_utils";
 import { User } from "../../interfaces/user.interface";
-import { deleteChannelUser, getBlockedUser, getChannelBlockedUser, getChannelUser, getMutedStatus, postChannelUser, postPrivateChannelUser } from "../../api/channel/channel_user.api";
+import { deleteBlockedUser, deleteChannelUser, deleteFriend, getBlockedUser, getChannelBlockedUser, getChannelUser, getIsFriend, getMutedStatus, postBlockedUser, postChannelUser, postFriend, postPrivateChannelUser } from "../../api/channel/channel_user.api";
 import { CurrentChat, WritableDraft, getChannelFromChannellist, initialMessagesState, initializeMessagesState } from "./Arena_Chat";
 import immer, { Draft } from "immer";
 import { getIsAdmin, postAdmin } from "../../api/channel/channel_admin.api";
@@ -451,6 +451,58 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 			});
 	}
 
+	function addBlockedUser(targetName: string | number){
+		getUserIDByUserName(targetName.toString())
+		.then((targetID) => {
+			if(targetID === undefined){
+				alert("User could not be found. Please try another Username.");
+				return;
+			}
+			postBlockedUser(props.user?.userID, Number(targetID))
+			.then(() => {
+				console.log('User blocked with UserId:', targetID);
+				// const data = {
+				// 	callerId: userID,
+				// 	targetId: Number(targetID)
+				// };
+				// socketRef.current?.emit('block user', data);
+				blockUserSocket(Number(targetID), props.user?.username);
+			})
+			.catch(error => {
+				console.error("Error blocking user with Username:" , targetName);
+				alert("Error while blocking User" + error);
+			})
+		})
+		.catch(error => {
+			console.error('Error getting UserID from User:' ,error);
+			alert("Error while blocking User" + error);
+		});
+	}
+
+	function unblockUser(targetName: string | number){
+		getUserIDByUserName(targetName.toString())
+			.then((targetID) => {
+				if(targetID === undefined){
+					alert("User could not be found. Please try another Username.");
+					return;
+				}
+				deleteBlockedUser(props.user?.userID, Number(targetID))
+				.then(() => {
+					console.log('User unblocked with UserId:', targetID);
+					unblockUserSocket(Number(targetID), props.user?.username);
+				})
+				.catch(error => {
+					console.error("Error unblocking user with Username:" , targetName);
+					alert("Error while unblocking User" + error);
+				})
+			})
+			.catch(error => {
+				console.error('Error getting UserID from User:' ,error);
+				alert("Error while unblocking User" + error);
+			});
+	}
+
+
 	function handleAdminRights(newAdminUserID: number, roomName: string) {
 		if (newAdminUserID === props.user?.userID)
 		{
@@ -670,16 +722,16 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 					<button onClick={() => inviteButton(props.allUsers.find(user => user.username === currentChat.chatName))}>
 						Invite for a Game
 					</button>
-					<button onClick={() => props.addBlockedUser(currentChat.chatName)}>
+					<button onClick={() => addBlockedUser(currentChat.chatName)}>
 						Block User
 					</button>
-					<button onClick={() => props.unblockUser(currentChat.chatName)}>
+					<button onClick={() => unblockUser(currentChat.chatName)}>
 						Unblock User
 					</button>
-					<button onClick={() => props.addFriend(currentChat.chatName)}>
+					<button onClick={() => addFriend(currentChat.chatName)}>
 						Add as Friend
 					</button>
-					<button onClick={() => props.removeFriend(currentChat.chatName)}>
+					<button onClick={() => removeFriend(currentChat.chatName)}>
 						Remove Friend
 					</button>
 					</div>
@@ -710,7 +762,12 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 					updateChannellist={updateChannellist}
 					addAdminRights={addAdminRights}
 					toggleChat={toggleChat}
-					generalChat={generalChat} />
+					generalChat={generalChat} 
+					changeChatRoom={changeChatRoom}
+					banUserSocket={banUserSocket}
+					unbanUserSocket={unbanUserSocket}
+					muteUserSocket={muteUserSocket}
+					deleteChatRoom={deleteChatRoom}/>
 			  );
 		  }
 		else if (currentRoles.isAdmin && currentRoles.isAdminResolved) {
@@ -722,7 +779,12 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 				updateChannellist={updateChannellist}
 				addAdminRights={addAdminRights}
 				toggleChat={toggleChat}
-				generalChat={generalChat} />
+				generalChat={generalChat}
+				changeChatRoom={changeChatRoom}
+				banUserSocket={banUserSocket}
+				unbanUserSocket={unbanUserSocket}
+				muteUserSocket={muteUserSocket}
+				deleteChatRoom={deleteChatRoom}/>
 			);
 		} 
 		setChannelPanelLoaded(true);
@@ -742,6 +804,109 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 		}
 	}, [channelPanelLoaded]);
 
+	//SOCKET FUNCTIONS
+	function blockUserSocket(targetId: string | number, username: string | undefined) {
+		props.socketRef.current?.emit('block user', {targetId, username});
+	}
+
+	function unblockUserSocket(targetId: string | number, username: string | undefined) {
+		props.socketRef.current?.emit('unblock user', {targetId, username});
+	}
+
+	function addFriend(targetName: string | number){
+		getUserIDByUserName(targetName.toString())
+		.then((targetID) => {
+			if(targetID === undefined){
+				alert("User could not be found. Please try another Username.");
+				return;
+			}
+			getIsFriend(props.user?.userID, Number(targetID))
+			.then((result) => {
+				if (result){
+					alert("User is already a Friend");
+					return;
+				}
+				postFriend(Number(targetID), props.user?.userID)
+				.then(() => {
+					console.log('Friend added with UserId:', targetID);
+					alert("User "+ targetName + " added as Friend");
+					// blockUserSocket(Number(targetID), user.username);
+				})
+				.catch(error => {
+					console.error("Error adding user as Friend with Username:" , targetName);
+					alert("Error while adding User as Friend:" + error);
+				});
+			})
+			.catch(error => {
+				console.error("Error adding user as Friend with Username:" , targetName);
+				alert("Error while adding User as Friend:" + error);
+			});
+		})
+		.catch(error => {
+			console.error('Error getting UserID from User:' ,error);
+			alert("Error adding User as Friend" + error);
+		});
+	}
+
+	function removeFriend(targetName: string | number){
+		getUserIDByUserName(targetName.toString())
+		.then((targetID) => {
+			if(targetID === undefined){
+				alert("User could not be found. Please try another Username.");
+				return;
+			}
+			getIsFriend(props.user?.userID, Number(targetID))
+			.then((result) => {
+				if (!result){
+					alert("User is not a Friend");
+					return;
+				}
+				deleteFriend(Number(targetID), props.user?.userID)
+				.then(() => {
+					console.log('Friend removed with UserId:', targetID);
+					alert("User "+ targetName + " removed as Friend");
+					// blockUserSocket(Number(targetID), user.username);
+				})
+				.catch(error => {
+					console.error("Error removing user as Friend with Username:" , targetName);
+					alert("Error while removing User as Friend:" + error);
+				});
+			})
+			.catch(error => {
+				console.error('Error getting Friendship Status from User:' ,error);
+				alert("Error getting Friendship Status" + error);
+			})
+		})
+		.catch(error => {
+			console.error('Error getting UserID from User:' ,error);
+			alert("Error removing User as Friend" + error);
+		});
+	}
+
+	function deleteChatRoom(roomName: string | number) {
+		props.socketRef.current?.emit('delete room', roomName);
+	}
+
+
+	function addChatRoom(roomName: string | number) {
+		props.socketRef.current?.emit('add room', roomName);
+	}
+
+	function changeChatRoom(roomName: string | number) {
+		props.socketRef.current?.emit('change room', roomName);
+	}
+
+	function banUserSocket(targetId: number, roomName: string | number) {
+		props.socketRef.current?.emit('ban user', {targetId, roomName});
+	}
+
+	function unbanUserSocket(targetId: number, roomName: string | number) {
+		props.socketRef.current?.emit('unban user', {targetId, roomName});
+	}
+
+	function muteUserSocket(targetId: number, roomName: string | number, muteDuration: number) {
+		props.socketRef.current?.emit('mute user', {targetId, roomName, muteDuration});
+	}
 
 	// useEffect(() => {
 	// 	setChatInput(<ChatInput_Div props = {props}/>);
@@ -760,7 +925,8 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 				ChatProps={props} 
 				allChannels={allChannels} 
 				toggleChat={toggleChat}
-				updateChannellist={updateChannellist}/>
+				updateChannellist={updateChannellist}
+				addChatRoom={addChatRoom}/>
 				<h3>All Users</h3>
 				{props.allUsers.map((user) => renderUser(user, props, toggleChat))}
 			</SideBar>
