@@ -12,7 +12,7 @@ const UserContext = createContext<UserContextValue>({
 	user: null,
 	setUser: () => {},
   });
-  
+
   export function useUserContext() {
 	return useContext(UserContext);
   }
@@ -25,7 +25,6 @@ const UserContext = createContext<UserContextValue>({
 	const storedUser = localStorage.getItem('user');
 	const initialUser: User | null = storedUser ? JSON.parse(storedUser) : null;
 
-	
 	const [user, setUser] = useState<User | null>(initialUser);
   
 	return (

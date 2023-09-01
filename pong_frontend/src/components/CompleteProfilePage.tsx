@@ -5,7 +5,7 @@ import { useUserContext } from './context/UserContext';
 import * as styles from './CompleteProfilePageStyles';
 import imageAssetUploadAvatar from './assets/uploadAvatar.png';
 import { User } from '../interfaces/user.interface';
-import { updateAvatarApi } from '../api/userApi';
+import { updateAvatarApi, updateUsernameApi } from '../api/userApi';
 import { fetchAddress } from './div/channel_div';
 
 interface CompleteProfilePageProps {
@@ -63,13 +63,21 @@ const CompleteProfilePage: React.FC<CompleteProfilePageProps> = ({/* Use Complet
 			if (newAvatar) {
 				try {
 					const formData = new FormData();
-					formData.append('img', newAvatar);
+					formData.append('file', newAvatar);
 					const userObjectWithAvatar = await updateAvatarApi(newCreatedUser.userID, formData);
 					newCreatedUser = userObjectWithAvatar;
 				} catch (error) {
 					setError('Error uploading avatar');
 				}
 			}
+            if (newUsername) {
+                try {
+                    const updatedUser = await updateUsernameApi(newCreatedUser.userID, newUsername);
+                    newCreatedUser = updatedUser;
+                } catch (error) {
+                    setError('Error uploading username');
+                }
+            }
 			localStorage.setItem('user', JSON.stringify(newCreatedUser));
 			setUser(newCreatedUser);
 			navigate(`/`);
