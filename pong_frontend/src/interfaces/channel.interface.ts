@@ -51,7 +51,7 @@ export interface ChatProps {
   	friend_set: React.Dispatch<React.SetStateAction<number>>;
 	invitation: Invitation;
 	socketRef: React.MutableRefObject<Socket | null>;
-	chatMainDivRef: any;
+	chatMainDivRef: React.MutableRefObject<any>;
 }
 
  export type ChatData = {
@@ -65,6 +65,15 @@ export interface ChatProps {
 export interface Message {
 	sender: string | undefined;
 	content: string;
+}
+
+export interface Channel_Div_props {
+	ChatProps: ChatProps;
+	allChannels: Channel[];
+	// joinRoom: (chatName: ChatName) => void;
+	toggleChat: (currentChat: ChatData) => void;
+	updateChannellist: () => void;
+	
 }
 
 // export interface User {

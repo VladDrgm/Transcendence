@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import  {ChatProps} from '../../interfaces/channel.interface';
+import  {ChatData, ChatName, ChatProps} from '../../interfaces/channel.interface';
 import { addAdminPopUp, banUserPopUp, changePasswordPopUp, kickUserPopUp, muteUserPopUp } from './channel_popups';
 import { deleteChannel } from '../../api/channel/channel.api';
 import { ChannelInfo } from '../mainPages/ChatPageStyles';
@@ -9,12 +9,18 @@ export interface LoadingProps {
 	loadingChannelPanel: boolean;
 }
 
+export interface ownerButtonProps {
+    chatProps: ChatProps;
+    currentChat: ChatData;
+    updateChannellist: () => void;
+    addAdminRights: (TargetName: string, chatName: ChatName) => void
+  }
 
 
 
-export const ChannelOwner_Buttons_Div: React.FC<ChatProps> = (props) => {
+export const ChannelOwner_Buttons_Div: React.FC<ownerButtonProps> = (props ) => {
     return (
-        props.loadingChannelPanel ? (
+        props.chatProps.loadingChannelPanel ? (
             <div>Loading Channel Name and Buttons...</div> // Show a loading spinner or placeholder
         ) : (
             <ChannelInfo>
@@ -22,32 +28,32 @@ export const ChannelOwner_Buttons_Div: React.FC<ChatProps> = (props) => {
                 <div>
                     <button
                     style={chatButtonsStyle}
-                    onClick={() => deleteChannel(props)}>
+                    onClick={() => deleteChannel(props.chatProps)}>
                     Delete Channel
                     </button>
                     <button
                     style={chatButtonsStyle}
-                    onClick={() => changePasswordPopUp(props)}>
+                    onClick={() => changePasswordPopUp(props.chatProps, props.currentChat, props.updateChannellist)}>
                     Change Password protection
                     </button>
                     <button
                     style={chatButtonsStyle}
-                    onClick={() => addAdminPopUp(props)}>
+                    onClick={() => addAdminPopUp(props.chatProps, props.addAdminRights, props.currentChat)}>
                     Add Admin
                     </button>
                     <button
                     style={chatButtonsStyle}
-                    onClick={() => banUserPopUp(props)}>
+                    onClick={() => banUserPopUp(props.chatProps, props.currentChat)}>
                     Ban User
                     </button>
                     <button
                     style={chatButtonsStyle}
-                    onClick={() => kickUserPopUp(props)}>
+                    onClick={() => kickUserPopUp(props.chatProps, props.currentChat)}>
                     Kick User
                     </button>
                     <button
                     style={chatButtonsStyle}
-                    onClick={() => muteUserPopUp(props)}>
+                    onClick={() => muteUserPopUp(props.chatProps, props.currentChat)}>
                     Mute User
                     </button>
                 </div>
@@ -58,9 +64,9 @@ export const ChannelOwner_Buttons_Div: React.FC<ChatProps> = (props) => {
 
 
 
-export const ChannelAdmin_Buttons_Div: React.FC<ChatProps> = (props) => {
+export const ChannelAdmin_Buttons_Div: React.FC<ownerButtonProps> = (props) => {
     return (
-        props.loadingChannelPanel ? (
+        props.chatProps.loadingChannelPanel ? (
             <div>Loading Channel Name and Buttons...</div> // Show a loading spinner or placeholder
         ) : (
             <ChannelInfo>
@@ -68,17 +74,17 @@ export const ChannelAdmin_Buttons_Div: React.FC<ChatProps> = (props) => {
                 <div>
                     <button
                     style={chatButtonsStyle}
-                    onClick={() => banUserPopUp(props)}>
+                    onClick={() => banUserPopUp(props.chatProps, props.currentChat)}>
                     Ban User
                     </button>
                     <button
                     style={chatButtonsStyle}
-                    onClick={() => kickUserPopUp(props)}>
+                    onClick={() => kickUserPopUp(props.chatProps, props.currentChat)}>
                     Kick User
                     </button>
                     <button
                     style={chatButtonsStyle}
-                    onClick={() => muteUserPopUp(props)}>
+                    onClick={() => muteUserPopUp(props.chatProps, props.currentChat)}>
                     Mute User
                     </button>
                 </div>

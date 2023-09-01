@@ -1,10 +1,10 @@
 import { Dispatch, SetStateAction } from 'react';
-import { Channel, ChatProps } from '../../interfaces/channel.interface';
+import { Channel, ChatData, ChatName, ChatProps } from '../../interfaces/channel.interface';
 import { modBannedUser, CreateChannel, addMuteUser, fetchAllChannels} from './channel_utils';
 import { deleteChannelPassword, postChannelUser, postMuteUser, postPrivateChannelUser, putChannelPassword, putChannelType } from '../../api/channel/channel_user.api';
 import { getChannel } from '../../api/channel/channel.api';
 
-export function banUserPopUp(props: &ChatProps) {
+export function banUserPopUp(props: &ChatProps, currentChat: ChatData) {
     
     var popup = window.open('', '_blank', 'width=500,height=300,menubar=no,toolbar=no');
 
@@ -22,7 +22,7 @@ export function banUserPopUp(props: &ChatProps) {
     addBlockButton.addEventListener('click', function() {
         var newBlockedUserName = newBlockedUserNameInput.value;
         var newBlockedUserName = newBlockedUserNameInput.value;
-        modBannedUser(true, newBlockedUserName, props);
+        modBannedUser(true, newBlockedUserName, props, currentChat);
         popup?.close();
     });
     popup?.document.body.appendChild(addBlockButton);
@@ -30,13 +30,13 @@ export function banUserPopUp(props: &ChatProps) {
     addUnblockButton.innerHTML = 'Unban';
     addUnblockButton.addEventListener('click', function() {
         var newUnblockedUserName = newBlockedUserNameInput.value;
-        modBannedUser(false, newUnblockedUserName, props);
+        modBannedUser(false, newUnblockedUserName, props, currentChat);
         popup?.close();
     });
     popup?.document.body.appendChild(addUnblockButton);
 }
 
-export function muteUserPopUp(props: &ChatProps) {
+export function muteUserPopUp(props: &ChatProps, currentChat: ChatData) {
     var popup = window.open('', '_blank', 'width=500,height=300,menubar=no,toolbar=no');
 
     const newBlockedLabel = document.createElement("h1");
@@ -59,7 +59,7 @@ export function muteUserPopUp(props: &ChatProps) {
         var newMutedUserName = newMutedUserNameInput.value;
         var newMutedUserDuration = newMutedUserDurationInput.valueAsNumber;
         if (!isNaN(newMutedUserDuration)) { // Check if it's a valid number
-            addMuteUser(newMutedUserName, newMutedUserDuration, props);
+            addMuteUser(newMutedUserName, newMutedUserDuration, props, currentChat);
             popup?.close();
         } else {
             alert("Invalid duration. Please enter a valid number.");
@@ -69,7 +69,7 @@ export function muteUserPopUp(props: &ChatProps) {
     popup?.document.body.appendChild(addMuteButton)
 }
 
-export function kickUserPopUp(props: &ChatProps) {
+export function kickUserPopUp(props: &ChatProps, currenchat: ChatData) {
     
     // Open Window
     var popup = window.open('', '_blank', 'width=500,height=300,menubar=no,toolbar=no');
@@ -87,11 +87,11 @@ export function kickUserPopUp(props: &ChatProps) {
     addKickFiveButton.innerHTML = 'Kick 5min';
     addKickFiveButton.addEventListener('click', function() {
         var newUnblockedUserName = newBlockedUserNameInput.value;
-        modBannedUser(true, newUnblockedUserName, props);
+        modBannedUser(true, newUnblockedUserName, props, currenchat);
         popup?.close();
         const fiveMin = 5 * 60 * 1000;
         setTimeout(() => {
-            modBannedUser(false, newUnblockedUserName, props);
+            modBannedUser(false, newUnblockedUserName, props, currenchat);
         }, fiveMin);
     });
     popup?.document.body.appendChild(addKickFiveButton);
@@ -100,18 +100,18 @@ export function kickUserPopUp(props: &ChatProps) {
     addKickFifteenButton.innerHTML = 'Kick 15min';
     addKickFifteenButton.addEventListener('click', function() {
         var newUnblockedUserName = newBlockedUserNameInput.value;
-        modBannedUser(true, newUnblockedUserName, props);
+        modBannedUser(true, newUnblockedUserName, props, currenchat);
         popup?.close();
         const fifteenMin = 15 * 60 * 1000;
         setTimeout(() => {
-            modBannedUser(false, newUnblockedUserName, props);
+            modBannedUser(false, newUnblockedUserName, props, currenchat);
         }, fifteenMin);
     });
     popup?.document.body.appendChild(addKickFifteenButton);
 }
 
 //opens the window for adding Usersnames as Admins and passes the input to addAdmin()
-export function addAdminPopUp(props:  &ChatProps) {
+export function addAdminPopUp(props:  &ChatProps, addAdminRights:(TargetName: string, chatName: ChatName) => void, currentChat: ChatData) {
     // Open Window
     var popup = window.open('', '_blank', 'width=500,height=300,menubar=no,toolbar=no');
 
@@ -129,7 +129,7 @@ export function addAdminPopUp(props:  &ChatProps) {
     addAdminButton.addEventListener('click', function() {
         var newAdminUserName = newAdminUserNameInput.value;
 
-        props.addAdminRights(newAdminUserName, props.currentChat.chatName);
+        addAdminRights(newAdminUserName, currentChat.chatName);
         // addAdmin(newAdminUserName, props);
         popup?.close();
     });
@@ -137,7 +137,7 @@ export function addAdminPopUp(props:  &ChatProps) {
 
 }
 
-export function changePasswordPopUp(props:  &ChatProps) {
+export function changePasswordPopUp(props:  &ChatProps, currentChat: ChatData, updateChannellist: () => void) {
     // Open Window
     var popup = window.open('', '_blank', 'width=500,height=300,menubar=no,toolbar=no');
 
@@ -155,15 +155,15 @@ export function changePasswordPopUp(props:  &ChatProps) {
     changePwButton.addEventListener('click', function() {
         var newPw = newPwInput.value;
         if (newPw === ""){
-            deleteChannelPassword(props?.userID, props.currentChat.Channel.ChannelId)
+            deleteChannelPassword(props?.userID, currentChat.Channel.ChannelId)
             .then(() => {
-                props.changeChatRoom(props.currentChat.chatName);
+                props.changeChatRoom(currentChat.chatName);
                 console.log("Password removed");
-                if (props.currentChat.Channel.Type === "private"){
-                    putChannelType(props?.userID, props.currentChat.Channel.ChannelId)
+                if (currentChat.Channel.Type === "private"){
+                    putChannelType(props?.userID, currentChat.Channel.ChannelId)
                     .then(() => {
-                        props.changeChatRoom(props.currentChat.chatName);
-                        props.updateChannellist();
+                        props.changeChatRoom(currentChat.chatName);
+                        updateChannellist();
                         console.log("Channel Type changed to public");
                     })
                     .catch(error => {
@@ -175,14 +175,14 @@ export function changePasswordPopUp(props:  &ChatProps) {
                 console.error("Error removing Password:", error);
             });
         }
-        putChannelPassword(props.userID, props.currentChat.Channel.ChannelId, newPw)
+        putChannelPassword(props.userID, currentChat.Channel.ChannelId, newPw)
         .then(() => {
             console.log("Password updated");
-            if (props.currentChat.Channel.Type === "public"){
-                putChannelType(props.userID, props.currentChat.Channel.ChannelId)
+            if (currentChat.Channel.Type === "public"){
+                putChannelType(props.userID, currentChat.Channel.ChannelId)
                 .then(() => {
-                    props.changeChatRoom(props.currentChat.chatName);
-                    props.updateChannellist();
+                    props.changeChatRoom(currentChat.chatName);
+                    updateChannellist();
                     console.log("Channel Type changed to private");
                 })
                 .catch(error => {
@@ -200,14 +200,14 @@ export function changePasswordPopUp(props:  &ChatProps) {
     var removePwButton = document.createElement('button');
     removePwButton.innerHTML = 'Remove Password';
     removePwButton.addEventListener('click', function() {
-        deleteChannelPassword(props.userID, props.currentChat.Channel.ChannelId)
+        deleteChannelPassword(props.userID, currentChat.Channel.ChannelId)
         .then(() => {
             console.log("Password removed");
-            if (props.currentChat.Channel.Type === "private"){
-                putChannelType(props.userID, props.currentChat.Channel.ChannelId)
+            if (currentChat.Channel.Type === "private"){
+                putChannelType(props.userID, currentChat.Channel.ChannelId)
                 .then(() => {
-                    props.changeChatRoom(props.currentChat.chatName);
-                    props.updateChannellist();
+                    props.changeChatRoom(currentChat.chatName);
+                    updateChannellist();
                     console.log("Channel Type changed to public");
                 })
                 .catch(error => {
@@ -260,7 +260,7 @@ export function changePasswordPopUp(props:  &ChatProps) {
 // }
 
 
-export function popUpCreateChannel(props: ChatProps){
+export function popUpCreateChannel(props: ChatProps, updateChannellist: any){
     // Open Window
     var popup = window.open('', '_blank', 'width=500,height=300,menubar=no,toolbar=no');
 
@@ -292,7 +292,7 @@ export function popUpCreateChannel(props: ChatProps){
             if (result){
                 //updating Channelllists
                 props.addChatRoom(channelName);
-				props.updateChannellist();
+				updateChannellist();
             }
         })
         .catch(error => {
@@ -303,7 +303,7 @@ export function popUpCreateChannel(props: ChatProps){
     popup?.document.body.appendChild(createButton);
 }
 
-export async function popUpJoinPrivateChannel(props: ChatProps){
+export async function popUpJoinPrivateChannel(props: ChatProps, currentChat: ChatData ,joinPrivateRoom: (chatName: ChatName, password: string) => void){
     var popup = window.open('', '_blank', 'width=500,height=300,menubar=no,toolbar=no');
 
     const channelPasswordLabel = document.createElement("h1");
@@ -319,7 +319,7 @@ export async function popUpJoinPrivateChannel(props: ChatProps){
     createButton.innerHTML = 'Join';
     createButton.addEventListener('click', async function() {
         var password = channelPasswordInput.value;
-        props.joinPrivateRoom(props.currentChat.chatName, password);
+        joinPrivateRoom(currentChat.chatName, password);
         popup?.close();
     });
     popup?.document.body.appendChild(createButton);

@@ -625,6 +625,7 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 			joinRoom={joinRoom}
 			ChannelUserRoles={currentRoles}
 			currentChat={currentChat}
+			joinPrivateRoom={joinPrivateRoom}
 		/>);
 	}, [messages, currentRoles]);
 
@@ -739,7 +740,11 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 	return (
 		<div style={ChatContainerStyle}>
 			<SideBar>
-				<Channel_Div{...props}/>
+				<Channel_Div 
+				ChatProps={props} 
+				allChannels={allChannels} 
+				toggleChat={toggleChat}
+				updateChannellist={updateChannellist}/>
 				<h3>All Users</h3>
 				{props.allUsers.map((user) => renderUser(user, props, toggleChat))}
 			</SideBar>
@@ -762,7 +767,9 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 					props: props,
 					value: message,
 					onChange: handleMessageChange,
-					onKeyPress: handleKeyPress
+					onKeyPress: handleKeyPress,
+					ChannelUserRoles: currentRoles,
+					currentChat: currentChat
 				})}
 			</ChatPanel>
 		</div>
