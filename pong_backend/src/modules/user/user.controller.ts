@@ -18,6 +18,7 @@ import { User } from 'src/models/orm_models/user.entity';
 import { UserDTO } from './userDTO';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UploadAvatarDto } from './UploadAvatarDTO';
+import { UserAuthDTO } from '../authProtectorService/authProtector';
 
 @ApiTags('User')
 @Controller('user')
@@ -48,22 +49,26 @@ export class UserController {
     return this.userService.findOne(id);
   }
 
-  @Put(':id/update/points/:points')
+  @Put(':id/update/points/:callerId/:targetId/:points')
   @ApiOperation({ summary: 'Update the points of a user' })
   async updatePoints(
-    @Param('id', ParseIntPipe) id: number,
+    @Param('callerId', ParseIntPipe) callerId: number,
+    @Param('targetId', ParseIntPipe) targetId: number,
     @Param('points', ParseIntPipe) points: number,
+    @Body() loggedUser: UserAuthDTO
   ): Promise<void> {
-    await this.userService.updatePoints(id, points);
+    await this.userService.updatePoints(loggedUser, callerId, targetId, points);
   }
 
-  @Put(':id/update/username/:username')
+  @Put(':callerId/:targetId/update/username/:username')
   @ApiOperation({ summary: 'Update the username of a user' })
   async updateUsername(
-    @Param('id', ParseIntPipe) id: number,
+    @Param('callerId', ParseIntPipe) callerId: number,
+    @Param('targetId', ParseIntPipe) targetId: number,
     @Param('username') newUsername: string,
+    @Body() loggedUser: UserAuthDTO
   ): Promise<User> {
-    return await this.userService.updateUsername(id, newUsername);
+    return await this.userService.updateUsername(loggedUser, callerId, targetId, newUsername);
   }
 
   @Get('users/points')
@@ -87,13 +92,15 @@ export class UserController {
     return this.userService.confirmUserLoggedIn(userName, password);
   }
 
-  @Put(':id/:password/update/password')
+  @Put(':callerId/:targetId/:password/update/password')
   @ApiOperation({ summary: 'Update the password of a user' })
   async updatePassword(
-    @Param('id', ParseIntPipe) id: number,
-    @Param('password') password: string,
+    @Param('callerId', ParseIntPipe) callerId: number,
+    @Param('targetId', ParseIntPipe) targetId: number,
+    @Param('password') newPassword: string,
+    @Body() loggedUser: UserAuthDTO
   ): Promise<User> {
-    return await this.userService.updateUserPassword(id, password);
+    return await this.userService.updateUserPassword(loggedUser, callerId, targetId, newPassword);
   }
 
   @Put(':id/update/avatar')

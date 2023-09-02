@@ -25,6 +25,7 @@ import { MatchService } from './modules/match/match.service';
 import { PasswordService } from './modules/password/password.service';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import { AuthProtector } from './modules/authProtectorService/authProtector';
 
 @Module({
   imports: [
@@ -65,6 +66,7 @@ import { join } from 'path';
     BlockedService,
     MatchService,
     PasswordService,
+    AuthProtector
   ],
 })
 export class AppModule {}
