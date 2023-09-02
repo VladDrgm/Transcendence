@@ -10,6 +10,7 @@ import { SharedSession } from '../session/shared-session.service';
 import { UserService } from './userservice';
 import { PasswordService } from '../password/password.service';
 import { FileService } from '../fileservice/file.service';
+import { AuthProtector } from '../authProtectorService/authProtector';
 
 @Module({
   imports: [TypeOrmModule.forFeature([User, Blocked, Friend])],
@@ -20,6 +21,7 @@ import { FileService } from '../fileservice/file.service';
     UserService,
     PasswordService,
     FileService,
+    AuthProtector
   ],
   exports: [UserService],
 })
