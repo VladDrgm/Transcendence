@@ -66,8 +66,9 @@ export type CurrentChat = {
 const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID, friend_set}) => {
 	const { user } = useUserContext()
 	/* chat utilities */
-	const [username, setUsername] = useState("");
+	// const [username, setUsername] = useState("");
 	const [connected, setConnected] = useState(true);
+	// let allUsersRef = useRef<any[]>([]);
 	const [allUsers, setAllUsers] = useState<any[]>([]);
 	let chatMainDivRef = useRef<{ 
 		roomJoinCallback: any;
@@ -113,6 +114,7 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID, friend_set}) => {
 				socketRef.current.emit("join room", "general", (messages: any) => chatMainDivRef.current?.roomJoinCallback(messages, "general"));
 			}
 			socketRef.current.on("new user", (allUsers: any) => {
+				// allUsersRef.current = allUsers;
 				setAllUsers(allUsers);
 				console.log(allUsers);
 			});
@@ -196,6 +198,7 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID, friend_set}) => {
 
 	function handlePlayerTwoInvite(sessionId: string, playerOneSocket: string, playerTwoSocket: string) {
 		// getting user name of playerOne
+		// const playerOneName = allUsersRef.current.find(user => user.socketId === playerOneSocket);
 		const playerOneName = allUsers.find(user => user.socketId === playerOneSocket);
 
 		//allerting playerTwo to join the game
@@ -391,20 +394,21 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID, friend_set}) => {
 		}
 	
 
-	let body;
-	body = (
-		<Chat_MainDiv
-			user={user}
-			userID={userID}
-			yourId={socketRef.current ? socketRef.current.id : ""}
-			allUsers={allUsers}
-			invitePlayer={invitePlayer}
-			friend_set={friend_set}
-			invitation={invitation}
-			socketRef={socketRef}
-			chatMainDivRef={chatMainDivRef}
-		/>
-	);
+	// let body;
+	// body = (
+	// 	<Chat_MainDiv
+	// 		user={user}
+	// 		userID={userID}
+	// 		yourId={socketRef.current ? socketRef.current.id : ""}
+	// 		allUsers={allUsersRef.current}
+	// 		// allUsers={allUsers}
+	// 		invitePlayer={invitePlayer}
+	// 		friend_set={friend_set}
+	// 		invitation={invitation}
+	// 		socketRef={socketRef}
+	// 		chatMainDivRef={chatMainDivRef}
+	// 	/>
+	// );
 
 	let gameBody, gameBodyForm;
 	if (gameStatus === 1) {
@@ -438,9 +442,21 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID, friend_set}) => {
 	return (
 		<div
 		style={ArenaStyle}>
-			<div>
+			{/* <div>
 				{body}
-			</div>
+			</div> */}
+			<Chat_MainDiv
+			user={user}
+			userID={userID}
+			yourId={socketRef.current ? socketRef.current.id : ""}
+			// allUsers={allUsersRef.current}
+			allUsers={allUsers}
+			invitePlayer={invitePlayer}
+			friend_set={friend_set}
+			invitation={invitation}
+			socketRef={socketRef}
+			chatMainDivRef={chatMainDivRef}
+		/>
 			<div
 			style={GameContainerStyle}>
 				{gameBody}
