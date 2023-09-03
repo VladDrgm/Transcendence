@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class MatchDTO {
@@ -52,4 +52,14 @@ export class MatchDTO {
   @IsString()
   @IsNotEmpty()
   WinningCondition: string;
+
+//   @ApiProperty({ example: "SystemRequest", description: 'Automated system Request' })
+//   @IsString()
+//   @IsOptional()
+//   Requester: string;
+
+//   @ApiProperty({ example: "$#SJDS%$345fDFsdsdg5454", description: 'System request hashed secret' })
+//   @IsString()
+//   @IsOptional()
+//   RequesterSecret: string;
 }

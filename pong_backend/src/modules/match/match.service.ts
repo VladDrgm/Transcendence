@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { Match } from 'src/models/orm_models/match.entity';
 import { MatchDTO } from './matchDTO';
 import { MatchHistory } from 'src/models/orm_models/matchHistory.entity';
+import { AuthProtector, UserAuthDTO } from '../authProtectorService/authProtector';
 
 @Injectable()
 export class MatchService {
@@ -11,7 +12,8 @@ export class MatchService {
     @InjectRepository(Match)
     private readonly matchRepository: Repository<Match>,
     @InjectRepository(MatchHistory)
-    private readonly matchHistoryRepository: Repository<MatchHistory>
+    private readonly matchHistoryRepository: Repository<MatchHistory>,
+    private readonly authProtector: AuthProtector
   ) {}
 
   async createMatch(matchDTO: MatchDTO): Promise<Match> {
@@ -40,11 +42,25 @@ export class MatchService {
     return match;
   }
 
-  async getMatchById(matchId: number): Promise<Match> {
+  async getMatchById(loggedUser: UserAuthDTO, callerId: number, matchId: number): Promise<Match> {
+    if (parseInt(process.env.FEATURE_FLAG) === 1) {
+        const passCheck = await this.authProtector.protectorCheck(loggedUser.passwordHash, callerId);
+        if (!passCheck) {
+            throw new HttpException('Unauthorized', 401);
+        }
+    }
+
     return this.matchRepository.findOneBy({ MatchId: matchId });
   }
 
-  async getAllMatches(): Promise<Match[]> {
+  async getAllMatches(loggedUser: UserAuthDTO, callerId: number): Promise<Match[]> {
+    if (parseInt(process.env.FEATURE_FLAG) === 1) {
+        const passCheck = await this.authProtector.protectorCheck(loggedUser.passwordHash, callerId);
+        if (!passCheck) {
+            throw new HttpException('Unauthorized', 401);
+        }
+    }
+
     return this.matchRepository.find();
   }
 
@@ -54,19 +70,22 @@ export class MatchService {
     await this.matchRepository.delete(matchId);
   }
 
-  async getMatchHistory(userId: number): Promise<Match[]> {
+  async getMatchHistory(loggedUser: UserAuthDTO, callerId: number, targetId: number): Promise<Match[]> {
+    if (parseInt(process.env.FEATURE_FLAG) === 1) {
+        const passCheck = await this.authProtector.protectorCheck(loggedUser.passwordHash, callerId);
+        if (!passCheck) {
+            throw new HttpException('Unauthorized', 401);
+        }
+    }
+
     const result1 = await this.matchRepository.find({
-      where: { Player1Id: userId },
+      where: { Player1Id: targetId },
     });
     const result2 = await this.matchRepository.find({
-      where: { Player2Id: userId },
+      where: { Player2Id: targetId },
     });
 
     const result = result1.concat(result2);
-
-    if (result.length == 0) {
-      throw new HttpException('No match history found', 404);
-    }
 
     return result;
   }
