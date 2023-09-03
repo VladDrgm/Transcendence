@@ -97,10 +97,10 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID, friend_set}) => {
 
 
 	useEffect(() => {
-
+		const baseUrl = process.env.REACT_APP_BASE_URL || "http://localhost:3000";
 		function connect() {
 			setConnected(true);
-			socketRef.current = io("http://localhost:4000", {
+			socketRef.current = io(baseUrl, {
 			transports: ["websocket"],
 			withCredentials: true,
 			});
