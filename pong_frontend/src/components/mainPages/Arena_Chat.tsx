@@ -66,8 +66,9 @@ export type CurrentChat = {
 const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID, friend_set}) => {
 	const { user } = useUserContext()
 	/* chat utilities */
-	const [username, setUsername] = useState("");
+	// const [username, setUsername] = useState("");
 	const [connected, setConnected] = useState(true);
+	// let allUsersRef = useRef<any[]>([]);
 	const [allUsers, setAllUsers] = useState<any[]>([]);
 	let chatMainDivRef = useRef<{ 
 		roomJoinCallback: any;
@@ -113,6 +114,7 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID, friend_set}) => {
 				socketRef.current.emit("join room", "general", (messages: any) => chatMainDivRef.current?.roomJoinCallback(messages, "general"));
 			}
 			socketRef.current.on("new user", (allUsers: any) => {
+				// allUsersRef.current = allUsers;
 				setAllUsers(allUsers);
 				console.log(allUsers);
 			});
@@ -188,14 +190,93 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID, friend_set}) => {
 		connect();
 
 		return () => {
-			if (socketRef.current)
+			if (socketRef.current){
+				// socketRef.current.off('init', handleInit);
+				socketRef.current.off("new user", (allUsers: any) => {
+					// allUsersRef.current = allUsers;
+					setAllUsers(allUsers);
+					console.log(allUsers);
+				});
+				socketRef.current.off("new message", ({ content, sender, chatName }: { content: string; sender: string; chatName: ChatName }) => {
+					console.log("sender", sender);
+					console.log("chatNAme", chatName);
+					console.log("content:", content)
+					if (chatMainDivRef.current?.newMessages)
+						chatMainDivRef.current.newMessages(content, sender, chatName);
+				});
+				socketRef.current.off('room deleted', (roomName) => {
+					if(chatMainDivRef.current?.handleDeletingChatRoom)
+						chatMainDivRef.current.handleDeletingChatRoom(roomName);
+				});
+				socketRef.current.off('room added', (roomName) => {
+					if(chatMainDivRef.current?.updateChannellist)
+						chatMainDivRef.current.updateChannellist();
+				});
+				socketRef.current.off('room changed', (roomName) => {
+					if(chatMainDivRef.current?.updateChannellist)
+						chatMainDivRef.current.updateChannellist();
+				});
+				socketRef.current.off('admin added', (data) => {
+					const newAdminUserID =data.newAdminUserID;
+					const roomName = data.roomName;
+					if(chatMainDivRef.current?.handleAdminRights)
+						chatMainDivRef.current.handleAdminRights(newAdminUserID, roomName);
+				});
+				socketRef.current.off('user banned', (data) => {
+					const targetId = data.targetId;
+					const roomName = data.roomName;
+					if(chatMainDivRef.current?.handleBannedUserSocket)
+						chatMainDivRef.current.handleBannedUserSocket(targetId, roomName);
+				});
+				socketRef.current.off('user unbanned', (data) => {
+					const targetId = data.targetId;
+					const roomName = data.roomName;
+					if(chatMainDivRef.current?.handleUnbannedUserSocket)
+						chatMainDivRef.current.handleUnbannedUserSocket(targetId, roomName);
+				});
+				socketRef.current.off('user muted', (data) => {
+					const targetId = data.targetId;
+					const roomName = data.roomName;
+					if (chatMainDivRef.current?.handleMutedUserSocket)
+						chatMainDivRef.current.handleMutedUserSocket(targetId, roomName);
+				});
+				// io.emit('user blocked', {userId, targetId });
+				socketRef.current.off('user unmuted', (data) => {
+					const targetId = data.targetId;
+					const roomName = data.roomName;
+					if (chatMainDivRef.current?.handleUnmutedUserSocket)
+						chatMainDivRef.current.handleUnmutedUserSocket(targetId, roomName);
+				});
+				socketRef.current.off('user blocked', (data) => {
+					const targetId = data.targetId;
+					const username = data.username;
+					if(chatMainDivRef.current?.handleBlockedUserSocket)
+						chatMainDivRef.current.handleBlockedUserSocket(targetId, username);
+				});
+				socketRef.current.off('user unblocked', (data) => {
+					const targetId = data.targetId;
+					const username = data.username;
+					if(chatMainDivRef.current?.handleunblockedUserSocket)
+						chatMainDivRef.current.handleunblockedUserSocket(targetId, username);
+				});
+				socketRef.current.off('invitation alert playertwo', (data) => {
+					const sessionId = data.sessionId;
+					const playerOneSocket = data.playerOneSocket;
+					const playerTwoSocket = data.playerTwoSocket;
+					handlePlayerTwoInvite(sessionId, playerOneSocket, playerTwoSocket);
+				});
 				socketRef.current.disconnect();
+
+			}
+
+
 		}
 	}, []);
 
 
 	function handlePlayerTwoInvite(sessionId: string, playerOneSocket: string, playerTwoSocket: string) {
 		// getting user name of playerOne
+		// const playerOneName = allUsersRef.current.find(user => user.socketId === playerOneSocket);
 		const playerOneName = allUsers.find(user => user.socketId === playerOneSocket);
 
 		//allerting playerTwo to join the game
@@ -391,20 +472,21 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID, friend_set}) => {
 		}
 	
 
-	let body;
-	body = (
-		<Chat_MainDiv
-			user={user}
-			userID={userID}
-			yourId={socketRef.current ? socketRef.current.id : ""}
-			allUsers={allUsers}
-			invitePlayer={invitePlayer}
-			friend_set={friend_set}
-			invitation={invitation}
-			socketRef={socketRef}
-			chatMainDivRef={chatMainDivRef}
-		/>
-	);
+	// let body;
+	// body = (
+	// 	<Chat_MainDiv
+	// 		user={user}
+	// 		userID={userID}
+	// 		yourId={socketRef.current ? socketRef.current.id : ""}
+	// 		allUsers={allUsersRef.current}
+	// 		// allUsers={allUsers}
+	// 		invitePlayer={invitePlayer}
+	// 		friend_set={friend_set}
+	// 		invitation={invitation}
+	// 		socketRef={socketRef}
+	// 		chatMainDivRef={chatMainDivRef}
+	// 	/>
+	// );
 
 	let gameBody, gameBodyForm;
 	if (gameStatus === 1) {
@@ -438,9 +520,21 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID, friend_set}) => {
 	return (
 		<div
 		style={ArenaStyle}>
-			<div>
+			{/* <div>
 				{body}
-			</div>
+			</div> */}
+			<Chat_MainDiv
+			user={user}
+			userID={userID}
+			yourId={socketRef.current ? socketRef.current.id : ""}
+			// allUsers={allUsersRef.current}
+			allUsers={allUsers}
+			invitePlayer={invitePlayer}
+			friend_set={friend_set}
+			invitation={invitation}
+			socketRef={socketRef}
+			chatMainDivRef={chatMainDivRef}
+		/>
 			<div
 			style={GameContainerStyle}>
 				{gameBody}
