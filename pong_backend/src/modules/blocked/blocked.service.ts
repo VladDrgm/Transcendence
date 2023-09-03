@@ -1,9 +1,10 @@
-import { HttpException, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Blocked } from 'src/models/orm_models/blocked.entity';
 import { Repository } from 'typeorm';
 import { UserService } from '../user/userservice';
 import { CreateBlockedDto } from './blockedDTO';
+import { AuthProtector, UserAuthDTO } from '../authProtectorService/authProtector';
 
 export class BlockedRepository extends Repository<Blocked> {}
 
@@ -13,28 +14,35 @@ export class BlockedService {
     @InjectRepository(Blocked)
     private readonly blockedRepository: Repository<Blocked>,
     private readonly userService: UserService,
+    private readonly authProtector: AuthProtector
   ) {}
 
-  async findAllBlockedForOneUser(id: number): Promise<Blocked[]> {
+  async findAllBlockedForOneUser(loggedUser: UserAuthDTO, callerId: number): Promise<Blocked[]> {
+    if (parseInt(process.env.FEATURE_FLAG) === 1) {
+        const authPass  = await this.authProtector.protectorCheck(loggedUser.passwordHash, callerId);
+        if (!authPass) {
+            throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+        }
+    }
+
     const result = await this.blockedRepository
       .createQueryBuilder('blocked')
       .leftJoinAndSelect('blocked.user', 'user')
       .leftJoinAndSelect('blocked.blockedUser', 'blockedUser')
-      .where('blocked.user.userID = :id', { id })
+      .where('blocked.user.userID = :id', { callerId })
       .getMany();
 
     return result;
   }
 
-  async blockUser(blockedDTO: CreateBlockedDto): Promise<Blocked> {
-    const { userId, blockId } = blockedDTO;
+  async blockUser(loggedUser, callerId, targetId): Promise<Blocked> {
+    const userId = callerId;
+    const blockId = targetId;
+
+    
 
     if (userId == blockId) {
       throw new HttpException('Cannot block yourself', 400);
-    }
-
-    if (!blockedDTO) {
-      throw new HttpException('No data provided', 400);
     }
 
     if (!userId) {
@@ -45,6 +53,18 @@ export class BlockedService {
       throw new HttpException('No block id provided', 400);
     }
 
+    if (parseInt(process.env.FEATURE_FLAG) === 1) {
+        const authPass  = await this.authProtector.protectorCheck(loggedUser.passwordHash, callerId);
+        if (!authPass) {
+            throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+        }
+    }
+
+    const isBlockedExisting = await this.blockedRepository.findBy( { user: userId, blockedUser: blockId } );
+    if (isBlockedExisting) {
+      throw new HttpException('User already blocked', 400);
+    }
+
     const blocked = new Blocked();
     blocked.user = await this.userService.findOne(userId);
     blocked.blockedUser = await this.userService.findOne(blockId);
@@ -52,20 +72,29 @@ export class BlockedService {
     return this.blockedRepository.save(blocked);
   }
 
-  async unblockUser(blockedDTO: CreateBlockedDto): Promise<string> {
-    if (!blockedDTO) {
-      throw new HttpException('No data provided', 400);
+  async unblockUser(loggedUser, callerId, targetId): Promise<string> {
+
+    const userId = callerId;
+    const blockId = targetId;
+
+    if (userId == blockId) {
+        throw new HttpException('Cannot unblock yourself', 400);
     }
 
-    if (!blockedDTO.userId) {
-      throw new HttpException('No user id provided', 400);
+    if (!userId) {
+        throw new HttpException('No user id provided', 400);
     }
 
-    if (!blockedDTO.blockId) {
-      throw new HttpException('No block id provided', 400);
+    if (!blockId) {
+        throw new HttpException('No block id provided', 400);
     }
 
-    const { userId, blockId } = blockedDTO;
+    if (parseInt(process.env.FEATURE_FLAG) === 1) {
+        const authPass  = await this.authProtector.protectorCheck(loggedUser.passwordHash, callerId);
+        if (!authPass) {
+            throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+        }
+    }
 
     const blocked = await this.blockedRepository
       .createQueryBuilder('blocked')
@@ -83,21 +112,28 @@ export class BlockedService {
     return 'User unblocked';
   }
 
-  async getOneBlockedUser(userId, blockId): Promise<Blocked> {
-    if (!userId) {
+  async getOneBlockedUser(loggedUser, callerId, targetId): Promise<Blocked> {
+    if (!callerId) {
       throw new HttpException('No user id provided', 400);
     }
 
-    if (!blockId) {
+    if (!targetId) {
       throw new HttpException('No block id provided', 400);
+    }
+
+    if (parseInt(process.env.FEATURE_FLAG) === 1) {
+        const authPass  = await this.authProtector.protectorCheck(loggedUser.passwordHash, callerId);
+        if (!authPass) {
+            throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+        }
     }
 
     const result = await this.blockedRepository
       .createQueryBuilder('blocked')
       .leftJoinAndSelect('blocked.user', 'user')
       .leftJoinAndSelect('blocked.blockedUser', 'blockedUser')
-      .where('blocked.user.userID = :userId', { userId })
-      .andWhere('blocked.blockedUser.userID = :blockId', { blockId })
+      .where('blocked.user.userID = :userId', { callerId })
+      .andWhere('blocked.blockedUser.userID = :blockId', { targetId })
       .getOne();
 
     if (!result) {

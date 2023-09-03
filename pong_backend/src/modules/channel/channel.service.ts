@@ -9,7 +9,6 @@ import { HttpException, HttpStatus } from '@nestjs/common';
 import { CreateChannelDto } from './channelDTO';
 import { PasswordService } from '../password/password.service';
 import { AuthProtector, UserAuthDTO } from '../authProtectorService/authProtector';
-import { User } from 'src/models/orm_models/user.entity';
 
 export class ChannelRepository extends Repository<Channel> {}
 
