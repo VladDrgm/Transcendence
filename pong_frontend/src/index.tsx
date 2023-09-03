@@ -18,8 +18,9 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
-import reportWebVitals from './reportWebVitals';
-import { UserContextProvider, useUserContext } from './components/context/UserContext';
+import { UserContextProvider } from './components/context/UserContext';
+import { ConnectivityProvider } from './components/context/ConnectivityContext';
+import NoInternetPopup from './components/Popups/NoInternetPopup';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -27,7 +28,10 @@ const root = ReactDOM.createRoot(
 root.render(
   <React.StrictMode>
 	<UserContextProvider>
-    	<App />
+		<ConnectivityProvider>
+			<App />
+      		<NoInternetPopup />
+    	</ConnectivityProvider>
 	</UserContextProvider>
   </React.StrictMode>
 );
