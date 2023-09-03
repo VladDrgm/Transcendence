@@ -26,9 +26,16 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Get()
-  @ApiOperation({ summary: 'Get all users' }) // TO DO: change the return type to UserDTO; Ids, Username
-  async findAll(): Promise<User[]> {
-    return this.userService.findAll();
+  @ApiOperation({ summary: 'Get all users' })
+  async findAll(): Promise<UserDTO[]> {
+    var users = await this.userService.findAll();
+    var result = [];
+    for (const user of users) {
+      result.push(UserDTO.fromEntity(user));
+    }
+
+
+    return result;
   }
 
   @Post()
@@ -45,8 +52,8 @@ export class UserController {
 
   @Get('user/:id')
   @ApiOperation({ summary: 'Get a user by his id' })
-  async getUser(@Param('id', ParseIntPipe) id: number): Promise<User> {
-    return this.userService.findOne(id);
+  async getUser(@Param('id', ParseIntPipe) id: number): Promise<UserDTO> {
+    return UserDTO.fromEntity(await this.userService.findOne(id));
   }
 
   @Put(':id/update/points/:callerId/:targetId/:points')
@@ -73,8 +80,14 @@ export class UserController {
 
   @Get('users/points')
   @ApiOperation({ summary: 'Get top 10 users ordered by points' })
-  async getUsersOrderedByPoints(): Promise<User[]> {
-    return this.userService.getUsersOrderedByPoints();
+  async getUsersOrderedByPoints(): Promise<UserDTO[]> {
+    var users = await this.userService.getUsersOrderedByPoints();
+    var result = [];
+    for (const user of users) {
+      result.push(UserDTO.fromEntity(user));
+    }
+
+    return result;
   }
 
 //   @Post('user/signup')
@@ -109,12 +122,13 @@ export class UserController {
   @UseInterceptors(FileInterceptor('file'))
   async updateAvatar(
     @UploadedFile() file: Express.Multer.File,
+    @Body() loggedUser: UserAuthDTO,
     @Param('id') id: number,
   ): Promise<void> {
     if (!file) {
       throw new BadRequestException('No file uploaded');
     }
 
-    await this.userService.updateAvatar(id, file);
+    await this.userService.updateAvatar(loggedUser, id, file);
   }
 }

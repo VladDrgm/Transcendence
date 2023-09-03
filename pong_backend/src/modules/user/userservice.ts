@@ -164,7 +164,14 @@ export class UserService {
     return await this.userRepository.findOneBy({ userID: targetId });
   }
 
-  async updateAvatar(id: number, file: Express.Multer.File): Promise<void> {
+  async updateAvatar(loggedUser: UserAuthDTO, id: number, file: Express.Multer.File): Promise<void> {
+    if (parseInt(process.env.FEATURE_FLAG) === 1) {
+        const authPass  = await this.authProtector.protectorCheck(loggedUser.passwordHash, id);
+        if (!authPass) {
+            throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+        }
+    }
+
     const userToUpdate = await this.userRepository.findOneBy({ userID: id });
 
     if (!userToUpdate) {
