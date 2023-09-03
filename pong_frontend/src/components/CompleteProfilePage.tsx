@@ -7,7 +7,7 @@ import imageAssetUploadAvatar from './assets/uploadAvatar.png';
 import { User } from '../interfaces/user.interface';
 import { updateAvatarApi, updateUsernameApi } from '../api/userApi';
 import { fetchAddress } from './div/channel_div';
-import ErrorPopup from './ErrorPopup';
+import ErrorPopup from './Popups/ErrorPopup';
 
 interface CompleteProfilePageProps {
 	/* Declare page properties here if needed */

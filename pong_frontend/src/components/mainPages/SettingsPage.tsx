@@ -1,12 +1,12 @@
 import React, {useState} from 'react';
 import { useNavigate } from 'react-router-dom';
-import { User } from '../../interfaces/user.interface';
 import { useUserContext } from '../context/UserContext';
-import { updateAvatarApi, updatePasswordApi, updateUsernameApi } from '../../api/userApi';
+import { fetchAddress } from '../div/channel_div';
+import { updateAvatarApi, updateUsernameApi } from '../../api/userApi';
+import { getPrivateProfile } from '../../api/profile.api';
 import * as styles from './SettingsPageStyles';
 import imageAssetUploadAvatar from '../assets/uploadAvatar.png'
-import { getPrivateProfile } from '../../api/profile.api';
-import { fetchAddress } from '../div/channel_div';
+import ErrorPopup from '../Popups/ErrorPopup';
 
 interface SettingsPageProps
 {
@@ -16,18 +16,18 @@ interface SettingsPageProps
 // Component
 const SettingsPage: React.FC<SettingsPageProps> = ({onLogout}) => {
 	const { user, setUser } = useUserContext();
-	// const [updatedUser, setUpdatedUser] = useState<User | undefined>(user);
-	const [newUsername, setNewUsername] = useState(''); // Sign up state for password input
-	const [newAvatar, setNewAvatar] = useState<File | null>(null)
-
-	const [showErrorMessage, setShowErrorMessage] = useState<boolean>(false);
-	const [ErrorMessage, setErrorMessage] = useState<string>('');
-	const [selectedImage, setSelectedImage] = useState<string>(fetchAddress.slice(0, -1) + user?.avatarPath?.slice(1));
-	const [border, setImageBorder] = useState<string>('3px solid rgba(254, 8, 16, 1)');
 	const userID = user?.userID;
 
+	const [newUsername, setNewUsername] = useState('');
+	const [newAvatar, setNewAvatar] = useState<File | null>(null)
+	const [selectedImage, setSelectedImage] = useState<string>(fetchAddress.slice(0, -1) + user?.avatarPath?.slice(1));
+
+	const [border, setImageBorder] = useState<string>('3px solid rgba(254, 8, 16, 1)');
+	
+	const [error, setError] = useState<string | null>(null);
+	
 	const navigate = useNavigate();
-  
+
 	//   // Add a conditional rendering to check if user is available
 	//   if (!user || !user.avatarPath) {
 	// 	// Return a loading state or null
@@ -35,24 +35,21 @@ const SettingsPage: React.FC<SettingsPageProps> = ({onLogout}) => {
 	//   }
 
 	const handleUpdateUsername = async () => {
-		
+		if (!(newUsername.trim().length !== 0)) {
+			setError('Please put in a username to continue!');
+  			return;
+		}
 		let updatedUser =  null;
 		try {
 			// Call the API function and get the updated user object
 			updatedUser = await updateUsernameApi(userID, newUsername);
 	  
-			// Update the state and local storage with the updated user object
-			
-	  
 			// Clear the input field after successful update
 			setNewUsername('');
-			setShowErrorMessage(false);
-		  
 		} catch (error) {
-			setErrorMessage('Error updating username. Try again!');
-			setShowErrorMessage(true);
+			setError('Error updating username. Try again!');
+			return;
 		}
-		// setUpdatedUser(updatedUser);
 		setUser(updatedUser);
 		localStorage.setItem('user', JSON.stringify(updatedUser));
 	};
@@ -60,7 +57,8 @@ const SettingsPage: React.FC<SettingsPageProps> = ({onLogout}) => {
 	const handleUpdateAvatar = async () => {
 		try {
 			if (!newAvatar) {
-				throw new Error('Please select an image to upload');
+				setError('Please select an image to upload');
+  				return;
 			}
 
 			const formData = new FormData();
@@ -69,18 +67,16 @@ const SettingsPage: React.FC<SettingsPageProps> = ({onLogout}) => {
 			setSelectedImage(fetchAddress.slice(0, -1) + user?.avatarPath?.slice(1));
 			setImageBorder('3px solid rgba(254, 8, 16, 1)');
 			setNewAvatar(null);
-			setShowErrorMessage(false);
 		} catch (error) {
-			setErrorMessage('Error updating avatar. Try again!');
-			setShowErrorMessage(true);
+			setError('Error updating avatar. Try again!');
+			return;
 		}
 		const myProf = await getPrivateProfile(userID);
-		// setUpdatedUser(myProf);
 		setUser(myProf);
 		localStorage.setItem('user', JSON.stringify(myProf));
 	};
 
-	   // Extract the filename from the File object and update the state
+	// Extract the filename from the File object and update the state
   	const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     	const file = e.target.files ? e.target.files[0] : null;
     	console.log('Selected file:', file);
@@ -93,8 +89,6 @@ const SettingsPage: React.FC<SettingsPageProps> = ({onLogout}) => {
 
 	const OnLogoutButtonClick = async () => {
 		onLogout()
-
-		console.log('User avatarPath:', user?.avatarPath);
 		navigate(`/`);
 	};
 	
@@ -127,8 +121,8 @@ const SettingsPage: React.FC<SettingsPageProps> = ({onLogout}) => {
 				style={styles.formFieldStyle}
 		  	/>
 		  	<button style={styles.updateButtonStyle} onClick={handleUpdateUsername}>Update</button>
-			{showErrorMessage && <p>{ErrorMessage}</p>}
 			<button style={styles.logoutButtonStyle} onClick={OnLogoutButtonClick}>Logout</button>
+			<ErrorPopup message={error} onClose={() => setError(null)} />
 	  	</div>
   	);
 };
