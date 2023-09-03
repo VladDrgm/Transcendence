@@ -7,6 +7,7 @@ import imageAssetUploadAvatar from './assets/uploadAvatar.png';
 import { User } from '../interfaces/user.interface';
 import { updateAvatarApi, updateUsernameApi } from '../api/userApi';
 import { fetchAddress } from './div/channel_div';
+import ErrorPopup from './ErrorPopup';
 
 interface CompleteProfilePageProps {
 	/* Declare page properties here if needed */
@@ -38,7 +39,8 @@ const CompleteProfilePage: React.FC<CompleteProfilePageProps> = ({/* Use Complet
 
 	const handleCreatingUser = async () => {
 		if (!(newUsername.trim().length !== 0)) {
-			throw new Error('Please put in a username to continue!');
+			setError('Please put in a username to continue!');
+  			return;
 		}
 		const newUser: User = {
 			username: newUsername,
@@ -136,6 +138,7 @@ const CompleteProfilePage: React.FC<CompleteProfilePageProps> = ({/* Use Complet
 			/>
 			</form>
 			<button style={styles.completeProfileButtonStyle} onClick={handleCreatingUser}>Complete profile</button>
+			<ErrorPopup message={error} onClose={() => setError(null)} />
 		</div>
 	)
 };
