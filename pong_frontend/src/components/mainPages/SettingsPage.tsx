@@ -23,7 +23,7 @@ const SettingsPage: React.FC<SettingsPageProps> = ({onLogout}) => {
 	const [showErrorMessage, setShowErrorMessage] = useState<boolean>(false);
 	const [ErrorMessage, setErrorMessage] = useState<string>('');
 	const [selectedImage, setSelectedImage] = useState<string>(fetchAddress.slice(0, -1) + user?.avatarPath?.slice(1));
-
+	const [border, setImageBorder] = useState<string>('3px solid rgba(254, 8, 16, 1)');
 	const userID = user?.userID;
 
 	const navigate = useNavigate();
@@ -67,6 +67,7 @@ const SettingsPage: React.FC<SettingsPageProps> = ({onLogout}) => {
 			formData.append('file', newAvatar);
 			await updateAvatarApi(userID, formData);
 			setSelectedImage(fetchAddress.slice(0, -1) + user?.avatarPath?.slice(1));
+			setImageBorder('3px solid rgba(254, 8, 16, 1)');setSelectedImage(fetchAddress.slice(0, -1) + user?.avatarPath?.slice(1));
 			setNewAvatar(null);
 			setShowErrorMessage(false);
 		} catch (error) {
@@ -86,6 +87,7 @@ const SettingsPage: React.FC<SettingsPageProps> = ({onLogout}) => {
     	if (file) {
       		setNewAvatar(file);
 			setSelectedImage(URL.createObjectURL(file));
+			setImageBorder('3px dashed rgba(0, 102, 204, 1)');
     	}
   	};
 
@@ -107,7 +109,8 @@ const SettingsPage: React.FC<SettingsPageProps> = ({onLogout}) => {
 					currentTarget.onerror = null;
 					currentTarget.src = '/default_pfp.png';
 				}}
-				style={styles.profilePictureStyle}
+				style={{...styles.profilePictureStyle, border}}
+
 			/>
 			<label style={styles.customAvatarUploadButtonStyle}>
 		  		<input type="file" onChange={handleAvatarChange} style={styles.avatarInputFieldStyle}/>
