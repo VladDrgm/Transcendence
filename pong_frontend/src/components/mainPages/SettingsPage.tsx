@@ -67,7 +67,7 @@ const SettingsPage: React.FC<SettingsPageProps> = ({onLogout}) => {
 			formData.append('file', newAvatar);
 			await updateAvatarApi(userID, formData);
 			setSelectedImage(fetchAddress.slice(0, -1) + user?.avatarPath?.slice(1));
-			setImageBorder('3px solid rgba(254, 8, 16, 1)');setSelectedImage(fetchAddress.slice(0, -1) + user?.avatarPath?.slice(1));
+			setImageBorder('3px solid rgba(254, 8, 16, 1)');
 			setNewAvatar(null);
 			setShowErrorMessage(false);
 		} catch (error) {
