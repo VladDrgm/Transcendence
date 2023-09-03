@@ -1,9 +1,11 @@
-import { Controller, Get, Post, Delete, Param } from '@nestjs/common';
+import { Controller, Get, Post, Delete, Param, Body } from '@nestjs/common';
 import { ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 import { Friend } from 'src/models/orm_models/friend.entity';
 import { FriendService } from './friend.service';
 import { User } from 'src/models/orm_models/user.entity';
 import { FriendDto } from './friendDto';
+import { UserAuthDTO } from '../authProtectorService/authProtector';
+import { UserDTO } from '../user/userDTO';
 
 @ApiTags('Friend')
 @Controller('friend')
@@ -12,20 +14,23 @@ export class FriendController {
 
   @Get(':id/friends')
   @ApiOperation({ summary: 'Get all friends of a user' })
-  async getUserFriends(@Param('id') id: number): Promise<User[]> {
-    const friends = await this.friendService.findUserFriends(id);
+  async getUserFriends(
+    @Param('id') id: number,
+    @Body() loggedUser: UserAuthDTO): Promise<UserDTO[]> {
+    const friends = await this.friendService.findUserFriends(loggedUser, id);
     return friends;
   }
 
   @Get(':id/friend/:friendId')
   @ApiOperation({ summary: 'Get a friend of a user by his id' })
-  @ApiParam({ name: 'id', description: 'User ID' })
-  @ApiParam({ name: 'friendId', description: 'Friend ID' })
+  @ApiParam({ name: 'callerId', description: 'User callerId' })
+  @ApiParam({ name: 'targetId', description: 'Friend ID' })
   async getFriendById(
-    @Param('id') id: number,
-    @Param('friendId') friendId: number,
-  ): Promise<User> {
-    const friend = await this.friendService.findFriendById(id, friendId);
+    @Param('callerId') callerId: number,
+    @Param('targetId') targetId: number,
+    @Body() loggedUser: UserAuthDTO
+  ): Promise<UserDTO> {
+    const friend = await this.friendService.findFriendById(loggedUser, callerId, targetId);
     return friend;
   }
 
@@ -34,39 +39,42 @@ export class FriendController {
   @ApiParam({ name: 'id', description: 'User ID' })
   @ApiParam({ name: 'friendId', description: 'Friend ID' })
   async getFriendStatus(
-    @Param('id') id: number,
-    @Param('friendId') friendId: number,
+    @Param('callerId') callerId: number,
+    @Param('targetId') targetId: number,
+    @Body() loggedUser: UserAuthDTO
   ): Promise<string> {
-    return this.friendService.getFriendStatus(id, friendId);
+    return this.friendService.getFriendStatus(loggedUser, callerId, targetId);
   }
 
   @Get(':id/friends/status')
   @ApiOperation({ summary: 'Get the statuses of all friends of a user' })
   @ApiParam({ name: 'id', description: 'User ID' })
-  async getFriendsStatuses(@Param('id') id: number): Promise<string[]> {
-    return this.friendService.getFriendsStatuses(id);
+  async getFriendsStatuses(@Param('id') id: number, @Body() loggedUser: UserAuthDTO): Promise<string[]> {
+    return this.friendService.getFriendsStatuses(loggedUser, id);
   }
 
   @Delete(':userId/friend/:friendId')
   @ApiOperation({ summary: 'Remove a friend from a user' })
-  @ApiParam({ name: 'userId', description: 'User ID' })
-  @ApiParam({ name: 'friendId', description: 'Friend ID' })
+  @ApiParam({ name: 'callerId', description: 'User ID' })
+  @ApiParam({ name: 'targetId', description: 'Friend ID' })
   async remove(
-    @Param('userId') userId: number,
-    @Param('friendId') friendId: number,
+    @Param('callerId') callerId: number,
+    @Param('targetId') targetId: number,
+    @Body() loggedUser: UserAuthDTO
   ): Promise<Friend> {
-    return await this.friendService.remove(userId, friendId);
+    return await this.friendService.remove(loggedUser, callerId, targetId);
   }
 
   @Post(':userId/friend/:friendId')
   @ApiOperation({ summary: 'Add a friend to a user' })
-  @ApiParam({ name: 'userId', description: 'User ID' })
-  @ApiParam({ name: 'friendId', description: 'Friend ID' })
+  @ApiParam({ name: 'callerId', description: 'User ID' })
+  @ApiParam({ name: 'targetId', description: 'Friend ID' })
   async add(
-    @Param('userId') userId: number,
-    @Param('friendId') friendId: number,
+    @Param('callerId') callerId: number,
+    @Param('targetId') targetId: number,
+    @Body() loggedUser: UserAuthDTO
   ): Promise<User> {
-    const dto: FriendDto = { UserId: userId, FriendId: friendId };
-    return await this.friendService.addFriend(dto);
+    const dto: FriendDto = { UserId: callerId, FriendId: targetId };
+    return await this.friendService.addFriend(loggedUser, dto);
   }
 }

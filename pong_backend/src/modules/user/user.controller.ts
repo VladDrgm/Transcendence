@@ -26,7 +26,7 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Get()
-  @ApiOperation({ summary: 'Get all users' })
+  @ApiOperation({ summary: 'Get all users' }) // TO DO: change the return type to UserDTO; Ids, Username
   async findAll(): Promise<User[]> {
     return this.userService.findAll();
   }
@@ -77,11 +77,11 @@ export class UserController {
     return this.userService.getUsersOrderedByPoints();
   }
 
-  @Post('user/signup')
-  @ApiOperation({ summary: 'Sign up' })
-  async postUserLoggedIn(@Body() userDto: UserDTO): Promise<User> {
-    return this.userService.postUserLoggedIn(userDto);
-  }
+//   @Post('user/signup')
+//   @ApiOperation({ summary: 'Sign up' })
+//   async postUserLoggedIn(@Body() userDto: UserDTO): Promise<User> {
+//     return this.userService.postUserLoggedIn(userDto);
+//   }
 
   @Post(':userName/:password/login/confirm')
   @ApiOperation({ summary: 'Log in' })

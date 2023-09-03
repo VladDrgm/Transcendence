@@ -42,7 +42,7 @@ export class UserService {
             const newHash = await this.passwordService.hashPassword(Date.now().toString());
             this.userRepository.update(isUserInDb.userID, { passwordHash: newHash })
         }
-        return user;
+        return isUserInDb;
     }
 
     user.username = user.username.toLowerCase();
@@ -115,19 +115,19 @@ export class UserService {
     });
   }
 
-  async postUserLoggedIn(userDto: UserDTO): Promise<User> {
-    const user = new User();
-    user.username = userDto.username;
-    user.passwordHash = await this.passwordService.hashPassword(
-      userDto.password,
-    );
-    user.avatarPath = userDto.avatarPath;
-    user.points = userDto.points;
-    user.status = userDto.status;
-    user.achievementsCSV = userDto.achievementsCSV;
-    user.intraUsername = userDto.intraUsername;
-    return this.userRepository.save(user);
-  }
+//   async postUserLoggedIn(userDto: UserDTO): Promise<User> {
+    // const user = new User();
+    // user.username = userDto.username;
+    // user.passwordHash = await this.passwordService.hashPassword(
+    //   userDto.password,
+    // );
+    // user.avatarPath = userDto.avatarPath;
+    // user.points = userDto.points;
+    // user.status = userDto.status;
+    // user.achievementsCSV = userDto.achievementsCSV;
+    // user.intraUsername = userDto.intraUsername;
+    // return this.userRepository.save(user);
+//   }
 
   async confirmUserLoggedIn(
     ftUserName: string,

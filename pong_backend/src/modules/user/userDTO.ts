@@ -1,16 +1,12 @@
 import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { User } from 'src/models/orm_models/user.entity';
 
 export class UserDTO {
   @ApiProperty({ example: 'Username', description: 'The username of the user' })
   @IsString()
   @IsNotEmpty()
   username: string;
-
-  @ApiProperty({ example: 'Password', description: 'The password of the user' })
-  @IsString()
-  @IsNotEmpty()
-  password: string;
 
   @ApiProperty({
     example: 'Avatar path',
@@ -45,4 +41,16 @@ export class UserDTO {
   @IsString()
   @IsOptional()
   intraUsername: string;
+
+    static fromEntity(user: User): UserDTO {
+        const userDTO = new UserDTO();
+        userDTO.username = user.username;
+        userDTO.avatarPath = user.avatarPath;
+        userDTO.points = user.points;
+        userDTO.status = user.status;
+        userDTO.achievementsCSV = user.achievementsCSV;
+        userDTO.intraUsername = user.intraUsername;
+        return userDTO;
+  }
 }
+
