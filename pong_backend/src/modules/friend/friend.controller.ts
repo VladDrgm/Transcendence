@@ -34,10 +34,10 @@ export class FriendController {
     return friend;
   }
 
-  @Get(':id/friend/:friendId/status')
+  @Get(':callerId/friend/:targetId/status')
   @ApiOperation({ summary: 'Get the status of a friend of a user by his id' })
-  @ApiParam({ name: 'id', description: 'User ID' })
-  @ApiParam({ name: 'friendId', description: 'Friend ID' })
+  @ApiParam({ name: 'callerId', description: 'User ID' })
+  @ApiParam({ name: 'targetId', description: 'Friend ID' })
   async getFriendStatus(
     @Param('callerId') callerId: number,
     @Param('targetId') targetId: number,
