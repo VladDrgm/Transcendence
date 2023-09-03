@@ -22,6 +22,7 @@ const SettingsPage: React.FC<SettingsPageProps> = ({onLogout}) => {
 
 	const [showErrorMessage, setShowErrorMessage] = useState<boolean>(false);
 	const [ErrorMessage, setErrorMessage] = useState<string>('');
+	const [selectedImage, setSelectedImage] = useState<string>(fetchAddress.slice(0, -1) + user?.avatarPath?.slice(1));
 
 	const userID = user?.userID;
 
@@ -65,7 +66,7 @@ const SettingsPage: React.FC<SettingsPageProps> = ({onLogout}) => {
 			const formData = new FormData();
 			formData.append('file', newAvatar);
 			await updateAvatarApi(userID, formData);
-
+			setSelectedImage(fetchAddress.slice(0, -1) + user?.avatarPath?.slice(1));
 			setNewAvatar(null);
 			setShowErrorMessage(false);
 		} catch (error) {
@@ -84,6 +85,7 @@ const SettingsPage: React.FC<SettingsPageProps> = ({onLogout}) => {
     	console.log('Selected file:', file);
     	if (file) {
       		setNewAvatar(file);
+			setSelectedImage(URL.createObjectURL(file));
     	}
   	};
 
@@ -99,7 +101,7 @@ const SettingsPage: React.FC<SettingsPageProps> = ({onLogout}) => {
 			<p style={styles.settingsTitleStyle}>Settings</p>
 			<img
 				className='user-card__image'
-				src={fetchAddress.slice(0, -1) + `${user?.avatarPath?.slice(1)}`}
+				src={selectedImage}
 				alt='user.avatarPath'
 				onError={({ currentTarget }) => {
 					currentTarget.onerror = null;

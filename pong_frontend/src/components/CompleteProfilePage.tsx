@@ -23,6 +23,8 @@ const CompleteProfilePage: React.FC<CompleteProfilePageProps> = ({/* Use Complet
 	const [newUsername, setNewUsername] = useState('');
 	const [newAvatar, setNewAvatar] = useState<File | null>(null)
 	const [error, setError] = useState<string | null>(null);
+	const [selectedImage, setSelectedImage] = useState<string>('/default_pfp.png');
+
 
 	// Extract the filename from the File object and update the state
 	const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -30,6 +32,7 @@ const CompleteProfilePage: React.FC<CompleteProfilePageProps> = ({/* Use Complet
 		console.log('Selected file:', file);
 		if (file) {
 			setNewAvatar(file);
+			setSelectedImage(URL.createObjectURL(file));
 		}
 	};
 
@@ -108,7 +111,7 @@ const CompleteProfilePage: React.FC<CompleteProfilePageProps> = ({/* Use Complet
 			<p style={styles.pageTitleStyle}>Complete your profile {intraName}</p>
 			<img
 				className='user-card__image'
-				src={fetchAddress + `/avatars/${user?.avatarPath}`}
+				src={selectedImage}
 				alt='user.avatarPath'
 				onError={({ currentTarget }) => {
 					currentTarget.onerror = null;
