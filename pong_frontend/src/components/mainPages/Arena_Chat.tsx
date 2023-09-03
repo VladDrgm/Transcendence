@@ -100,7 +100,7 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID, friend_set}) => {
 
 		function connect() {
 			setConnected(true);
-			socketRef.current = io("http://localhost:4000", {
+			socketRef.current = io("http://localhost:3000", {
 			transports: ["websocket"],
 			withCredentials: true,
 			});
