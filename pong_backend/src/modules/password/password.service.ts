@@ -15,4 +15,8 @@ export class PasswordService {
     const isPasswordMatching = await bcrypt.compare(password, hashedPassword);
     return isPasswordMatching;
   }
+
+  compareToken(token: string, tokenInDb: string): boolean {
+    return token === tokenInDb;
+  }
 }
