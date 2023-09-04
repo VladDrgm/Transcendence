@@ -29,7 +29,18 @@ export function deleteChannel(
     console.error("Error: Don't delete general Channel");
     return;
   }
-  fetch(fetchAddress + 'channel/' + currentChat.Channel.ChannelId, {method: 'DELETE'})
+  const ChannelData = {
+    "intraUsername": props.user?.intraUsername,
+    "passwordHash": props.user?.passwordHash
+  }
+  const jsonData = JSON.stringify(ChannelData);
+  return fetch(fetchAddress + 'channel/' + props.user?.userID + '/' + currentChat.Channel.ChannelId, {credentials: "include",
+      method:"DELETE",
+      headers: {
+          "Content-Type": "application/json"
+        },
+      body:jsonData
+  })
   .then(response => {
     if (response.ok) {
       console.log("Channel deleted successfully.");
@@ -44,20 +55,3 @@ export function deleteChannel(
     console.error("Error deleting Channel:", error);
   });
 }
-
-// export function postChannel(ChannelData: any, callerID: number) {
-//   console.log("ChannelData from post:", ChannelData);
-//   console.log("JSON from post:", JSON.stringify(ChannelData));
-//   const requestOptions = {
-//     method: 'POST',
-//     headers: { 
-//       "Accept": "*/*",
-//       "Container-Type": "application/json"
-//     },
-//     body:  JSON.stringify(ChannelData)
-//   };
-//   fetch(fetchAddress + 'channel/' + callerID, requestOptions)
-//     .then(response => response.json())
-//     .then(data => {console.log("Channel created:", data);})
-//     .catch(error => {console.log("Error creating channel:", error);});
-// }

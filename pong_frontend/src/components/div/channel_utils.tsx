@@ -8,6 +8,7 @@ import {IUser} from '../../interfaces/interface';
 import { fetchAddress } from './channel_div';
 import { Row } from '../mainPages/ChatPageStyles';
 import { ChatName, getChannelFromChannellist } from '../mainPages/Arena_Chat';
+import { User } from '../../interfaces/user.interface';
 
 export function mapChannel(item: any) {
     const { ChannelId, OwnerId, Name, Type, Password } = item;
@@ -154,7 +155,7 @@ export async function modBannedUser(
     if (targetID !== undefined)
         {
             if (add === true)
-                postChannelUserBlocked(props?.userID, targetID, currentChat.Channel.ChannelId)
+                postChannelUserBlocked(props?.userID, targetID, currentChat.Channel.ChannelId, props.user!)
                 .then(() => {
                     banUserSocket(targetID, currentChat.chatName);
                 })
@@ -163,7 +164,7 @@ export async function modBannedUser(
                     alert("Error unbanning User");
                 })
             else
-                deleteChannelUserBlocked(props?.userID, targetID, currentChat.Channel.ChannelId)
+                deleteChannelUserBlocked(props?.userID, targetID, currentChat.Channel.ChannelId, props.user!)
                 .then(() => {
                     unbanUserSocket(targetID, currentChat.chatName);
                 })
@@ -188,7 +189,7 @@ export async function addMuteUser(
     getUserIDByUserName(newBlockedUsername)
     .then((targetID) => {
         if (targetID !== undefined) {
-            postMuteUser(props?.userID, targetID, currentChat.Channel.ChannelId, duration)
+            postMuteUser(props?.userID, targetID, currentChat.Channel.ChannelId, duration, props.user!)
              .then(() => {
                  const socketDuration = (duration * 60 * 1000) + 100;
                  muteUserSocket(targetID, currentChat.chatName, socketDuration);
@@ -210,14 +211,17 @@ export async function CreateChannel(props: ChatProps, channelName: string, passw
         var channelType = "public";
     else
         channelType = "private";
+    console.log(props.user?.passwordHash)
     const ChannelData = {
-        "Name": channelName,
-        "Type": channelType,
-        "Password": password,
-        "OwnerId": props.userID
+        "intraUsername": props.user?.intraUsername,
+        "passwordHash": props.user?.passwordHash
+        // "channelName": channelName,
+        // "channelType": channelType,
+        // "channelPassword": password,
+        // "ownerId": props.userID
     }
     const jsonData = JSON.stringify(ChannelData);
-    return fetch(fetchAddress + 'channel/' + props.userID, {credentials: "include",
+    return fetch(fetchAddress + 'channel/' + props.user?.userID + '/' + props.user?.userID + '/' + channelName + '/' + channelType, {credentials: "include",
         method:"POST",
         headers: {
             "Content-Type": "application/json"

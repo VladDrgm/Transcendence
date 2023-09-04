@@ -1,21 +1,15 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
-import Form from "./UsernameForm";
+import React, { useState, useRef, useEffect } from 'react';
 import Chat_MainDiv from "./Chat_MainDiv";
 import Game from './Game';
 import GameForm from "./GameForm";
 import { io, Socket } from "socket.io-client";
-import immer, { Draft } from "immer";
+import { Draft } from "immer";
 import "../../App.css";
-import {fetchChannelNames, copyChannelByName, fetchAllChannels, getUserIDByUserName} from "../div/channel_utils"
-import {postChannelUser, deleteChannelUser, getChannelUser, getChannelBlockedUser, getIsMuted, postPrivateChannelUser, getMutedStatus, postBlockedUser, getBlockedUser, deleteBlockedUser, postFriend, deleteFriend, getIsFriend} from "../../api/channel/channel_user.api"
-import { Channel, ChannelUserRoles, ChatProps } from '../../interfaces/channel.interface';
-import { User } from '../../interfaces/user.interface';
+import {fetchChannelNames} from "../div/channel_utils"
+import { Channel } from '../../interfaces/channel.interface';
 import { useUserContext } from '../context/UserContext';
-import { connected } from 'process';
-import { getIsAdmin, postAdmin } from '../../api/channel/channel_admin.api';
-import { error } from 'console';
 import { GameContainerStyle } from './GamePageStyles';
-import { ArenaStyle, ChatContainerStyle } from './ChatPageStyles';
+import { ArenaStyle } from './ChatPageStyles';
 // import { main_div_mode_t } from '../MainDivSelector';
 // import { Channel } from 'diagnostics_channel';
 
