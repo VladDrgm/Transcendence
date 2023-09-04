@@ -47,8 +47,8 @@ export class ChannelController {
   })
   @UsePipes(new ValidationPipe())
   async create(
-    @Param('ownerId') ownerId: number,
     @Param('callerId') callerId: number,
+    @Param('ownerId') ownerId: number,
     @Param('channelName') channelName: string,
     @Param('channelType') channelType: string,
     @Body() loggedInUser: UserAuthDTO,
