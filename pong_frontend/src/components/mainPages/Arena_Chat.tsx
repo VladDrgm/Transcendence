@@ -300,11 +300,15 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID, friend_set}) => {
 			player: number | null;
 			playerOne: string | null;
 			playerTwo: string | null;
+			playerOneName: string | null;
+			playerTwoName: string | null;
 		}>({
 			sessionId: null,
 			player: null,
 			playerOne: null,
 			playerTwo: null,
+			playerOneName: null,
+			playerTwoName: null
 		});
 		
 		let invitation: Invitation | null = {
