@@ -93,8 +93,8 @@
 // 	console.log('A user connected on the server');
 // 	userCount++;
 // 	console.log('Users online: ' + userCount);
-// 	socket.emit('init', {
-// 		data: 'hello!'
+// 	socket.emit('init', { 
+// 		data: 'hello!' 
 // 	});
 
 // 	socket.on('join server', (data) => {
@@ -198,7 +198,7 @@
 // 			}, muteDuration)
 // 		}
 // 		mutedUser[targetId] = {
-// 			roomName,
+// 			roomName, 
 // 			muteDuration,
 // 			timeout: setTimeout(() => {
 // 				io.emit("user unmuted", {targetId, roomName});
@@ -237,9 +237,12 @@
 // 		}
 // 	});
 
+
+
 // 			/*              */
 // 			// GAME PART //
 // 			/*              */
+
 
 // 	/* Joining game */
 
@@ -258,10 +261,12 @@
 // 			ball: { position: { x: 0, y: 0 }, vel: { x: 0, y: 0, len: 0 }, left: 0, right: 0, top: 0, bottom: 0, size: { x: 0, y: 0 } },
 // 			timestamps: { start: currentTime, end: null },
 // 			dt: 0,
-// 			disconnected: false,
+// 			disconnected: false, 
 // 			scoreOnDisconnect: { playerOne: 0, playerTwo: 0 }
 // 		};
 // 	}
+
+
 
 // 	socket.on('join queue', () => {
 // 		console.log("Join Queue was triggered");
@@ -316,7 +321,7 @@
 // 						sessionIdInput: session.sessionId,
 // 						playerInput: 2
 // 					});
-
+			
 // 					// Notify each player of opponents
 // 					let playerOneSocketId = session.playerIds[0];
 // 					/* console.log("Notifying Player 1 of Player 2 joining, playerOneSocket being " + playerOneSocketId);
@@ -324,7 +329,7 @@
 // 						sessionIdInput: session.sessionId,
 // 						player: 1
 // 					}); */
-
+					
 // 					console.log("Notifying Player 2 - " + socket.id + " who is player 1 - " + playerOneSocketId);
 // 					socket.emit('opponent joined', playerOneSocketId);
 // 					console.log("Notifying player 1 - " + playerOneSocketId + " who is Player 2 - " + socket.id);
@@ -376,6 +381,7 @@
 // 			// SEND INVITE TO PLAYER TWO
 // 			socket.to(invitation.playerTwoSocket).emit('invitation alert playertwo', invitation);
 
+
 // 			playerQueue.push(socket.id);
 // 			console.log("Game sessions after joining as Player 1:", gameSessions);
 // 		} else {
@@ -392,7 +398,7 @@
 // 						sessionIdInput: session.sessionId,
 // 						playerInput: 2
 // 					});
-
+			
 // 					// Notify each player of opponents
 // 					let playerOneSocketId = session.playerIds[0];
 // 					console.log("Notifying Player 1 of Player 2 joining, playerOneSocket being " + playerOneSocketId);
@@ -400,7 +406,7 @@
 // 						sessionIdInput: session.sessionId,
 // 						player: 1
 // 					});
-
+					
 // 					console.log("Notifying Player 2 - " + socket.id + " who is player 1 - " + playerOneSocketId);
 // 					socket.emit('opponent joined', playerOneSocketId);
 // 					console.log("Notifying player 1 - " + playerOneSocketId + " who is Player 2 - " + socket.id);
@@ -410,6 +416,7 @@
 // 			console.log("Game sessions after joining as Player 2:", gameSessions);
 // 		}
 // 	});
+
 
 // 	/* STARTING GAME */
 
@@ -462,7 +469,7 @@
 // 			if (gameSessions[sessionIndex].gameState) {
 // 				gameSessions[sessionIndex].gameState = null;
 // 			}
-
+			
 // 			// Nullify the playerIds
 // 			gameSessions[sessionIndex].playerIds = null;
 // 			gameSessions.splice(sessionIndex, 1);
@@ -485,7 +492,7 @@
 // 				// Find the users in the session
 // 				let firstUserId = sessionOfDisconnectedUser.playerIds.find(id => id === socket.id);
 // 				let otherUserId = sessionOfDisconnectedUser.playerIds.find(id => id !== socket.id);
-
+		
 // 				if (firstUserId) {
 // 					// Emit to the quitting user in the session that the game is ending
 // 					io.to(firstUserId).emit('playerDisconnected');
@@ -518,7 +525,7 @@
 // 			if (gameSessions[sessionIndex].gameState) {
 // 				gameSessions[sessionIndex].gameState = null;
 // 			}
-
+			
 // 			// Nullify the playerIds
 // 			gameSessions[sessionIndex].playerIds = null;
 // 			gameSessions.splice(sessionIndex, 1);
@@ -528,23 +535,27 @@
 // 		}
 // 	});
 
+
 // 	/* Updating Gameplay Sessions */
+
+
 
 // 	function startGameInterval(session: any) {
 // 		const intervalId = setInterval(() => {
 // 			let sessionWinner: boolean = false;
-
+	
 // 			// Check if the gameState, ball, and players exist and have correct shape
-// 			if (!session || !session.gameState || !session.gameState.ball ||
+// 			if (!session || !session.gameState || !session.gameState.ball || 
 // 				!session.gameState.playerOne || !session.gameState.playerTwo) {
 // 				console.error('Incorrect game state structure: did the session end? (This is not an error, but a notification)');
 // 				clearInterval(intervalId);
 // 				return;
 // 			}
-
+	
 // 			// Update ball's position
 // 			session.gameState.ball.position.x += session.gameState.ball.vel.x * 0.05;
 // 			session.gameState.ball.position.y += session.gameState.ball.vel.y * 0.05;
+
 
 // 			/* Check for round winners and ball resetting */
 // 			if (session.gameState.ball.position.x < 0 || session.gameState.ball.position.x > canvasWidth) {
@@ -554,19 +565,19 @@
 // 				else {
 // 					session.gameState.playerOne.score++;
 // 				}
-
+				
 // 				// Reset ball's position to center and its velocity to default
 // 				session.gameState.ball.position = { x: canvasWidth / 2, y: canvasHeight / 2 };
-// 				session.gameState.ball.vel = {
+// 				session.gameState.ball.vel = { 
 // 					x: 100 * (Math.random() > 0.5 ? 1 : -1),
 // 					y: 100 * (Math.random() * 2 - 1),
 // 					len: 100 };
-
+					
 // 					if (session.gameState.playerTwo.score === 5 || session.gameState.playerOne.score === 5) {
 // 						sessionWinner = true;
 // 					}
 // 				}
-
+				
 // 				/* Collision with canvas top and bottom */
 // 				if (session.gameState.ball.position.y < 0 || session.gameState.ball.position.y > canvasHeight) {
 // 					session.gameState.ball.vel.y = -session.gameState.ball.vel.y;
@@ -579,6 +590,7 @@
 // 				session.gameState.playerTwo = getBoundaries(session.gameState.playerTwo);
 // 				session.gameState.ball = getBoundaries(session.gameState.ball);
 
+
 // 				//console.log("Before potential collision, ballState is: " + JSON.stringify(session.gameState.ball));
 // 				// Handle collisions with the players
 // 				if (collide(session.gameState.playerOne, session.gameState.ball) === true || collide(session.gameState.playerTwo, session.gameState.ball) === true) {
@@ -587,11 +599,12 @@
 // 					session.gameState.ball.vel.len *= 1.05;
 // 			}
 
+
 // 			// Decide what to do next: continue or session over
 // 			if (sessionWinner === false) {
 // 				io.to(session.playerIds[0]).emit('updateGameState', session.gameState);
 // 				io.to(session.playerIds[1]).emit('updateGameState', session.gameState);
-// 			}
+// 			} 
 // 			else {
 // 				io.to(session.playerIds[0]).emit('endGame', session.gameState);
 // 				io.to(session.playerIds[1]).emit('endGame', session.gameState);
@@ -607,6 +620,7 @@
 // 		rect.bottom = rect.position.y + rect.size.y / 2;
 // 		return rect;
 // 	}
+
 
 // 	function collide(player:any, ball:any) {
 // 		if (player.left < ball.right &&
@@ -630,7 +644,7 @@
 // 						len: 100
 // 					}
 // 				};
-// 		}
+// 		} 
 // 			gameState.ball.position = ballState.position;
 // 			gameState.ball.vel = ballState.vel;
 // 			session.gameState = gameState;
@@ -644,27 +658,28 @@
 // 		const session = gameSessions.find((session) =>
 // 			session.playerIds.includes(socket.id)
 // 		);
-
+		
 // 		//console.log("Reached Session Start, gameState is: " + JSON.stringify(gameState) + "\nand sessionData is: " + JSON.stringify(session));
 // 		if (session && socket.id === session.playerIds[0]) {
 // 			updateBallPositionInSession(session, gameState);
 // 		}
 // 	});
 
+
 // 	socket.on('endSession', (gameState: GameState) => {
 // 		console.log("Reached endSession");
 // 		let matchResults = {} as MatchEntity;
-
+		
 // 		// Find the session the player is in
 // 		const session = gameSessions.find((session) =>
 // 			session.playerIds.includes(socket.id)
 // 		);
-
+	
 // 		// Get the index of the session
-// 		const sessionIndex = gameSessions.findIndex((session) =>
+// 		const sessionIndex = gameSessions.findIndex((session) => 
 // 			session.playerIds.includes(socket.id)
 // 		);
-
+	
 // 		// If the session is found
 // 		if (session && sessionIndex !== -1) {
 // 			//Populate matchResults
@@ -719,12 +734,14 @@
 
 // 			// Unlink the gameState object by nullifying it
 // 			gameSessions[sessionIndex].gameState = null;
-
+			
 // 			// Nullify the playerIds
 // 			gameSessions[sessionIndex].playerIds = null;
 // 			gameSessions.splice(sessionIndex, 1);
 // 		}
 // 	});
+
+
 
 // 	socket.on('updateMovementPlayerOne', (key:any) => {
 // 		const movementSpeed = 20;
@@ -736,7 +753,7 @@
 
 // 		if (key === 'w' || key === 'W') {
 // 			session.gameState.playerOne.position.y -= movementSpeed;
-// 		}
+// 		}  
 // 		if (key === 's' || key === 'S') {
 // 			session.gameState.playerOne.position.y += movementSpeed;
 // 		}
@@ -752,7 +769,7 @@
 
 // 		if (key === 'w' || key === 'W') {
 // 			session.gameState.playerTwo.position.y -= movementSpeed;
-// 		}
+// 		}  
 // 		if (key === 's' || key === 'S') {
 // 			session.gameState.playerTwo.position.y += movementSpeed;
 // 		}
@@ -767,14 +784,17 @@
 // 		if (key === 'p' || key === 'P') {
 // 			session.gameState.ball.vel.y += 50;
 // 			session.gameState.ball.vel.len *= 1.3;
-// 		}
+// 		}  
 // 	});
+
+
 
 // 	/* DISCONNECT */
 
+
 // 		socket.on('disconnect', () => {
 // 			console.log('A user disconnected');
-// 			let sessionOfDisconnectedUser = gameSessions.find(session =>
+// 			let sessionOfDisconnectedUser = gameSessions.find(session => 
 // 				session.playerIds.includes(socket.id)
 // 			);
 
@@ -785,12 +805,12 @@
 
 // 				// Find the other user in the session
 // 				let otherUserId = sessionOfDisconnectedUser.playerIds.find(id => id !== socket.id);
-
+		
 // 				if (otherUserId) {
 // 					// Emit to the other user in the session that the player has left
 // 					io.to(otherUserId).emit('playerDisconnected');
 // 				}
-
+		
 // 				// Remove the gameSession that the disconnected user was a part of - this will be done in endGame
 // 				//gameSessions = gameSessions.filter(session => session !== sessionOfDisconnectedUser);
 // 			}
