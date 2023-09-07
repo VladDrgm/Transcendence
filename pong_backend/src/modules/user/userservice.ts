@@ -10,7 +10,10 @@ import { Repository } from 'typeorm';
 import { UserDTO } from './userDTO';
 import { PasswordService } from '../password/password.service';
 import { FileService } from '../fileservice/file.service';
-import { AuthProtector, UserAuthDTO } from '../authProtectorService/authProtector';
+import {
+  AuthProtector,
+  UserAuthDTO,
+} from '../authProtectorService/authProtector';
 
 @Injectable()
 export class UserService {
@@ -35,20 +38,27 @@ export class UserService {
   }
 
   async create(user: User): Promise<User> {
-    const isUserInDb = await this.userRepository.findOneBy({ intraUsername: user.intraUsername });
-    if (isUserInDb)
-    {
-        if (parseInt(process.env.FEATURE_FLAG) === 1) {
-            const newHash = await this.passwordService.hashPassword(Date.now().toString());
-            this.userRepository.update(isUserInDb.userID, { passwordHash: newHash })
-        }
-        return isUserInDb;
+    const isUserInDb = await this.userRepository.findOneBy({
+      intraUsername: user.intraUsername,
+    });
+    if (isUserInDb) {
+      if (parseInt(process.env.FEATURE_FLAG) === 1) {
+        const newHash = await this.passwordService.hashPassword(
+          Date.now().toString(),
+        );
+        this.userRepository.update(isUserInDb.userID, {
+          passwordHash: newHash,
+        });
+      }
+      return isUserInDb;
     }
 
     user.username = user.username.toLowerCase();
-	user.intraUsername = user.intraUsername.toLowerCase();
+    user.intraUsername = user.intraUsername.toLowerCase();
     if (parseInt(process.env.FEATURE_FLAG) === 1) {
-        user.passwordHash = await this.passwordService.hashPassword(Date.now().toString());
+      user.passwordHash = await this.passwordService.hashPassword(
+        Date.now().toString(),
+      );
     }
     return this.userRepository.save(user);
   }
@@ -57,24 +67,34 @@ export class UserService {
     await this.userRepository.delete(id);
   }
 
-  async updatePoints(loggedUser: UserAuthDTO, 
-                        callerId: number, 
-                        targetId: number, 
-                        points: number): Promise<void> {
-    if (callerId !== targetId) { 
-        throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+  async updatePoints(
+    loggedUser: UserAuthDTO,
+    callerId: number,
+    targetId: number,
+    points: number,
+  ): Promise<void> {
+    if (callerId !== targetId) {
+      throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
     }
-    if(parseInt(process.env.FEATURE_FLAG) === 1) {
-        const authPass  = await this.authProtector.protectorCheck(loggedUser.passwordHash, callerId);
-        if (!authPass) {
-            throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
-        }
+    if (parseInt(process.env.FEATURE_FLAG) === 1) {
+      const authPass = await this.authProtector.protectorCheck(
+        loggedUser.passwordHash,
+        callerId,
+      );
+      if (!authPass) {
+        throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+      }
     }
 
     await this.userRepository.update(targetId, { points: points });
   }
 
-  async updateUsername(loggedUser: UserAuthDTO, callerId: number, targetId: number, newUsername: string): Promise<User> {
+  async updateUsername(
+    loggedUser: UserAuthDTO,
+    callerId: number,
+    targetId: number,
+    newUsername: string,
+  ): Promise<User> {
     const isUsernameInDb = await this.userRepository.findOneBy({
       username: newUsername,
     });
@@ -90,15 +110,20 @@ export class UserService {
     }
 
     if (callerId !== targetId) {
-        throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+      throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
     }
 
-    if(parseInt(process.env.FEATURE_FLAG) === 1) {
-        const user = await this.userRepository.findOneBy({ intraUsername: loggedUser.intraUsername });
-        const authPass  = await this.authProtector.protectorCheck(user.passwordHash, callerId);
-        if (!authPass) {
-            throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
-        }
+    if (parseInt(process.env.FEATURE_FLAG) === 1) {
+      const user = await this.userRepository.findOneBy({
+        intraUsername: loggedUser.intraUsername,
+      });
+      const authPass = await this.authProtector.protectorCheck(
+        user.passwordHash,
+        callerId,
+      );
+      if (!authPass) {
+        throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+      }
     }
 
     await this.userRepository.update(targetId, { username: newUsername });
@@ -115,19 +140,19 @@ export class UserService {
     });
   }
 
-//   async postUserLoggedIn(userDto: UserDTO): Promise<User> {
-    // const user = new User();
-    // user.username = userDto.username;
-    // user.passwordHash = await this.passwordService.hashPassword(
-    //   userDto.password,
-    // );
-    // user.avatarPath = userDto.avatarPath;
-    // user.points = userDto.points;
-    // user.status = userDto.status;
-    // user.achievementsCSV = userDto.achievementsCSV;
-    // user.intraUsername = userDto.intraUsername;
-    // return this.userRepository.save(user);
-//   }
+  //   async postUserLoggedIn(userDto: UserDTO): Promise<User> {
+  // const user = new User();
+  // user.username = userDto.username;
+  // user.passwordHash = await this.passwordService.hashPassword(
+  //   userDto.password,
+  // );
+  // user.avatarPath = userDto.avatarPath;
+  // user.points = userDto.points;
+  // user.status = userDto.status;
+  // user.achievementsCSV = userDto.achievementsCSV;
+  // user.intraUsername = userDto.intraUsername;
+  // return this.userRepository.save(user);
+  //   }
 
   async confirmUserLoggedIn(
     ftUserName: string,
@@ -142,20 +167,28 @@ export class UserService {
     throw new HttpException('Wrong password', HttpStatus.UNAUTHORIZED);
   }
 
-  async updateUserPassword(loggedUser, callerId, targetId, newPassword): Promise<User> {
+  async updateUserPassword(
+    loggedUser,
+    callerId,
+    targetId,
+    newPassword,
+  ): Promise<User> {
     const user = await this.userRepository.findOneBy({ userID: callerId });
     if (!user) {
       throw new HttpException('User not found', HttpStatus.NOT_FOUND);
     }
     if (callerId !== targetId) {
-        throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+      throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
     }
 
     if (parseInt(process.env.FEATURE_FLAG) === 1) {
-        const authPass  = await this.authProtector.protectorCheck(loggedUser.passwordHash, callerId);
-        if (!authPass) {
-            throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
-        }
+      const authPass = await this.authProtector.protectorCheck(
+        loggedUser.passwordHash,
+        callerId,
+      );
+      if (!authPass) {
+        throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+      }
     }
 
     const psswd = await this.passwordService.hashPassword(newPassword);
@@ -164,12 +197,19 @@ export class UserService {
     return await this.userRepository.findOneBy({ userID: targetId });
   }
 
-  async updateAvatar(loggedUser: UserAuthDTO, id: number, file: Express.Multer.File): Promise<void> {
+  async updateAvatar(
+    loggedUser: UserAuthDTO,
+    id: number,
+    file: Express.Multer.File,
+  ): Promise<void> {
     if (parseInt(process.env.FEATURE_FLAG) === 1) {
-        const authPass  = await this.authProtector.protectorCheck(loggedUser.passwordHash, id);
-        if (!authPass) {
-            throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
-        }
+      const authPass = await this.authProtector.protectorCheck(
+        loggedUser.passwordHash,
+        id,
+      );
+      if (!authPass) {
+        throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+      }
     }
 
     const userToUpdate = await this.userRepository.findOneBy({ userID: id });
