@@ -300,7 +300,6 @@ io.on('connection', (socket: Socket) => {
 	}
 
 
-
 	socket.on('join queue', (userID: number | undefined) => {
 		console.log("Join Queue was triggered");
 		let availableSession:any;
@@ -755,20 +754,20 @@ io.on('connection', (socket: Socket) => {
 
 			console.log("matchResults is: " + JSON.stringify(matchResults) + "/n");
 
-			// fetch('http://localhost:3000/match', {
-			// 	method: 'POST',
-			// 	headers: {
-			// 		'Content-Type': 'application/json',
-			// 	},
-			// 	body: JSON.stringify(matchResults),
-			// })
-			// .then(response => response.json())
-			// .then(data => {
-			// 	console.log('Data sent successfully:', data);
-			// })
-			// .catch((error) => {
-			// 	console.error('Error:', error);
-			// });
+			fetch('http://localhost:3000/match', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify(matchResults),
+			})
+			.then(response => response.json())
+			.then(data => {
+				console.log('Data sent successfully:', data);
+			})
+			.catch((error) => {
+				console.error('Error:', error);
+			});
 
 			// Unlink the gameState object by nullifying it
 			gameSessions[sessionIndex].gameState = null;
@@ -778,7 +777,6 @@ io.on('connection', (socket: Socket) => {
 			gameSessions.splice(sessionIndex, 1);
 		}
 	});
-
 
 
 	socket.on('updateMovementPlayerOne', (key:any) => {
