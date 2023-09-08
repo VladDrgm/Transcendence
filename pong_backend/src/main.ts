@@ -753,7 +753,7 @@ io.on('connection', (socket: Socket) => {
 
 			console.log("matchResults is: " + JSON.stringify(matchResults) + "/n");
 
-			fetch(`${process.env.URI}/match`, {
+			/* fetch(`${process.env.URI}/match`, {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
@@ -766,7 +766,7 @@ io.on('connection', (socket: Socket) => {
 			})
 			.catch((error) => {
 				console.error('Error:', error);
-			});
+			}); */
 
 			// Unlink the gameState object by nullifying it
 			gameSessions[sessionIndex].gameState = null;
@@ -803,7 +803,7 @@ io.on('connection', (socket: Socket) => {
 
 		if (key === 'w' || key === 'W') {
 			session.gameState.playerTwo.position.y -= movementSpeed;
-		}  
+		}
 		if (key === 's' || key === 'S') {
 			session.gameState.playerTwo.position.y += movementSpeed;
 		}
@@ -818,7 +818,7 @@ io.on('connection', (socket: Socket) => {
 		if (key === 'p' || key === 'P') {
 			session.gameState.ball.vel.y += 50;
 			session.gameState.ball.vel.len *= 1.3;
-		}  
+		}
 	});
 
 
