@@ -4,6 +4,8 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common/pipes/validation.pipe';
 import { Socket, Server } from 'socket.io';
 
+const fetch = require('node-fetch');
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
@@ -753,7 +755,9 @@ io.on('connection', (socket: Socket) => {
 
 			console.log("matchResults is: " + JSON.stringify(matchResults) + "/n");
 
-			/* fetch(`${process.env.URI}/match`, {
+			console.log("the URI is: " + process.env.URI);
+
+			fetch(process.env.URI + "match", {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
@@ -766,7 +770,7 @@ io.on('connection', (socket: Socket) => {
 			})
 			.catch((error) => {
 				console.error('Error:', error);
-			}); */
+			});
 
 			// Unlink the gameState object by nullifying it
 			gameSessions[sessionIndex].gameState = null;
