@@ -12,7 +12,7 @@ interface FormProps {
 }
 
 const GameForm: React.FC<FormProps> = (props) => {
-	const [gameSession, setGameSession] = useState<{
+	/* const [gameSession, setGameSession] = useState<{
 		playerOne: string | null;
 		playerTwo: string | null;
 	}>(props.gameSession);
@@ -20,7 +20,7 @@ const GameForm: React.FC<FormProps> = (props) => {
 	useEffect(() => {
 		// Update the gameSession state whenever props.gameSession changes
 		setGameSession(props.gameSession);
-	}, [props.gameSession]);
+	}, [props.gameSession]); */
 
 	const handleStartGameClick = (event: React.MouseEvent<HTMLButtonElement>) => {
 		event.preventDefault();
