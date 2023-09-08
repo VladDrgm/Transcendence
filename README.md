@@ -22,6 +22,7 @@ The backend of Transcendence has Swagger installed in order to test the REST API
 ## Frontend
 
 The frontend of Transcendence includes a user API that fetches users from the backend URL. The user data is then rendered in the UI. From the /api/ directory, where we have the results of our APIs from the backend, we move forward and render them in components.
+Deployed using Vercel: <https://transcendence-one.vercel.app/app>
 
 ## Additional Notes
 

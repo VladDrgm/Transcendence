@@ -1,11 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-// import * as session from 'express-session';
-// import { SessionOptions } from 'express-session';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common/pipes/validation.pipe';
-// import * as http from 'http';
-// import './socket-server';
 import { Socket, Server } from 'socket.io';
 
 async function bootstrap() {
@@ -74,9 +70,23 @@ async function bootstrap() {
       size: { x: number; y: number };
     };
     ball: Ball;
-    timestamps: { start: number | null; end: number | null };
+    timestamps: { start: Date | null; end: Date | null };
     dt: number;
-    resetNeeded: boolean;
+    disconnected: boolean;
+    scoreOnDisconnect: { playerOne: number; playerTwo: number };
+  }
+
+  interface MatchEntity {
+    Player1Id: number;
+    Player2Id: number;
+    Player1Points: number;
+    Player2Points: number;
+    GameType: string;
+    FinalResultString: string;
+    startTime: Date;
+    endTime: Date;
+    WinnerId: number;
+    WinningCondition: string;
   }
 
   interface Ball {
@@ -87,6 +97,12 @@ async function bootstrap() {
     top: number;
     bottom: number;
     size: { x: number; y: number };
+  }
+
+  interface Invitation {
+    sessionId: any | null;
+    playerOneSocket: string | null;
+    playerTwoSocket: string | null;
   }
 
   const gameSessions: {
@@ -293,6 +309,7 @@ async function bootstrap() {
     }
 
     function createNewGameState(): GameState {
+      const currentTime = new Date();
       return {
         sessionId: null,
         gameStatus: 0,
@@ -327,9 +344,10 @@ async function bootstrap() {
           bottom: 0,
           size: { x: 0, y: 0 },
         },
-        timestamps: { start: null, end: null },
+        timestamps: { start: currentTime, end: null },
         dt: 0,
-        resetNeeded: false,
+        disconnected: false,
+        scoreOnDisconnect: { playerOne: 0, playerTwo: 0 },
       };
     }
 
@@ -422,7 +440,7 @@ async function bootstrap() {
       }
     });
 
-    socket.on('invite player', (newSessionId: any) => {
+    socket.on('invite player', (invitation: Invitation) => {
       console.log('Invite Player was triggered');
       let existingSession: any;
 
@@ -436,10 +454,10 @@ async function bootstrap() {
         }
       }
 
-      // Check if a session exists with the given newSessionId
-      if (newSessionId) {
+      // Check if a session exists with the given invitation.sessionId
+      if (invitation.sessionId) {
         existingSession = gameSessions.find(
-          (session) => session.sessionId === newSessionId,
+          (session) => session.sessionId === invitation.sessionId,
         );
       }
 
@@ -463,6 +481,12 @@ async function bootstrap() {
           sessionIdInput: newSessionId,
           playerInput: 1,
         });
+
+        // SEND INVITE TO PLAYER TWO
+        socket
+          .to(invitation.playerTwoSocket)
+          .emit('invitation alert playertwo', invitation);
+
         playerQueue.push(socket.id);
         console.log('Game sessions after joining as Player 1:', gameSessions);
       } else {
@@ -540,6 +564,109 @@ async function bootstrap() {
       }
     });
 
+    socket.on('remove invite', (invitation: Invitation) => {
+      console.log('Remove Invite was triggered');
+      let existingSession: any;
+
+      // Check if a session exists with the given invitation.sessionId
+      if (invitation.sessionId) {
+        existingSession = gameSessions.find(
+          (session) => session.sessionId === invitation.sessionId,
+        );
+      }
+
+      if (existingSession) {
+        // If the existing session exists, Player 1 has to be quit
+        console.log('Quitting Player 1 has been triggered');
+        if (existingSession.playerIds[0]) {
+          io.to(existingSession.playerIds[0]).emit('clean queue');
+        }
+        existingSession.sessionId = null;
+        existingSession.invite = false;
+
+        // Get the index of the session
+        const sessionIndex = gameSessions.indexOf(existingSession);
+
+        // Unlink the gameState object by nullifying it
+        if (gameSessions[sessionIndex].gameState) {
+          gameSessions[sessionIndex].gameState = null;
+        }
+
+        // Nullify the playerIds
+        gameSessions[sessionIndex].playerIds = null;
+        gameSessions.splice(sessionIndex, 1);
+
+        // Remove the player from the queue if they were waiting
+        playerQueue = playerQueue.filter((playerId) => playerId !== socket.id);
+      }
+    });
+
+    socket.on('quit game', (sessionId) => {
+      console.log('A user quit the game');
+      // Check if the provided sessionId exists in the gameSessions array
+      const sessionOfDisconnectedUser = gameSessions.find(
+        (session) => session.sessionId === sessionId,
+      );
+
+      if (sessionOfDisconnectedUser) {
+        sessionOfDisconnectedUser.gameState.disconnected = true;
+        sessionOfDisconnectedUser.gameState.scoreOnDisconnect.playerOne =
+          sessionOfDisconnectedUser.gameState.playerOne.score;
+        sessionOfDisconnectedUser.gameState.scoreOnDisconnect.playerTwo =
+          sessionOfDisconnectedUser.gameState.playerTwo.score;
+
+        // Find the users in the session
+        const firstUserId = sessionOfDisconnectedUser.playerIds.find(
+          (id) => id === socket.id,
+        );
+        const otherUserId = sessionOfDisconnectedUser.playerIds.find(
+          (id) => id !== socket.id,
+        );
+
+        if (firstUserId) {
+          // Emit to the quitting user in the session that the game is ending
+          io.to(firstUserId).emit('playerDisconnected');
+        }
+        if (otherUserId) {
+          // Emit to the other user in the session that the player has left
+          io.to(otherUserId).emit('playerDisconnected');
+        }
+      }
+    });
+
+    socket.on('quit queue', (sessionId) => {
+      // Check if the provided sessionId exists in the gameSessions array
+      const session = gameSessions.find(
+        (session) => session.sessionId === sessionId,
+      );
+
+      if (session) {
+        if (session.playerIds[0]) {
+          io.to(session.playerIds[0]).emit('clean queue');
+        }
+        if (session.playerIds[1]) {
+          io.to(session.playerIds[1]).emit('clean queue');
+        }
+        session.sessionId = null;
+        session.invite = false;
+
+        // Get the index of the session
+        const sessionIndex = gameSessions.indexOf(session);
+
+        // Unlink the gameState object by nullifying it
+        if (gameSessions[sessionIndex].gameState) {
+          gameSessions[sessionIndex].gameState = null;
+        }
+
+        // Nullify the playerIds
+        gameSessions[sessionIndex].playerIds = null;
+        gameSessions.splice(sessionIndex, 1);
+
+        // Remove the player from the queue if they were waiting
+        playerQueue = playerQueue.filter((playerId) => playerId !== socket.id);
+      }
+    });
+
     /* Updating Gameplay Sessions */
 
     function startGameInterval(session: any) {
@@ -554,7 +681,9 @@ async function bootstrap() {
           !session.gameState.playerOne ||
           !session.gameState.playerTwo
         ) {
-          console.error('Incorrect game state structure: did the session end?');
+          console.error(
+            'Incorrect game state structure: did the session end? (This is not an error, but a notification)',
+          );
           clearInterval(intervalId);
           return;
         }
@@ -700,6 +829,7 @@ async function bootstrap() {
 
     socket.on('endSession', (gameState: GameState) => {
       console.log('Reached endSession');
+      const matchResults = {} as MatchEntity;
 
       // Find the session the player is in
       const session = gameSessions.find((session) =>
@@ -713,8 +843,52 @@ async function bootstrap() {
 
       // If the session is found
       if (session && sessionIndex !== -1) {
-        // SEND SESSION DATA TO DB
-        console.log('Placeholder for: sending session data to DB');
+        //Populate matchResults
+        matchResults.FinalResultString = 'finished';
+        if (session.invite) {
+          matchResults.GameType = 'invite';
+        } else {
+          matchResults.GameType = 'normal';
+        }
+        matchResults.Player1Id = 999;
+        if (session.gameState.disconnected === true) {
+          matchResults.Player1Points =
+            session.gameState.scoreOnDisconnect.playerOne;
+          matchResults.Player2Points =
+            session.gameState.scoreOnDisconnect.playerTwo;
+          matchResults.WinningCondition = 'disconnected';
+        } else {
+          matchResults.Player1Points = session.gameState.playerOne.score;
+          matchResults.Player2Points = session.gameState.playerTwo.score;
+          matchResults.WinningCondition = 'game won';
+        }
+        matchResults.Player2Id = 666;
+        if (matchResults.Player1Points === matchResults.Player2Points) {
+          matchResults.WinnerId = 0;
+        } else if (matchResults.Player1Points > matchResults.Player2Points) {
+          matchResults.WinnerId = matchResults.Player1Id;
+        } else {
+          matchResults.WinnerId = matchResults.Player2Id;
+        }
+        matchResults.WinnerId = 666;
+        matchResults.endTime = new Date();
+        matchResults.startTime = session.gameState.timestamps.start;
+
+        console.log('matchResults is: ' + JSON.stringify(matchResults) + '/n');
+        fetch(`${process.env.URI}/match`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(matchResults),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            console.log('Data sent successfully:', data);
+          })
+          .catch((error) => {
+            console.error('Error:', error);
+          });
 
         // Unlink the gameState object by nullifying it
         gameSessions[sessionIndex].gameState = null;
@@ -778,6 +952,12 @@ async function bootstrap() {
       );
 
       if (sessionOfDisconnectedUser) {
+        sessionOfDisconnectedUser.gameState.disconnected = true;
+        sessionOfDisconnectedUser.gameState.scoreOnDisconnect.playerOne =
+          sessionOfDisconnectedUser.gameState.playerOne.score;
+        sessionOfDisconnectedUser.gameState.scoreOnDisconnect.playerTwo =
+          sessionOfDisconnectedUser.gameState.playerTwo.score;
+
         // Find the other user in the session
         const otherUserId = sessionOfDisconnectedUser.playerIds.find(
           (id) => id !== socket.id,
@@ -792,7 +972,7 @@ async function bootstrap() {
         //gameSessions = gameSessions.filter(session => session !== sessionOfDisconnectedUser);
       }
 
-      io.sockets.emit('playerDisconnected');
+      //io.sockets.emit('playerDisconnected');
       userCount--;
       users = users.filter((u) => u.socketId !== socket.id);
       if (users.length !== 0) {

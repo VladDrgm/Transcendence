@@ -17,11 +17,11 @@ export class MatchController {
     return this.matchService.createMatch(matchDto);
   }
 
-  @Get("all/:callerId")
+  @Get('all/:callerId')
   @ApiOperation({ summary: 'Get all matches' })
   async getAllMatches(
     @Param() callerId: number,
-    @Body() loggedUser: UserAuthDTO
+    @Body() loggedUser: UserAuthDTO,
   ): Promise<Match[]> {
     return this.matchService.getAllMatches(loggedUser, callerId);
   }
@@ -31,7 +31,8 @@ export class MatchController {
   async getMatchById(
     @Param() callerId: number,
     @Param('matchId') matchId: number,
-    @Body() loggedUser: UserAuthDTO): Promise<Match> {
+    @Body() loggedUser: UserAuthDTO,
+  ): Promise<Match> {
     return this.matchService.getMatchById(loggedUser, callerId, matchId);
   }
 
@@ -44,9 +45,10 @@ export class MatchController {
   @Get(':callerId/:targetId/matchHistory')
   @ApiOperation({ summary: 'Get match history of a user' })
   async getMatchHistory(
-    @Param('callerId') callerId : number,
+    @Param('callerId') callerId: number,
     @Param('targetId') targetId: number,
-    @Body() loggedUser: UserAuthDTO): Promise<Match[]> {
+    @Body() loggedUser: UserAuthDTO,
+  ): Promise<Match[]> {
     return this.matchService.getMatchHistory(loggedUser, callerId, targetId);
   }
 }
