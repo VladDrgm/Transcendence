@@ -89,7 +89,7 @@ interface Invitation {
 	playerTwoSocket: string | null;
 };
 
-let gameSessions: { sessionId: string; invite: boolean; playerIds: string[]; gameState?: GameState}[] = [];
+let gameSessions: { sessionId: string; invite: boolean; playerIds: string[]; gameState?: GameState; clientIdPO: number | null; clientIdPT: number | null}[] = [];
 let playerQueue: string[] = [];
 
 const canvasWidth = 600;
@@ -300,8 +300,7 @@ io.on('connection', (socket: Socket) => {
 	}
 
 
-
-	socket.on('join queue', () => {
+	socket.on('join queue', (userID: number | undefined) => {
 		console.log("Join Queue was triggered");
 		let availableSession:any;
 
@@ -330,6 +329,8 @@ io.on('connection', (socket: Socket) => {
 				invite: false,
 				playerIds: [socket.id],
 				gameState: newGameState,
+				clientIdPO: userID,
+				clientIdPT: null
 			});
 
 			// Notify the player that they are Player 1 and provide the new sessionId
@@ -344,6 +345,7 @@ io.on('connection', (socket: Socket) => {
 			// If an available session exists, join as Player 2
 			console.log("Joining as Player 2 has been triggered");
 			availableSession.playerIds.push(socket.id);
+			availableSession.clientIdPT = userID;
 
 			// Notify both players (Player 1 and Player 2) about the session details
 			gameSessions.forEach((session) => {
@@ -373,7 +375,7 @@ io.on('connection', (socket: Socket) => {
 		}
 	});
 
-	socket.on('invite player', (invitation:Invitation) => {
+	socket.on('invite player', (invitation:Invitation, userID: number | undefined) => {
 		console.log("Invite Player was triggered");
 		let existingSession:any;
 
@@ -402,6 +404,8 @@ io.on('connection', (socket: Socket) => {
 				invite: true,
 				playerIds: [socket.id],
 				gameState: newGameState,
+				clientIdPO: userID,
+				clientIdPT: null
 			});
 
 			// Notify the player that they are Player 1 and provide the new sessionId
@@ -421,6 +425,7 @@ io.on('connection', (socket: Socket) => {
 			// If the existing session exists, join as Player 2
 			console.log("Joining as Player 2 has been triggered");
 			existingSession.playerIds.push(socket.id);
+			existingSession.clientIdPT = userID;
 
 			// Notify both players (Player 1 and Player 2) about the session details
 			gameSessions.forEach((session) => {
@@ -723,7 +728,7 @@ io.on('connection', (socket: Socket) => {
 			else {
 				matchResults.GameType = "normal";
 			}
-			matchResults.Player1Id = 999;
+			matchResults.Player1Id = session.clientIdPO;
 			if (session.gameState.disconnected === true) {
 				matchResults.Player1Points = session.gameState.scoreOnDisconnect.playerOne;
 				matchResults.Player2Points = session.gameState.scoreOnDisconnect.playerTwo;
@@ -734,7 +739,7 @@ io.on('connection', (socket: Socket) => {
 				matchResults.Player2Points = session.gameState.playerTwo.score;
 				matchResults.WinningCondition = "game won";
 			}
-			matchResults.Player2Id = 666;
+			matchResults.Player2Id = session.clientIdPT;
 			if (matchResults.Player1Points === matchResults.Player2Points) {
 				matchResults.WinnerId = 0;
 			}
@@ -744,7 +749,6 @@ io.on('connection', (socket: Socket) => {
 			else {
 				matchResults.WinnerId = matchResults.Player2Id;
 			}
-			matchResults.WinnerId = 666;
 			matchResults.endTime = new Date();
 			matchResults.startTime = session.gameState.timestamps.start;
 
@@ -773,7 +777,6 @@ io.on('connection', (socket: Socket) => {
 			gameSessions.splice(sessionIndex, 1);
 		}
 	});
-
 
 
 	socket.on('updateMovementPlayerOne', (key:any) => {
