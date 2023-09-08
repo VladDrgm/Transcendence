@@ -8,7 +8,7 @@ import {IUser} from '../../interfaces/interface';
 import { fetchAddress } from './channel_div';
 import { Row } from '../mainPages/ChatPageStyles';
 import { ChatName, getChannelFromChannellist } from '../mainPages/Arena_Chat';
-import { User } from '../../interfaces/user.interface';
+import { useUserContext } from '../context/UserContext';
 
 export function mapChannel(item: any) {
     const { ChannelId, OwnerId, Name, Type, Password } = item;
@@ -215,6 +215,7 @@ export async function CreateChannel(props: ChatProps, channelName: string, passw
     const ChannelData = {
         "intraUsername": props.user?.intraUsername,
         "passwordHash": props.user?.passwordHash
+        // "passwordHash": "$2b$10$ZrGltCBM3NsOPTEo3wc6GePgb3yjaSn73kfAfO7fdhb0gSzI0fSt."
         // "channelName": channelName,
         // "channelType": channelType,
         // "channelPassword": password,

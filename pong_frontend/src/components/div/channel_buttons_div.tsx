@@ -32,7 +32,7 @@ export const ChannelOwner_Buttons_Div: React.FC<ownerButtonProps> = (props ) => 
             <div>Loading Channel Name and Buttons...</div> // Show a loading spinner or placeholder
         ) : (
             <ChannelInfo>
-                {props.currentChat.chatName}
+                <h3>{props.currentChat.chatName}</h3>
                 <div>
                     <button
                     style={chatButtonsStyle}
@@ -95,7 +95,7 @@ export const ChannelAdmin_Buttons_Div: React.FC<ownerButtonProps> = (props) => {
             <div>Loading Channel Name and Buttons...</div> // Show a loading spinner or placeholder
         ) : (
             <ChannelInfo>
-                {props.currentChat.chatName}
+                <h3>{props.currentChat.chatName}</h3>
                 <div>
                     <button
                     style={chatButtonsStyle}

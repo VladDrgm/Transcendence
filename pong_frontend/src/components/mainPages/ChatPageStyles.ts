@@ -55,11 +55,19 @@ export const ArenaStyle: Properties = {
 	marginBottom: '0px',
 }
 
-export const SideBar = styled.div`
-  height: 100%;
-  width: 15%;
-  border-right: 1px solid black;
-`;
+export const SideBarStyle: Properties = {
+	backgroundColor: 'black',
+	height: '100vh',
+  	width: '15%',
+  	borderRight: '1px solid white',
+}
+
+// export const SideBar = styled.div`
+//   height: 100%;
+//   width: 15%;
+//   border-right: 1px solid black;
+//   backgroundColor: 'blue';
+// `;
 
 export const ChatPanel = styled.div`
   height: 100vh;
@@ -74,7 +82,7 @@ export const BodyContainer = styled.div`
   overflow: scroll;
 //   display: flex;
 
-  border-bottom: 1px solid black;
+//   border-bottom: 1px solid black;
 `;
 
 export const TextBox = styled.textarea`

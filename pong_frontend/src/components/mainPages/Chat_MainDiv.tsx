@@ -1,6 +1,6 @@
 import React, { FC, useEffect, useState, useCallback} from "react";
 import { renderUser} from "../div/chat_utils"; 
-import {ChatContainerStyle, BodyContainer, ChannelInfo, ChatPanel, SideBar } from "./ChatPageStyles";
+import {ChatContainerStyle, BodyContainer, ChannelInfo, ChatPanel, SideBarStyle } from "./ChatPageStyles";
 import Channel_Div from '../div/channel_div';
 import { ChannelAdmin_Buttons_Div, ChannelOwner_Buttons_Div } from "../div/channel_buttons_div";
 import ChatBody_Div from "../div/channel_ChatBody_div";
@@ -701,7 +701,7 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 			  <div>Loading Channel Name...</div> // Show a loading spinner or placeholder
 			) : (
 			  <ChannelInfo>
-				{currentChat.chatName}
+				<h3>{currentChat.chatName}</h3>
 				{/* <button onClick={() => props.leaveRoom(props.currentChat.chatName)}>
 						Leave {props.currentChat.chatName}
 					</button> */}
@@ -920,7 +920,7 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 
 	return (
 		<div style={ChatContainerStyle}>
-			<SideBar>
+			<div style={SideBarStyle}>
 				<Channel_Div 
 				ChatProps={props} 
 				allChannels={allChannels} 
@@ -929,7 +929,7 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 				addChatRoom={addChatRoom}/>
 				<h3>All Users</h3>
 				{props.allUsers.map((user) => renderUser(user, props, toggleChat))}
-			</SideBar>
+			</div>
 			<ChatPanel>
 				<ChannelInfo>
 					{channelpanel}
