@@ -468,14 +468,16 @@ io.on('connection', (socket: Socket) => {
 				// The session already has two players, the game can start
 				io.to(session.playerIds[0]).emit('game starting', sessionId, 1);
 				io.to(session.playerIds[1]).emit('game starting', sessionId, 2);
-			} else {
+			} 
+			/* else {
 				// There's only one player in the session, wait for the second player
 				socket.to(session.playerIds[0]).emit('waiting for opponent');
-			}
-		} else {
+			} */
+		} 
+		/* else {
 			// Invalid sessionId, notify the sender that the game session doesn't exist
 			socket.to(socket.id).emit('invalid session');
-		}
+		} */
 	});
 
 	socket.on('remove invite', (invitation:Invitation) => {
@@ -782,34 +784,50 @@ io.on('connection', (socket: Socket) => {
 	});
 
 	socket.on('updateMovementPlayerOne', (key:any) => {
-		const movementSpeed = 20;
-
+		const movementSpeed = 15;
+		const canvasTopBoundary = 0;
+		const canvasBottomBoundary = canvasHeight;
+		
 		// Find the game session with the specified sessionId
 		const session = gameSessions.find((session) =>
-			session.playerIds.includes(socket.id)
+		session.playerIds.includes(socket.id)
 		);
+		
+		let newPosition = session.gameState.playerOne.position.y;
 
 		if (key === 'w' || key === 'W') {
-			session.gameState.playerOne.position.y -= movementSpeed;
-		}  
+			newPosition -= movementSpeed;
+		}
 		if (key === 's' || key === 'S') {
-			session.gameState.playerOne.position.y += movementSpeed;
+			newPosition += movementSpeed;
+		}
+
+		if (newPosition - 30 >= canvasTopBoundary && newPosition + 30 <= canvasBottomBoundary) {
+			session.gameState.playerOne.position.y = newPosition;
 		}
 	});
 
 	socket.on('updateMovementPlayerTwo', (key:any) => {
-		const movementSpeed = 20;
+		const movementSpeed = 15;
+		const canvasTopBoundary = 0;
+		const canvasBottomBoundary = canvasHeight;
 
 		// Find the game session with the specified sessionId
 		const session = gameSessions.find((session) =>
 			session.playerIds.includes(socket.id)
 		);
 
+		let newPosition = session.gameState.playerTwo.position.y;
+
 		if (key === 'w' || key === 'W') {
-			session.gameState.playerTwo.position.y -= movementSpeed;
+			newPosition -= movementSpeed;
 		}
 		if (key === 's' || key === 'S') {
-			session.gameState.playerTwo.position.y += movementSpeed;
+			newPosition += movementSpeed;
+		}
+
+		if (newPosition - 30 >= canvasTopBoundary && newPosition + 30 <= canvasBottomBoundary) {
+			session.gameState.playerTwo.position.y = newPosition;
 		}
 	});
 
