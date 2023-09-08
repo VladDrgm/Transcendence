@@ -300,6 +300,7 @@ io.on('connection', (socket: Socket) => {
 	}
 
 
+
 	socket.on('join queue', (userID: number | undefined) => {
 		console.log("Join Queue was triggered");
 		let availableSession:any;
@@ -777,6 +778,7 @@ io.on('connection', (socket: Socket) => {
 			gameSessions.splice(sessionIndex, 1);
 		}
 	});
+
 
 
 	socket.on('updateMovementPlayerOne', (key:any) => {

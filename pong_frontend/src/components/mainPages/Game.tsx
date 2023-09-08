@@ -15,8 +15,8 @@ interface GameProps {
 	canvasRef: React.RefObject<HTMLCanvasElement | null>;
 	socket: any;
 	updateGameStatus: (newStatus: 0 | 1) => void;
-	gameSession: { sessionId: string | null; player: number | null, playerOne: string | null, playerTwo: string | null, playerOneName: string | null, playerTwoName: string | null };
-	setGameSession: (gameSession: { sessionId: string | null; player: number | null, playerOne: string | null, playerTwo: string | null, playerOneName: string | null, playerTwoName: string | null }) => void;
+	gameSession: { sessionId: string | null; player: number | null, playerOne: string | null, playerTwo: string | null };
+	setGameSession: (gameSession: { sessionId: string | null; player: number | null, playerOne: string | null, playerTwo: string | null }) => void;
 }
 
 interface Ball {
@@ -32,8 +32,8 @@ interface Ball {
 interface GameState {
 	sessionId: string | null;
 	gameStatus: number;
-	playerOne: { id: string | null; name: string | null; socket: any; position: { x: number; y: number }; score: number; left:number; right:number; top:number; bottom:number, size: { x: number; y: number } };
-	playerTwo: { id: string | null; name: string | null; socket: any; position: { x: number; y: number }; score: number; left:number; right:number; top:number; bottom:number, size: { x: number; y: number } };
+	playerOne: { id: string | null; socket: any; position: { x: number; y: number }; score: number; left:number; right:number; top:number; bottom:number, size: { x: number; y: number } };
+	playerTwo: { id: string | null; socket: any; position: { x: number; y: number }; score: number; left:number; right:number; top:number; bottom:number, size: { x: number; y: number } };
 	ball: Ball;
 	timestamps: { start: Date | null; end: Date | null };
 	dt: number;
@@ -241,8 +241,8 @@ const Game: FC<GameProps> = (props) => {
 		let gameState:GameState = {
 			sessionId: null,
 			gameStatus: 0,
-			playerOne: { id: null, name: null, socket: null, position: { x: 0, y: 0 }, score: 0, left: 0, right: 0, top: 0, bottom: 0, size: { x: 0, y: 0 } },
-			playerTwo: { id: null, name: null, socket: null, position: { x: 0, y: 0 }, score: 0, left: 0, right: 0, top: 0, bottom: 0, size: { x: 0, y: 0 } },
+			playerOne: { id: null, socket: null, position: { x: 0, y: 0 }, score: 0, left: 0, right: 0, top: 0, bottom: 0, size: { x: 0, y: 0 } },
+			playerTwo: { id: null, socket: null, position: { x: 0, y: 0 }, score: 0, left: 0, right: 0, top: 0, bottom: 0, size: { x: 0, y: 0 } },
 			ball: { position: { x: 0, y: 0 }, vel: { x: 0, y: 0, len: 0 }, left: 0, right: 0, top: 0, bottom: 0, size: { x: 0, y: 0 } },
 			timestamps: { start: new Date(), end: null },
 			dt: 0,
@@ -256,8 +256,6 @@ const Game: FC<GameProps> = (props) => {
 		gameState.playerTwo.id = gameSession.playerTwo;
 		gameState.playerOne.socket = gameSession.playerOne;
 		gameState.playerTwo.socket = gameSession.playerTwo;
-		gameState.playerOne.name = gameSession.playerOneName;
-		gameState.playerTwo.name = gameSession.playerTwoName;
 
 
 		useEffect(() => {
@@ -330,8 +328,6 @@ const Game: FC<GameProps> = (props) => {
 				player: null,
 				playerOne: null,
 				playerTwo: null,
-				playerOneName: null,
-				playerTwoName: null
 			});
 			updateGameStatus(0);
 			pong = null;

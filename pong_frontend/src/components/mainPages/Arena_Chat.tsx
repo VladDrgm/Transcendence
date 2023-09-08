@@ -300,15 +300,11 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID, friend_set}) => {
 			player: number | null;
 			playerOne: string | null;
 			playerTwo: string | null;
-			playerOneName: string | null;
-			playerTwoName: string | null;
 		}>({
 			sessionId: null,
 			player: null,
 			playerOne: null,
 			playerTwo: null,
-			playerOneName: null,
-			playerTwoName: null
 		});
 		
 		let invitation: Invitation | null = {
@@ -328,7 +324,7 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID, friend_set}) => {
 				console.log("Invite player " + invitation!.playerTwoSocket + " action triggered");
 				//console.log("Joining que emitting from Arena Chat, socketRef is: " + socketRef.current.id);
 				alert("Invite/Accept To Game Session");
-				socketRef.current.emit('invite player', invitation, user?.userID);
+				socketRef.current.emit('invite player', invitation);
 			}
 			else if (socketRef.current?.id && gameSession.playerOne && !gameSession.playerTwo) {
 				alert("You are already in a queue as Player 1.");
@@ -345,7 +341,7 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID, friend_set}) => {
 			if (socketRef.current?.id && !gameSession.playerOne && !gameSession.playerTwo) {
 				console.log("Joining que emitting from Arena Chat, socketRef is: " + socketRef.current.id);
 				alert("Joining Sessions Queue");
-				socketRef.current.emit('join queue', user?.userID);
+				socketRef.current.emit('join queue');
 			}
 			else if (socketRef.current?.id && gameSession.playerOne && !gameSession.playerTwo) {
 				alert("You are already in the que as Player 1. Wait for Player 2.");
