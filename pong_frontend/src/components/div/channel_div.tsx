@@ -3,6 +3,7 @@ import { Channel, Channel_Div_props } from '../../interfaces/channel.interface';
 import  {ChatProps} from '../../interfaces/channel.interface';
 import {renderRooms, fetchPublicChannels, fetchPrivateChannels} from './channel_utils';
 import { popUpJoinPrivateChannel, popUpCreateChannel } from './channel_popups';
+import { chatButtonsStyle } from '../mainPages/ChatPageStyles';
 
 // export var fetchAddress = 'http://localhost:3000/';
 // export var fetchAddress = process.env.REACT_APP_SRVR_URL || 'http://localhost:3000/';
@@ -42,8 +43,8 @@ const Channel_Div: React.FC<Channel_Div_props> = (props) => {
     }
     return (
         <div>
-            <h3>Channels</h3>
-            <button onClick={() => popUpCreateChannel(props.ChatProps, props.updateChannellist(), props.addChatRoom)}>
+            {/* <h3>Channels</h3> */}
+            <button style={chatButtonsStyle} onClick={() => popUpCreateChannel(props.ChatProps, props.updateChannellist(), props.addChatRoom)}>
 			Create Channel
 		    </button>
             {/* <button onClick={() => popUpJoinPrivateChannel(props)}>

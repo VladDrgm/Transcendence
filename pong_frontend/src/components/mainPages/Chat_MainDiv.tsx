@@ -1,6 +1,6 @@
 import React, { FC, useEffect, useState, useCallback, useMemo, useReducer, useRef} from "react";
 import { renderUser} from "../div/chat_utils"; 
-import {ChatContainerStyle, BodyContainer, ChannelInfo, ChatPanel, Container, SideBar, TextBox } from "./ChatPageStyles";
+import {ChatContainerStyle, BodyContainer, ChannelInfo, ChatPanel, SideBar, TextBox } from "./ChatPageStyles";
 import Channel_Div from '../div/channel_div';
 import { ChannelAdmin_Buttons_Div, ChannelOwner_Buttons_Div } from "../div/channel_buttons_div";
 import ChatBody_Div from "../div/channel_ChatBody_div";

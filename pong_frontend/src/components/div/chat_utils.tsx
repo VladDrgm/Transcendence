@@ -77,9 +77,9 @@ export function renderUser(user: User, props: ChatProps, toggleChat: any) {
 
 export function renderMessages(message: Message, index: number) {
     return (
-    <div key={index}>
-        <h3>{message.sender}</h3>
+        <div key={index} style={{ display: 'flex', alignItems: 'center'}}>
+        <h3 style={{ marginRight: '5px' }}> {message.sender}:</h3>
         <p>{message.content}</p>
-    </div>
+        </div>
     );
 }

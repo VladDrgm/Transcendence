@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { chatButtonsStyle } from "./ChatPageStyles";
 
 interface FormProps {
 	joinQueue: () => void;
@@ -51,9 +52,9 @@ const GameForm: React.FC<FormProps> = (props) => {
 	return (
 		<>
 			<form>
-				<button onClick={props.joinQueue}>Join Game</button>
-				<button onClick={handleStartGameClick}>Start the Game!</button>
-				<button onClick={handleQuitGameClick}>Quit Game/Session</button>
+				<button style={chatButtonsStyle} onClick={props.joinQueue}>Join Game</button>
+				<button style={chatButtonsStyle} onClick={handleStartGameClick}>Start the Game!</button>
+				<button style={chatButtonsStyle} onClick={handleQuitGameClick}>Quit Game/Session</button>
 			</form>
 			<p>Controls: W - UP, S - Down, R - Change Map, P - PowerUp: Increase Gravity!</p>
 		</>
