@@ -15,7 +15,7 @@ import {
 } from '@nestjs/common';
 import { UserService } from './userservice';
 import { User } from 'src/models/orm_models/user.entity';
-import { UserDTO } from './userDTO';
+import { UserDTO, UserListDto } from './userDTO';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UploadAvatarDto } from './UploadAvatarDTO';
 import { UserAuthDTO } from '../authProtectorService/authProtector';
@@ -27,11 +27,11 @@ export class UserController {
 
   @Get()
   @ApiOperation({ summary: 'Get all users' })
-  async findAll(): Promise<UserDTO[]> {
+  async findAll(): Promise<UserListDto[]> {
     var users = await this.userService.findAll();
     var result = [];
     for (const user of users) {
-      result.push(UserDTO.fromEntity(user));
+      result.push(UserListDto.fromEntity(user));
     }
 
 

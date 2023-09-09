@@ -54,3 +54,23 @@ export class UserDTO {
   }
 }
 
+export class UserListDto {
+    @ApiProperty({ example: 'Username', description: 'The username of the user' })
+    @IsString()
+    @IsNotEmpty()
+    username: string;
+
+    @ApiProperty({ example: '3', description: 'The ID of the User'})
+    @IsNumber()
+    @IsNotEmpty()
+    id: number;
+
+
+    static fromEntity(user: User): UserListDto {
+        const userListDto = new UserListDto();
+        userListDto.username = user.username;
+        userListDto.id = user.userID;
+        return userListDto;
+    }
+}
+
