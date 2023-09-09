@@ -1,19 +1,42 @@
 import { fetchAddress } from "../components/div/channel_div";
 
-export async function getFriendProfile(userID:number, friendID:number)  {
-	const response = await fetch(fetchAddress + 'friend/' + userID + '/friend/' + friendID);
+export async function getFriendProfile(userID:number, friendID:number, intra:string | undefined, token:string | undefined)  {
+	const response = await fetch(fetchAddress + 'friend/' + userID + '/friend/' + friendID, {
+		method: "GET",
+		headers: {
+		  "Content-Type": "application/json"
+		},
+		body:  JSON.stringify({
+			"intraUsername" : intra,
+			"passwordHash" : token
+		})
+	  });
     const json = (await response.json());
 	return json;
   }
 
-export async function getPrivateProfile(userID:number | undefined)  {
-  const response = await fetch(fetchAddress + 'user/user/' + userID);
+export async function getPrivateProfile(userID:number | undefined, intra:string | undefined, token:string | undefined)  {
+  const response = await fetch(fetchAddress + 'user/user/' + userID, {
+		method: "GET",
+		headers: {
+		  "Content-Type": "application/json"
+		},
+		body:  JSON.stringify({
+			"intraUsername" : intra,
+			"passwordHash" : token
+		})
+	  });
   const json = (await response.json());
 return json;
 }
 
 export async function getPublicProfile(userID:number)  {
-  const response = await fetch(fetchAddress + 'user/user/' + userID);
+  const response = await fetch(fetchAddress + 'user/user/' + userID, {
+		method: "GET",
+		headers: {
+		  "Content-Type": "application/json"
+		}
+	  });
     const json = (await response.json());
   return json;
   }

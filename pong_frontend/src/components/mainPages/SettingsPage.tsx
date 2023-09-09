@@ -42,7 +42,10 @@ const SettingsPage: React.FC<SettingsPageProps> = ({onLogout}) => {
 		let updatedUser =  null;
 		try {
 			// Call the API function and get the updated user object
-			updatedUser = await updateUsernameApi(userID, newUsername);
+			updatedUser = await updateUsernameApi(userID, newUsername, user?.intraUsername, user?.passwordHash);
+	  
+			// Update the state and local storage with the updated user object
+			
 	  
 			// Clear the input field after successful update
 			setNewUsername('');
@@ -63,7 +66,7 @@ const SettingsPage: React.FC<SettingsPageProps> = ({onLogout}) => {
 
 			const formData = new FormData();
 			formData.append('file', newAvatar);
-			await updateAvatarApi(userID, formData);
+			await updateAvatarApi(userID, formData, user?.intraUsername, user?.passwordHash);
 			setSelectedImage(fetchAddress.slice(0, -1) + user?.avatarPath?.slice(1));
 			setImageBorder('3px solid rgba(254, 8, 16, 1)');
 			setNewAvatar(null);
@@ -71,7 +74,8 @@ const SettingsPage: React.FC<SettingsPageProps> = ({onLogout}) => {
 			setError('Error updating avatar. Try again!');
 			return;
 		}
-		const myProf = await getPrivateProfile(userID);
+		const myProf = await getPrivateProfile(userID, user?.intraUsername, user?.passwordHash);
+		// setUpdatedUser(myProf);
 		setUser(myProf);
 		localStorage.setItem('user', JSON.stringify(myProf));
 	};

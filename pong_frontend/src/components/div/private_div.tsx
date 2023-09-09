@@ -16,7 +16,7 @@ const Private_Div: React.FC<PrivateDivProps> = ({userID}) => {
 
   	const getData = async () => {
     	try {
-      		const myProf = await getPrivateProfile(userID);
+      		const myProf = await getPrivateProfile(userID, user?.intraUsername, user?.passwordHash);
       		setUser(myProf);
     	} catch (error) {
       		console.error(error);

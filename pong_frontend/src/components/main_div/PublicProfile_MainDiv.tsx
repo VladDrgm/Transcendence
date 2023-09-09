@@ -1,9 +1,10 @@
 import React, {useState, useEffect} from 'react';
 // import {main_div_mode_t} from '../MainDivSelector';
 import Public_Div from '../div/public_div';
-import FriendList from '../div/friend_list_div';
+
 import Friend_Div from '../div/friend_div';
 import { checkFriend, addFriend, removeFriend } from '../../api/friend_list.api';
+import { useUserContext } from '../context/UserContext';
 
 
 export enum ProfileType_t
@@ -24,10 +25,10 @@ const PublicProfile_MainDiv: React.FC<ProfileProps> = ({userID, friend_ID}) => {
     const set_ownProfile = () => {
         // mode_set(main_div_mode_t.PROFILE);
       };
-
+      const { user, setUser } = useUserContext();
       const isFriend = async () => {
         try{
-          const ret = await checkFriend(userID, friend_ID);
+          const ret = await checkFriend(userID, friend_ID, user?.intraUsername, user?.passwordHash);
           if (ret)
           {
             set_type(ProfileType_t.FRIEND_PROFILE);
@@ -45,7 +46,7 @@ const PublicProfile_MainDiv: React.FC<ProfileProps> = ({userID, friend_ID}) => {
 
       const addFriend_private = async () => {
         try{
-          await addFriend(userID, friend_ID);
+          await addFriend(userID, friend_ID, user?.intraUsername, user?.passwordHash);
           isFriend();
         }
         catch (error) {
@@ -56,7 +57,7 @@ const PublicProfile_MainDiv: React.FC<ProfileProps> = ({userID, friend_ID}) => {
 
       const removeFriend_private = async () => {
         try{
-          await removeFriend(userID, friend_ID);
+          await removeFriend(userID, friend_ID, user?.intraUsername, user?.passwordHash);
           isFriend();
         }
         catch (error) {

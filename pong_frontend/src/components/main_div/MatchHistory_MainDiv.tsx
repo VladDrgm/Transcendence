@@ -75,7 +75,7 @@ const MatchHistory_MainDiv: React.FC<MatchHistoryProps>  = ({userID, friend_set}
   }
 
   const findUsername = (idToFind: number): string | undefined => {
-    return usernameList.find((user) => user.userID === idToFind)?.username;
+    return usernameList.find((user) => user.id === idToFind)?.username;
   };
 
   // Split the data into multiple pages
