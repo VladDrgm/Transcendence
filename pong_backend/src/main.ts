@@ -449,7 +449,7 @@ async function bootstrap() {
 
     socket.on(
       'invite player',
-      (invitation: Invitation, userID: number | undefined) => {
+      (invitation: Invitation, userID: number | undefined, username: string) => {
         console.log('Invite Player was triggered');
         let existingSession: any;
 
@@ -493,12 +493,12 @@ async function bootstrap() {
             sessionIdInput: newSessionId,
             playerInput: 1,
           });
-          
+
           invitation.sessionId = newSessionId;
           // SEND INVITE TO PLAYER TWO
           socket
             .to(invitation.playerTwoSocket)
-            .emit('invitation alert playertwo', invitation);
+            .emit('invitation alert playertwo', { invitation, username});
 
           playerQueue.push(socket.id);
           console.log('Game sessions after joining as Player 1:', gameSessions);
