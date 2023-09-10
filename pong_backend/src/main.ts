@@ -4,6 +4,8 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common/pipes/validation.pipe';
 import { Socket, Server } from 'socket.io';
 
+// const fetch = require('node-fetch');
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
@@ -110,6 +112,8 @@ async function bootstrap() {
     invite: boolean;
     playerIds: string[];
     gameState?: GameState;
+    clientIdPO: number | null;
+    clientIdPT: number | null;
   }[] = [];
   let playerQueue: string[] = [];
 
@@ -351,7 +355,7 @@ async function bootstrap() {
       };
     }
 
-    socket.on('join queue', () => {
+    socket.on('join queue', (userID: number | undefined) => {
       console.log('Join Queue was triggered');
       let availableSession: any;
 
@@ -382,6 +386,8 @@ async function bootstrap() {
           invite: false,
           playerIds: [socket.id],
           gameState: newGameState,
+          clientIdPO: userID,
+          clientIdPT: null,
         });
 
         // Notify the player that they are Player 1 and provide the new sessionId
@@ -398,6 +404,7 @@ async function bootstrap() {
         // If an available session exists, join as Player 2
         console.log('Joining as Player 2 has been triggered');
         availableSession.playerIds.push(socket.id);
+        availableSession.clientIdPT = userID;
 
         // Notify both players (Player 1 and Player 2) about the session details
         gameSessions.forEach((session) => {
@@ -440,103 +447,110 @@ async function bootstrap() {
       }
     });
 
-    socket.on('invite player', (invitation: Invitation) => {
-      console.log('Invite Player was triggered');
-      let existingSession: any;
+    socket.on(
+      'invite player',
+      (invitation: Invitation, userID: number | undefined) => {
+        console.log('Invite Player was triggered');
+        let existingSession: any;
 
-      // check if player is already in a queue or session
-      if (gameSessions.length !== 0) {
-        const playerIsInSession = gameSessions.some((session) =>
-          session.playerIds.includes(socket.id),
-        );
-        if (playerIsInSession) {
-          return;
-        }
-      }
-
-      // Check if a session exists with the given invitation.sessionId
-      if (invitation.sessionId) {
-        existingSession = gameSessions.find(
-          (session) => session.sessionId === invitation.sessionId,
-        );
-      }
-
-      if (!existingSession) {
-        // If no existing session, create a new session and join as Player 1
-        console.log('New session created for Player 1');
-        const newSessionId = generateNewSessionId();
-        const newGameState = createNewGameState(); // Initialize the gameState
-        gameSessions.push({
-          sessionId: newSessionId,
-          invite: true,
-          playerIds: [socket.id],
-          gameState: newGameState,
-        });
-
-        // Notify the player that they are Player 1 and provide the new sessionId
-        console.log(
-          'Emitting joining answer back to Player 1, for socketID ' + socket.id,
-        );
-        socket.emit('session joined', {
-          sessionIdInput: newSessionId,
-          playerInput: 1,
-        });
-
-        // SEND INVITE TO PLAYER TWO
-        socket
-          .to(invitation.playerTwoSocket)
-          .emit('invitation alert playertwo', invitation);
-
-        playerQueue.push(socket.id);
-        console.log('Game sessions after joining as Player 1:', gameSessions);
-      } else {
-        // If the existing session exists, join as Player 2
-        console.log('Joining as Player 2 has been triggered');
-        existingSession.playerIds.push(socket.id);
-
-        // Notify both players (Player 1 and Player 2) about the session details
-        gameSessions.forEach((session) => {
-          if (session.sessionId === existingSession.sessionId) {
-            // Notify Player 2
-            console.log(
-              'Notifying Player 2 that he is player 2, his socketId is ' +
-                socket.id,
-            );
-            socket.emit('session joined', {
-              sessionIdInput: session.sessionId,
-              playerInput: 2,
-            });
-
-            // Notify each player of opponents
-            const playerOneSocketId = session.playerIds[0];
-            console.log(
-              'Notifying Player 1 of Player 2 joining, playerOneSocket being ' +
-                playerOneSocketId,
-            );
-            socket.to(playerOneSocketId).emit('session joined', {
-              sessionIdInput: session.sessionId,
-              player: 1,
-            });
-
-            console.log(
-              'Notifying Player 2 - ' +
-                socket.id +
-                ' who is player 1 - ' +
-                playerOneSocketId,
-            );
-            socket.emit('opponent joined', playerOneSocketId);
-            console.log(
-              'Notifying player 1 - ' +
-                playerOneSocketId +
-                ' who is Player 2 - ' +
-                socket.id,
-            );
-            io.to(playerOneSocketId).emit('opponent joined', socket.id);
+        // check if player is already in a queue or session
+        if (gameSessions.length !== 0) {
+          const playerIsInSession = gameSessions.some((session) =>
+            session.playerIds.includes(socket.id),
+          );
+          if (playerIsInSession) {
+            return;
           }
-        });
-        console.log('Game sessions after joining as Player 2:', gameSessions);
-      }
-    });
+        }
+
+        // Check if a session exists with the given invitation.sessionId
+        if (invitation.sessionId) {
+          existingSession = gameSessions.find(
+            (session) => session.sessionId === invitation.sessionId,
+          );
+        }
+
+        if (!existingSession) {
+          // If no existing session, create a new session and join as Player 1
+          console.log('New session created for Player 1');
+          const newSessionId = generateNewSessionId();
+          const newGameState = createNewGameState(); // Initialize the gameState
+          gameSessions.push({
+            sessionId: newSessionId,
+            invite: true,
+            playerIds: [socket.id],
+            gameState: newGameState,
+            clientIdPO: userID,
+            clientIdPT: null,
+          });
+
+          // Notify the player that they are Player 1 and provide the new sessionId
+          console.log(
+            'Emitting joining answer back to Player 1, for socketID ' +
+              socket.id,
+          );
+          socket.emit('session joined', {
+            sessionIdInput: newSessionId,
+            playerInput: 1,
+          });
+
+          // SEND INVITE TO PLAYER TWO
+          socket
+            .to(invitation.playerTwoSocket)
+            .emit('invitation alert playertwo', invitation);
+
+          playerQueue.push(socket.id);
+          console.log('Game sessions after joining as Player 1:', gameSessions);
+        } else {
+          // If the existing session exists, join as Player 2
+          console.log('Joining as Player 2 has been triggered');
+          existingSession.playerIds.push(socket.id);
+          existingSession.clientIdPT = userID;
+
+          // Notify both players (Player 1 and Player 2) about the session details
+          gameSessions.forEach((session) => {
+            if (session.sessionId === existingSession.sessionId) {
+              // Notify Player 2
+              console.log(
+                'Notifying Player 2 that he is player 2, his socketId is ' +
+                  socket.id,
+              );
+              socket.emit('session joined', {
+                sessionIdInput: session.sessionId,
+                playerInput: 2,
+              });
+
+              // Notify each player of opponents
+              const playerOneSocketId = session.playerIds[0];
+              console.log(
+                'Notifying Player 1 of Player 2 joining, playerOneSocket being ' +
+                  playerOneSocketId,
+              );
+              socket.to(playerOneSocketId).emit('session joined', {
+                sessionIdInput: session.sessionId,
+                player: 1,
+              });
+
+              console.log(
+                'Notifying Player 2 - ' +
+                  socket.id +
+                  ' who is player 1 - ' +
+                  playerOneSocketId,
+              );
+              socket.emit('opponent joined', playerOneSocketId);
+              console.log(
+                'Notifying player 1 - ' +
+                  playerOneSocketId +
+                  ' who is Player 2 - ' +
+                  socket.id,
+              );
+              io.to(playerOneSocketId).emit('opponent joined', socket.id);
+            }
+          });
+          console.log('Game sessions after joining as Player 2:', gameSessions);
+        }
+      },
+    );
 
     /* STARTING GAME */
 
@@ -554,14 +568,16 @@ async function bootstrap() {
           // The session already has two players, the game can start
           io.to(session.playerIds[0]).emit('game starting', sessionId, 1);
           io.to(session.playerIds[1]).emit('game starting', sessionId, 2);
-        } else {
-          // There's only one player in the session, wait for the second player
-          socket.to(session.playerIds[0]).emit('waiting for opponent');
         }
-      } else {
-        // Invalid sessionId, notify the sender that the game session doesn't exist
-        socket.to(socket.id).emit('invalid session');
+        /* else {
+				// There's only one player in the session, wait for the second player
+				socket.to(session.playerIds[0]).emit('waiting for opponent');
+			} */
       }
+      /* else {
+			// Invalid sessionId, notify the sender that the game session doesn't exist
+			socket.to(socket.id).emit('invalid session');
+		} */
     });
 
     socket.on('remove invite', (invitation: Invitation) => {
@@ -850,7 +866,7 @@ async function bootstrap() {
         } else {
           matchResults.GameType = 'normal';
         }
-        matchResults.Player1Id = 999;
+        matchResults.Player1Id = session.clientIdPO;
         if (session.gameState.disconnected === true) {
           matchResults.Player1Points =
             session.gameState.scoreOnDisconnect.playerOne;
@@ -862,7 +878,7 @@ async function bootstrap() {
           matchResults.Player2Points = session.gameState.playerTwo.score;
           matchResults.WinningCondition = 'game won';
         }
-        matchResults.Player2Id = 666;
+        matchResults.Player2Id = session.clientIdPT;
         if (matchResults.Player1Points === matchResults.Player2Points) {
           matchResults.WinnerId = 0;
         } else if (matchResults.Player1Points > matchResults.Player2Points) {
@@ -870,12 +886,14 @@ async function bootstrap() {
         } else {
           matchResults.WinnerId = matchResults.Player2Id;
         }
-        matchResults.WinnerId = 666;
         matchResults.endTime = new Date();
         matchResults.startTime = session.gameState.timestamps.start;
 
         console.log('matchResults is: ' + JSON.stringify(matchResults) + '/n');
-        fetch(`${process.env.URI}/match`, {
+
+        console.log('the URI is: ' + process.env.URI);
+
+        fetch(process.env.URI + 'match', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -900,34 +918,56 @@ async function bootstrap() {
     });
 
     socket.on('updateMovementPlayerOne', (key: any) => {
-      const movementSpeed = 20;
+      const movementSpeed = 15;
+      const canvasTopBoundary = 0;
+      const canvasBottomBoundary = canvasHeight;
 
       // Find the game session with the specified sessionId
       const session = gameSessions.find((session) =>
         session.playerIds.includes(socket.id),
       );
 
+      let newPosition = session.gameState.playerOne.position.y;
+
       if (key === 'w' || key === 'W') {
-        session.gameState.playerOne.position.y -= movementSpeed;
+        newPosition -= movementSpeed;
       }
       if (key === 's' || key === 'S') {
-        session.gameState.playerOne.position.y += movementSpeed;
+        newPosition += movementSpeed;
+      }
+
+      if (
+        newPosition - 30 >= canvasTopBoundary &&
+        newPosition + 30 <= canvasBottomBoundary
+      ) {
+        session.gameState.playerOne.position.y = newPosition;
       }
     });
 
     socket.on('updateMovementPlayerTwo', (key: any) => {
-      const movementSpeed = 20;
+      const movementSpeed = 15;
+      const canvasTopBoundary = 0;
+      const canvasBottomBoundary = canvasHeight;
 
       // Find the game session with the specified sessionId
       const session = gameSessions.find((session) =>
         session.playerIds.includes(socket.id),
       );
 
+      let newPosition = session.gameState.playerTwo.position.y;
+
       if (key === 'w' || key === 'W') {
-        session.gameState.playerTwo.position.y -= movementSpeed;
+        newPosition -= movementSpeed;
       }
       if (key === 's' || key === 'S') {
-        session.gameState.playerTwo.position.y += movementSpeed;
+        newPosition += movementSpeed;
+      }
+
+      if (
+        newPosition - 30 >= canvasTopBoundary &&
+        newPosition + 30 <= canvasBottomBoundary
+      ) {
+        session.gameState.playerTwo.position.y = newPosition;
       }
     });
 

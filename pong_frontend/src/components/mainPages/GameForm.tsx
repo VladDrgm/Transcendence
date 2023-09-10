@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { chatButtonsStyle } from "./ChatPageStyles";
 
 interface FormProps {
 	joinQueue: () => void;
@@ -12,7 +13,7 @@ interface FormProps {
 }
 
 const GameForm: React.FC<FormProps> = (props) => {
-	const [gameSession, setGameSession] = useState<{
+	/* const [gameSession, setGameSession] = useState<{
 		playerOne: string | null;
 		playerTwo: string | null;
 	}>(props.gameSession);
@@ -20,7 +21,7 @@ const GameForm: React.FC<FormProps> = (props) => {
 	useEffect(() => {
 		// Update the gameSession state whenever props.gameSession changes
 		setGameSession(props.gameSession);
-	}, [props.gameSession]);
+	}, [props.gameSession]); */
 
 	const handleStartGameClick = (event: React.MouseEvent<HTMLButtonElement>) => {
 		event.preventDefault();
@@ -51,9 +52,9 @@ const GameForm: React.FC<FormProps> = (props) => {
 	return (
 		<>
 			<form>
-				<button onClick={props.joinQueue}>Join Game</button>
-				<button onClick={handleStartGameClick}>Start the Game!</button>
-				<button onClick={handleQuitGameClick}>Quit Game/Session</button>
+				<button style={chatButtonsStyle} onClick={props.joinQueue}>Join Game</button>
+				<button style={chatButtonsStyle} onClick={handleStartGameClick}>Start the Game!</button>
+				<button style={chatButtonsStyle} onClick={handleQuitGameClick}>Quit Game/Session</button>
 			</form>
 			<p>Controls: W - UP, S - Down, R - Change Map, P - PowerUp: Increase Gravity!</p>
 		</>
