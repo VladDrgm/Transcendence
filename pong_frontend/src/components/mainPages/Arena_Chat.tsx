@@ -175,9 +175,14 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID, friend_set}) => {
 					chatMainDivRef.current.handleunblockedUserSocket(targetId, username);
 			});
 			socketRef.current.on('invitation alert playertwo', (data) => {
+				console.log("invite angekommen");
 				const sessionId = data.sessionId;
 				const playerOneSocket = data.playerOneSocket;
 				const playerTwoSocket = data.playerTwoSocket;
+				console.log("sessionid", sessionId);
+				console.log("playerowns", playerOneSocket);
+				console.log("playertwoSo", playerTwoSocket);
+
 				handlePlayerTwoInvite(sessionId, playerOneSocket, playerTwoSocket);
 			});
 		}
@@ -269,10 +274,12 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID, friend_set}) => {
 
 
 	function handlePlayerTwoInvite(sessionId: string, playerOneSocket: string, playerTwoSocket: string) {
-		// getting user name of playerOne
-		// const playerOneName = allUsersRef.current.find(user => user.socketId === playerOneSocket);
+		invitation.sessionId = sessionId;
+		invitation.playerOneSocket = playerOneSocket;
+		invitation.playerTwoSocket = playerTwoSocket;
 		const playerOneName = allUsers.find(user => user.socketId === playerOneSocket);
-
+		console.log("allUser", allUsers);
+		console.log("playerOneName", playerOneName);
 		//allerting playerTwo to join the game
 		if (playerOneName) {
 			alert("You have been invited to a game by User: " + playerOneName 
@@ -281,6 +288,7 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID, friend_set}) => {
 	}
 
 	function invitePlayer(invitationNew: Invitation) {
+		console.log("invitationNew", invitationNew);
 		if (invitation?.sessionId === null) {
 			invitation.playerOneSocket = invitationNew?.playerOneSocket;
 			invitation.playerTwoSocket = invitationNew?.playerTwoSocket;

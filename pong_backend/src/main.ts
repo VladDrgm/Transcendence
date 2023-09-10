@@ -493,7 +493,8 @@ async function bootstrap() {
             sessionIdInput: newSessionId,
             playerInput: 1,
           });
-
+          
+          invitation.sessionId = newSessionId;
           // SEND INVITE TO PLAYER TWO
           socket
             .to(invitation.playerTwoSocket)

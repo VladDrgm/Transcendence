@@ -651,11 +651,16 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 
 
 	function inviteButton(invitedPlayer: User | undefined){
+		console.log("user", props.user);
+		console.log("invitaion", props.invitation);
 		if( invitedPlayer) {
 			if (!props.invitation.playerOneSocket ||
 				 !props.invitation.playerTwoSocket ||
 				 !props.invitation.sessionId) {
-				props.invitation.playerOneSocket = props.user!.socketId;
+				const userOne = props.allUsers.find(user => user.username === props.user?.username)
+				props.invitation.playerOneSocket = userOne!.socketId;
+				
+				// props.invitation.playerOneSocket = props.user!.socketId;
 				props.invitation.playerTwoSocket = invitedPlayer.socketId;
 			}
 			props.invitePlayer(props.invitation);
