@@ -401,14 +401,17 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID, friend_set}) => {
 					alert("Player 2 joined your session");
 				}
 			});
+
+			socketRef.current?.on('clean queue', cleanQueue);
+
 			return () => {
 				socketRef.current?.off('session joined');
 				socketRef.current?.off('opponent joined');
+				socketRef.current?.off('clean queue', cleanQueue);
 			};
 		}, [gameSession]);
-		
-		socketRef.current?.on('clean queue', cleanQueue);
-		
+
+
 		function cleanQueue() {
 			gameSession.playerOne = null;
 			gameSession.playerTwo = null;
