@@ -19,6 +19,9 @@ import { UserDTO, UserListDto } from './userDTO';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UploadAvatarDto } from './UploadAvatarDTO';
 import { UserAuthDTO } from '../authProtectorService/authProtector';
+import { GenerateTotpDTO } from '../auth/dto/generate-totp.dto';
+import { VerifyTotpDTO } from '../auth/dto/verify-totp.dto';
+import { VerifyTotpResponseDTO } from '../auth/dto/verify-totp-response.dto';
 
 @ApiTags('User')
 @Controller('user')
@@ -42,6 +45,20 @@ export class UserController {
   @ApiOperation({ summary: 'Create a new user' })
   async create(@Body() user: User): Promise<User> {
     return this.userService.create(user);
+  }
+
+  @Get('generate-totp')
+  @ApiOperation({ summary: 'Generating token for 2FA' })
+  async generateTOTP() {
+    return this.userService.generateTOTP();
+  }
+
+  @Post('/verify-totp')
+  verifyTOTP(@Body() verifyTotpDto: VerifyTotpDTO) {
+    const { tempSecret, token } = verifyTotpDto;
+    return {
+      isValid: this.userService.verifyTOTP(tempSecret, token)
+    };
   }
 
   @Delete(':id')

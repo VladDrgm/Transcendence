@@ -52,6 +52,46 @@ export const userLoginAPI = async (username: string, password: string): Promise<
 	}
 };
 
+export const generateToken = async () => {
+	try {
+		const response = await fetch(fetchAddress + 'generate-totp', {
+			method:"GET",
+			headers: {
+				"Content-Type": "application/json"
+			},
+		});
+
+		if (response.ok) {
+			// Store token in variabel and return it
+		} else {
+			throw new Error(response.statusText);
+		}
+		// MAKE API call 
+	} catch (error) {
+		throw new Error('Error generating token. Try again!');
+	}
+};
+
+export const verifyToken = async () => {
+	try {
+		// MAKE API call 
+		const response = await fetch(fetchAddress + 'verify-totp', {
+			method:"POST",
+			headers: {
+				"Content-Type": "application/json"
+			},
+		});
+
+		if (response.ok) {
+			// Store token in variabel and return it
+		} else {
+			throw new Error(response.statusText);
+		}
+	} catch (error) {
+		throw new Error('Error verifying token. Try again!');
+	}
+};
+
 export async function login(userID:number)  { //placeholder for real login
     // const response = await fetch(process.env.REACT_APP_BASE_URL + 'user/login/' + userID, {credentials: 'include',});
     // const response = await fetch('http://localhost:3000/user/login/' + userID, {credentials: 'include',});
