@@ -68,6 +68,12 @@ export class User {
   })
   passwordHash: string;
 
+  @Column({
+    type: 'boolean',
+    default: false
+  })
+  isTFAEnabled: boolean;
+
   @OneToMany(() => Blocked, (block) => block.user)
   blocked: User[];
 
