@@ -1,6 +1,6 @@
 import React, { FC, useEffect, useState, useCallback} from "react";
 import { renderUser} from "../div/chat_utils"; 
-import {ChatContainerStyle, BodyContainer, ChannelInfo, ChatPanel, SideBarStyle } from "./ChatPageStyles";
+import {ChatContainerStyle, BodyContainer, ChannelInfo, ChatPanel, SideBarStyle, chatButtonsStyle } from "./ChatPageStyles";
 import Channel_Div from '../div/channel_div';
 import { ChannelAdmin_Buttons_Div, ChannelOwner_Buttons_Div } from "../div/channel_buttons_div";
 import ChatBody_Div from "../div/channel_ChatBody_div";
@@ -651,11 +651,16 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 
 
 	function inviteButton(invitedPlayer: User | undefined){
+		console.log("user", props.user);
+		console.log("invitaion", props.invitation);
 		if( invitedPlayer) {
 			if (!props.invitation.playerOneSocket ||
 				 !props.invitation.playerTwoSocket ||
 				 !props.invitation.sessionId) {
-				props.invitation.playerOneSocket = props.user!.socketId;
+				const userOne = props.allUsers.find(user => user.username === props.user?.username)
+				props.invitation.playerOneSocket = userOne!.socketId;
+				
+				// props.invitation.playerOneSocket = props.user!.socketId;
 				props.invitation.playerTwoSocket = invitedPlayer.socketId;
 			}
 			props.invitePlayer(props.invitation);
@@ -715,23 +720,34 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 				) : (
 				  <ChannelInfo>
 
-					<div onClick={() => openFriend(currentChat.chatName.toString())}>
+					<div 
+					onClick={() => openFriend(currentChat.chatName.toString())}>
     					{currentChat.chatName}
   					</div>
 					<div>
-					<button onClick={() => inviteButton(props.allUsers.find(user => user.username === currentChat.chatName))}>
+					<button 
+					style={chatButtonsStyle}
+					onClick={() => inviteButton(props.allUsers.find(user => user.username === currentChat.chatName))}>
 						Invite for a Game
 					</button>
-					<button onClick={() => addBlockedUser(currentChat.chatName)}>
+					<button 
+					style={chatButtonsStyle}
+					onClick={() => addBlockedUser(currentChat.chatName)}>
 						Block User
 					</button>
-					<button onClick={() => unblockUser(currentChat.chatName)}>
+					<button 
+					style={chatButtonsStyle}
+					onClick={() => unblockUser(currentChat.chatName)}>
 						Unblock User
 					</button>
-					<button onClick={() => addFriend(currentChat.chatName)}>
+					<button 
+					style={chatButtonsStyle}
+					onClick={() => addFriend(currentChat.chatName)}>
 						Add as Friend
 					</button>
-					<button onClick={() => removeFriend(currentChat.chatName)}>
+					<button 
+					style={chatButtonsStyle}
+					onClick={() => removeFriend(currentChat.chatName)}>
 						Remove Friend
 					</button>
 					</div>

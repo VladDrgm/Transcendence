@@ -23,7 +23,7 @@ export const ChatContainerStyle: Properties = {
 	fontSize: '12px',
 	alignSelf: 'center',
 	borderRadius: '6px',
-	border: '2px solid',
+	border: '2px solid white',
 	color:'black',
 	// marginTop: '100px',
 	marginBottom: '0px',
@@ -52,6 +52,7 @@ export const SideBarStyle: Properties = {
 	height: '100vh',
   	width: '15%',
   	borderRight: '1px solid white',
+	color: 'white'
 }
 
 // export const SideBar = styled.div`
@@ -63,7 +64,7 @@ export const SideBarStyle: Properties = {
 
 export const ChatPanel = styled.div`
   height: 100vh;
-  width: 80%;
+  width: 85%;
   display: flex;
   flex-direction: column;
 `;
