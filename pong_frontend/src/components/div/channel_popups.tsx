@@ -159,12 +159,12 @@ export function changePasswordPopUp(
     changePwButton.addEventListener('click', function() {
         var newPw = newPwInput.value;
         if (newPw === ""){
-            deleteChannelPassword(props?.userID, currentChat.Channel.ChannelId)
+            deleteChannelPassword(props?.userID, currentChat.Channel.ChannelId, props.user!)
             .then(() => {
                 changeChatRoom(currentChat.chatName);
                 console.log("Password removed");
                 if (currentChat.Channel.Type === "private"){
-                    putChannelType(props?.userID, currentChat.Channel.ChannelId)
+                    putChannelType(props?.userID, currentChat.Channel.ChannelId, props.user!)
                     .then(() => {
                         changeChatRoom(currentChat.chatName);
                         updateChannellist();
@@ -179,11 +179,11 @@ export function changePasswordPopUp(
                 console.error("Error removing Password:", error);
             });
         }
-        putChannelPassword(props.userID, currentChat.Channel.ChannelId, newPw)
+        putChannelPassword(props.userID, currentChat.Channel.ChannelId, newPw, props.user!)
         .then(() => {
             console.log("Password updated");
             if (currentChat.Channel.Type === "public"){
-                putChannelType(props.userID, currentChat.Channel.ChannelId)
+                putChannelType(props.userID, currentChat.Channel.ChannelId, props.user!)
                 .then(() => {
                     changeChatRoom(currentChat.chatName);
                     updateChannellist();
@@ -204,11 +204,11 @@ export function changePasswordPopUp(
     var removePwButton = document.createElement('button');
     removePwButton.innerHTML = 'Remove Password';
     removePwButton.addEventListener('click', function() {
-        deleteChannelPassword(props.userID, currentChat.Channel.ChannelId)
+        deleteChannelPassword(props.userID, currentChat.Channel.ChannelId, props.user!)
         .then(() => {
             console.log("Password removed");
             if (currentChat.Channel.Type === "private"){
-                putChannelType(props.userID, currentChat.Channel.ChannelId)
+                putChannelType(props.userID, currentChat.Channel.ChannelId, props.user!)
                 .then(() => {
                     changeChatRoom(currentChat.chatName);
                     updateChannellist();
@@ -237,7 +237,7 @@ export function popUpCreateChannel(
     ){
     // Open Window
     var popup = window.open('', '_blank', 'width=500,height=300,menubar=no,toolbar=no');
-
+    
     const channelNameLabel = document.createElement("h1");
     channelNameLabel.textContent = "Channel Name:";
     popup?.document.body.appendChild(channelNameLabel);
@@ -258,6 +258,7 @@ export function popUpCreateChannel(
 
     var createButton = document.createElement('button');
     createButton.innerHTML = 'Create';
+    createButton.classList.add("createButton_style"); 
     createButton.addEventListener('click', function() {
         var channelName = channelNameInput.value;
         var password = channelPasswordInput.value;

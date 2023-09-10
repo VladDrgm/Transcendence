@@ -1,4 +1,6 @@
+import { json } from "stream/consumers";
 import { fetchAddress } from "../../components/div/channel_div";
+import { User } from "../../interfaces/user.interface";
 
 //to be tested
 export async function getAdmins(channelId: number): Promise<any[]>{
@@ -48,23 +50,41 @@ export async function getAdmins(channelId: number): Promise<any[]>{
   }
   
   
-  export function deleteAdmin(channelId: number, userId: number) {
-    fetch(fetchAddress + 'channel/' + userId + '/' + channelId + '/admin', {method: 'DELETE'})
+  export function deleteAdmin(channelId: number, user: User, targetId: number) {
+    const ChannelData = {
+      "intraUsername": user?.intraUsername,
+      "passwordHash": user?.passwordHash
+    }
+    const jsonData = JSON.stringify(ChannelData);
+    const requestOptions = {
+      method: 'DELETE',
+      headers: { 
+        "Accept": "*/*",
+        "Container-Type": "application/json"
+      },
+      body: jsonData
+    };
+    return fetch(fetchAddress + 'channel/' + user.userID + '/' + targetId + '/' + channelId + '/admin', requestOptions)
       .then(response => response.json())
-      .then(data => {console.log("Admin UserId: " + userId + " of channelId: " + channelId + "deleted:", data);})
+      .then(data => {console.log("Admin UserId: " + targetId + " of channelId: " + channelId + "deleted:", data);})
       .catch(error => {console.log("Error deleting Admin:", error);})
   }
   
-  export function postAdmin(channelId: number, targetId: number, userId: number | undefined) {
+  export function postAdmin(channelId: number, targetId: number, user: User | null) {
+    const ChannelData = {
+      "intraUsername": user?.intraUsername,
+      "passwordHash": user?.passwordHash
+    }
+    const jsonData = JSON.stringify(ChannelData);
     const requestOptions = {
       method: 'POST',
       headers: { 
         "Accept": "*/*",
         "Container-Type": "application/json"
       },
-      body:  ''
+      body: jsonData
     };
-    return fetch(fetchAddress + 'channel/' + userId +'/' + targetId + '/' + channelId, requestOptions)
+    return fetch(fetchAddress + 'channel/' + user?.userID +'/' + targetId + '/' + channelId, requestOptions)
       .then((response) =>{
         if (response.ok){
           return response.json();
@@ -72,9 +92,9 @@ export async function getAdmins(channelId: number): Promise<any[]>{
           throw new Error("Failed to add channel admin");
         }
       })
-      .then(data => {console.log("Channel Admin with UserId :" + userId +" added:", data);})
+      .then(data => {console.log("Channel Admin with UserId :" + user?.userID +" added:", data);})
       .catch(error => {
-        console.error("Error adding ChannelAdmin with UserId :" + userId +":", error);
+        console.error("Error adding ChannelAdmin with UserId :" + user?.userID+":", error);
         throw error;
       });
   }

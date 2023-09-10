@@ -50,7 +50,9 @@ const ChatBody_Div: React.FC<ChatBodyProps> = ({
           <Messages>{messages?.map(renderMessages)}</Messages>);
       } else {
         return (
-          <button onClick={() => popUpJoinPrivateChannel(props, currentChat, joinPrivateRoom)}>
+          <button 
+          style={chatButtonsStyle}
+          onClick={() => popUpJoinPrivateChannel(props, currentChat, joinPrivateRoom)}>
             Join private Channel {currentChat.chatName}
           </button>);
       }
@@ -65,7 +67,9 @@ const ChatBody_Div: React.FC<ChatBodyProps> = ({
         );
       } else {
         return (
-          <button style={chatButtonsStyle} onClick={() => joinRoom(currentChat.chatName)}>
+          <button 
+          style={chatButtonsStyle}
+          onClick={() => joinRoom(currentChat.chatName)}>
             Join {currentChat.chatName}
           </button>
         );

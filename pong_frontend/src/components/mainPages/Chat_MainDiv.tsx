@@ -1,6 +1,6 @@
-import React, { FC, useEffect, useState, useCallback, useMemo, useReducer, useRef} from "react";
+import React, { FC, useEffect, useState, useCallback} from "react";
 import { renderUser} from "../div/chat_utils"; 
-import {ChatContainerStyle, BodyContainer, ChannelInfo, ChatPanel, SideBar, TextBox } from "./ChatPageStyles";
+import {ChatContainerStyle, BodyContainer, ChannelInfo, ChatPanel, SideBarStyle } from "./ChatPageStyles";
 import Channel_Div from '../div/channel_div';
 import { ChannelAdmin_Buttons_Div, ChannelOwner_Buttons_Div } from "../div/channel_buttons_div";
 import ChatBody_Div from "../div/channel_ChatBody_div";
@@ -12,7 +12,7 @@ import { fetchAllChannels, getUserIDByUserName } from "../div/channel_utils";
 import { User } from "../../interfaces/user.interface";
 import { deleteBlockedUser, deleteChannelUser, deleteFriend, getBlockedUser, getChannelBlockedUser, getChannelUser, getIsFriend, getMutedStatus, postBlockedUser, postChannelUser, postFriend, postPrivateChannelUser } from "../../api/channel/channel_user.api";
 import { CurrentChat, WritableDraft, getChannelFromChannellist, initialMessagesState, initializeMessagesState } from "./Arena_Chat";
-import immer, { Draft } from "immer";
+import immer from "immer";
 import { getIsAdmin, postAdmin } from "../../api/channel/channel_admin.api";
 
 const Chat_MainDiv: FC<ChatProps> = (props) => {
@@ -235,7 +235,7 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 			if (!currentChat.isResolved){
 				return;
 			}
-			getChannelUser(props.user?.userID, currentChat.Channel.ChannelId)
+			getChannelUser(props.user?.userID, currentChat.Channel.ChannelId, props.user?.userID, props.user!)
 				.then((user) => {
 					setCurrentRoles((prevState) => ( {
 						...prevState,
@@ -338,7 +338,7 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 	// FUNKTIONS FOR CHATROOMS
 	function joinRoom(chatName: ChatName) {
 		console.log("Posting User ", props.user?.userID, " in Channel:", currentChat.Channel.ChannelId);
-		postChannelUser(props.user?.userID, currentChat.Channel.ChannelId)
+		postChannelUser(props.user?.userID, currentChat.Channel.ChannelId, props.user!)
 			.then(()=> {
 			props.socketRef.current?.emit("join room", chatName, (messages: any) => roomJoinCallback(messages, chatName))
 			setCurrentRoles((prevState) => ({
@@ -352,7 +352,7 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 
 	function leaveRoom(chatName: ChatName) {
 		console.log("Removing User ", props.user?.userID, " from Channel:", currentChat.Channel.ChannelId);
-		deleteChannelUser(props.user?.userID, currentChat.Channel.ChannelId);
+		deleteChannelUser(props.user?.userID, currentChat.Channel.ChannelId, props.user!);
 	}
 
 	function roomJoinCallback(incomingMessages: any, room: keyof typeof messages) {
@@ -383,7 +383,7 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 
 
 	function joinPrivateRoom(chatName: ChatName, password: string) {
-		postPrivateChannelUser(props.user?.userID, currentChat.Channel.ChannelId, password)
+		postPrivateChannelUser(props.user?.userID, currentChat.Channel.ChannelId, password, props.user!)
 		.then(() => {
 				console.log("Posting User ", props.user?.userID, " in Channel:", currentChat.Channel.ChannelId);
 				props.socketRef.current?.emit("join room", chatName, (messages: any) => roomJoinCallback(messages, chatName));
@@ -431,7 +431,7 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 					alert("User could not be found. Please try another Username.");
 					return;
 				}
-				postAdmin(currentChat.Channel.ChannelId, Number(targetID), props.user?.userID)
+				postAdmin(currentChat.Channel.ChannelId, Number(targetID), props.user)
 				.then(() => {
 					console.log('Admin added with UserId:', targetID);
 					const data = {
@@ -458,7 +458,7 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 				alert("User could not be found. Please try another Username.");
 				return;
 			}
-			postBlockedUser(props.user?.userID, Number(targetID))
+			postBlockedUser(Number(targetID), props.user!, currentChat.Channel.ChannelId)
 			.then(() => {
 				console.log('User blocked with UserId:', targetID);
 				// const data = {
@@ -486,7 +486,7 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 					alert("User could not be found. Please try another Username.");
 					return;
 				}
-				deleteBlockedUser(props.user?.userID, Number(targetID))
+				deleteBlockedUser(Number(targetID), currentChat.Channel.ChannelId, props.user!)
 				.then(() => {
 					console.log('User unblocked with UserId:', targetID);
 					unblockUserSocket(Number(targetID), props.user?.username);
@@ -701,7 +701,7 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 			  <div>Loading Channel Name...</div> // Show a loading spinner or placeholder
 			) : (
 			  <ChannelInfo>
-				{currentChat.chatName}
+				<h3>{currentChat.chatName}</h3>
 				{/* <button onClick={() => props.leaveRoom(props.currentChat.chatName)}>
 						Leave {props.currentChat.chatName}
 					</button> */}
@@ -820,13 +820,13 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 				alert("User could not be found. Please try another Username.");
 				return;
 			}
-			getIsFriend(props.user?.userID, Number(targetID))
+			getIsFriend(props.user?.userID, Number(targetID), props.user!)
 			.then((result) => {
 				if (result){
 					alert("User is already a Friend");
 					return;
 				}
-				postFriend(Number(targetID), props.user?.userID)
+				postFriend(Number(targetID), props.user?.userID, props.user!)
 				.then(() => {
 					console.log('Friend added with UserId:', targetID);
 					alert("User "+ targetName + " added as Friend");
@@ -855,13 +855,13 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 				alert("User could not be found. Please try another Username.");
 				return;
 			}
-			getIsFriend(props.user?.userID, Number(targetID))
+			getIsFriend(props.user?.userID, Number(targetID), props.user!)
 			.then((result) => {
 				if (!result){
 					alert("User is not a Friend");
 					return;
 				}
-				deleteFriend(Number(targetID), props.user?.userID)
+				deleteFriend(Number(targetID), props.user?.userID, props.user!)
 				.then(() => {
 					console.log('Friend removed with UserId:', targetID);
 					alert("User "+ targetName + " removed as Friend");
@@ -920,7 +920,7 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 
 	return (
 		<div style={ChatContainerStyle}>
-			<SideBar>
+			<div style={SideBarStyle}>
 				<Channel_Div 
 				ChatProps={props} 
 				allChannels={allChannels} 
@@ -929,7 +929,7 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 				addChatRoom={addChatRoom}/>
 				<h3>All Users</h3>
 				{props.allUsers.map((user) => renderUser(user, props, toggleChat))}
-			</SideBar>
+			</div>
 			<ChatPanel>
 				<ChannelInfo>
 					{channelpanel}
