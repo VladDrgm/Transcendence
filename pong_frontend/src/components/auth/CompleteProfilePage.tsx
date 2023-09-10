@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { userSignupAPI } from '../../api/authAPI';
 import { useUserContext } from '../context/UserContext';
 import * as styles from './CompleteProfilePageStyles';
-import imageAssetUploadAvatar from './assets/uploadAvatar.png';
+import imageAssetUploadAvatar from '../assets/uploadAvatar.png';
 import { User } from '../../interfaces/user.interface';
 import { updateAvatarApi, updateUsernameApi } from '../../api/userApi';
 import { fetchAddress } from '../div/channel_div';
@@ -62,7 +62,7 @@ const CompleteProfilePage: React.FC<CompleteProfilePageProps> = ({/* Use Complet
 			blockedChannels: [],
 			channels: [],
 			socketId: '',
-			is2FAEnabled: false,
+			is2FAEnabled: enable2FA,
 		};
 
 		try {
@@ -141,9 +141,9 @@ const CompleteProfilePage: React.FC<CompleteProfilePageProps> = ({/* Use Complet
 				style={styles.formFieldStyle}
 			/>
 			</form>
-			<div style={{ display: 'flex', alignItems: 'center', marginBottom: '20px' }}>
-    			<span style={{ marginRight: '10px' }}>Enable 2 Factor Authentication</span>
+			<div style={styles.tfaCheckboxStyle}>
     			<input type="checkbox" onChange={e => setEnable2FA(e.target.checked)} />
+    			<span style={styles.tfaLabelStyle}>Enable 2 Factor Authentication</span>
 			</div>
 			<button style={styles.completeProfileButtonStyle} onClick={handleCreatingUser}>Complete profile</button>
 			<ErrorPopup message={error} onClose={() => setError(null)} />
