@@ -237,7 +237,7 @@ export function popUpCreateChannel(
     ){
     // Open Window
     var popup = window.open('', '_blank', 'width=500,height=300,menubar=no,toolbar=no');
-
+    
     const channelNameLabel = document.createElement("h1");
     channelNameLabel.textContent = "Channel Name:";
     popup?.document.body.appendChild(channelNameLabel);
@@ -258,6 +258,7 @@ export function popUpCreateChannel(
 
     var createButton = document.createElement('button');
     createButton.innerHTML = 'Create';
+    createButton.classList.add("createButton_style"); 
     createButton.addEventListener('click', function() {
         var channelName = channelNameInput.value;
         var password = channelPasswordInput.value;
