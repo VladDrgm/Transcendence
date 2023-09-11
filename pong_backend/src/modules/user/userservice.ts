@@ -50,7 +50,7 @@ export class UserService {
           passwordHash: newHash,
         });
       }
-      return isUserInDb;
+      return user;
     }
 
     user.username = user.username.toLowerCase();
