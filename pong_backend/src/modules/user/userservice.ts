@@ -46,11 +46,11 @@ export class UserService {
         const newHash = await this.passwordService.hashPassword(
           Date.now().toString(),
         );
-        this.userRepository.update(isUserInDb.userID, {
+        await this.userRepository.update(isUserInDb.userID, {
           passwordHash: newHash,
         });
+        return user;
       }
-      return user;
     }
 
     user.username = user.username.toLowerCase();
