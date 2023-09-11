@@ -114,11 +114,8 @@ export class UserService {
     }
 
     if (parseInt(process.env.FEATURE_FLAG) === 1) {
-      const user = await this.userRepository.findOneBy({
-        intraUsername: loggedUser.intraUsername,
-      });
       const authPass = await this.authProtector.protectorCheck(
-        user.passwordHash,
+        loggedUser.passwordHash,
         callerId,
       );
       if (!authPass) {
