@@ -21,11 +21,7 @@ async function bootstrap() {
 
   // app.use(session(sessionOptions));
   app.enableCors({
-    origin: [
-      'https://transcendence-one.vercel.app',
-      'http://localhost:3001',
-      // Add other origins here as needed
-    ],
+    origin: process.env.FRONTEND_URL,
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
   });
@@ -453,11 +449,7 @@ async function bootstrap() {
 
     socket.on(
       'invite player',
-      (
-        invitation: Invitation,
-        userID: number | undefined,
-        username: string,
-      ) => {
+      (invitation: Invitation, userID: number | undefined, username: string) => {
         console.log('Invite Player was triggered');
         let existingSession: any;
 
@@ -506,7 +498,7 @@ async function bootstrap() {
           // SEND INVITE TO PLAYER TWO
           socket
             .to(invitation.playerTwoSocket)
-            .emit('invitation alert playertwo', { invitation, username });
+            .emit('invitation alert playertwo', { invitation, username});
 
           playerQueue.push(socket.id);
           console.log('Game sessions after joining as Player 1:', gameSessions);
