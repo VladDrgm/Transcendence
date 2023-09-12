@@ -14,6 +14,7 @@ import {
   AuthProtector,
   UserAuthDTO,
 } from '../authProtectorService/authProtector';
+import { find } from 'rxjs';
 
 @Injectable()
 export class UserService {
@@ -49,7 +50,7 @@ export class UserService {
         await this.userRepository.update(isUserInDb.userID, {
           passwordHash: newHash,
         });
-        return user;
+        return await this.findOne(user.userID);
       }
     }
 
