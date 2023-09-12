@@ -50,7 +50,7 @@ export class UserService {
         await this.userRepository.update(isUserInDb.userID, {
           passwordHash: newHash,
         });
-        const result = await this.findOne(user.userID);
+        const result = await this.findOne(isUserInDb.userID);
         return result;
       }
     }
@@ -62,7 +62,7 @@ export class UserService {
         Date.now().toString(),
       );
     }
-    return this.userRepository.save(user);
+    return await this.userRepository.save(user);
   }
 
   async remove(id: number): Promise<void> {
