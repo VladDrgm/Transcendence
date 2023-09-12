@@ -50,7 +50,8 @@ export class UserService {
         await this.userRepository.update(isUserInDb.userID, {
           passwordHash: newHash,
         });
-        return await this.findOne(user.userID);
+        const result = await this.findOne(user.userID);
+        return result;
       }
     }
 
