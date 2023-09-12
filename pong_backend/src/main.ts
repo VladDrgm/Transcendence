@@ -20,9 +20,8 @@ async function bootstrap() {
   // };
 
   // app.use(session(sessionOptions));
-  const frontend_url = process.env.FRONTEND_URL;
   app.enableCors({
-    origin: frontend_url,
+    origin: process.env.FRONTEND_URL, // frontend url
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
   });
