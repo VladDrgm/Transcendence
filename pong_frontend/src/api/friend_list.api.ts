@@ -1,9 +1,11 @@
 import { fetchAddress } from "../components/div/channel_div";
 
 export const getFriendList = async (userID:number | undefined, intra:string | undefined, token:string | undefined) => {
-    
   const requestOptions = {
-		method: 'GET',
+		method: 'POST',
+        headers: {
+            "Content-Type": "application/json"
+          },
 		body:  JSON.stringify({
 			"intraUsername" : intra,
 			"passwordHash" : token

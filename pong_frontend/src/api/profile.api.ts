@@ -20,11 +20,7 @@ export async function getPrivateProfile(userID:number | undefined, intra:string 
 		method: "GET",
 		headers: {
 		  "Content-Type": "application/json"
-		},
-		body:  JSON.stringify({
-			"intraUsername" : intra,
-			"passwordHash" : token
-		})
+		}
 	  });
   const json = (await response.json());
 return json;
