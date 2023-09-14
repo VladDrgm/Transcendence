@@ -103,4 +103,4 @@ export async function login(userID:number)  { //placeholder for real login
     }
     console.log(response.text());
     console.log("Tried to log in as " + userID);
-    }
+}
