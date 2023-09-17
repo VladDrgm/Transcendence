@@ -14,7 +14,7 @@ export class AuthController {
 
   @Post('/verify-totp')
   async verifyTOTP(@Body() verifyTotpDto: VerifyTotpDTO): Promise<VerifyTotpResponseDTO> {
-    const isValid = await this.authService.verifyTOTP(verifyTotpDto.tempSecret, verifyTotpDto.token);
+    const isValid = await this.authService.verifyTOTP(verifyTotpDto.secret, verifyTotpDto.token);
         return { isValid };
   }
 }

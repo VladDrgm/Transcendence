@@ -55,9 +55,9 @@ export class UserController {
 
   @Post('/verify-totp')
   verifyTOTP(@Body() verifyTotpDto: VerifyTotpDTO) {
-    const { tempSecret, token } = verifyTotpDto;
+    const { secret, token } = verifyTotpDto;
     return {
-      isValid: this.userService.verifyTOTP(tempSecret, token)
+      isValid: this.userService.verifyTOTP(secret, token)
     };
   }
 

@@ -1,31 +1,38 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { fetchAddress } from '../div/channel_div';
 import { api } from '../../api/utils/api';
 
 const TwoFactorSetup: React.FC = () => {
   const [qrCode, setQrCode] = useState<string>('');
-  const [tempSecret, setTempSecret] = useState<string>('');
+  const [secret, setSecret] = useState<string>('');
   const [token, setToken] = useState<string>('');
   const [isVerified, setIsVerified] = useState<boolean | null>(null);
 
+  useEffect(() => {
+	console.log("The secret from useEffect is", secret);
+	setSecret(secret); // This will log the updated value
+  }, [secret]);
+
   const generateTOTP = async () => {
-    // const res = await generateTOTP(); //await axios.get(fetchAddress + 'auth/generate-totp'); // Ensure this endpoint points to your Nest.js server
-    // setQrCode(res.data.dataURL);
-    // setTempSecret(res.data.tempSecret);
 	try {
 		const res = await api('user/generate-totp');
+		console.log("Received from server:", res); 
 		setQrCode(res.dataURL);
-		setTempSecret(res.tempSecret);
+		console.log("The pre set current secret is", { secret });
+		console.log("The server secret is", res.tempSecret );
+		await setSecret(res.tempSecret);
+		console.log("The new secret is", { secret });
 	  } catch (error) {
 		console.error('Error generating TOTP:', error);
 	  }
   };
 
   const verifyToken = async () => {
-    // const res = await axios.post(fetchAddress + 'auth/verify-totp', { tempSecret, token });
-    // setIsVerified(res.data.isValid);
 	try {
-		const res = await api('user/verify-totp', { body: { tempSecret, token } });
+		console.log("The secret is", { secret });
+		const res = await api('user/verify-totp', { body: { secret, token } });
+		console.log("Sending to server:", { secret, token });
+		console.log("The secret is", res);
 		setIsVerified(res.isValid);
 	  } catch (error) {
 		console.error('Error verifying token:', error);
