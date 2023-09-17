@@ -14,6 +14,7 @@ import {
   AuthProtector,
   UserAuthDTO,
 } from '../authProtectorService/authProtector';
+import { find } from 'rxjs';
 
 @Injectable()
 export class UserService {
@@ -46,11 +47,12 @@ export class UserService {
         const newHash = await this.passwordService.hashPassword(
           Date.now().toString(),
         );
-        this.userRepository.update(isUserInDb.userID, {
+        await this.userRepository.update(isUserInDb.userID, {
           passwordHash: newHash,
         });
+        const result = await this.findOne(isUserInDb.userID);
+        return result;
       }
-      return isUserInDb;
     }
 
     user.username = user.username.toLowerCase();
@@ -60,7 +62,7 @@ export class UserService {
         Date.now().toString(),
       );
     }
-    return this.userRepository.save(user);
+    return await this.userRepository.save(user);
   }
 
   async remove(id: number): Promise<void> {
@@ -114,11 +116,8 @@ export class UserService {
     }
 
     if (parseInt(process.env.FEATURE_FLAG) === 1) {
-      const user = await this.userRepository.findOneBy({
-        intraUsername: loggedUser.intraUsername,
-      });
       const authPass = await this.authProtector.protectorCheck(
-        user.passwordHash,
+        loggedUser.passwordHash,
         callerId,
       );
       if (!authPass) {

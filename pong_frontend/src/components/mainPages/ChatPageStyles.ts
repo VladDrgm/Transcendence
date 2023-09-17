@@ -11,28 +11,20 @@ export const exampleStyle: Properties = {
 	fontSize: '40px',
 }
 
-export const Container = styled.div`
-  height: 100vh;
-  width: 50%;
-  display: flex;
-  border: '2px solid',
-	color:'white',
-`;
-
 export const ChatContainerStyle: Properties = {
-	backgroundColor: 'gray',
+	backgroundColor: 'lightgray',
 	position: 'static',
 	flexGrow: '1',
 	// height: '100%',
-  	width: '50vw',
+  	width: '70vw',
   	display: 'flex',
 	flexDirection: 'row',
 	fontFamily: 'Shlop',
 	fontSize: '12px',
 	alignSelf: 'center',
 	borderRadius: '6px',
-	border: '2px solid',
-	color:'white',
+	border: '2px solid white',
+	color:'black',
 	// marginTop: '100px',
 	marginBottom: '0px',
 }
@@ -42,8 +34,8 @@ export const ArenaStyle: Properties = {
 	position: 'static',
 	flexGrow: '1',
 	// height: '100vh',
-  	width: '100%',
-  	display: 'flex',
+	width: '100vw',
+	display: 'flex',
 	flexDirection: 'row',
 	fontFamily: 'Shlop',
 	fontSize: '12px',
@@ -55,15 +47,24 @@ export const ArenaStyle: Properties = {
 	marginBottom: '0px',
 }
 
-export const SideBar = styled.div`
-  height: 100%;
-  width: 15%;
-  border-right: 1px solid black;
-`;
+export const SideBarStyle: Properties = {
+	backgroundColor: 'black',
+	height: '100vh',
+  	width: '15%',
+  	borderRight: '1px solid white',
+	color: 'white'
+}
+
+// export const SideBar = styled.div`
+//   height: 100%;
+//   width: 15%;
+//   border-right: 1px solid black;
+//   backgroundColor: 'blue';
+// `;
 
 export const ChatPanel = styled.div`
   height: 100vh;
-  width: 80%;
+  width: 85%;
   display: flex;
   flex-direction: column;
 `;
@@ -74,12 +75,12 @@ export const BodyContainer = styled.div`
   overflow: scroll;
 //   display: flex;
 
-  border-bottom: 1px solid black;
+//   border-bottom: 1px solid black;
 `;
 
 export const TextBox = styled.textarea`
   height: 10%;
-  width: 105%;
+  width: 99%;
 `;
 
 export const ChannelInfo = styled.div`
@@ -104,14 +105,16 @@ export const chatButtonsStyle: Properties = {
 	// height:'40px',
 	// width:'160px',
 	fontFamily: 'Shlop',
-	fontSize: '12px',
+	fontSize: '13px',
 	alignSelf: 'center',
 	borderRadius: '6px',
 	border: '2px solid',
 	color:'white',
-	// marginTop: '100px',
-	marginBottom: '0px',
+	marginTop: '15px',
+	marginBottom: '1px',
+	padding:'5px',
 }
+
 
 /* Usage:
 import * as styles from './ChatPageStyles';

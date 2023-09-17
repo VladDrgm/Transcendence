@@ -1,5 +1,7 @@
+import { json } from "stream/consumers";
 import { fetchAddress } from "../../components/div/channel_div";
 import { IUser } from "../../interfaces/interface";
+import { User } from "../../interfaces/user.interface";
 
 
 export async function getUsers():  Promise<IUser[]> {
@@ -22,12 +24,25 @@ export async function getChannelUsers(channelId: number):  Promise<any[]> {
 }
 
 //to be tested
-export async function getChannelUser(userId: number | undefined, channelId: number): Promise<any> {
-  if (userId === undefined || channelId === undefined) {
+export async function getChannelUser(callerId: number | undefined, channelId: number, targetId: number | undefined, user: User): Promise<any> {
+  if (callerId === undefined || channelId === undefined || targetId === undefined) {
     throw new Error("Invalid userId or channelId");
   }
   try {
-    const response = await fetch(fetchAddress + 'channel/' + userId + '/' + channelId + '/user', {credentials: "include",});
+    const ChannelData = {
+      "intraUsername": user?.intraUsername,
+      "passwordHash": user?.passwordHash
+    }
+    const jsonData = JSON.stringify(ChannelData);  
+    const requestOptions = {
+        method: 'GET',
+        headers: { 
+          "Accept": "*/*",
+          "Content-Type": "application/json"
+        },
+        body: jsonData
+      };
+    const response = await fetch(fetchAddress + 'channel/' + callerId + '/' + targetId + '/' + channelId + '/user', requestOptions);
 
     if (!response.ok) {
       console.log("User is not Member of Channel");
@@ -42,14 +57,27 @@ export async function getChannelUser(userId: number | undefined, channelId: numb
     }
     return json;
   } catch (error) {
-      console.log("Error returning ChannelUser "+ userId + " of Channel "+ channelId + ":", error);
+      console.log("Error returning ChannelUser "+ callerId + " of Channel "+ channelId + ":", error);
       return false;
   } 
 }
 
 
-export function deleteChannelUser(userId: number | undefined, channelId: number) {
-    fetch(fetchAddress + 'channel/' + userId + '/' + channelId + '/user', {method: 'DELETE'})
+export function deleteChannelUser(userId: number | undefined, channelId: number, user: User) {
+  const ChannelData = {
+    "intraUsername": user?.intraUsername,
+    "passwordHash": user?.passwordHash
+  }
+  const jsonData = JSON.stringify(ChannelData);  
+  const requestOptions = {
+      method: 'DELETE',
+      headers: { 
+        "Accept": "*/*",
+        "Content-Type": "application/json"
+      },
+      body: jsonData
+    };  
+  fetch(fetchAddress + 'channel/' + userId + '/' + channelId + '/user', requestOptions)
       .then(response => response.json())
       .then(data => {console.log("ChannelUser" + userId + " deleted:", data);})
       .catch(error => {console.log("Error deleting ChannelUser " + userId + ":" , error);})
@@ -57,14 +85,19 @@ export function deleteChannelUser(userId: number | undefined, channelId: number)
   
   //to be tested
   // adds a user to the Channeluser table of a channel with channelId
-export async function postChannelUser(userId: number | undefined, channelId: number): Promise<void> {
-    const requestOptions = {
+export async function postChannelUser(userId: number | undefined, channelId: number, user: User): Promise<void> {
+  const ChannelData = {
+    "intraUsername": user?.intraUsername,
+    "passwordHash": user?.passwordHash
+  }
+  const jsonData = JSON.stringify(ChannelData);  
+  const requestOptions = {
       method: 'POST',
       headers: { 
         "Accept": "*/*",
         "Content-Type": "application/json"
       },
-      body:  ''
+      body: jsonData
     };
     fetch(fetchAddress + 'channel/' + userId +'/' + channelId, requestOptions)
       .then(response => {
@@ -81,16 +114,21 @@ export async function postChannelUser(userId: number | undefined, channelId: num
       });
 }
 
-export function postPrivateChannelUser(userId: number | undefined, channelId: number, password: string) {
+export function postPrivateChannelUser(userId: number | undefined, channelId: number, password: string, user: User) {
+  const ChannelData = {
+    "intraUsername": user?.intraUsername,
+    "passwordHash": user?.passwordHash
+  }
+  const jsonData = JSON.stringify(ChannelData);
   const requestOptions = {
     method: 'POST',
     headers: { 
       "Accept": "*/*",
       "Content-Type": "application/json"
     },
-    body:  ''
+    body: jsonData
   };
-  return fetch(fetchAddress + 'channel/' + userId +'/' + channelId + '/' + password +  '/password', requestOptions)
+  return fetch(fetchAddress + 'channel/' + userId +'/' + userId + '/' + channelId + '/' + password +  '/password', requestOptions)
   .then(response => {
     if (response.ok) {
       console.log("ChannelUser with UserId :" + userId +" added to private Channel");
@@ -116,15 +154,41 @@ export async function getChannelUsersBlocked(channelId: number):  Promise<any[]>
   
   //to be tested
   // fetches a specific User with UserId from blcoked list of Channel with ChannelId
-export async function getChannelUserBlocked(userId: number, channelId: number): Promise<any> {
-    const response = await fetch(fetchAddress + 'channel/' + userId + '/' + channelId + '/blocked', {credentials: "include",});
+export async function getChannelUserBlocked(callerId: number, targetId: number, channelId: number, user : User): Promise<any> {
+  const ChannelData = {
+    "intraUsername": user?.intraUsername,
+    "passwordHash": user?.passwordHash
+  }
+  const jsonData = JSON.stringify(ChannelData);  
+  const requestOptions = {
+      method: 'GET',
+      headers: { 
+        "Accept": "*/*",
+        "Container-Type": "application/json"
+      },
+      body: jsonData
+    };    
+  const response = await fetch(fetchAddress + 'channel/' + callerId + '/' + targetId + '/' + channelId + '/blocked', requestOptions);
     const json = await response.json();
     return json; 
 }
   
   //works fine
-export function deleteChannelUserBlocked(callerId: number | undefined, targetId: number, channelId: number) {
-    return fetch(fetchAddress + 'channel/' + targetId + '/' + channelId + '/blocked', {method: 'DELETE'})
+export function deleteChannelUserBlocked(callerId: number | undefined, targetId: number, channelId: number, user: User) {
+  const ChannelData = {
+    "intraUsername": user?.intraUsername,
+    "passwordHash": user?.passwordHash
+  }
+  const jsonData = JSON.stringify(ChannelData);  
+  const requestOptions = {
+      method: 'DELETE',
+      headers: { 
+        "Accept": "*/*",
+        "Container-Type": "application/json"
+      },
+      body: jsonData
+    };  
+  return fetch(fetchAddress + 'channel/' + targetId + '/' + channelId + '/blocked', requestOptions)
     .then(response => {
       if (!response.ok) {
         throw new Error('Request failed with status: ' + response.status);
@@ -141,14 +205,19 @@ export function deleteChannelUserBlocked(callerId: number | undefined, targetId:
 }
   
   //to be tested
-export function postChannelUserBlocked(callerId: number | undefined, targetId: number, channelId: number) {
-    const requestOptions = {
+export function postChannelUserBlocked(callerId: number | undefined, targetId: number, channelId: number, user: User) {
+  const ChannelData = {
+    "intraUsername": user?.intraUsername,
+    "passwordHash": user?.passwordHash
+  }
+  const jsonData = JSON.stringify(ChannelData);  
+  const requestOptions = {
       method: 'POST',
       headers: { 
         "Accept": "*/*",
         "Container-Type": "application/json"
       },
-      body:  ''
+      body: jsonData
     };
     // /channel/{callerId}/{targetId}/{channelId}/blocked
     return fetch(fetchAddress + 'channel/' + callerId +'/' + targetId + '/' + channelId + '/blocked', requestOptions)
@@ -196,15 +265,20 @@ export async function getChannelBlockedUser(userId: number | undefined, channelI
 }
 
 
-export function postMuteUser(callerId: number | undefined, targetId: number, channelId: number, duration: number) {
+export function postMuteUser(callerId: number | undefined, targetId: number, channelId: number, duration: number, user: User) {
   return new Promise<void>((resolve, reject) => {
+    const ChannelData = {
+      "intraUsername": user?.intraUsername,
+      "passwordHash": user?.passwordHash
+    }
+    const jsonData = JSON.stringify(ChannelData);   
     const requestOptions = {
         method: 'POST',
         headers: { 
           "Accept": "*/*",
           "Container-Type": "application/json"
         },
-        body:  ''
+        body:  jsonData
       };
       fetch(fetchAddress + 'channel/' + callerId +'/' + targetId + '/' + channelId + '/mute/' + duration, requestOptions)
       .then(response => {
@@ -288,8 +362,21 @@ export async function getIsMuted(channelId: number, callerId: number, targetId: 
 
 //Password protection
 
-export function deleteChannelPassword(userId: number| undefined, channelId: number) {
-  return fetch(fetchAddress + 'channel/' + userId + '/' + channelId + '/password', {method: 'DELETE'})
+export function deleteChannelPassword(userId: number| undefined, channelId: number, user: User) {
+  const ChannelData = {
+    "intraUsername": user?.intraUsername,
+    "passwordHash": user?.passwordHash
+  }
+  const jsonData = JSON.stringify(ChannelData);  
+  const requestOptions = {
+      method: 'DELETE',
+      headers: { 
+        "Accept": "*/*",
+        "Container-Type": "application/json"
+      },
+      body: jsonData
+    };  
+  return fetch(fetchAddress + 'channel/' + userId + '/' + channelId + '/password', requestOptions)
   .then(response => {
     if (response.ok) {
       console.log("ChannelPassword of Channel" + channelId + " was deleted");
@@ -303,14 +390,19 @@ export function deleteChannelPassword(userId: number| undefined, channelId: numb
 }
 
 
-export function putChannelPassword(userId: number | undefined, channelId: number, password: string) {
+export function putChannelPassword(userId: number | undefined, channelId: number, password: string, user: User) {
+  const ChannelData = {
+    "intraUsername": user?.intraUsername,
+    "passwordHash": user?.passwordHash
+  }
+  const jsonData = JSON.stringify(ChannelData);   
   const requestOptions = {
     method: 'PUT',
     headers: { 
       "Accept": "*/*",
       "Content-Type": "application/json"
     },
-    body:  ''
+    body: jsonData
   };
   return fetch(fetchAddress + 'channel/' + userId +'/' + channelId + '/' + password +  '/password', requestOptions)
   .then(response => {
@@ -327,14 +419,19 @@ export function putChannelPassword(userId: number | undefined, channelId: number
 
 
 // changes the Channeltype from public to private and the other way around
-export function putChannelType(userId: number | undefined, channelId: number) {
+export function putChannelType(userId: number | undefined, channelId: number, user: User) {
+  const ChannelData = {
+    "intraUsername": user?.intraUsername,
+    "passwordHash": user?.passwordHash
+  }
+  const jsonData = JSON.stringify(ChannelData);    
   const requestOptions = {
     method: 'PUT',
     headers: { 
       "Accept": "*/*",
       "Content-Type": "application/json"
     },
-    body:  ''
+    body: jsonData
   };
   return fetch(fetchAddress + 'channel/' + userId +'/' + channelId + '/type', requestOptions)
   .then(response => {
@@ -352,19 +449,21 @@ export function putChannelType(userId: number | undefined, channelId: number) {
 
 //Blocked Users
 
-export async function postBlockedUser(callerId: number | undefined, targetId: number): Promise<void> {
+export async function postBlockedUser(targetId: number, user: User, channelId: number): Promise<void> {
+  const ChannelData = {
+    "intraUsername": user?.intraUsername,
+    "passwordHash": user?.passwordHash
+  }
+  const jsonData = JSON.stringify(ChannelData);    
   const requestOptions = {
     method: 'POST',
     headers: { 
       "Accept": "*/*",
       "Content-Type": "application/json"
     },
-    body: JSON.stringify({
-      "userId": callerId,
-      "blockId": targetId.toString()
-    })
+    body: jsonData
   };
-  fetch(fetchAddress + 'blocked/', requestOptions)
+  fetch(fetchAddress + 'channel/' + user.userID + '/' + targetId + '/' + channelId + '/blocked/', requestOptions)
     .then(response => {
       if (response.ok) {
         console.log("ChannelUser with UserId :" + targetId +" blocked");
@@ -381,19 +480,21 @@ export async function postBlockedUser(callerId: number | undefined, targetId: nu
     });
 }
 
-export async function deleteBlockedUser(callerId: number | undefined, targetId: number): Promise<void> {
+export async function deleteBlockedUser(targetId: number, channelId: number, user: User): Promise<void> {
+  const ChannelData = {
+    "intraUsername": user?.intraUsername,
+    "passwordHash": user?.passwordHash
+  }
+  const jsonData = JSON.stringify(ChannelData);   
   const requestOptions = {
     method: 'DELETE',
     headers: { 
       "Accept": "*/*",
       "Content-Type": "application/json"
     },
-    body: JSON.stringify({
-      "userId": callerId,
-      "blockId": targetId.toString()
-    })
+    body: jsonData
   };
-  fetch(fetchAddress + 'blocked/', requestOptions)
+  fetch(fetchAddress + 'channel/' + targetId + '/' + channelId + '/blocked', requestOptions)
     .then(response => {
       if (response.ok) {
         console.log("ChannelUser with UserId :" + targetId +" unblocked");
@@ -439,14 +540,19 @@ export async function getBlockedUser(callerId: number, targetId: number | undefi
 
 // Friends
 
-export function postFriend(targetId: number, userId: number | undefined) {
+export function postFriend(targetId: number, userId: number | undefined, user: User) {
+  const ChannelData = {
+    "intraUsername": user?.intraUsername,
+    "passwordHash": user?.passwordHash
+  }
+  const jsonData = JSON.stringify(ChannelData);   
   const requestOptions = {
     method: 'POST',
     headers: { 
       "Accept": "*/*",
       "Container-Type": "application/json"
     },
-    body:  ''
+    body:  jsonData
   };
   return fetch(fetchAddress + 'friend/' + userId +'/friend/' + targetId , requestOptions)
     .then((response) =>{
@@ -465,14 +571,19 @@ export function postFriend(targetId: number, userId: number | undefined) {
     });
 }
 
-export function deleteFriend(targetId: number, userId: number | undefined) {
+export function deleteFriend(targetId: number, userId: number | undefined, user: User) {
+  const ChannelData = {
+    "intraUsername": user?.intraUsername,
+    "passwordHash": user?.passwordHash
+  }
+  const jsonData = JSON.stringify(ChannelData);   
   const requestOptions = {
     method: 'DELETE',
     headers: { 
       "Accept": "*/*",
       "Container-Type": "application/json"
     },
-    body:  ''
+    body: jsonData
   };
   return fetch(fetchAddress + 'friend/' + userId +'/friend/' + targetId , requestOptions)
     .then((response) =>{
@@ -491,13 +602,19 @@ export function deleteFriend(targetId: number, userId: number | undefined) {
     });
 }
 
-export async function getIsFriend(callerId: number | undefined, targetId: number | undefined): Promise<boolean> {
+export async function getIsFriend(callerId: number | undefined, targetId: number | undefined, user: User): Promise<boolean> {
+  const ChannelData = {
+    "intraUsername": user?.intraUsername,
+    "passwordHash": user?.passwordHash
+  }
+  const jsonData = JSON.stringify(ChannelData);   
   const requestOptions = {
     method: 'GET',
     headers: { 
       "Accept": "*/*",
       "Content-Type": "application/json"
-    }
+    },
+    body: jsonData
   };
   return fetch(fetchAddress + 'friend/'+ callerId + "/friend/" + targetId, requestOptions)
     .then(response => {

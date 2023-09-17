@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { chatButtonsStyle } from "./ChatPageStyles";
 
 interface FormProps {
 	joinQueue: () => void;
@@ -37,23 +38,25 @@ const GameForm: React.FC<FormProps> = (props) => {
 
 	const handleQuitGameClick = (event: React.MouseEvent<HTMLButtonElement>) => {
 		event.preventDefault();
-		let { playerOne, playerTwo } = props.gameSession;
+		/* let { playerOne, playerTwo } = props.gameSession;
 
 		if (playerOne || playerTwo) {
-			// Both Player 1 and Player 2 are assigned and valid
+			// Player 1 or Player 2 assigned and valid
 			props.quitGame();
 		} else {
 			// Player 2 has not joined yet
-			alert("No session to quit.");
-		} 
+			alert("You are in no session now.");
+		}  */
+
+		props.quitGame();
 	};
 
 	return (
 		<>
 			<form>
-				<button onClick={props.joinQueue}>Join Game</button>
-				<button onClick={handleStartGameClick}>Start the Game!</button>
-				<button onClick={handleQuitGameClick}>Quit Game/Session</button>
+				<button style={chatButtonsStyle} onClick={props.joinQueue}>Join Game</button>
+				<button style={chatButtonsStyle} onClick={handleStartGameClick}>Start the Game!</button>
+				<button style={chatButtonsStyle} onClick={handleQuitGameClick}>Quit Game/Session</button>
 			</form>
 			<p>Controls: W - UP, S - Down, R - Change Map, P - PowerUp: Increase Gravity!</p>
 		</>
