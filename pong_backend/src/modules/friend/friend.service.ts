@@ -65,10 +65,6 @@ export class FriendService {
 
     const friends = await this.friendRepository.findBy({ UserId: callerId });
 
-    if (!friends || friends.length == 0) {
-      throw new HttpException('Friends not found', 404);
-    }
-
     const result = [];
 
     for (const friend of friends) {

@@ -16,7 +16,7 @@ enum matchHistoryType_t {
 
 interface MatchHistoryProps
 {
-  userID: number;
+  userID: number | undefined;
 //   mode_set: React.Dispatch<React.SetStateAction<main_div_mode_t>>;
   friend_set: React.Dispatch<React.SetStateAction<number>>;
 }
@@ -34,7 +34,7 @@ const MatchHistory_MainDiv: React.FC<MatchHistoryProps>  = ({userID, friend_set}
     {
         try
         {  
-          const matchData = await getPersonalMatchHistory(userID)
+          const matchData = await getPersonalMatchHistory(userID as number)
           setJsonData(matchData);
         }
         catch(error)

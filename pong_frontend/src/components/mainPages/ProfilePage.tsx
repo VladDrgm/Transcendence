@@ -19,7 +19,7 @@ interface ProfilePageProps
 
 const ProfilePage: React.FC<ProfilePageProps> = ({friend_set}) => {
 	const { user } = useUserContext();
-        
+
 	return (
 		<div style={styles.pageStyle}>
             <Private_Div userID={user?.userID}/>
