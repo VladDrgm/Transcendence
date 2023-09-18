@@ -2,6 +2,7 @@ import { FC, useEffect, useState } from 'react';
 import { FriendProfile } from '../../interfaces/friend_profile.interface';
 import { getFriendList } from '../../api/friend_list.api';
 import { useUserContext } from '../context/UserContext';
+import { Link } from 'react-router-dom';
 
 interface FriendProps
 {
@@ -30,7 +31,9 @@ const FriendList: FC<FriendProps> = ({userID, friend_set}) => {
     	<div>
       		<h3>Friend List</h3>
         	{friends?.map((friend) => (
-            	<p onClick={() => openFriend(friend.userID)}>{friend.username}: {friend.status}</p>
+				<Link onClick={() => openFriend(friend.userID)} key={friend.username} to={"/app/public_profile"}>{friend.username}: {friend.status}</Link>
+
+
         	))}
     	</div>
   	);

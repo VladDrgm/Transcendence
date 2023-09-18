@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import * as styles from './LeaderboardPageStyles';
 import { IUser } from '../../interfaces/interface';
 import { getLeaderboard } from '../../api/leaderboard.api';
+import { Link } from 'react-router-dom';
 
 interface LeaderboardProps {
 	friend_set: React.Dispatch<React.SetStateAction<number>>;
@@ -52,7 +53,7 @@ const LeaderboardPage: React.FC<LeaderboardProps> = ({friend_set}) => {
 					<li key={user.username}>
 						<div>
 							<h2>Place: {scoreMap.get(user.points)}</h2>
-							<p onClick={() => openFriend(user.userID)}>Name: {user.username}</p>
+							<Link onClick={() => openFriend(user.userID)} key={user.username} to={"/app/public_profile"}>Name: {user.username}</Link>
 							<p>Wins: {user.wins}</p>
 							<p>Losses: {user.losses}</p>
 							<p>Points: {user.points}</p>

@@ -32,6 +32,7 @@ const App = () => {
                     <Route path="chat" element={<Arena_Chat_MainDiv userID={user?.userID} friend_set={friend_set}/>} />
                     <Route path="leaderboard" element={<LeaderboardPage friend_set={friend_set}/>} />
                     <Route path="profile" element={<ProfilePage friend_set={friend_set} />} />
+                    <Route path="public_profile" element={<ProfilePage friend_set={friend_set} />} />
                     <Route path="match_history" element={<MatchHistory_MainDiv userID={user?.userID} friend_set={friend_set} />} />
                     <Route path="settings" element={<SettingsPage onLogout={handleLogout} />} />
                 </Route>

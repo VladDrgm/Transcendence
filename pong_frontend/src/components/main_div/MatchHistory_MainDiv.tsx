@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import Pagination from '../div/pagination';
 import { MatchHistoryItem } from '../../interfaces/matchHistory.interface';
 import { UsernameItem } from '../../interfaces/username_list.interface';
@@ -17,7 +18,6 @@ enum matchHistoryType_t {
 interface MatchHistoryProps
 {
   userID: number | undefined;
-//   mode_set: React.Dispatch<React.SetStateAction<main_div_mode_t>>;
   friend_set: React.Dispatch<React.SetStateAction<number>>;
 }
 
@@ -67,12 +67,7 @@ const MatchHistory_MainDiv: React.FC<MatchHistoryProps>  = ({userID, friend_set}
 
   const openFriend = (FID:number) => {
     friend_set(FID);
-    // mode_set(main_div_mode_t.PUBLIC_PROFILE);
   };
-
-  const openProfile = () => {
-    // mode_set(main_div_mode_t.PROFILE);
-  }
 
   const findUsername = (idToFind: number): string | undefined => {
     return usernameList.find((user) => user.id === idToFind)?.username;
@@ -115,11 +110,13 @@ const MatchHistory_MainDiv: React.FC<MatchHistoryProps>  = ({userID, friend_set}
       {currentPageData.map((item) => (
         <div key={item.MatchId}>
             <p>Match: {item.GameType}</p>
-            {item.Player1Id === userID && (<p onClick={() => openProfile()} >{findUsername(item.Player1Id)}</p>)}
-            {item.Player1Id !== userID && (<p onClick={() => openFriend(item.Player1Id)} >{findUsername(item.Player1Id)}</p> )}
+            
+            
+            {item.Player1Id === userID && (<Link to={"/app/profile"}>{findUsername(item.Player1Id)}</Link>)}
+            {item.Player1Id !== userID && (<Link onClick={() => openFriend(item.Player1Id)} to={"/app/public_profile"}>{findUsername(item.Player1Id)}</Link>)}
             <p> vs </p>
-            {item.Player2Id === userID && (<p onClick={() => openProfile()} >{findUsername(item.Player2Id)}</p>)}
-            {item.Player2Id !== userID && (<p onClick={() => openFriend(item.Player2Id)} >{findUsername(item.Player2Id)}</p> )}
+            {item.Player2Id === userID && (<Link to={"/app/profile"}>{findUsername(item.Player2Id)}</Link>)}
+            {item.Player2Id !== userID && (<Link onClick={() => openFriend(item.Player2Id)} to={"/app/public_profile"}>{findUsername(item.Player2Id)}</Link>)}
             <p>Score: {item.Player1Points} : {item.Player2Points}</p>
             <p>Winner: {findUsername(item.WinnerId)} by {item.WinningCondition}</p>
         </div>
