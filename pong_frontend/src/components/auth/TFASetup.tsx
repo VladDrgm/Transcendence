@@ -16,7 +16,7 @@ const TwoFactorSetup: React.FC = () => {
   const generateTOTP = async () => {
 	try {
 		const res = await api('user/generate-totp');
-		console.log("Received from server:", res); 
+		console.log("Received from server:", res);
 		setQrCode(res.dataURL);
 		console.log("The pre set current secret is", { secret });
 		console.log("The server secret is", res.tempSecret );
