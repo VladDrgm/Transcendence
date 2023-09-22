@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Delete, Param, Body } from '@nestjs/common';
+import { Controller, Get, Post, Delete, Param, Body, Put } from '@nestjs/common';
 import { ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 import { Friend } from 'src/models/orm_models/friend.entity';
 import { FriendService } from './friend.service';
@@ -12,7 +12,7 @@ import { UserDTO } from '../user/userDTO';
 export class FriendController {
   constructor(private readonly friendService: FriendService) {}
 
-  @Get(':id/friends')
+  @Put(':id/friends')
   @ApiOperation({ summary: 'Get all friends of a user' })
   async getUserFriends(
     @Param('id') id: number,
@@ -21,7 +21,7 @@ export class FriendController {
     return friends;
   }
 
-  @Get(':id/friend/:friendId')
+  @Put(':id/friend/:friendId')
   @ApiOperation({ summary: 'Get a friend of a user by his id' })
   @ApiParam({ name: 'callerId', description: 'User callerId' })
   @ApiParam({ name: 'targetId', description: 'Friend ID' })
@@ -34,7 +34,7 @@ export class FriendController {
     return friend;
   }
 
-  @Get(':callerId/friend/:targetId/status')
+  @Put(':callerId/friend/:targetId/status')
   @ApiOperation({ summary: 'Get the status of a friend of a user by his id' })
   @ApiParam({ name: 'callerId', description: 'User ID' })
   @ApiParam({ name: 'targetId', description: 'Friend ID' })
@@ -46,7 +46,7 @@ export class FriendController {
     return this.friendService.getFriendStatus(loggedUser, callerId, targetId);
   }
 
-  @Get(':id/friends/status')
+  @Put(':id/friends/status')
   @ApiOperation({ summary: 'Get the statuses of all friends of a user' })
   @ApiParam({ name: 'id', description: 'User ID' })
   async getFriendsStatuses(@Param('id') id: number, @Body() loggedUser: UserAuthDTO): Promise<string[]> {

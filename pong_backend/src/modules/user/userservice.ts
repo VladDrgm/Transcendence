@@ -130,7 +130,18 @@ export class UserService {
     return await this.userRepository.findOneBy({ userID: targetId });
   }
 
-  async getUsersOrderedByPoints(): Promise<User[]> {
+  async getUsersOrderedByPoints(loggedUser : UserAuthDTO, callerId : number): Promise<User[]> {
+    if (parseInt(process.env.FEATURE_FLAG) === 1) {
+        const authPass = await this.authProtector.protectorCheck(
+          loggedUser.passwordHash,
+          callerId,
+        );
+        if (!authPass) {
+          throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+        }
+    }
+
+
     return this.userRepository.find({
       order: {
         points: 'DESC',

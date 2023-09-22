@@ -78,10 +78,12 @@ export class UserController {
     return await this.userService.updateUsername(loggedUser, callerId, targetId, newUsername);
   }
 
-  @Get('users/points')
+  @Put(':callerId/users/points')
   @ApiOperation({ summary: 'Get top 10 users ordered by points' })
-  async getUsersOrderedByPoints(): Promise<UserDTO[]> {
-    var users = await this.userService.getUsersOrderedByPoints();
+  async getUsersOrderedByPoints(
+            @Param() callerId : number,
+            @Body() loggedUser: UserAuthDTO): Promise<UserDTO[]> {
+    var users = await this.userService.getUsersOrderedByPoints(loggedUser, callerId);
     var result = [];
     for (const user of users) {
       result.push(UserDTO.fromEntity(user));
