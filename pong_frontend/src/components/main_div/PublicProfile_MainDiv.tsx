@@ -15,17 +15,16 @@ export enum ProfileType_t
 
 interface ProfileProps
 {
-  userID: number;
-//   mode_set: React.Dispatch<React.SetStateAction<main_div_mode_t>>;
   friend_ID: number;
 }
 
-const PublicProfile_MainDiv: React.FC<ProfileProps> = ({userID, friend_ID}) => {
+const PublicProfile_MainDiv: React.FC<ProfileProps> = ({friend_ID}) => {
     const [type, set_type] = useState<ProfileType_t>(ProfileType_t.PUBLIC_PROFILE);
     const set_ownProfile = () => {
         // mode_set(main_div_mode_t.PROFILE);
       };
       const { user, setUser } = useUserContext();
+      const userID = user!.userID;
       const isFriend = async () => {
         try{
           const ret = await checkFriend(userID, friend_ID, user?.intraUsername, user?.passwordHash);

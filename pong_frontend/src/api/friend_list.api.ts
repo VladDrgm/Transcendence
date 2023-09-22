@@ -26,11 +26,7 @@ export const getFriendList = async (userID:number | undefined, intra:string | un
 export const checkFriend = async (userID:number, friendID:number, intra:string | undefined, token:string | undefined) => {
   
   const requestOptions = {
-		method: 'GET',
-		body:  JSON.stringify({
-			"intraUsername" : intra,
-			"passwordHash" : token
-		})
+		method: 'GET'
 	  };
   const response = await fetch(fetchAddress + 'friend/' + userID + '/friend/' + friendID, requestOptions);
   if (response.ok)
