@@ -5,6 +5,7 @@ import { MatchHistoryItem } from '../../interfaces/matchHistory.interface';
 import { UsernameItem } from '../../interfaces/username_list.interface';
 import { getGlobalMatchHistory, getPersonalMatchHistory } from '../../api/matchHistory.api';
 import { getUserList } from '../../api/user_list.api';
+import { useUserContext } from '../context/UserContext';
 // import {main_div_mode_t} from '../MainDivSelector';
 
 const ITEMS_PER_PAGE = 3;
@@ -26,6 +27,7 @@ const MatchHistory_MainDiv: React.FC<MatchHistoryProps>  = ({userID, friend_set}
   const [usernameList, setusernameList] = useState<UsernameItem[]>([]);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [historyType, setHistoryType]  = useState<number>(matchHistoryType_t.GLOBAL);
+  const { user, setUser } = useUserContext();
 
   const getData = async () => {
     const usenames = await getUserList();
@@ -34,7 +36,7 @@ const MatchHistory_MainDiv: React.FC<MatchHistoryProps>  = ({userID, friend_set}
     {
         try
         {  
-          const matchData = await getPersonalMatchHistory(userID as number)
+          const matchData = await getPersonalMatchHistory(userID as number, user?.intraUsername, user?.passwordHash)
           setJsonData(matchData);
         }
         catch(error)
@@ -46,7 +48,7 @@ const MatchHistory_MainDiv: React.FC<MatchHistoryProps>  = ({userID, friend_set}
     {   
       try
       {  
-        const matchData = await getGlobalMatchHistory();
+        const matchData = await getGlobalMatchHistory(userID as number, user?.intraUsername, user?.passwordHash);
         setJsonData(matchData);
       }
       catch(error)

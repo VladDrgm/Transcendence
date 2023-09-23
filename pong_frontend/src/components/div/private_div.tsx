@@ -23,7 +23,6 @@ const Private_Div: React.FC<PrivateDivProps> = ({userID}) => {
 			user!.losses = myProf.losses;
 			user!.points = myProf.points;
 			user!.achievementsCSV = myProf.achievementsCSV;
-
       		setUser(user);
     	} catch (error) {
       		console.error(error);
