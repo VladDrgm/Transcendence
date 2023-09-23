@@ -17,7 +17,7 @@ export class MatchController {
     return this.matchService.createMatch(matchDto);
   }
 
-  @Put('all/:callerId')
+  @Put(':callerId/all')
   @ApiOperation({ summary: 'Get all matches' })
   async getAllMatches(
     @Param() callerId: number,
