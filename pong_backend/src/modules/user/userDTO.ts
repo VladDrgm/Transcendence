@@ -64,7 +64,7 @@ export class UserDTO {
         description: 'The ID of the User'
     })
     @IsNumber()
-    @IsNotEmpty()
+    @IsOptional()
     userID: number;
 
     static fromEntity(user: User): UserDTO {
