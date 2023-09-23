@@ -31,8 +31,8 @@ const FriendList: FC<FriendProps> = ({userID, friend_set}) => {
     	<div>
       		<h3>Friend List</h3>
         	{friends?.map((friend) => (
-				<Link onClick={() => openFriend(friend.userID)} key={friend.username} to={"/app/public_profile"}>{friend.username}: {friend.status}</Link>
-
+				<Link onClick={() => openFriend(friend.userID)} key={friend.username} to={"/app/public_profile"}>{friend.username}: {friend.status}<br/></Link>
+				
 
         	))}
     	</div>
