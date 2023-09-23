@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Get, Delete, Param, Put } from '@nestjs/common';
+import { Controller, Post, Body, Get, Delete, Param, Put, ParseIntPipe } from '@nestjs/common';
 import { MatchService } from './match.service';
 import { Match } from 'src/models/orm_models/match.entity';
 import { MatchDTO } from './matchDTO';
@@ -17,10 +17,10 @@ export class MatchController {
     return this.matchService.createMatch(matchDto);
   }
 
-  @Put('all/:callerId')
+  @Put(':callerId/all')
   @ApiOperation({ summary: 'Get all matches' })
   async getAllMatches(
-    @Param() callerId: number,
+    @Param('callerId', ParseIntPipe) callerId: number,
     @Body() loggedUser: UserAuthDTO,
   ): Promise<Match[]> {
     return this.matchService.getAllMatches(loggedUser, callerId);
@@ -29,8 +29,8 @@ export class MatchController {
   @Put('all/:callerId/:matchId')
   @ApiOperation({ summary: 'Get match by id' })
   async getMatchById(
-    @Param() callerId: number,
-    @Param('matchId') matchId: number,
+    @Param('callerId', ParseIntPipe) callerId: number,
+    @Param('matchId', ParseIntPipe) matchId: number,
     @Body() loggedUser: UserAuthDTO,
   ): Promise<Match> {
     return this.matchService.getMatchById(loggedUser, callerId, matchId);
