@@ -30,6 +30,8 @@
     "@types/multer": "^1.4.7",
     "authenticator": "^1.1.5",
     "axios": "^1.4.0",
+    "base32-decode": "^1.0.0",
+    "base32-encode": "^2.0.0",
     "bcrypt": "^5.1.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.0",

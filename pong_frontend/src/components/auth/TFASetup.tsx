@@ -10,18 +10,14 @@ const TwoFactorSetup: React.FC = () => {
 
   useEffect(() => {
 	console.log("The secret from useEffect is", secret);
-	setSecret(secret); // This will log the updated value
+	setSecret(secret);
   }, [secret]);
 
   const generateTOTP = async () => {
 	try {
 		const res = await api('user/generate-totp');
-		console.log("Received from server:", res);
 		setQrCode(res.dataURL);
-		console.log("The pre set current secret is", { secret });
-		console.log("The server secret is", res.tempSecret );
-		await setSecret(res.tempSecret);
-		console.log("The new secret is", { secret });
+		await setSecret(res.secret);
 	  } catch (error) {
 		console.error('Error generating TOTP:', error);
 	  }
@@ -29,10 +25,7 @@ const TwoFactorSetup: React.FC = () => {
 
   const verifyToken = async () => {
 	try {
-		console.log("The secret is", { secret });
 		const res = await api('user/verify-totp', { body: { secret, token } });
-		console.log("Sending to server:", { secret, token });
-		console.log("The secret is", res);
 		setIsVerified(res.isValid);
 	  } catch (error) {
 		console.error('Error verifying token:', error);

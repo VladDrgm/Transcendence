@@ -14,6 +14,7 @@ import { AuthProtector, UserAuthDTO } from '../authProtectorService/authProtecto
 import * as speakeasy from 'speakeasy';
 import * as uuid from 'uuid';
 import * as qrcode from 'qrcode';
+import { authenticator } from 'otplib';
 
 @Injectable()
 export class UserService {
@@ -65,22 +66,18 @@ export class UserService {
   }
 
   async generateTOTP() {
-	const secret = speakeasy.generateSecret({ length: 10, name: 'YourAppName' });
-    const tempSecret = uuid.v4();
-    const dataURL = await qrcode.toDataURL(secret.otpauth_url);
-    return {
-      tempSecret,
-      dataURL,
-      otpauth_url: secret.otpauth_url
-    };
+	const secret = authenticator.generateSecret();
+    const otpauth_url = authenticator.keyuri('user', 'HorrorPong', secret);
+    const dataURL = await qrcode.toDataURL(otpauth_url);
+	return {
+		secret,
+		dataURL,
+		otpauth_url
+	};
   }
 
-  verifyTOTP(tempSecret: string, token: string) {
-    return speakeasy.totp.verify({
-      secret: tempSecret,
-      encoding: 'base32',
-      token
-    });
+  verifyTOTP(secret: string, token: string) {
+	return authenticator.verify({ token, secret });
   }
 
   async remove(id: number): Promise<void> {
