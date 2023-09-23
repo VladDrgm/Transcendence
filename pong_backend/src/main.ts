@@ -21,7 +21,7 @@ async function bootstrap() {
 
   // app.use(session(sessionOptions));
   app.enableCors({
-    origin: 'http://localhost:3001', // frontend url
+    origin: process.env.FRONTEND_URL,
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
   });

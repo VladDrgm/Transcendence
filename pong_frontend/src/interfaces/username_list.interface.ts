@@ -1,4 +1,4 @@
 export interface UsernameItem {
-    userID: number;
+    id: number;
     username: string;
 }

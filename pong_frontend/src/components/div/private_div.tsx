@@ -14,16 +14,22 @@ interface PrivateDivProps
 const Private_Div: React.FC<PrivateDivProps> = ({userID}) => {
 	const { user, setUser } = useUserContext();
 
+
   	const getData = async () => {
     	try {
-      		const myProf = await getPrivateProfile(userID);
-      		setUser(myProf);
+      		const myProf = await getPrivateProfile(userID, user?.intraUsername, user?.passwordHash);
+			user!.status = myProf.status;
+			user!.wins = myProf.wins;
+			user!.losses = myProf.losses;
+			user!.points = myProf.points;
+			user!.achievementsCSV = myProf.achievementsCSV;
+      		setUser(user);
     	} catch (error) {
       		console.error(error);
     		// handle the error appropriately or ignore it
     	}
-  	};
-
+	}
+  	
   	useEffect(() => {
    		getData();
   	}, []);

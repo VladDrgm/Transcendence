@@ -15,6 +15,7 @@ import * as speakeasy from 'speakeasy';
 import * as uuid from 'uuid';
 import * as qrcode from 'qrcode';
 import { authenticator } from 'otplib';
+import { find } from 'rxjs';
 
 @Injectable()
 export class UserService {
@@ -47,11 +48,12 @@ export class UserService {
         const newHash = await this.passwordService.hashPassword(
           Date.now().toString(),
         );
-        this.userRepository.update(isUserInDb.userID, {
+        await this.userRepository.update(isUserInDb.userID, {
           passwordHash: newHash,
         });
+        const result = await this.findOne(isUserInDb.userID);
+        return result;
       }
-      return isUserInDb;
     }
 
     user.username = user.username.toLowerCase();
@@ -62,7 +64,7 @@ export class UserService {
         Date.now().toString(),
       );
     }
-    return this.userRepository.save(user);
+    return await this.userRepository.save(user);
   }
 
   async generateTOTP() {
@@ -131,11 +133,8 @@ export class UserService {
     }
 
     if (parseInt(process.env.FEATURE_FLAG) === 1) {
-      const user = await this.userRepository.findOneBy({
-        intraUsername: loggedUser.intraUsername,
-      });
       const authPass = await this.authProtector.protectorCheck(
-        user.passwordHash,
+        loggedUser.passwordHash,
         callerId,
       );
       if (!authPass) {
@@ -215,19 +214,9 @@ export class UserService {
   }
 
   async updateAvatar(
-    loggedUser: UserAuthDTO,
     id: number,
     file: Express.Multer.File,
-  ): Promise<void> {
-    if (parseInt(process.env.FEATURE_FLAG) === 1) {
-      const authPass = await this.authProtector.protectorCheck(
-        loggedUser.passwordHash,
-        id,
-      );
-      if (!authPass) {
-        throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
-      }
-    }
+  ): Promise<UserDTO> {
 
     const userToUpdate = await this.userRepository.findOneBy({ userID: id });
 
@@ -241,7 +230,7 @@ export class UserService {
       picturePath = await this.fileService.saveAvatar(file, id);
     }
     userToUpdate.avatarPath = picturePath;
-    await this.userRepository.save(userToUpdate);
+    return await this.userRepository.save(userToUpdate);
   }
 
   async getAvatarPath(id: number): Promise<string | null> {

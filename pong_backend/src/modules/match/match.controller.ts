@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Get, Delete, Param } from '@nestjs/common';
+import { Controller, Post, Body, Get, Delete, Param, Put, ParseIntPipe } from '@nestjs/common';
 import { MatchService } from './match.service';
 import { Match } from 'src/models/orm_models/match.entity';
 import { MatchDTO } from './matchDTO';
@@ -17,20 +17,20 @@ export class MatchController {
     return this.matchService.createMatch(matchDto);
   }
 
-  @Get('all/:callerId')
+  @Put(':callerId/all')
   @ApiOperation({ summary: 'Get all matches' })
   async getAllMatches(
-    @Param() callerId: number,
+    @Param('callerId', ParseIntPipe) callerId: number,
     @Body() loggedUser: UserAuthDTO,
   ): Promise<Match[]> {
     return this.matchService.getAllMatches(loggedUser, callerId);
   }
 
-  @Get('all/:callerId/:matchId')
+  @Put('all/:callerId/:matchId')
   @ApiOperation({ summary: 'Get match by id' })
   async getMatchById(
-    @Param() callerId: number,
-    @Param('matchId') matchId: number,
+    @Param('callerId', ParseIntPipe) callerId: number,
+    @Param('matchId', ParseIntPipe) matchId: number,
     @Body() loggedUser: UserAuthDTO,
   ): Promise<Match> {
     return this.matchService.getMatchById(loggedUser, callerId, matchId);
@@ -42,7 +42,7 @@ export class MatchController {
     return this.matchService.deleteMatch(matchId);
   }
 
-  @Get(':callerId/:targetId/matchHistory')
+  @Put(':callerId/:targetId/matchHistory')
   @ApiOperation({ summary: 'Get match history of a user' })
   async getMatchHistory(
     @Param('callerId') callerId: number,

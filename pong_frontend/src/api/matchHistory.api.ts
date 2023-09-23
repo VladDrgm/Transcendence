@@ -1,13 +1,32 @@
 import { fetchAddress } from "../components/div/channel_div";
+import { UserProvider } from "../interfaces/user.interface";
 
-export const getGlobalMatchHistory = async () => {
-    const response = await fetch(fetchAddress + 'match');
+export const getGlobalMatchHistory = async (userID:number, intra:string | undefined, token:string | undefined) => {
+    const response = await fetch(fetchAddress + 'match/' + userID + "/all", {
+		method: "PUT",
+		headers: {
+		  "Content-Type": "application/json"
+		},
+		body:  JSON.stringify({
+			"intraUsername" : intra,
+			"passwordHash" : token
+		})
+	  });
     const json = (await response.json());
     return json;
 };
 
-export const getPersonalMatchHistory = async (userID:number) => {
-    const response = await fetch(fetchAddress + 'match/' + userID + '/matchHistory');
+export const getPersonalMatchHistory = async (userID:number, intra:string | undefined, token:string | undefined) => {
+    const response = await fetch(fetchAddress + 'match/' + userID + "/" + userID + '/matchHistory', {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body:  JSON.stringify({
+        "intraUsername" : intra,
+        "passwordHash" : token
+    })
+    });
     const json = (await response.json());
     return json;
 };

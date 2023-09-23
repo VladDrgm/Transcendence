@@ -21,7 +21,7 @@ export const createUser = async () => {
 	return json;
 };
 
-export const updatePasswordApi = async (userID: number | undefined, newPassword: string): Promise<User> => {
+export const updatePasswordApi = async (userID: number | undefined, newPassword: string, intra:string | undefined, token:string | undefined): Promise<User> => {
 	try {
 	  // Make API call and get the response
 	  const response = await fetch(fetchUserAddress + userID + slash + newPassword + updatePasswordEndpoint, {
@@ -29,6 +29,10 @@ export const updatePasswordApi = async (userID: number | undefined, newPassword:
 		headers: {
 		  "Content-Type": "application/json"
 		},
+		body:  JSON.stringify({
+			"intraUsername" : intra,
+			"passwordHash" : token
+		})
 	  });
   
 	  if (response.ok) {
@@ -42,14 +46,18 @@ export const updatePasswordApi = async (userID: number | undefined, newPassword:
 	}
   };
 
-  export const updateUsernameApi = async (userID: number | undefined, newUsername: string): Promise<User> => {
+  export const updateUsernameApi = async (userID: number | undefined, newUsername: string, intra:string | undefined, token:string | undefined): Promise<User> => {
 	try {
 	  // Make API call and get the response
-	  const response = await fetch(fetchUserAddress + userID + updateUsernameEndpoint + newUsername, {
+	  const response = await fetch(fetchUserAddress + userID + "/" + userID  + updateUsernameEndpoint + newUsername, {
 		method: "PUT",
 		headers: {
 		  "Content-Type": "application/json"
 		},
+		body:  JSON.stringify({
+			"intraUsername" : intra,
+			"passwordHash" : token
+		})
 	  });
   
 	  if (response.ok) {
@@ -63,20 +71,22 @@ export const updatePasswordApi = async (userID: number | undefined, newPassword:
 	}
   };
 
-export const updateAvatarApi = async (userID: number | undefined, formData: FormData): Promise<User> => {
+export const updateAvatarApi = async (userID: number | undefined, formData: FormData, intra:string | undefined, token:string | undefined): Promise<User> => {
 	try {
 	  const response = await fetch(fetchUserAddress + userID + '/update/avatar', {
 		method: 'PUT',
-		body: formData,
+        body: formData,
 	  });
-  
+      console.log("Test")
 	  if (response.ok) {
+        console.log("Test3")
 		const userObject: User = await response.json();
 		return userObject;
 	  } else {
 		throw new Error(response.statusText);
 	  }
 	} catch (error) {
+        console.log("Test2")
 		throw new Error('Error uploading avatar. Try again!');
 	}
   };

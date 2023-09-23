@@ -42,7 +42,10 @@ const SettingsPage: React.FC<SettingsPageProps> = ({onLogout}) => {
 		let updatedUser =  null;
 		try {
 			// Call the API function and get the updated user object
-			updatedUser = await updateUsernameApi(userID, newUsername);
+			updatedUser = await updateUsernameApi(userID, newUsername, user?.intraUsername, user?.passwordHash);
+	  
+			// Update the state and local storage with the updated user object
+			
 	  
 			// Clear the input field after successful update
 			setNewUsername('');
@@ -50,8 +53,9 @@ const SettingsPage: React.FC<SettingsPageProps> = ({onLogout}) => {
 			setError('Error updating username. Try again!');
 			return;
 		}
-		setUser(updatedUser);
-		localStorage.setItem('user', JSON.stringify(updatedUser));
+        user!.username = updatedUser.username;
+		setUser(user);
+		localStorage.setItem('user', JSON.stringify(user));
 	};
 
 	const handleUpdateAvatar = async () => {
@@ -63,17 +67,19 @@ const SettingsPage: React.FC<SettingsPageProps> = ({onLogout}) => {
 
 			const formData = new FormData();
 			formData.append('file', newAvatar);
-			await updateAvatarApi(userID, formData);
-			setSelectedImage(fetchAddress.slice(0, -1) + user?.avatarPath?.slice(1));
+			await updateAvatarApi(userID, formData, user?.intraUsername, user?.passwordHash);
 			setImageBorder('3px solid rgba(254, 8, 16, 1)');
 			setNewAvatar(null);
 		} catch (error) {
 			setError('Error updating avatar. Try again!');
 			return;
 		}
-		const myProf = await getPrivateProfile(userID);
-		setUser(myProf);
-		localStorage.setItem('user', JSON.stringify(myProf));
+		const myProf = await getPrivateProfile(userID, user?.intraUsername, user?.passwordHash);
+		// setUpdatedUser(myProf);
+        user!.avatarPath = myProf.avatarPath;
+		setUser(user);
+        setSelectedImage(fetchAddress.slice(0, -1) + user?.avatarPath?.slice(1));
+		localStorage.setItem('user', JSON.stringify(user));
 	};
 
 	// Extract the filename from the File object and update the state

@@ -42,6 +42,31 @@ export class UserDTO {
   @IsOptional()
   intraUsername: string;
 
+
+  @ApiProperty({
+    example: 3,
+    description: 'Wins of a user'
+  })
+    @IsNumber()
+    @IsOptional()
+    wins: number;
+
+    @ApiProperty({
+        example: 3,
+        description: 'Losses of a user'
+    })
+    @IsNumber()
+    @IsOptional()
+    losses: number;
+
+    @ApiProperty({
+        example: 3,
+        description: 'The ID of the User'
+    })
+    @IsNumber()
+    @IsOptional()
+    userID: number;
+
     static fromEntity(user: User): UserDTO {
         const userDTO = new UserDTO();
         userDTO.username = user.username;
@@ -50,6 +75,9 @@ export class UserDTO {
         userDTO.status = user.status;
         userDTO.achievementsCSV = user.achievementsCSV;
         userDTO.intraUsername = user.intraUsername;
+        userDTO.wins = user.wins;
+        userDTO.losses = user.losses;
+        userDTO.userID = user.userID;
         return userDTO;
   }
 }

@@ -97,14 +97,10 @@ export class UserController {
 
   @Get('users/points')
   @ApiOperation({ summary: 'Get top 10 users ordered by points' })
-  async getUsersOrderedByPoints(): Promise<UserDTO[]> {
+  async getUsersOrderedByPoints() {
     var users = await this.userService.getUsersOrderedByPoints();
-    var result = [];
-    for (const user of users) {
-      result.push(UserDTO.fromEntity(user));
-    }
 
-    return result;
+    return users;
   }
 
 //   @Post('user/signup')
@@ -139,13 +135,12 @@ export class UserController {
   @UseInterceptors(FileInterceptor('file'))
   async updateAvatar(
     @UploadedFile() file: Express.Multer.File,
-    @Body() loggedUser: UserAuthDTO,
     @Param('id') id: number,
-  ): Promise<void> {
+  ): Promise<UserDTO> {
     if (!file) {
       throw new BadRequestException('No file uploaded');
     }
 
-    await this.userService.updateAvatar(loggedUser, id, file);
+    return await this.userService.updateAvatar(id, file);
   }
 }
