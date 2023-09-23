@@ -2,7 +2,7 @@ import { fetchAddress } from "../components/div/channel_div";
 
 export const getFriendList = async (userID:number | undefined, intra:string | undefined, token:string | undefined) => {
   const requestOptions = {
-		method: 'POST',
+		method: 'PUT',
         headers: {
             "Content-Type": "application/json"
           },
@@ -26,7 +26,11 @@ export const getFriendList = async (userID:number | undefined, intra:string | un
 export const checkFriend = async (userID:number, friendID:number, intra:string | undefined, token:string | undefined) => {
   
   const requestOptions = {
-		method: 'GET'
+		method: 'PUT',
+		body:  JSON.stringify({
+			"intraUsername" : intra,
+			"passwordHash" : token
+		})
 	  };
   const response = await fetch(fetchAddress + 'friend/' + userID + '/friend/' + friendID, requestOptions);
   if (response.ok)
