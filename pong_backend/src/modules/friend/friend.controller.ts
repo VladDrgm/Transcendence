@@ -53,7 +53,7 @@ export class FriendController {
     return this.friendService.getFriendsStatuses(loggedUser, id);
   }
 
-  @Delete(':userId/friend/:friendId')
+  @Delete(':callerId/friend/:targetId')
   @ApiOperation({ summary: 'Remove a friend from a user' })
   @ApiParam({ name: 'callerId', description: 'User ID' })
   @ApiParam({ name: 'targetId', description: 'Friend ID' })
@@ -65,7 +65,7 @@ export class FriendController {
     return await this.friendService.remove(loggedUser, callerId, targetId);
   }
 
-  @Post(':userId/friend/:friendId')
+  @Post(':callerId/friend/:targetId')
   @ApiOperation({ summary: 'Add a friend to a user' })
   @ApiParam({ name: 'callerId', description: 'User ID' })
   @ApiParam({ name: 'targetId', description: 'Friend ID' })
