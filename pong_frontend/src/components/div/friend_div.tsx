@@ -4,6 +4,7 @@ import { getFriendProfile } from '../../api/profile.api';
 import defaultProfile from '../../default_profiile.jpg';
 import { fetchAddress } from './channel_div';
 import CSS from 'csstype';
+import { useUserContext } from '../context/UserContext';
 
 interface FriendProps {
   userID: number;
@@ -11,7 +12,7 @@ interface FriendProps {
 }
 
 const Friend_Div: React.FC<FriendProps> = ({ userID, friendID }) => {
-  const [user, setFriend] = useState<FriendProfile>();
+  const [friend, setFriend] = useState<FriendProfile>();
 
   const profilePictureStyle: CSS.Properties = {
     width: '120px',
@@ -22,11 +23,13 @@ const Friend_Div: React.FC<FriendProps> = ({ userID, friendID }) => {
     border: '3px solid rgba(254, 8, 16, 1)',
   };
 
+  const { user, setUser } = useUserContext();
+
   const getData = async () => {
     if (friendID > 0)
     {
       try{
-        const friend = await getFriendProfile(userID, friendID);
+        const friend = await getFriendProfile(userID, friendID,  user?.intraUsername, user?.passwordHash);
         setFriend(friend);
       }
       catch (error) {
@@ -40,14 +43,14 @@ const Friend_Div: React.FC<FriendProps> = ({ userID, friendID }) => {
     getData();
   }, [friendID]);
 
-  if (user != null) {
+  if (friend != null) {
     return (
       <div>
         <div>
-          <h2>{user.username}</h2>
+          <h2>{friend.username}</h2>
           <img
             className='user-card__image'
-            src={fetchAddress.slice(0,-1) + `${user.avatarPath.slice(1)}`}
+            src={fetchAddress.slice(0,-1) + `${friend.avatarPath.slice(1)}`}
             alt='user.avatarPath'
             onError={({ currentTarget }) => {
               currentTarget.onerror = null;
@@ -55,11 +58,11 @@ const Friend_Div: React.FC<FriendProps> = ({ userID, friendID }) => {
             }}
             style={profilePictureStyle}
           />
-          <p>Wins: {user.wins}</p>
-          <p>Losses: {user.losses}</p>
-          <p>Points: {user.points}</p>
-          <p>Status: {user.status}</p>
-          <p>Achievements: {user.achievementsCSV}</p>
+          <p>Wins: {friend.wins}</p>
+          <p>Losses: {friend.losses}</p>
+          <p>Points: {friend.points}</p>
+          <p>Status: {friend.status}</p>
+          <p>Achievements: {friend.achievementsCSV}</p>
         </div>
         <button>Chat</button>
         <button>Match</button>

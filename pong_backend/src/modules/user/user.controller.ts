@@ -118,13 +118,12 @@ export class UserController {
   @UseInterceptors(FileInterceptor('file'))
   async updateAvatar(
     @UploadedFile() file: Express.Multer.File,
-    @Body() loggedUser: UserAuthDTO,
     @Param('id') id: number,
-  ): Promise<void> {
+  ): Promise<UserDTO> {
     if (!file) {
       throw new BadRequestException('No file uploaded');
     }
 
-    await this.userService.updateAvatar(loggedUser, id, file);
+    return await this.userService.updateAvatar(id, file);
   }
 }

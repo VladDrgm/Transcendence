@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import Pagination from '../div/pagination';
 import { MatchHistoryItem } from '../../interfaces/matchHistory.interface';
 import { UsernameItem } from '../../interfaces/username_list.interface';
 import { getGlobalMatchHistory, getPersonalMatchHistory } from '../../api/matchHistory.api';
 import { getUserList } from '../../api/user_list.api';
+import { useUserContext } from '../context/UserContext';
 // import {main_div_mode_t} from '../MainDivSelector';
 
 const ITEMS_PER_PAGE = 3;
@@ -16,8 +18,7 @@ enum matchHistoryType_t {
 
 interface MatchHistoryProps
 {
-  userID: number;
-//   mode_set: React.Dispatch<React.SetStateAction<main_div_mode_t>>;
+  userID: number | undefined;
   friend_set: React.Dispatch<React.SetStateAction<number>>;
 }
 
@@ -26,6 +27,7 @@ const MatchHistory_MainDiv: React.FC<MatchHistoryProps>  = ({userID, friend_set}
   const [usernameList, setusernameList] = useState<UsernameItem[]>([]);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [historyType, setHistoryType]  = useState<number>(matchHistoryType_t.GLOBAL);
+  const { user, setUser } = useUserContext();
 
   const getData = async () => {
     const usenames = await getUserList();
@@ -34,7 +36,7 @@ const MatchHistory_MainDiv: React.FC<MatchHistoryProps>  = ({userID, friend_set}
     {
         try
         {  
-          const matchData = await getPersonalMatchHistory(userID)
+          const matchData = await getPersonalMatchHistory(userID as number, user?.intraUsername, user?.passwordHash)
           setJsonData(matchData);
         }
         catch(error)
@@ -46,7 +48,7 @@ const MatchHistory_MainDiv: React.FC<MatchHistoryProps>  = ({userID, friend_set}
     {   
       try
       {  
-        const matchData = await getGlobalMatchHistory();
+        const matchData = await getGlobalMatchHistory(userID as number, user?.intraUsername, user?.passwordHash);
         setJsonData(matchData);
       }
       catch(error)
@@ -67,15 +69,10 @@ const MatchHistory_MainDiv: React.FC<MatchHistoryProps>  = ({userID, friend_set}
 
   const openFriend = (FID:number) => {
     friend_set(FID);
-    // mode_set(main_div_mode_t.PUBLIC_PROFILE);
   };
 
-  const openProfile = () => {
-    // mode_set(main_div_mode_t.PROFILE);
-  }
-
   const findUsername = (idToFind: number): string | undefined => {
-    return usernameList.find((user) => user.userID === idToFind)?.username;
+    return usernameList.find((user) => user.id === idToFind)?.username;
   };
 
   // Split the data into multiple pages
@@ -115,11 +112,13 @@ const MatchHistory_MainDiv: React.FC<MatchHistoryProps>  = ({userID, friend_set}
       {currentPageData.map((item) => (
         <div key={item.MatchId}>
             <p>Match: {item.GameType}</p>
-            {item.Player1Id === userID && (<p onClick={() => openProfile()} >{findUsername(item.Player1Id)}</p>)}
-            {item.Player1Id !== userID && (<p onClick={() => openFriend(item.Player1Id)} >{findUsername(item.Player1Id)}</p> )}
+            
+            
+            {item.Player1Id === userID && (<Link to={"/app/profile"}>{findUsername(item.Player1Id)}</Link>)}
+            {item.Player1Id !== userID && (<Link onClick={() => openFriend(item.Player1Id)} to={"/app/public_profile"}>{findUsername(item.Player1Id)}</Link>)}
             <p> vs </p>
-            {item.Player2Id === userID && (<p onClick={() => openProfile()} >{findUsername(item.Player2Id)}</p>)}
-            {item.Player2Id !== userID && (<p onClick={() => openFriend(item.Player2Id)} >{findUsername(item.Player2Id)}</p> )}
+            {item.Player2Id === userID && (<Link to={"/app/profile"}>{findUsername(item.Player2Id)}</Link>)}
+            {item.Player2Id !== userID && (<Link onClick={() => openFriend(item.Player2Id)} to={"/app/public_profile"}>{findUsername(item.Player2Id)}</Link>)}
             <p>Score: {item.Player1Points} : {item.Player2Points}</p>
             <p>Winner: {findUsername(item.WinnerId)} by {item.WinningCondition}</p>
         </div>

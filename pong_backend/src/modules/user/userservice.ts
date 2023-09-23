@@ -197,19 +197,9 @@ export class UserService {
   }
 
   async updateAvatar(
-    loggedUser: UserAuthDTO,
     id: number,
     file: Express.Multer.File,
-  ): Promise<void> {
-    if (parseInt(process.env.FEATURE_FLAG) === 1) {
-      const authPass = await this.authProtector.protectorCheck(
-        loggedUser.passwordHash,
-        id,
-      );
-      if (!authPass) {
-        throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
-      }
-    }
+  ): Promise<UserDTO> {
 
     const userToUpdate = await this.userRepository.findOneBy({ userID: id });
 
@@ -223,7 +213,7 @@ export class UserService {
       picturePath = await this.fileService.saveAvatar(file, id);
     }
     userToUpdate.avatarPath = picturePath;
-    await this.userRepository.save(userToUpdate);
+    return await this.userRepository.save(userToUpdate);
   }
 
   async getAvatarPath(id: number): Promise<string | null> {
