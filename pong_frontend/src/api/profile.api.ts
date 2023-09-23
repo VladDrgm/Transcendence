@@ -2,7 +2,7 @@ import { fetchAddress } from "../components/div/channel_div";
 
 export async function getFriendProfile(userID:number, friendID:number, intra:string | undefined, token:string | undefined)  {
 	const response = await fetch(fetchAddress + 'friend/' + userID + '/friend/' + friendID, {
-		method: "GET",
+		method: "PUT",
 		headers: {
 		  "Content-Type": "application/json"
 		},

@@ -5,6 +5,7 @@ import Public_Div from '../div/public_div';
 import Friend_Div from '../div/friend_div';
 import { checkFriend, addFriend, removeFriend } from '../../api/friend_list.api';
 import { useUserContext } from '../context/UserContext';
+import { Link } from 'react-router-dom';
 
 
 export enum ProfileType_t
@@ -20,9 +21,6 @@ interface ProfileProps
 
 const PublicProfile_MainDiv: React.FC<ProfileProps> = ({friend_ID}) => {
     const [type, set_type] = useState<ProfileType_t>(ProfileType_t.PUBLIC_PROFILE);
-    const set_ownProfile = () => {
-        // mode_set(main_div_mode_t.PROFILE);
-      };
       const { user, setUser } = useUserContext();
       const userID = user!.userID;
       const isFriend = async () => {
@@ -78,8 +76,8 @@ const PublicProfile_MainDiv: React.FC<ProfileProps> = ({friend_ID}) => {
             </div>
             <Friend_Div userID={userID} friendID={friend_ID}/>
             <hr/>
-            <button onClick={set_ownProfile}>Back to your profile</button>
             <button onClick={removeFriend_private}>Unfriend</button>
+            <Link to={"/app/profile"}><button>Back to your profile</button></Link>
             </div>)
         case (ProfileType_t.PUBLIC_PROFILE):
             return (<div>
@@ -90,7 +88,8 @@ const PublicProfile_MainDiv: React.FC<ProfileProps> = ({friend_ID}) => {
                 <Public_Div userID={userID} publicID={friend_ID}/>
                 <hr/>
                 <button onClick={addFriend_private}>Add Friend</button>
-                <button onClick={set_ownProfile}>Back to your profile</button>
+                <Link to={"/app/profile"}><button>Back to your profile</button></Link>
+                
             </div>)
     }
 };
