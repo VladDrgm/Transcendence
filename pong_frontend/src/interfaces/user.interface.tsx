@@ -20,6 +20,7 @@ export interface User {
 	adminChannels: Channel[],
 	blockedChannels: Channel[],
 	channels: Channel[],
+	is2FAEnabled: boolean,
 }
 
 export interface Invitation {

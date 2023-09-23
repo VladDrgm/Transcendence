@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Route, BrowserRouter as Router, Navigate, Routes } from 'react-router-dom';
 import { useUserContext } from './components/context/UserContext';
-import LoginPage from './components/LoginPage';
-import CompleteProfilePage from './components/CompleteProfilePage';
+import LoginPage from './components/auth/LoginPage';
+import CompleteProfilePage from './components/auth/CompleteProfilePage';
 import UserStartPage from './components/UserStartPage';
 import HomePage from './components/mainPages/HomePage';
 import Arena_Chat_MainDiv from './components/mainPages/Arena_Chat';
@@ -11,6 +11,7 @@ import ProfilePage from './components/mainPages/ProfilePage';
 import SettingsPage from './components/mainPages/SettingsPage';
 import MatchHistory_MainDiv from './components/main_div/MatchHistory_MainDiv';
 import PublicProfile_MainDiv from './components/main_div/PublicProfile_MainDiv';
+import TFASetup from './components/auth/TFASetup';
 
 const App = () => {
 	const { user, setUser } = useUserContext();
@@ -28,6 +29,7 @@ const App = () => {
                 <Route path="/" element={user ? <Navigate to="/app" replace /> : <Navigate to="/login" replace />} />
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/complete_profile" element={<CompleteProfilePage />} />
+				<Route path='/setup-2fa' element={<TFASetup />} />
                 <Route path="/app" element={<UserStartPage />}>
                     <Route path='home' index element={<HomePage />} />
                     <Route path="chat" element={<Arena_Chat_MainDiv userID={user?.userID} friend_set={friend_set}/>} />

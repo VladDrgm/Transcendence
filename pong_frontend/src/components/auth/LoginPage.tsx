@@ -1,4 +1,4 @@
-import imageAssetBilly from './assets/billy.png'
+import imageAssetBilly from '../assets/billy.png'
 import * as styles from './LoginPageStyles';
 
 interface LoginPageProps

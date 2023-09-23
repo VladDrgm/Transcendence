@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { userSignupAPI } from '../api/authAPI';
-import { useUserContext } from './context/UserContext';
+import { userSignupAPI } from '../../api/authAPI';
+import { useUserContext } from '../context/UserContext';
 import * as styles from './CompleteProfilePageStyles';
-import imageAssetUploadAvatar from './assets/uploadAvatar.png';
-import { User } from '../interfaces/user.interface';
-import { updateAvatarApi, updateUsernameApi } from '../api/userApi';
-import { fetchAddress } from './div/channel_div';
-import ErrorPopup from './Popups/ErrorPopup';
+import imageAssetUploadAvatar from '../assets/uploadAvatar.png';
+import { User } from '../../interfaces/user.interface';
+import { updateAvatarApi, updateUsernameApi } from '../../api/userApi';
+import { fetchAddress } from '../div/channel_div';
+import ErrorPopup from '../Popups/ErrorPopup';
 
 interface CompleteProfilePageProps {
 	/* Declare page properties here if needed */
@@ -22,7 +22,8 @@ const CompleteProfilePage: React.FC<CompleteProfilePageProps> = ({/* Use Complet
 	const intraName = queryParams.get('intraName');
 
 	const [newUsername, setNewUsername] = useState('');
-	const [newAvatar, setNewAvatar] = useState<File | null>(null)
+	const [newAvatar, setNewAvatar] = useState<File | null>(null);
+	const [enable2FA, setEnable2FA] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 	const [selectedImage, setSelectedImage] = useState<string>('/default_pfp.png');
 
@@ -61,6 +62,7 @@ const CompleteProfilePage: React.FC<CompleteProfilePageProps> = ({/* Use Complet
 			blockedChannels: [],
 			channels: [],
 			socketId: '',
+			is2FAEnabled: enable2FA,
 		};
 
 		try {
@@ -85,7 +87,9 @@ const CompleteProfilePage: React.FC<CompleteProfilePageProps> = ({/* Use Complet
             }
 			localStorage.setItem('user', JSON.stringify(newCreatedUser));
 			setUser(newCreatedUser);
-			navigate(`/`);
+
+			if (enable2FA) { navigate(`/setup-2fa`); } 
+			else { navigate(`/`); }
 		} catch (error) {
 			setError('Error creating a new user');
 		}
@@ -137,6 +141,10 @@ const CompleteProfilePage: React.FC<CompleteProfilePageProps> = ({/* Use Complet
 				style={styles.formFieldStyle}
 			/>
 			</form>
+			<div style={styles.tfaCheckboxStyle}>
+    			<input type="checkbox" onChange={e => setEnable2FA(e.target.checked)} />
+    			<span style={styles.tfaLabelStyle}>Enable 2 Factor Authentication</span>
+			</div>
 			<button style={styles.completeProfileButtonStyle} onClick={handleCreatingUser}>Complete profile</button>
 			<ErrorPopup message={error} onClose={() => setError(null)} />
 		</div>

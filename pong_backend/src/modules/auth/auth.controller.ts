@@ -1,17 +1,20 @@
-// import { Controller, Post, Body, Req, Res } from '@nestjs/common';
-// import { Request, Response } from 'express';
-// import { AuthService } from './auth.service';
-// import { LocalAuthGuard } from './local-auth.guard';
+import { Controller, Get, Post, Body } from '@nestjs/common';
+import { AuthService } from './auth.service';
+import { VerifyTotpDTO } from './dto/verify-totp.dto'
+import { VerifyTotpResponseDTO } from './dto/verify-totp-response.dto'
+import { GenerateTotpDTO } from './dto/generate-totp.dto';
 
-// @Controller('auth')
-// export class AuthController {
-//   constructor(private readonly authService: AuthService) {}
+@Controller('auth')
+export class AuthController {
+  constructor(private authService: AuthService) {}
 
-//   @UseGuards(LocalAuthGuard)
-//   @Post('login')
-//   async login(@Req() req: Request, @Res() res: Response) {
-//     const token = await this.authService.generateToken(req.user);
-//     res.cookie('token', token, { httpOnly: true }); // Set the token as an httpOnly cookie
-//     res.send({ message: 'Login successful' });
+//   @Get('/generate-totp')
+//   generateTOTP(): Promise<GenerateTotpDTO> {
+//     return this.authService.generateTOTP();
 //   }
-// }
+
+//   @Post('/verify-totp')
+//   async verifyTOTP(@Body() verifyTotpDto: VerifyTotpDTO): Promise<VerifyTotpResponseDTO> {
+//     return this.authService.verifyTOTP(verifyTotpDto.secret, verifyTotpDto.token);
+//   }
+}

@@ -91,4 +91,11 @@ export class User {
 
   @OneToMany(() => ChannelUser, (channelUsers) => channelUsers.user)
   channels: ChannelUser[];
+
+  @Column({
+    type: 'boolean',
+    name: 'is2FAEnabled',
+    default: 'false',
+  })
+  is2FAEnabled: boolean;
 }

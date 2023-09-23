@@ -10,6 +10,7 @@ export const pageStyle: Properties = {
 	textAlign: 'center',
 	borderColor: 'green',
 	borderWidth: '5px',
+	alignContent: 'center',
 }
 
 export const pageTitleStyle: Properties = {
@@ -65,9 +66,10 @@ export const formFieldStyle: Properties = {
 	fontFamily: 'Shlop',
 }
 
-export const completeProfileButtonStyle: Properties = {
+export const completeProfileButtonContainerStyle: Properties = {
 	backgroundColor: 'rgba(254, 8, 16, 1)',
 	position: 'relative',
+	display: 'block',
 	height:'40px',
 	width:'100px',
 	fontFamily: 'Shlop',
@@ -77,19 +79,35 @@ export const completeProfileButtonStyle: Properties = {
 	border: 'none',
 	color:'white',
 	marginTop: '10px',
-	marginLeft: '20px',
+	textAlign: 'center',
 }
 
-export const logoutButtonStyle: Properties = {
+export const completeProfileButtonStyle: Properties = {
 	backgroundColor: 'rgba(254, 8, 16, 1)',
 	position: 'relative',
+	display: 'block',
 	height:'40px',
-	width:'160px',
+	width:'100px',
 	fontFamily: 'Shlop',
-	fontSize: '24px',
+	fontSize: '14px',
 	alignSelf: 'center',
 	borderRadius: '6px',
 	border: 'none',
 	color:'white',
-	marginBottom: '0px',
+	marginTop: '10px',
+	textAlign: 'center',
+	left: '47%',
+}
+
+export const tfaLabelStyle: Properties = {
+	marginRight: '10px',
+	color: 'white',
+}
+
+export const tfaCheckboxStyle: Properties = {
+	display: 'inline-block',
+	position: 'relative',
+	alignItems: 'center',
+	alignSelf: 'center',
+	marginBottom: '20px',
 }

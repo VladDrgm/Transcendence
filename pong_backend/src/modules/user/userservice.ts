@@ -10,10 +10,11 @@ import { Repository } from 'typeorm';
 import { UserDTO } from './userDTO';
 import { PasswordService } from '../password/password.service';
 import { FileService } from '../fileservice/file.service';
-import {
-  AuthProtector,
-  UserAuthDTO,
-} from '../authProtectorService/authProtector';
+import { AuthProtector, UserAuthDTO } from '../authProtectorService/authProtector';
+import * as speakeasy from 'speakeasy';
+import * as uuid from 'uuid';
+import * as qrcode from 'qrcode';
+import { authenticator } from 'otplib';
 import { find } from 'rxjs';
 
 @Injectable()
@@ -56,13 +57,29 @@ export class UserService {
     }
 
     user.username = user.username.toLowerCase();
-    user.intraUsername = user.intraUsername.toLowerCase();
+	user.intraUsername = user.intraUsername.toLowerCase();
+	user.is2FAEnabled = user.is2FAEnabled;
     if (parseInt(process.env.FEATURE_FLAG) === 1) {
       user.passwordHash = await this.passwordService.hashPassword(
         Date.now().toString(),
       );
     }
     return await this.userRepository.save(user);
+  }
+
+  async generateTOTP() {
+	const secret = authenticator.generateSecret();
+    const otpauth_url = authenticator.keyuri('user', 'HorrorPong', secret);
+    const dataURL = await qrcode.toDataURL(otpauth_url);
+	return {
+		secret,
+		dataURL,
+		otpauth_url
+	};
+  }
+
+  verifyTOTP(secret: string, token: string) {
+	return authenticator.verify({ token, secret });
   }
 
   async remove(id: number): Promise<void> {
