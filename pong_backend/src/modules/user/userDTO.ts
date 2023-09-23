@@ -59,6 +59,14 @@ export class UserDTO {
     @IsOptional()
     losses: number;
 
+    @ApiProperty({
+        example: 3,
+        description: 'The ID of the User'
+    })
+    @IsNumber()
+    @IsNotEmpty()
+    userID: number;
+
     static fromEntity(user: User): UserDTO {
         const userDTO = new UserDTO();
         userDTO.username = user.username;
@@ -69,6 +77,7 @@ export class UserDTO {
         userDTO.intraUsername = user.intraUsername;
         userDTO.wins = user.wins;
         userDTO.losses = user.losses;
+        userDTO.userID = user.userID;
         return userDTO;
   }
 }
