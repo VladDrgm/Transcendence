@@ -78,7 +78,7 @@ export class UserController {
     return await this.userService.updateUsername(loggedUser, callerId, targetId, newUsername);
   }
 
-  @Get(':callerId/users/points')
+  @Get('users/points')
   @ApiOperation({ summary: 'Get top 10 users ordered by points' })
   async getUsersOrderedByPoints() {
     var users = await this.userService.getUsersOrderedByPoints();
