@@ -21,7 +21,7 @@ export class FriendController {
     return friends;
   }
 
-  @Put(':id/friend/:friendId')
+  @Put(':callerId/friend/:targetId')
   @ApiOperation({ summary: 'Get a friend of a user by his id' })
   @ApiParam({ name: 'callerId', description: 'User callerId' })
   @ApiParam({ name: 'targetId', description: 'Friend ID' })
