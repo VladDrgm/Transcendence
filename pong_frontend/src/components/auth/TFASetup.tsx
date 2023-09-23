@@ -1,12 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { fetchAddress } from '../div/channel_div';
 import { api } from '../../api/utils/api';
+import { useNavigate } from 'react-router-dom';
+import ErrorPopup from '../Popups/ErrorPopup';
 
 const TwoFactorSetup: React.FC = () => {
-  const [qrCode, setQrCode] = useState<string>('');
-  const [secret, setSecret] = useState<string>('');
-  const [token, setToken] = useState<string>('');
-  const [isVerified, setIsVerified] = useState<boolean | null>(null);
+	const navigate = useNavigate();
+	const [qrCode, setQrCode] = useState<string>('');
+	const [secret, setSecret] = useState<string>('');
+	const [token, setToken] = useState<string>('');
+	const [isVerified, setIsVerified] = useState<boolean | null>(null);
+	const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
 	console.log("The secret from useEffect is", secret);
@@ -27,6 +31,11 @@ const TwoFactorSetup: React.FC = () => {
 	try {
 		const res = await api('user/verify-totp', { body: { secret, token } });
 		setIsVerified(res.isValid);
+		if (res.isValid) { 
+			navigate(`/`);
+		} else { 
+			setError("Error: Invalid token");
+		}
 	  } catch (error) {
 		console.error('Error verifying token:', error);
 	  }
@@ -52,6 +61,7 @@ const TwoFactorSetup: React.FC = () => {
           )}
         </div>
       )}
+	  <ErrorPopup message={error} onClose={() => setError(null)} />
     </div>
   );
 };
