@@ -74,6 +74,18 @@ export class User {
   })
   isTFAEnabled: boolean;
 
+  @Column({
+    type: 'text',
+    default: null
+  })
+  token: string;
+
+  @Column({
+    type: 'text',
+    default: null
+  })
+  TFASecret: string;
+
   @OneToMany(() => Blocked, (block) => block.user)
   blocked: User[];
 

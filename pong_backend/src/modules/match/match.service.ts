@@ -5,6 +5,8 @@ import { Match } from 'src/models/orm_models/match.entity';
 import { MatchDTO } from './matchDTO';
 import { MatchHistory } from 'src/models/orm_models/matchHistory.entity';
 import { AuthProtector, UserAuthDTO } from '../authProtectorService/authProtector';
+import { User } from 'src/models/orm_models/user.entity';
+
 
 @Injectable()
 export class MatchService {
@@ -13,7 +15,9 @@ export class MatchService {
     private readonly matchRepository: Repository<Match>,
     @InjectRepository(MatchHistory)
     private readonly matchHistoryRepository: Repository<MatchHistory>,
-    private readonly authProtector: AuthProtector
+    private readonly authProtector: AuthProtector,
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
   ) {}
 
   async createMatch(matchDTO: MatchDTO): Promise<Match> {
@@ -38,6 +42,21 @@ export class MatchService {
     matchHistory.Player1Id = match.Player1Id;
     matchHistory.Player2Id = match.Player2Id;
     this.matchHistoryRepository.save(matchHistory);
+
+    const winner = await this.userRepository.findOneBy({ userID: match.WinnerId });
+    const loser = await this.userRepository.findOneBy({ userID: match.WinnerId === match.Player1Id ? match.Player2Id : match.Player1Id });
+
+    loser.losses += 1;
+    winner.wins += 1;
+    winner.points += 1;
+
+    this.achievementsService(winner);
+
+    await this.userRepository.save(winner);
+    await this.userRepository.save(loser);
+
+
+
 
     return match;
   }
@@ -88,5 +107,20 @@ export class MatchService {
     const result = result1.concat(result2);
 
     return result;
+  }
+
+  achievementsService(user : User) {
+    if (user.wins === 1) {
+      user.achievementsCSV = user.achievementsCSV +"Achievement 1: First win";
+    }
+
+    if (user.wins === 5) {
+      user.achievementsCSV = user.achievementsCSV + ", Achievement 2: 5 wins";
+    }
+
+    if (user.wins === 10) {
+      user.achievementsCSV = user.achievementsCSV + ", Achievement 3: 10 wins";
+    }
+
   }
 }
