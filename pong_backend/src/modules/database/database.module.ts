@@ -34,7 +34,7 @@ config();
         Channel,
         ChannelUser,
       ],
-      synchronize: true, // set to false in production; true in development
+      synchronize: false, // set to false in production; true in development
       ssl: true,
       extra: {
         ssl: {
