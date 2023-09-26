@@ -92,7 +92,7 @@ export async function getUserIDByUserName(UserName: string): Promise<number | un
     const UserList = await getUsers();
     const TargetUser = UserList.find((user: IUser) => user.username === UserName)
     if (TargetUser) {
-        return TargetUser.userID;
+        return TargetUser.id;
     }
     return undefined;
 }

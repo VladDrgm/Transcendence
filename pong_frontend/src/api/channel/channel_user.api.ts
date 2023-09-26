@@ -4,7 +4,7 @@ import { IUser } from "../../interfaces/interface";
 import { User } from "../../interfaces/user.interface";
 
 
-export async function getUsers():  Promise<IUser[]> {
+export async function getUsers():  Promise<any> {
 	try { 
     const response = await fetch(fetchAddress + 'user', {credentials: "include",});
     const json = await response.json();
