@@ -13,6 +13,27 @@ export const getUsers = async () => {
 	return json;
 };
 
+export const getUserByToken = async (token:string | undefined): Promise<User> => {
+	  try {
+		// Make API call and get the response
+		const response = await fetch(fetchUserAddress + 'authToken/' + token, {
+		  method: "GET",
+		  headers: {
+			"Content-Type": "application/json"
+		  }
+		});
+	
+		if (response.ok) {
+		  const userObject: User = await response.json();
+		  return userObject;
+		} else {
+		  throw new Error(response.statusText);
+		}
+	  } catch (error) {
+		throw new Error('Error fetching user with token. Please try again!');
+	  }
+};
+
 export const createUser = async () => {
 	const response = await fetch(fetchAddress + 'users');
 	console.log(response.text);
