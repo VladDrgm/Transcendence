@@ -39,6 +39,13 @@ export class UserService {
       .getOne();
   }
 
+  async findOneByToken(token: string): Promise<User> {
+    return this.userRepository
+      .createQueryBuilder('user')
+      .where('user.token = :token', { token })
+      .getOne();
+  }
+
   async create(user: User): Promise<User> {
     const isUserInDb = await this.userRepository.findOneBy({
       intraUsername: user.intraUsername,

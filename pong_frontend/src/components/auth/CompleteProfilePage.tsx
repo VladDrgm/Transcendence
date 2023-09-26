@@ -63,6 +63,8 @@ const CompleteProfilePage: React.FC<CompleteProfilePageProps> = ({/* Use Complet
 			channels: [],
 			socketId: '',
 			is2FAEnabled: enable2FA,
+			token: '',
+			tfa_secret: '',
 		};
 
 		try {
@@ -88,8 +90,11 @@ const CompleteProfilePage: React.FC<CompleteProfilePageProps> = ({/* Use Complet
 			localStorage.setItem('user', JSON.stringify(newCreatedUser));
 			setUser(newCreatedUser);
 
-			if (enable2FA) { navigate(`/setup-2fa`); } 
-			else { navigate(`/`); }
+			if (enable2FA) { 
+				navigate(`/setup-2fa`);
+			} else {
+				navigate(`/`);
+			}
 		} catch (error) {
 			setError('Error creating a new user');
 		}

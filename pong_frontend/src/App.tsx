@@ -12,6 +12,7 @@ import SettingsPage from './components/mainPages/SettingsPage';
 import MatchHistory_MainDiv from './components/main_div/MatchHistory_MainDiv';
 import PublicProfile_MainDiv from './components/main_div/PublicProfile_MainDiv';
 import TFASetup from './components/auth/TFASetup';
+import AuthRedirectPage from './components/auth/AuthRedirectPage';
 
 const App = () => {
 	const { user, setUser } = useUserContext();
@@ -29,6 +30,7 @@ const App = () => {
                 <Route path="/" element={user ? <Navigate to="/app" replace /> : <Navigate to="/login" replace />} />
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/complete_profile" element={<CompleteProfilePage />} />
+				<Route path="/auth_redirect" element={<AuthRedirectPage />} />
 				<Route path='/setup-2fa' element={<TFASetup />} />
                 <Route path="/app" element={<UserStartPage />}>
                     <Route path='home' index element={<HomePage />} />

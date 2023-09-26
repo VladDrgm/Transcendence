@@ -143,4 +143,10 @@ export class UserController {
 
     return await this.userService.updateAvatar(id, file);
   }
+
+  @Get('authToken/:token')
+  @ApiOperation({ summary: 'Get a user by his token' })
+  async getUserByToken(@Param('token') token: string): Promise<User> {
+    return await this.userService.findOneByToken(token);
+  }
 }

@@ -21,6 +21,8 @@ export interface User {
 	blockedChannels: Channel[],
 	channels: Channel[],
 	is2FAEnabled: boolean,
+	token: string,
+	tfa_secret: string,
 }
 
 export interface Invitation {
