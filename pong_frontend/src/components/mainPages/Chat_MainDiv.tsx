@@ -14,6 +14,7 @@ import { deleteBlockedUser, deleteChannelUser, deleteFriend, getBlockedUser, get
 import { CurrentChat, WritableDraft, getChannelFromChannellist, initialMessagesState, initializeMessagesState } from "./Arena_Chat";
 import immer from "immer";
 import { getIsAdmin, postAdmin } from "../../api/channel/channel_admin.api";
+import { Link } from 'react-router-dom';
 
 const Chat_MainDiv: FC<ChatProps> = (props) => {
 	const [body, setBody] = useState<JSX.Element | null>(null);
@@ -720,10 +721,8 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 				) : (
 				  <ChannelInfo>
 
-					<div 
-					onClick={() => openFriend(currentChat.chatName.toString())}>
-    					{currentChat.chatName}
-  					</div>
+	
+					<Link onClick={() => openFriend(currentChat.chatName.toString())} key={"chat_frined " + currentChat.chatName.toString()} to={"/app/public_profile"}>Name: {currentChat.chatName.toString()}</Link>
 					<div>
 					<button 
 					style={chatButtonsStyle}
