@@ -4,7 +4,7 @@ import { User } from "../../interfaces/user.interface";
 
 //to be tested
 export async function getAdmins(channelId: number): Promise<any[]>{
-    return fetch(fetchAddress + 'channel/' + channelId + '/admin', {credentials: "include",})
+    return fetch(fetchAddress + 'channel/' + channelId + '/admin', {credentials: "include", method: 'PUT'})
     .then(response => {
       if (response.ok) {
         return response.json();
@@ -30,7 +30,7 @@ export async function getAdmins(channelId: number): Promise<any[]>{
   //tested
   export async function getIsAdmin(channelId: number, userId: number | undefined): Promise<boolean> {
     try {
-      const response = await fetch(fetchAddress + 'channel/' + userId + '/' + channelId + '/admin', {credentials: "include",})
+      const response = await fetch(fetchAddress + 'channel/' + userId + '/' + channelId + '/admin', {credentials: "include", method: 'PUT'})
       if (!response.ok) {
         console.error("Error retrieving ChannelUser");
         return false;

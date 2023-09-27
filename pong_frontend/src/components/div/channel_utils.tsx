@@ -90,6 +90,7 @@ export async function copyChannelByName(channelName: string): Promise<Channel | 
 
 export async function getUserIDByUserName(UserName: string): Promise<number | undefined> {
     const UserList = await getUsers();
+    // const UserListArray = [...UserList];
     const TargetUser = UserList.find((user: IUser) => user.username === UserName)
     if (TargetUser) {
         return TargetUser.id;
