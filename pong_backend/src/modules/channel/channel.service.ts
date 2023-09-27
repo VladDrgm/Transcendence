@@ -339,7 +339,7 @@ export class ChannelService {
     }
   }
 
-  async addChannelBlockedUser(
+  async addChannelBlockedUserService(
     loggedUser: UserAuthDTO,
     callerId: number,
     targetId: number,
@@ -347,11 +347,14 @@ export class ChannelService {
   ): Promise<ChannelBlockedUser> {
 
     if (parseInt(process.env.FEATURE_FLAG) === 1) {
-        const authPass  = await this.authProtector.protectorCheck(loggedUser.passwordHash, callerId);
+        const authPass = await this.authProtector.protectorCheck(
+          loggedUser.passwordHash,
+          callerId,
+        );
         if (!authPass) {
-            throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+          throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
         }
-    }
+      }
 
     if (callerId == targetId) {
       throw new HttpException(
@@ -370,9 +373,9 @@ export class ChannelService {
     const callerIsAdmin = await this.getChannelAdminByUserId(
         callerId,
         channelId,
-        );
+        ) ? true : false;
 
-    if (!callerIsAdmin) {
+    if (callerIsAdmin == false) {
         throw new HttpException(
             'You do not have the credentials to ban a user.',
             HttpStatus.BAD_REQUEST,
@@ -383,7 +386,7 @@ export class ChannelService {
     channelBlockedUser.UserId = targetId;
     channelBlockedUser.ChannelId = channelId;
 
-    return this.channelBlockedUserRepository.save(channelBlockedUser);
+    return await this.channelBlockedUserRepository.save(channelBlockedUser);
   }
 
   async getChannelBlockedUsers(
@@ -405,16 +408,15 @@ export class ChannelService {
         }
     }
 
-    const isChannelOwner = await this.GetChannelOwner(channelId) == targetId;
-    const isChannelAdmin = await this.getChannelAdminByUserId(callerId, channelId);
+    const isChannelOwner = await this.GetChannelOwner(channelId) == callerId ? true : false;
+    const isChannelAdmin = await this.getChannelAdminByUserId(callerId, channelId) ? true : false;
 
-    if (!isChannelOwner && !isChannelAdmin && callerId != targetId) {
+    if (isChannelOwner == false && isChannelAdmin == false && callerId == targetId) {
         throw new HttpException(
-            'You do not have the credentials to run this command.',
+            'You do not have the credentials to get a user.',
             HttpStatus.BAD_REQUEST,
         );
     }
-
 
     return this.channelBlockedUserRepository.findOneBy({
       UserId: targetId,

@@ -16,9 +16,4 @@ export class ChannelUser {
   @Column({ nullable: true })
   MutedUntil: Date;
 
-  @ManyToOne(() => User, (user) => user.channels)
-  user: User;
-
-  @ManyToOne(() => Channel, (channel) => channel.users)
-  channel: Channel;
 }

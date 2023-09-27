@@ -39,7 +39,7 @@ export class UserAuthDTO {
   @IsNotEmpty()
   intraUsername: string;
   @ApiProperty({
-    example: '$2b$10$7jvbxST0POK/JtjsqLRkx.fgIQDKXN19HyyXiUM5i8fO1As7ar8.6',
+    example: '$2b$10$iXumFm6KoyN6J3.M03j7OO3454548G64OLJcgy7dG3Wf9Zhg/SyJKabmY.',
     description: 'PasswordHash',
   })
   @IsString()

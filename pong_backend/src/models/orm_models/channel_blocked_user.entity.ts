@@ -12,10 +12,4 @@ export class ChannelBlockedUser {
 
   @Column()
   ChannelId: number;
-
-  @ManyToOne(() => User, (user) => user.blockedChannels)
-  user: User;
-
-  @ManyToOne(() => Channel, (channel) => channel.blockedUsers)
-  channel: Channel;
 }

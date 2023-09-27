@@ -13,9 +13,5 @@ export class ChannelAdmin {
   @Column()
   ChannelId: number;
 
-  @ManyToOne(() => User, (user) => user.adminChannels)
-  user: User;
-
-  @ManyToOne(() => Channel, (channel) => channel.admins)
   channel: Channel;
 }

@@ -19,16 +19,4 @@ export class Channel {
 
   @Column({ nullable: true })
   Password: string;
-
-  @OneToMany(() => ChannelUser, (channelUsers) => channelUsers.channel)
-  users: ChannelUser[];
-
-  @OneToMany(
-    () => ChannelBlockedUser,
-    (channelBlockedUsers) => channelBlockedUsers.channel,
-  )
-  blockedUsers: ChannelBlockedUser[];
-
-  @OneToMany(() => ChannelAdmin, (channelAdmins) => channelAdmins.channel)
-  admins: ChannelAdmin[];
 }

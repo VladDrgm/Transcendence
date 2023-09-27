@@ -11,6 +11,7 @@ import {
   Query,
   HttpException,
   HttpStatus,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 import { Channel } from 'src/models/orm_models/channel.entity';
@@ -20,7 +21,6 @@ import { ChannelUser } from 'src/models/orm_models/channel_user.entity';
 import { ChannelBlockedUser } from 'src/models/orm_models/channel_blocked_user.entity';
 import { CreateChannelDto } from './channelDTO';
 import { UserAuthDTO } from '../authProtectorService/authProtector';
-import { log } from 'console';
 
 @ApiTags('Channel')
 @Controller('channel')
@@ -177,25 +177,25 @@ export class ChannelController {
     await this.channelService.removeChannelUser(loggedUser, callerId, targetId, channelId);
   }
 
-  @Post(':callerId/:targetId/:channelId/blocked')
-  @ApiOperation({
-    summary: 'Ban a user from a Channel. Only Admins/Owner can ban users.',
-  })
-  async addChannelBlockedUser(
-    @Param('callerId') callerId: number,
-    @Param('targetId') targetId: number,
-    @Param('channelId') channelId: number,
-    @Body() loggedUser: UserAuthDTO
-  ): Promise<ChannelBlockedUser> {
-    return this.channelService.addChannelBlockedUser(loggedUser, callerId, targetId, channelId);
-  }
+  @Post('ban/blocked/:callerId/:targetId/:channelId/blocked')
+    @ApiOperation({
+        summary: 'Ban a user from a Channel. Only Admins/Owner can ban users.',
+    })
+    async addChannelBlockedUser(
+        @Param('callerId') callerId: number,
+        @Param('targetId') targetId: number,
+        @Param('channelId') channelId: number,
+        @Body() loggedUser: UserAuthDTO
+    ): Promise<ChannelBlockedUser> {
+        return await this.channelService.addChannelBlockedUserService(loggedUser, callerId, targetId, channelId);
+    }
 
   @Put(':channelId/blockedUsers')
   @ApiOperation({ summary: 'Get all blocked users of a Channel' })
   async getChannelBlockedUsers(
     @Param('channelId') channelId: number,
   ): Promise<ChannelBlockedUser[]> {
-    return this.channelService.getChannelBlockedUsers(channelId);
+    return await this.channelService.getChannelBlockedUsers(channelId);
   }
 
   @Put(':callerId/:targetId/:channelId/blocked')

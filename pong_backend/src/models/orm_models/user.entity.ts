@@ -86,24 +86,6 @@ export class User {
   })
   TFASecret: string;
 
-  @OneToMany(() => Blocked, (block) => block.user)
-  blocked: User[];
-
-  @OneToMany(() => Blocked, (block) => block.blockedUser)
-  blockedBy: User[];
-
-  @OneToMany(() => ChannelAdmin, (channelAdmins) => channelAdmins.user)
-  adminChannels: ChannelAdmin[];
-
-  @OneToMany(
-    () => ChannelBlockedUser,
-    (channelBlockedUsers) => channelBlockedUsers.user,
-  )
-  blockedChannels: ChannelBlockedUser[];
-
-  @OneToMany(() => ChannelUser, (channelUsers) => channelUsers.user)
-  channels: ChannelUser[];
-
   @Column({
     type: 'boolean',
     name: 'is2FAEnabled',
