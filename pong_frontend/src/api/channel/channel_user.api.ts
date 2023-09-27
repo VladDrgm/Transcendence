@@ -449,7 +449,7 @@ export function putChannelType(userId: number | undefined, channelId: number, us
 
 //Blocked Users
 
-export async function postBlockedUser(targetId: number, user: User, channelId: number): Promise<void> {
+export async function postBlockedUser(targetId: number, user: User): Promise<void> {
   const ChannelData = {
     "intraUsername": user?.intraUsername,
     "passwordHash": user?.passwordHash
@@ -463,20 +463,20 @@ export async function postBlockedUser(targetId: number, user: User, channelId: n
     },
     body: jsonData
   };
-  fetch(fetchAddress + 'channel/' + user.userID + '/' + targetId + '/' + channelId + '/blocked/', requestOptions)
+  fetch(fetchAddress + 'blocked/' + user.userID + '/' + targetId, requestOptions)
     .then(response => {
       if (response.ok) {
         console.log("ChannelUser with UserId :" + targetId +" blocked");
       } else {
         console.error("Error blocking User with UserId :" + targetId +":", response.status);
-        // alert("Error blocking User: " + response);
-        throw new Error ("Error blocking User");
+        alert("Error blocking User: " + response);
+        // throw new Error ("Error blocking User");
       }
     })
     .catch(error => {
       console.error("Error blocking User with UserId :" + targetId +":", error);
       // alert("Error blocking User: " + error);
-      throw error;
+      // throw error;
     });
 }
 

@@ -102,17 +102,18 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 		setMessage(e.target.value);
 	}
 
-	useEffect(() => {
-    	setMessage(message.trim());
-  	}, [message]);
+	// useEffect(() => {
+    // 	setMessage(message.trim());
+  	// }, [message]);
 
 	function sendMessage() {
 		console.log("message:", message);
 		console.log("Messages :", messages);
 		console.log("currentchat: ", currentChat);
 		console.log("username : ", props.user?.username);
+		const trimmedMessage = message.trim();
 		const payload = {
-		content: message,
+		content: trimmedMessage,
 		to: currentChat.isChannel ? currentChat.chatName : currentChat.receiverId,
 		sender: props.user?.username,
 		chatName: currentChat.chatName,
@@ -459,7 +460,7 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 				alert("User could not be found. Please try another Username.");
 				return;
 			}
-			postBlockedUser(Number(targetID), props.user!, currentChat.Channel.ChannelId)
+			postBlockedUser(Number(targetID), props.user!)
 			.then(() => {
 				console.log('User blocked with UserId:', targetID);
 				// const data = {
@@ -669,12 +670,6 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 		else 
 			alert("Error while inviting Player. Please try again");
 	}
-
-	const renderChatInput = (chatInputProps: chatInputProps) => {
-		return (
-		  <ChatInput_Div {...chatInputProps} />
-		);
-	  };
 
 	const handleBody = useCallback (() =>{
 		setBody(<ChatBody_Div
@@ -923,14 +918,9 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 		props.socketRef.current?.emit('mute user', {targetId, roomName, muteDuration});
 	}
 
-	// useEffect(() => {
-	// 	setChatInput(<ChatInput_Div props = {props}/>);
-	// }, [props.currentChat, handleBody, handleChannelPanel, loadingChannelpanel, props.ChannelUserRoles, messages]);
-	
 	useEffect(() => {
 		handleChannelPanel();
 		handleBody();
-		// setChatInput(<ChatInput_Div props = {props}/>);
 	}, [currentChat, handleBody, handleChannelPanel, loadingChannelpanel, currentRoles]);
 
 	return (
@@ -952,22 +942,14 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 				<BodyContainer>
 				{body}
 				</BodyContainer>
-				{/* {chatInput}
-				<TextBox
-				value={props.message}
-				onChange={props.handleMessageChange}
-				onKeyPress={handleKeyPress}
-				placeholder="You can write something here"
-				/> */}
-				{/* </BodyContainer> */}
-				{renderChatInput({
-					props: props,
-					value: message,
-					onChange: handleMessageChange,
-					onKeyPress: handleKeyPress,
-					currentRoles: currentRoles,
-					currentChat: currentChat
-				})}
+				<ChatInput_Div
+					props={props}
+					value={message}
+					onChange={handleMessageChange}
+					onKeyPress={handleKeyPress}
+					currentRoles={currentRoles}
+					currentChat={currentChat}
+				/>
 			</ChatPanel>
 		</div>
 	);
