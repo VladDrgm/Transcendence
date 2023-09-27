@@ -10,7 +10,10 @@ import { Repository } from 'typeorm';
 import { UserDTO } from './userDTO';
 import { PasswordService } from '../password/password.service';
 import { FileService } from '../fileservice/file.service';
-import { AuthProtector, UserAuthDTO } from '../authProtectorService/authProtector';
+import {
+  AuthProtector,
+  UserAuthDTO,
+} from '../authProtectorService/authProtector';
 import * as speakeasy from 'speakeasy';
 import * as uuid from 'uuid';
 import * as qrcode from 'qrcode';
@@ -46,12 +49,12 @@ export class UserService {
       .getOne();
 
     if (!result) {
-        throw new HttpException('User not found', HttpStatus.NOT_FOUND);
-        }
-    
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    }
+
     const newHash = await this.passwordService.hashPassword(
-        Date.now().toString(),
-        );
+      Date.now().toString(),
+    );
 
     result.passwordHash = newHash;
     await this.userRepository.save(result);
@@ -77,8 +80,8 @@ export class UserService {
     }
 
     user.username = user.username.toLowerCase();
-	user.intraUsername = user.intraUsername.toLowerCase();
-	user.is2FAEnabled = user.is2FAEnabled;
+    user.intraUsername = user.intraUsername.toLowerCase();
+    user.is2FAEnabled = user.is2FAEnabled;
     if (parseInt(process.env.FEATURE_FLAG) === 1) {
       user.passwordHash = await this.passwordService.hashPassword(
         Date.now().toString(),
@@ -88,18 +91,18 @@ export class UserService {
   }
 
   async generateTOTP() {
-	const secret = authenticator.generateSecret();
+    const secret = authenticator.generateSecret();
     const otpauth_url = authenticator.keyuri('user', 'HorrorPong', secret);
     const dataURL = await qrcode.toDataURL(otpauth_url);
-	return {
-		secret,
-		dataURL,
-		otpauth_url
-	};
+    return {
+      secret,
+      dataURL,
+      otpauth_url,
+    };
   }
 
   verifyTOTP(secret: string, token: string) {
-	return authenticator.verify({ token, secret });
+    return authenticator.verify({ token, secret });
   }
 
   async remove(id: number): Promise<void> {
@@ -233,11 +236,7 @@ export class UserService {
     return await this.userRepository.findOneBy({ userID: targetId });
   }
 
-  async updateAvatar(
-    id: number,
-    file: Express.Multer.File,
-  ): Promise<UserDTO> {
-
+  async updateAvatar(id: number, file: Express.Multer.File): Promise<UserDTO> {
     const userToUpdate = await this.userRepository.findOneBy({ userID: id });
 
     if (!userToUpdate) {
@@ -250,6 +249,7 @@ export class UserService {
       picturePath = await this.fileService.saveAvatar(file, id);
     }
     userToUpdate.avatarPath = picturePath;
+    console.log(picturePath);
     return await this.userRepository.save(userToUpdate);
   }
 
@@ -259,35 +259,37 @@ export class UserService {
   }
 
   async enable2Fa(
-    loggedUser : UserAuthDTO,
-    callerId : number,
-    targetId : number,
-    secret : string
-  ) : Promise<User> {
-
+    loggedUser: UserAuthDTO,
+    callerId: number,
+    targetId: number,
+    secret: string,
+  ): Promise<User> {
     if (parseInt(process.env.FEATURE_FLAG) === 1) {
-        const authPass = await this.authProtector.protectorCheck(
-          loggedUser.passwordHash,
-          callerId,
-        );
-        if (!authPass) {
-          throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
-        }
+      const authPass = await this.authProtector.protectorCheck(
+        loggedUser.passwordHash,
+        callerId,
+      );
+      if (!authPass) {
+        throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
       }
+    }
 
-      if (callerId != targetId) {
-        throw new HttpException('You cannot set the 2FA for someone else.', HttpStatus.UNAUTHORIZED);
-      }
+    if (callerId != targetId) {
+      throw new HttpException(
+        'You cannot set the 2FA for someone else.',
+        HttpStatus.UNAUTHORIZED,
+      );
+    }
 
-        const user = await this.userRepository.findOneBy({ userID: callerId });
-        if (!user) {
-          throw new HttpException('User not found', HttpStatus.NOT_FOUND);
-        }
+    const user = await this.userRepository.findOneBy({ userID: callerId });
+    if (!user) {
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    }
 
-        user.TFASecret = secret;
-        user.is2FAEnabled = true;
-        await this.userRepository.save(user);
+    user.TFASecret = secret;
+    user.is2FAEnabled = true;
+    await this.userRepository.save(user);
 
-        return user;
+    return user;
   }
 }

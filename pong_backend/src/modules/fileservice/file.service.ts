@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import * as fs from 'fs/promises';
-import { extname } from 'path';
+import path, { extname } from 'path';
 
 @Injectable()
 export class FileService {
@@ -11,15 +11,15 @@ export class FileService {
   }
 
   async saveAvatar(file: Express.Multer.File, id: number): Promise<string> {
-    const avatarFolder = './avatars';
+    const avatarFolderPath = './avatars';
     const originalFileName = file.originalname;
     const indexOfLastDot = originalFileName.lastIndexOf('.');
     const fileNameWithoutExtension = originalFileName.slice(0, indexOfLastDot);
     const modifiedFileName = fileNameWithoutExtension;
-    const filePath = `${avatarFolder}/${modifiedFileName}${id}${extname(
+    const filePath = `${avatarFolderPath}/${modifiedFileName}${id}${extname(
       file.originalname,
     )}`;
-
+    console.log(filePath);
     try {
       await fs.writeFile(filePath, file.buffer);
       return filePath;

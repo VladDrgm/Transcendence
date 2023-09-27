@@ -66,7 +66,7 @@ import { AuthProtector } from './modules/authProtectorService/authProtector';
     BlockedService,
     MatchService,
     PasswordService,
-    AuthProtector
+    AuthProtector,
   ],
 })
 export class AppModule {}

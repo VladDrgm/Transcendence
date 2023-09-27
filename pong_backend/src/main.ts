@@ -4,7 +4,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common/pipes/validation.pipe';
 import { Socket, Server } from 'socket.io';
 
-const fetch = require('node-fetch');
+// const fetch = require('node-fetch');
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -448,7 +448,11 @@ async function bootstrap() {
 
     socket.on(
       'invite player',
-      (invitation: Invitation, userID: number | undefined, username: string) => {
+      (
+        invitation: Invitation,
+        userID: number | undefined,
+        username: string,
+      ) => {
         console.log('Invite Player was triggered');
         let existingSession: any;
 
@@ -497,7 +501,7 @@ async function bootstrap() {
           // SEND INVITE TO PLAYER TWO
           socket
             .to(invitation.playerTwoSocket)
-            .emit('invitation alert playertwo', { invitation, username});
+            .emit('invitation alert playertwo', { invitation, username });
 
           playerQueue.push(socket.id);
           console.log('Game sessions after joining as Player 1:', gameSessions);

@@ -21,7 +21,7 @@ import { AuthProtector } from '../authProtectorService/authProtector';
     UserService,
     PasswordService,
     FileService,
-    AuthProtector
+    AuthProtector,
   ],
   exports: [UserService],
 })
