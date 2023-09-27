@@ -40,10 +40,23 @@ export class UserService {
   }
 
   async findOneByToken(token: string): Promise<User> {
-    return this.userRepository
+    const result = await this.userRepository
       .createQueryBuilder('user')
       .where('user.token = :token', { token })
       .getOne();
+
+    if (!result) {
+        throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+        }
+    
+    const newHash = await this.passwordService.hashPassword(
+        Date.now().toString(),
+        );
+
+    result.passwordHash = newHash;
+    await this.userRepository.save(result);
+
+    return result;
   }
 
   async create(user: User): Promise<User> {
@@ -243,5 +256,38 @@ export class UserService {
   async getAvatarPath(id: number): Promise<string | null> {
     const user = await this.findOneBy({ userID: id });
     return user ? user.avatarPath : null;
+  }
+
+  async enable2Fa(
+    loggedUser : UserAuthDTO,
+    callerId : number,
+    targetId : number,
+    secret : string
+  ) : Promise<User> {
+
+    if (parseInt(process.env.FEATURE_FLAG) === 1) {
+        const authPass = await this.authProtector.protectorCheck(
+          loggedUser.passwordHash,
+          callerId,
+        );
+        if (!authPass) {
+          throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+        }
+      }
+
+      if (callerId != targetId) {
+        throw new HttpException('You cannot set the 2FA for someone else.', HttpStatus.UNAUTHORIZED);
+      }
+
+        const user = await this.userRepository.findOneBy({ userID: callerId });
+        if (!user) {
+          throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+        }
+
+        user.TFASecret = secret;
+        user.is2FAEnabled = true;
+        await this.userRepository.save(user);
+
+        return user;
   }
 }

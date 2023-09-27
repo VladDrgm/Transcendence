@@ -7,8 +7,7 @@ export class FileService {
   async deleteImage(imageUrl: string): Promise<void> {
     try {
       await fs.unlink(imageUrl);
-    } catch (error) {
-    }
+    } catch (error) {}
   }
 
   async saveAvatar(file: Express.Multer.File, id: number): Promise<string> {
@@ -25,6 +24,7 @@ export class FileService {
       await fs.writeFile(filePath, file.buffer);
       return filePath;
     } catch (error) {
+      console.error('Failed to save avatar:', error);
       throw new Error('Failed to save avatar.');
     }
   }
