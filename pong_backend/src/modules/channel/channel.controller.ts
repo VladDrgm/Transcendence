@@ -209,7 +209,7 @@ export class ChannelController {
     return this.channelService.getChannelBlockedUserByUserId(loggedUser, callerId, targetId , channelId);
   }
 
-  @Delete(':userId/:channelId/blocked')
+  @Delete(':callerId/:targetId/:channelId/blocked')
   @ApiOperation({
     summary: 'Unban a user from a Channel. Only Admins/Owner can unban users.',
   })
