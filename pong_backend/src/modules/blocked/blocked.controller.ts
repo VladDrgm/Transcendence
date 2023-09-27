@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Delete, Body, Param } from '@nestjs/common';
+import { Controller, Put, Post, Delete, Body, Param } from '@nestjs/common';
 
 import { ApiTags, ApiOperation, ApiParam } from '@nestjs/swagger';
 import { BlockedService } from './blocked.service';
@@ -11,7 +11,7 @@ import { AuthProtector, UserAuthDTO } from '../authProtectorService/authProtecto
 export class BlockedController {
   constructor(private readonly blockedService: BlockedService) {}
 
-  @Get(':requesterId')
+  @Put(':requesterId')
   @ApiOperation({ summary: 'Get all the blocked users for the requester' })
   @ApiParam({ name: 'requesterId', description: 'Caller ID' })
   async getBlockedUserById(
@@ -69,7 +69,7 @@ export class BlockedController {
     return await this.blockedService.unblockUser(loggedUser, callerId, targetId);
   }
 
-  @Get(':requesterId/:blockedId')
+  @Put(':requesterId/:blockedId')
   @ApiOperation({ summary: 'Check if a user is blocked and return the entity' })
   @ApiParam({
     name: 'callerId',
