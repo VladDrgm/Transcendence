@@ -39,13 +39,12 @@ async function bootstrap() {
 
   app.useGlobalPipes(new ValidationPipe({ transform: true }));
 
-  app.use('/avatars', express.static(join(__dirname, 'avatars')));
-  
   // Create a Socket.io server that uses the same HTTP server instance as Nest.js
   const httpServer = app.getHttpServer();
   const io = new Server(httpServer);
 
   /* Game utilities */
+  const FRAME_RATE = 10;
   await app.listen(port);
   interface GameState {
     sessionId: string | null;
