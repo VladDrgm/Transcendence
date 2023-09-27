@@ -205,8 +205,11 @@ export class ChannelController {
     @Param('targetId') targetId: number,
     @Param('channelId') channelId: number,
     @Body() loggedUser: UserAuthDTO
-  ): Promise<ChannelBlockedUser> {
-    return this.channelService.getChannelBlockedUserByUserId(loggedUser, callerId, targetId , channelId);
+  ): Promise<Boolean> {
+    const result = this.channelService.getChannelBlockedUserByUserId(loggedUser, callerId, targetId , channelId);
+    if (!result)
+      return false;
+    return true;
   }
 
   @Delete(':callerId/:targetId/:channelId/blocked')

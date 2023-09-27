@@ -276,7 +276,7 @@ export async function getChannelBlockedUser(userId: number | undefined, channelI
       // if(!json) {
       //   return false;
       // }
-      return !response;
+      return response;
     })
   
     .catch (error => {

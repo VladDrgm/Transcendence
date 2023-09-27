@@ -37,7 +37,7 @@ export class ChannelService {
   }
 
   async findOne(id: number): Promise<Channel> {
-    return this.channelRepository.findOneBy({ ChannelId: id });
+    return await this.channelRepository.findOneBy({ ChannelId: id });
   }
 
   async create(loggedUser,
@@ -408,20 +408,23 @@ export class ChannelService {
         }
     }
 
-    const isChannelOwner = await this.GetChannelOwner(channelId) == callerId ? true : false;
-    const isChannelAdmin = await this.getChannelAdminByUserId(callerId, channelId) ? true : false;
+    // const isChannelOwner = await this.GetChannelOwner(channelId) == callerId;
+    // const isChannelAdmin = await this.getChannelAdminByUserId(callerId, channelId) ? true : false;
 
-    if (isChannelOwner == false && isChannelAdmin == false && callerId == targetId) {
-        throw new HttpException(
-            'You do not have the credentials to get a user.',
-            HttpStatus.BAD_REQUEST,
-        );
-    }
+    // if (isChannelOwner == false && isChannelAdmin == false) {
+    //     throw new HttpException(
+    //         'You do not have the credentials to get a user.',
+    //         HttpStatus.BAD_REQUEST,
+    //     );
+    // }
 
-    return this.channelBlockedUserRepository.findOneBy({
-      UserId: targetId,
+    const result = await this.channelBlockedUserRepository.findOneBy({
+      UserId: callerId,
       ChannelId: channelId,
     });
+    if (result)
+      return result;
+    return null;
   }
 
   async removeChannelBlockedUser(
