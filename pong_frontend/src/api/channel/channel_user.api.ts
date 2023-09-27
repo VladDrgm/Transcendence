@@ -264,6 +264,7 @@ export async function getChannelBlockedUser(userId: number | undefined, channelI
     };
     return fetch(fetchAddress + 'channel/' + userId + '/' + userId + '/' + channelId + '/blocked', requestOptions)
     .then(response => {
+      console.log(response);
       if (!response.ok) {
         console.error("Error retrieving blocked ChannelUser");
         return false;
@@ -303,7 +304,7 @@ export function postMuteUser(callerId: number | undefined, targetId: number, cha
       fetch(fetchAddress + 'channel/' + callerId +'/' + targetId + '/' + channelId + '/mute/' + duration, requestOptions)
       .then(response => {
         if (!response.ok) {
-          throw new Error('Request failed with status: ' + response.status);
+          console.log('Request failed with status: ' + response.status);
         }
         return response.text();
       })
