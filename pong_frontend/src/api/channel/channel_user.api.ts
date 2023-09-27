@@ -226,7 +226,7 @@ export function postChannelUserBlocked(callerId: number | undefined, targetId: n
     // /channel/{callerId}/{targetId}/{channelId}/blocked
     console.log("intra:", user.intraUsername);
     console.log("hash:", user.passwordHash);
-    return fetch(fetchAddress + 'channel/' + callerId +'/' + targetId + '/' + channelId + '/blocked', requestOptions)
+    return fetch(fetchAddress + 'channel/ban/blocked/' + callerId +'/' + targetId + '/' + channelId + '/blocked', requestOptions)
       .then(response => {
         if (!response.ok) {
           throw new Error('Request failed with status: ' + response.status);
