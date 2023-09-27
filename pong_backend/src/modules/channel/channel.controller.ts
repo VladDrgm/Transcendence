@@ -27,13 +27,13 @@ import { log } from 'console';
 export class ChannelController {
   constructor(private readonly channelService: ChannelService) {}
 
-  @Get()
+  @Put()
   @ApiOperation({ summary: 'Get all Channels' })
   async findAll(): Promise<Channel[]> {
     return this.channelService.findAll();
   }
 
-  @Get(':id')
+  @Put(':id')
   @ApiOperation({ summary: 'Get a Channel by its ID' })
   async findOne(@Param('id') id: number): Promise<Channel> {
     return this.channelService.findOne(id);
@@ -88,7 +88,7 @@ export class ChannelController {
     return this.channelService.addAdmin(loggedUser, callerId, targetId, channelId);
   }
 
-  @Get(':channelId/admins')
+  @Put(':channelId/admins')
   @ApiOperation({ summary: 'Get all Admins of a Channel' })
   async getChannelAdmins(
     @Param('channelId') channelId: number,
@@ -96,7 +96,7 @@ export class ChannelController {
     return this.channelService.getChannelAdmins(channelId);
   }
 
-  @Get(':userId/:channelId/admin')
+  @Put(':userId/:channelId/admin')
   @ApiOperation({ summary: 'Get an Admin by his userId' })
   @ApiParam({ name: 'userId', description: 'User ID' })
   @ApiParam({ name: 'channelId', description: 'Channel ID' })
@@ -137,7 +137,7 @@ export class ChannelController {
     return this.channelService.addChannelUser(loggedUser, callerId, targetId, channelId);
   }
 
-  @Get(':channelId/users')
+  @Put(':channelId/users')
   @ApiOperation({ summary: 'Get all Users of a Channel' })
   async getChannelUsers(
     @Param('channelId') channelId: number,
@@ -145,7 +145,7 @@ export class ChannelController {
     return this.channelService.getChannelUsers(channelId);
   }
 
-  @Get(':channelId/mutedusers')
+  @Put(':channelId/mutedusers')
   @ApiOperation({ summary: 'Get all muted users of a Channel' })
   async getChannelMutedUsers(
     @Param('channelId') channelId: number,
@@ -153,7 +153,7 @@ export class ChannelController {
     return this.channelService.getChannelUsersOnMute(channelId);
   }
 
-  @Get(':callerId/:userId/:channelId/user')
+  @Put(':callerId/:userId/:channelId/user')
   @ApiOperation({ summary: 'Get a ChannelUser by his userId' })
   async getChannelUserByUserId(
     @Param('callerId') callerId: number,
@@ -190,7 +190,7 @@ export class ChannelController {
     return this.channelService.addChannelBlockedUser(loggedUser, callerId, targetId, channelId);
   }
 
-  @Get(':channelId/blockedUsers')
+  @Put(':channelId/blockedUsers')
   @ApiOperation({ summary: 'Get all blocked users of a Channel' })
   async getChannelBlockedUsers(
     @Param('channelId') channelId: number,
@@ -198,7 +198,7 @@ export class ChannelController {
     return this.channelService.getChannelBlockedUsers(channelId);
   }
 
-  @Get(':callerId/:targetId/:channelId/blocked')
+  @Put(':callerId/:targetId/:channelId/blocked')
   @ApiOperation({ summary: 'Get a ChannelBlockedUser by his userId' })
   async getChannelBlockedUserByUserId(
     @Param('callerId') callerId: number,
@@ -307,7 +307,7 @@ export class ChannelController {
     );
   }
 
-  @Get(':channelId/owner')
+  @Put(':channelId/owner')
   @ApiOperation({ summary: 'Get the owner of a channel' })
   async getChannelOwner(
     @Param('channelId') channelId: number,
@@ -332,7 +332,7 @@ export class ChannelController {
     await this.channelService.deleteChannelOwner(channelId);
   }
 
-  @Get(':callerId/:targetId/:channelId/mute')
+  @Put(':callerId/:targetId/:channelId/mute')
   @ApiOperation({ summary: 'Get the mute status of a user in a channel' })
   async getMuteStatus(
     @Param('callerId') callerId: number,
