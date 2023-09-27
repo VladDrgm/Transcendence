@@ -45,7 +45,6 @@ async function bootstrap() {
 
   /* Game utilities */
   const FRAME_RATE = 10;
-  await app.listen(port);
   interface GameState {
     sessionId: string | null;
     gameStatus: number;
