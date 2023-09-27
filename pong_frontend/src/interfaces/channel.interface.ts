@@ -1,6 +1,7 @@
 import React, { FC, ChangeEvent, KeyboardEvent } from "react";
 import { Invitation, User } from "./user.interface";
 import { Socket } from "socket.io-client";
+import { CurrentChat } from "../components/mainPages/Arena_Chat";
 // import { main_div_mode_t } from "../components/MainDivSelector";
 
 export interface Channel {
@@ -74,6 +75,8 @@ export interface Channel_Div_props {
 	toggleChat: (currentChat: ChatData) => void;
 	updateChannellist: () => void;
 	addChatRoom: (chatName: ChatName) => void;
+	currentChat: ChatData;
+	joinPrivateRoom: (chatName: ChatName, password: string) => void;
 	
 }
 

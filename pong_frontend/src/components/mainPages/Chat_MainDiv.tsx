@@ -203,7 +203,7 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 		getUserIDByUserName(currentChat.chatName.toString())
 			.then((result) => {
 				if(result !== undefined){
-					getBlockedUser(result, props.user?.userID)
+					getBlockedUser(result, props.user?.userID, props.user!)
 					.then((user) => {
 						setCurrentRoles((prevState) => ( {
 							...prevState,
@@ -261,7 +261,7 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 			if (!currentChat.isResolved){
 				return;
 			}
-			getChannelBlockedUser(props.user?.userID, currentChat.Channel.ChannelId)
+			getChannelBlockedUser(props.user?.userID, currentChat.Channel.ChannelId, props.user!)
 				.then((user) => {
 					setCurrentRoles((prevState) => ({
 						...prevState,
@@ -717,7 +717,7 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 				  <ChannelInfo>
 
 	
-					<Link onClick={() => openFriend(currentChat.chatName.toString())} key={"chat_frined " + currentChat.chatName.toString()} to={"/app/public_profile"}>Name: {currentChat.chatName.toString()}</Link>
+					<Link onClick={() => openFriend(currentChat.chatName.toString())} key={"chat_frined " + currentChat.chatName.toString()} to={"/app/public_profile"}>{currentChat.chatName.toString()}</Link>
 					<div>
 					<button 
 					style={chatButtonsStyle}
@@ -734,7 +734,7 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 					onClick={() => unblockUser(currentChat.chatName)}>
 						Unblock User
 					</button>
-					<button 
+					{/* <button 
 					style={chatButtonsStyle}
 					onClick={() => addFriend(currentChat.chatName)}>
 						Add as Friend
@@ -743,7 +743,7 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 					style={chatButtonsStyle}
 					onClick={() => removeFriend(currentChat.chatName)}>
 						Remove Friend
-					</button>
+					</button> */}
 					</div>
 				  </ChannelInfo>
 				)
@@ -931,7 +931,9 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 				allChannels={allChannels} 
 				toggleChat={toggleChat}
 				updateChannellist={updateChannellist}
-				addChatRoom={addChatRoom}/>
+				addChatRoom={addChatRoom}
+				currentChat={currentChat}
+				joinPrivateRoom={joinPrivateRoom}/>
 				<h3>All Users</h3>
 				{props.allUsers.map((user) => renderUser(user, props, toggleChat))}
 			</div>

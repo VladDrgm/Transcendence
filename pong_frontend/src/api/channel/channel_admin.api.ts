@@ -38,6 +38,10 @@ export async function getAdmins(channelId: number): Promise<any[]>{
       if (!response.headers.has("content-length")) {
         return false;
       }
+      const contentLength = response.headers.get("content-length");
+      if (contentLength === "0") {
+        return false; // No JSON data in the response
+      }
       const data = await response.json();
       if(!data) {
         return false;
