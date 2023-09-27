@@ -6,7 +6,7 @@ import { User } from "../../interfaces/user.interface";
 
 export async function getUsers():  Promise<any> {
 	try { 
-    const response = await fetch(fetchAddress + 'user', {credentials: "include",});
+    const response = await fetch(fetchAddress + 'user', {credentials: "include", method: 'GET'});
     const json = await response.json();
 	  return json as any[];
   } catch (error) {
@@ -18,7 +18,7 @@ export async function getUsers():  Promise<any> {
 
 //to be tested
 export async function getChannelUsers(channelId: number):  Promise<any[]> {
-	const response = await fetch(fetchAddress + 'channel/' + channelId + '/users', {credentials: "include",});
+	const response = await fetch(fetchAddress + 'channel/' + channelId + '/users', {credentials: "include", method: 'PUT'});
   const json = await response.json();
 	return json as any[];
 }
@@ -35,7 +35,7 @@ export async function getChannelUser(callerId: number | undefined, channelId: nu
     }
     const jsonData = JSON.stringify(ChannelData);  
     const requestOptions = {
-        method: 'GET',
+        method: 'PUT',
         headers: { 
           "Accept": "*/*",
           "Content-Type": "application/json"
@@ -51,12 +51,16 @@ export async function getChannelUser(callerId: number | undefined, channelId: nu
     if (!response.headers.has("content-length")) {
       return false;
     }
+    const contentLength = response.headers.get("content-length");
+    if (contentLength === "0") {
+      return false;
+}
     const json = await response.json();
     if(!json) {
       return false;
     }
     return json;
-  } catch (error) {
+  }catch (error) {
       console.log("Error returning ChannelUser "+ callerId + " of Channel "+ channelId + ":", error);
       return false;
   } 
@@ -147,7 +151,7 @@ export function postPrivateChannelUser(userId: number | undefined, channelId: nu
   //Channel blocked Users
   // fetches all blocked users from Channel with ChannelId
 export async function getChannelUsersBlocked(channelId: number):  Promise<any[]> {
-      const response = await fetch(fetchAddress + 'channel/' + channelId + '/blockedUsers', {credentials: "include",});
+      const response = await fetch(fetchAddress + 'channel/' + channelId + '/blockedUsers', {credentials: "include", method: 'PUT'});
     const json = await response.json();
       return json as any[];
 }
@@ -161,7 +165,7 @@ export async function getChannelUserBlocked(callerId: number, targetId: number, 
   }
   const jsonData = JSON.stringify(ChannelData);  
   const requestOptions = {
-      method: 'GET',
+      method: 'PUT',
       headers: { 
         "Accept": "*/*",
         "Container-Type": "application/json"
@@ -251,7 +255,7 @@ export async function getChannelBlockedUser(userId: number | undefined, channelI
     }
     const jsonData = JSON.stringify(ChannelData); 
     const requestOptions = {
-      method: 'GET',
+      method: 'PUT',
       headers: { 
         "Accept": "*/*",
         "Content-Type": "application/json"
@@ -271,7 +275,7 @@ export async function getChannelBlockedUser(userId: number | undefined, channelI
       // if(!json) {
       //   return false;
       // }
-      return response;
+      return !response;
     })
   
     .catch (error => {
@@ -327,7 +331,7 @@ function hasUserId(array: ApiResponseItem[], targetUserId: number | undefined): 
 
 export async function getMutedStatus(channelId: number, targetId: number | undefined): Promise<boolean> {
   try {
-    const response = await fetch(fetchAddress + 'channel/' + channelId + '/mutedusers', {credentials: "include",})
+    const response = await fetch(fetchAddress + 'channel/' + channelId + '/mutedusers', {credentials: "include", method: 'PUT'})
     if (!response.ok) {
       if (response.status === 400){
         return false;
@@ -354,7 +358,7 @@ export async function getMutedStatus(channelId: number, targetId: number | undef
 
 export async function getIsMuted(channelId: number, callerId: number, targetId: number): Promise<boolean> {
   try {
-    const response = await fetch(fetchAddress + 'channel/' + callerId + '/' + targetId + '/' + channelId + '/mute', {credentials: "include",})
+    const response = await fetch(fetchAddress + 'channel/' + callerId + '/' + targetId + '/' + channelId + '/mute', {credentials: "include", method: 'PUT'})
     if (!response.ok) {
       if (response.status === 400){
         return false;
@@ -632,7 +636,7 @@ export async function getIsFriend(callerId: number | undefined, targetId: number
   }
   const jsonData = JSON.stringify(ChannelData);   
   const requestOptions = {
-    method: 'GET',
+    method: 'PUT',
     headers: { 
       "Accept": "*/*",
       "Content-Type": "application/json"

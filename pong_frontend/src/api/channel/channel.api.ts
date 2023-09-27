@@ -2,7 +2,7 @@ import { Channel, ChatData, ChatName, ChatProps } from "../../interfaces/channel
 import { fetchAddress } from "../../components/div/channel_div";
 
 export async function getChannels():  Promise<Channel[]> {
-	const response = await fetch(fetchAddress + 'channel', {credentials: "include",});
+	const response = await fetch(fetchAddress + 'channel', {credentials: "include", method: 'PUT'});
   const json = await response.json();
 	return json as any[];
 }
@@ -10,7 +10,7 @@ export async function getChannels():  Promise<Channel[]> {
 
 //to be tested
 export async function getChannel(channelId: number): Promise<Channel> {
-  const response = await fetch(fetchAddress + 'channel/' + channelId, {credentials: "include",});
+  const response = await fetch(fetchAddress + 'channel/' + channelId, {credentials: "include",method: 'PUT'});
   const json = await response.json();
   return json as Channel; 
 }
