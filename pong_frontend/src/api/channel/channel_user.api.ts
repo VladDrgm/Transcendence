@@ -192,7 +192,7 @@ export function deleteChannelUserBlocked(callerId: number | undefined, targetId:
       },
       body: jsonData
     };  
-  return fetch(fetchAddress + 'channel/' + targetId + '/' + channelId + '/blocked', requestOptions)
+  return fetch(fetchAddress + 'channel/' + callerId + '/' + targetId + '/' + channelId + '/blocked', requestOptions)
     .then(response => {
       if (!response.ok) {
         throw new Error('Request failed with status: ' + response.status);
