@@ -169,8 +169,8 @@ export async function getChannelUserBlocked(callerId: number, targetId: number, 
       body: jsonData
     };    
   const response = await fetch(fetchAddress + 'channel/' + callerId + '/' + targetId + '/' + channelId + '/blocked', requestOptions);
-    const json = await response.json();
-    return json; 
+  const json = await response.json();
+  return json; 
 }
   
   //works fine
@@ -184,7 +184,7 @@ export function deleteChannelUserBlocked(callerId: number | undefined, targetId:
       method: 'DELETE',
       headers: { 
         "Accept": "*/*",
-        "Container-Type": "application/json"
+        "Content-Type": "application/json"
       },
       body: jsonData
     };  
@@ -215,11 +215,13 @@ export function postChannelUserBlocked(callerId: number | undefined, targetId: n
       method: 'POST',
       headers: { 
         "Accept": "*/*",
-        "Container-Type": "application/json"
+        "Content-Type": "application/json"
       },
       body: jsonData
     };
     // /channel/{callerId}/{targetId}/{channelId}/blocked
+    console.log("intra:", user.intraUsername);
+    console.log("hash:", user.passwordHash);
     return fetch(fetchAddress + 'channel/' + callerId +'/' + targetId + '/' + channelId + '/blocked', requestOptions)
       .then(response => {
         if (!response.ok) {
@@ -239,13 +241,25 @@ export function postChannelUserBlocked(callerId: number | undefined, targetId: n
 //to be tested#
 // checks if userId is on the list of blocked Users in Channel with ChannelId
 // returns the User json, if blocked and false if not or an error occured
-export async function getChannelBlockedUser(userId: number | undefined, channelId: number): Promise<any> {
+export async function getChannelBlockedUser(userId: number | undefined, channelId: number, user: User): Promise<any> {
     if (userId === undefined || channelId === undefined) {
       throw new Error("Invalid userId or channelId");
     }
-    try {
-      const response = await fetch(fetchAddress + 'channel/' + userId + '/' + channelId + '/blocked', {credentials: "include",});
-  
+    const ChannelData = {
+      "intraUsername": user?.intraUsername,
+      "passwordHash": user?.passwordHash
+    }
+    const jsonData = JSON.stringify(ChannelData); 
+    const requestOptions = {
+      method: 'GET',
+      headers: { 
+        "Accept": "*/*",
+        "Content-Type": "application/json"
+      },
+      body: jsonData
+    };
+    return fetch(fetchAddress + 'channel/' + userId + '/' + userId + '/' + channelId + '/blocked', requestOptions)
+    .then(response => {
       if (!response.ok) {
         console.error("Error retrieving blocked ChannelUser");
         return false;
@@ -253,15 +267,17 @@ export async function getChannelBlockedUser(userId: number | undefined, channelI
       if (!response.headers.has("content-length")) {
         return false;
       }
-      const json = await response.json();
-      if(!json) {
-        return false;
-      }
-      return json;
-    } catch (error) {
+      // const json = await response.json();
+      // if(!json) {
+      //   return false;
+      // }
+      return response;
+    })
+  
+    .catch (error => {
         console.log("Error returning blocked ChannelUser "+ userId + " of Channel "+ channelId + ":", error);
         return false;
-    } 
+    })
 }
 
 
@@ -276,7 +292,7 @@ export function postMuteUser(callerId: number | undefined, targetId: number, cha
         method: 'POST',
         headers: { 
           "Accept": "*/*",
-          "Container-Type": "application/json"
+          "Content-Type": "application/json"
         },
         body:  jsonData
       };
@@ -296,7 +312,8 @@ export function postMuteUser(callerId: number | undefined, targetId: number, cha
         reject(error);
       });  
     });  
-  }
+}
+
 interface ApiResponseItem {
   CUserId: number;
   UserId: number;
@@ -509,13 +526,19 @@ export async function deleteBlockedUser(targetId: number, channelId: number, use
     });
 }
 
-export async function getBlockedUser(callerId: number, targetId: number | undefined): Promise<boolean> {
+export async function getBlockedUser(callerId: number, targetId: number | undefined, user: User): Promise<boolean> {
+  const ChannelData = {
+    "intraUsername": user?.intraUsername,
+    "passwordHash": user?.passwordHash
+  }
+  const jsonData = JSON.stringify(ChannelData);  
   const requestOptions = {
     method: 'GET',
     headers: { 
       "Accept": "*/*",
       "Content-Type": "application/json"
-    }
+    },
+    body: jsonData
   };
   return fetch(fetchAddress + 'blocked/'+ callerId + "/" + targetId, requestOptions)
     .then(response => response.json())
@@ -550,7 +573,7 @@ export function postFriend(targetId: number, userId: number | undefined, user: U
     method: 'POST',
     headers: { 
       "Accept": "*/*",
-      "Container-Type": "application/json"
+      "Content-Type": "application/json"
     },
     body:  jsonData
   };
