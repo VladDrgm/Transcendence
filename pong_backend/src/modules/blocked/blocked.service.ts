@@ -113,13 +113,6 @@ export class BlockedService {
   }
 
   async getOneBlockedUser(loggedUser, callerId, targetId): Promise<Blocked> {
-    if (!callerId) {
-      throw new HttpException('No user id provided', 400);
-    }
-
-    if (!targetId) {
-      throw new HttpException('No block id provided', 400);
-    }
 
     if (parseInt(process.env.FEATURE_FLAG) === 1) {
         const authPass  = await this.authProtector.protectorCheck(loggedUser.passwordHash, callerId);

@@ -69,7 +69,7 @@ export class BlockedController {
     return await this.blockedService.unblockUser(loggedUser, callerId, targetId);
   }
 
-  @Put(':requesterId/:blockedId')
+  @Put(':callerId/:blockedId')
   @ApiOperation({ summary: 'Check if a user is blocked and return the entity' })
   @ApiParam({
     name: 'callerId',
