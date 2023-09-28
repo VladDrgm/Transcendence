@@ -484,6 +484,7 @@ export async function postBlockedUser(targetId: number, user: User): Promise<voi
     .then(response => {
       if (response.ok) {
         console.log("ChannelUser with UserId :" + targetId +" blocked");
+        alert("User has been blocked.");
       } else {
         console.error("Error blocking User with UserId :" + targetId +":", response.status);
         alert("Error blocking User: " + response);
@@ -515,6 +516,7 @@ export async function deleteBlockedUser(targetId: number, user: User): Promise<v
     .then(response => {
       if (response.ok) {
         console.log("ChannelUser with UserId :" + targetId +" unblocked");
+        alert("User has been unblocked.");
       } else {
         console.error("Error unblocking User with UserId :" + targetId +":", response.status);
         // throw new Error ("Error unblocking User");

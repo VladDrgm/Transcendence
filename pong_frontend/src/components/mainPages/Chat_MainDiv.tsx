@@ -462,12 +462,6 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 			}
 			postBlockedUser(Number(targetID), props.user!)
 			.then(() => {
-				console.log('User blocked with UserId:', targetID);
-				// const data = {
-				// 	callerId: userID,
-				// 	targetId: Number(targetID)
-				// };
-				// socketRef.current?.emit('block user', data);
 				blockUserSocket(Number(targetID), props.user?.username);
 			})
 			.catch(error => {
@@ -619,7 +613,7 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 						...prevRoles,
 						isBlocked: true
 					}));
-					alert("You have been blocked by the User.");
+					// alert("You have been blocked by the User.");
 				}
 				return prevChat;
 			});
@@ -640,7 +634,7 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 						...prevRoles,
 						isBlocked: false
 					}));
-					alert("You have been unblocked by the User.");
+					// alert("You have been unblocked by the User.");
 				}
 				return prevChat;
 			});
