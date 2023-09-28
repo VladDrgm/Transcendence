@@ -11,9 +11,6 @@ const TwoFactorVerification: React.FC = () => {
 	const { user, setUser } = useUserContext();
 	const [qrCode, setQrCode] = useState<string>('');
 	const [secret, setSecret] = useState<string>('');
-	console.log('The useState secret: ', secret);
-	console.log('The stored users secret: ', user!.tfa_secret)
-	console.log('The stored user is : ', user!)
 	const [token, setToken] = useState<string>('');
 	const [isVerified, setIsVerified] = useState<boolean | null>(null);
 	const [error, setError] = useState<string | null>(null);
@@ -35,7 +32,6 @@ const TwoFactorVerification: React.FC = () => {
 			const res = await verifyTFAToken(userSecret, token);
 			setIsVerified(res);
 			if (qrCode) {
-				console.log("Updating user");
 				const updatedUser = await enableTFA(user?.userID, secret, user?.intraUsername, user?.passwordHash);
 				localStorage.setItem('user', JSON.stringify(updatedUser));
 				setUser(updatedUser);
