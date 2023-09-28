@@ -24,6 +24,7 @@ export class FileService {
     console.log('Saving avatar to:', filePath);
     try {
       await fs.writeFile(filePath, file.buffer);
+      console.log('Trimmed avatarpath:', trimmedAvatarPath);
       return trimmedAvatarPath;
     } catch (error) {
       console.error('Failed to save avatar:', error);

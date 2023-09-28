@@ -249,8 +249,9 @@ export class UserService {
       await this.fileService.deleteImage(userToUpdate.avatarPath);
       picturePath = await this.fileService.saveAvatar(file, id);
     }
-    userToUpdate.avatarPath = picturePath;
     console.log(picturePath);
+    userToUpdate.avatarPath = picturePath;
+    console.log(userToUpdate.avatarPath);
     if (!file) {
       throw new BadRequestException('No file uploaded');
     }
