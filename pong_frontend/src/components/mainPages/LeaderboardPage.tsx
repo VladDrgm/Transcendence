@@ -1,17 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import * as styles from './LeaderboardPageStyles';
-import { IUser } from '../../interfaces/interface';
 import { getLeaderboard } from '../../api/leaderboard.api';
-import { Link } from 'react-router-dom';
+import LeaderboardUser from './LeaderboardUser';
+import { User } from '../../interfaces/user.interface';
 
 interface LeaderboardProps {
 	friend_set: React.Dispatch<React.SetStateAction<number>>;
+	loggedInUsername: string | undefined;
 }
 
-const LeaderboardPage: React.FC<LeaderboardProps> = ({friend_set}) => {
-	const [leaderboard, setLeaderboard] = useState<IUser[]>([]);
+const LeaderboardPage: React.FC<LeaderboardProps> = ({friend_set, loggedInUsername}) => {
+	const [leaderboard, setLeaderboard] = useState<User[]>([]);
 	const [scoreMap, setScoreMap] = useState<Map<number, number>>(new Map());
-
+	
 	const getData = async () => {
 		const leaderboardData = await getLeaderboard();
     	setLeaderboard(leaderboardData);
@@ -51,11 +52,11 @@ const LeaderboardPage: React.FC<LeaderboardProps> = ({friend_set}) => {
 		  <h1>Leaderboard</h1>
 		  <table style={styles.tableStyle}>
 			<colgroup>
-				<col style={{ width: '25%' }} /> {/* Rank column width */}
-				<col style={{ width: '15%' }} /> {/* User column width */}
-				<col style={{ width: '15%' }} /> {/* Wins column width */}
-				<col style={{ width: '15%' }} /> {/* Losses column width */}
-				<col style={{ width: '15%' }} /> {/* Points column width */}
+				<col style={{ width: '25%' }} />
+				<col style={{ width: '15%' }} /> 
+				<col style={{ width: '15%' }} /> 
+				<col style={{ width: '15%' }} />
+				<col style={{ width: '15%' }} /> 
 			</colgroup>
 			<thead>
 			  <tr style={styles.firstRowStyle}>
@@ -67,67 +68,24 @@ const LeaderboardPage: React.FC<LeaderboardProps> = ({friend_set}) => {
 			  </tr>
 			</thead>
 			<tbody>
-			  {leaderboard.map((user, index) => (
-				<tr key={index} style={index % 2 === 0 ? styles.rowEven : styles.rowOdd}>
-				  <td style={styles.tableCell}>{scoreMap.get(user.points)}</td>
-				  <td >
-                	{index < 3 ? (
-                  	<div style={styles.userContainer}>
-						<div style={styles.circularImage}>
-						<img
-							src={`/winner.png`}
-							alt={`Top ${index + 1}`}
-							style={styles.profilePicture}
-						/>
-						</div>
-                    	<div style={styles.username}>
-							<Link onClick={() => openFriend(user.userID)} key={index} to={"/app/public_profile"}>
-								{user.username}
-							</Link>
-						</div>
-                  </div>
-                ) : (
-                  <div style={styles.userContainer}>
-                    <div style={styles.circularImage}>
-                      <img
-                        src={`/looser.png`}
-                        alt={`Other`}
-                        style={styles.profilePicture}
-                      />
-                    </div>
-                    <div style={styles.username}>
-						<Link onClick={() => openFriend(user.userID)} key={index} to={"/app/public_profile"}> 
-							{user.username}
-						</Link>
-					</div>
-                  </div>
-                )}
-              </td>
-              <td style={styles.tableCell}>{user.wins}</td>
-              <td style={styles.tableCell}>{user.losses}</td>
-              <td style={styles.tableCell}>{user.points}</td>
-            </tr>
-          ))}
-        </tbody>
+				{leaderboard.map((user, index) => (
+					 <tr key={index} style={index % 2 === 0 ? styles.rowEven : styles.rowOdd}>
+					<td style={styles.tableCell}>{scoreMap.get(user.points)}</td>
+					<LeaderboardUser
+						user={user}
+						index={index}
+						loggedInUser={loggedInUsername}
+						openFriend={openFriend}
+					/>
+					<td style={styles.tableCell}>{user.wins}</td>
+					<td style={styles.tableCell}>{user.losses}</td>
+					<td style={styles.tableCell}>{user.points}</td>
+					</tr>
+				))}
+			</tbody>
       </table>
     </div>
   );
 };
-	
 
-      		{/* <h1>Leaderboard:</h1>
-      		<ul>
-				{leaderboard.map((user, index) => (
-					<li key={index}>
-						<div>
-							<h2>Place: {scoreMap.get(user.points)}</h2>
-							<Link onClick={() => openFriend(user.userID)} key={index} to={"/app/public_profile"}>Name: {user.username}</Link>
-							<p>Wins: {user.wins}</p>
-							<p>Losses: {user.losses}</p>
-							<p>Points: {user.points}</p>
-						</div>
-					</li>
-				))}
-      		</ul>
-    	</div> */}
 export default LeaderboardPage;

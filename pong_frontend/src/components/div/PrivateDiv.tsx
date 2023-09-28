@@ -1,6 +1,5 @@
-import React, { useEffect, useState, ChangeEvent  } from 'react';
+import React, { useEffect } from 'react';
 import * as styles from './private_divStyles';
-import { PrivateProfile } from '../../interfaces/private_profile.interface';
 import { getPrivateProfile } from '../../api/profile.api';
 import { useUserContext } from '../context/UserContext';
 import imageAssetAchievement1 from '../assets/achievement1.png'
@@ -11,7 +10,7 @@ interface PrivateDivProps
   userID: number | undefined;
 }
 
-const Private_Div: React.FC<PrivateDivProps> = ({userID}) => {
+const PrivateDiv: React.FC<PrivateDivProps> = ({userID}) => {
 	const { user, setUser } = useUserContext();
 
 
@@ -79,4 +78,4 @@ const Private_Div: React.FC<PrivateDivProps> = ({userID}) => {
   	}
 };
 
-export default Private_Div;
+export default PrivateDiv;

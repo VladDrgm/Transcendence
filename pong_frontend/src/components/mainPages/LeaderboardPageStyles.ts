@@ -15,45 +15,44 @@ export const userContainer: Properties = {
   
   export const tableStyle: Properties = {
 	borderCollapse: 'collapse',
-	width: '70%', // Adjust the width as needed
-	marginTop: '20px', // Add spacing from the top
+	width: '70%',
+	marginTop: '20px',
   };
   
 
   export const profilePicture: Properties = {
 	width: '100%',
 	height: '100%',
-	objectFit: 'cover', // Adjust the image fit as needed
+	objectFit: 'cover',
   };
   
   export const circularImage: Properties = {
-	width: '40px', // Adjust the size of the circular image
+	width: '40px', 
 	height: '40px',
-	borderRadius: '50%', // Creates a circular shape
-	overflow: 'hidden', // Ensures the image stays within the circular shape
-	marginRight: '10px', // Add spacing between the image and username
+	borderRadius: '50%',
+	overflow: 'hidden', 
+	marginRight: '10px', 
   };
   
   export const username: Properties = {
-	fontSize: '15px', // Adjust the font size of the username
+	fontSize: '15px',
   };
 
   export const tableCell: Properties = {
-	padding: '15px', // Adjust the cell padding to control spacing
-	textAlign: 'center', // Align cell content to the left
+	padding: '15px',
+	textAlign: 'center',
   };
 
   export const rowEven: Properties = {
-	backgroundColor: 'rgba(0, 0, 0, 0.05)', // Adjust the background color as needed
+	backgroundColor: 'rgba(0, 0, 0, 0.05)',
   };
   
   export const rowOdd: Properties = {
-	backgroundColor: 'rgba(0, 0, 0, 0.1)', // Adjust the background color as needed
+	backgroundColor: 'rgba(0, 0, 0, 0.1)',
   };
 
   export const firstRowStyle: Properties = {
 	lineHeight: '3', 
-		backgroundColor: 'rgba(0, 0, 0, 0.1)', // Background color for the first row
-	// color: 'rgba(254, 8, 16, 1)', // Text color for the first row
-	fontWeight: 'bold', // Make the text bold for the first row
+	backgroundColor: 'rgba(0, 0, 0, 0.1)', 
+	fontWeight: 'bold',
   };

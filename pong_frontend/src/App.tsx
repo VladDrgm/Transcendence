@@ -5,14 +5,14 @@ import LoginPage from './components/auth/LoginPage';
 import CompleteProfilePage from './components/auth/CompleteProfilePage';
 import UserStartPage from './components/UserStartPage';
 import HomePage from './components/mainPages/HomePage';
-import Arena_Chat_MainDiv from './components/mainPages/Arena_Chat';
+import ArenaChat from './components/mainPages/Arena_Chat';
 import LeaderboardPage from './components/mainPages/LeaderboardPage';
 import ProfilePage from './components/mainPages/ProfilePage';
 import SettingsPage from './components/mainPages/SettingsPage';
-import MatchHistory_MainDiv from './components/main_div/MatchHistory_MainDiv';
-import PublicProfile_MainDiv from './components/main_div/PublicProfile_MainDiv';
+import MatchHistoryMainDiv from './components/main_div/MatchHistoryMainDiv';
 import TFASetup from './components/auth/TFASetup';
 import AuthRedirectPage from './components/auth/AuthRedirectPage';
+import PublicProfileMainDiv from './components/main_div/PublicProfileMainDiv';
 
 const App = () => {
 	const { user, setUser } = useUserContext();
@@ -33,13 +33,13 @@ const App = () => {
 				<Route path="/auth_redirect" element={<AuthRedirectPage />} />
 				<Route path='/setup-2fa' element={<TFASetup />} />
                 <Route path="/app" element={<UserStartPage />}>
-                    <Route path='home' index element={<HomePage />} />
-                    <Route path="chat" element={<Arena_Chat_MainDiv userID={user?.userID} friend_set={friend_set}/>} />
-                    <Route path="leaderboard" element={<LeaderboardPage friend_set={friend_set}/>} />
-                    <Route path="profile" element={<ProfilePage friend_set={friend_set} />} />
-                    <Route path="public_profile" element={<PublicProfile_MainDiv friend_ID={friendID} />} />
-                    <Route path="match_history" element={<MatchHistory_MainDiv userID={user?.userID} friend_set={friend_set} />} />
-                    <Route path="settings" element={<SettingsPage onLogout={handleLogout} />} />
+                <Route path='home' index element={<HomePage />} />
+                <Route path="chat" element={<ArenaChat userID={user?.userID} friend_set={friend_set}/>} />
+                <Route path="leaderboard" element={<LeaderboardPage friend_set={friend_set} loggedInUsername={user?.username}/>} />
+                <Route path="profile" element={<ProfilePage friend_set={friend_set} />} />
+                <Route path="/app/public_profile/:friend_ID"  element={<PublicProfileMainDiv friend_ID={friendID} />} />
+                <Route path="match_history" element={<MatchHistoryMainDiv userID={user?.userID} friend_set={friend_set} />} />
+                <Route path="settings" element={<SettingsPage onLogout={handleLogout} />} />
                 </Route>
             </Routes>
         </Router>

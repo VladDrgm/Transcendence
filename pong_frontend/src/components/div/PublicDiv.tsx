@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { PublicProfile } from '../../interfaces/public_profile.interface';
 import { getPublicProfile } from '../../api/profile.api';
-import defaultProfile from '../../default_profiile.jpg';
 
 interface PublicProps {
   userID: number;
@@ -9,7 +8,7 @@ interface PublicProps {
   //probably add function to set type of profile
 }
 
-const Public_Div: React.FC<PublicProps> = ({ userID, publicID }) => {
+const PublicDiv: React.FC<PublicProps> = ({ userID, publicID }) => {
   const [user, setFriend] = useState<PublicProfile>();
 
   const getData = async () => {
@@ -43,4 +42,4 @@ const Public_Div: React.FC<PublicProps> = ({ userID, publicID }) => {
   }
 };
 
-export default Public_Div;
+export default PublicDiv;
