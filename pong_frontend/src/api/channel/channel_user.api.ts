@@ -497,7 +497,7 @@ export async function postBlockedUser(targetId: number, user: User): Promise<voi
     });
 }
 
-export async function deleteBlockedUser(targetId: number, channelId: number, user: User): Promise<void> {
+export async function deleteBlockedUser(targetId: number, user: User): Promise<void> {
   const ChannelData = {
     "intraUsername": user?.intraUsername,
     "passwordHash": user?.passwordHash
@@ -511,13 +511,13 @@ export async function deleteBlockedUser(targetId: number, channelId: number, use
     },
     body: jsonData
   };
-  fetch(fetchAddress + 'channel/' + targetId + '/' + channelId + '/blocked', requestOptions)
+  fetch(fetchAddress + 'blocked/' + user.userID + '/' + targetId, requestOptions)
     .then(response => {
       if (response.ok) {
         console.log("ChannelUser with UserId :" + targetId +" unblocked");
       } else {
         console.error("Error unblocking User with UserId :" + targetId +":", response.status);
-        throw new Error ("Error unblocking User");
+        // throw new Error ("Error unblocking User");
       }
     })
     .catch(error => {

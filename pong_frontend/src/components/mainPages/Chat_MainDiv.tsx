@@ -488,7 +488,7 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 					alert("User could not be found. Please try another Username.");
 					return;
 				}
-				deleteBlockedUser(Number(targetID), currentChat.Channel.ChannelId, props.user!)
+				deleteBlockedUser(Number(targetID), props.user!)
 				.then(() => {
 					console.log('User unblocked with UserId:', targetID);
 					unblockUserSocket(Number(targetID), props.user?.username);

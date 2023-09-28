@@ -60,12 +60,19 @@ export class BlockedService {
         }
     }
 
-    const existingBlocked = await this.blockedRepository.findOne({
-      where: {
-        user: userId,
-        blockedUser: blockId,
-      },
-    });
+    // const existingBlocked = await this.blockedRepository.findOne({
+    //   where: {
+    //     user: userId,
+    //     blockedUser: blockId,
+    //   },
+    // });
+    const existingBlocked = await this.blockedRepository
+      .createQueryBuilder('blocked')
+      .leftJoinAndSelect('blocked.user', 'user')
+      .leftJoinAndSelect('blocked.blockedUser', 'blockedUser')
+      .where('blocked.user.userID = :userId', { userId })
+      .andWhere('blocked.blockedUser.userID = :blockId', { blockId })
+      .getOne();
   
     if (existingBlocked) {
       throw new HttpException('User already blocked', 400);
