@@ -42,6 +42,54 @@ export const createUser = async () => {
 	return json;
 };
 
+export const verifyTFAToken = async (secret: string | undefined, token: string | undefined): Promise<boolean> => {
+	try {
+		const response = await fetch(fetchUserAddress + 'verify-totp', {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json"
+			},
+			body:	JSON.stringify({
+				"secret" : secret,
+				"token" : token
+			})
+		});
+
+		if (response.ok) {
+			const isValid: boolean = await response.json();
+			return isValid;
+		} else {
+			throw new Error(response.statusText);
+		}
+	} catch (error) {
+		throw new Error('Error verifying code. Please try again!');
+	}
+};
+
+export const enableTFA = async (userID: number | undefined, secret: string, intra: string | undefined, token: string | undefined): Promise<User> => {
+	try {
+		const response = await fetch(fetchUserAddress + userID + slash + userID + slash + secret + '/enable/2fa', {
+			method: "PUT",
+			headers: {
+				"Content-Type": "application/json"
+			},
+			body:	JSON.stringify({
+				"intraUsername" : intra,
+				"passwordHash" : token
+			})
+		});
+
+		if (response.ok) {
+			const userObject: User = await response.json();
+			return userObject;
+		} else {
+			throw new Error(response.statusText);
+		}
+	} catch (error) {
+		throw new Error('Error enabling 2FA. Try again!');
+	}
+};
+
 export const updatePasswordApi = async (userID: number | undefined, newPassword: string, intra:string | undefined, token:string | undefined): Promise<User> => {
 	try {
 	  // Make API call and get the response

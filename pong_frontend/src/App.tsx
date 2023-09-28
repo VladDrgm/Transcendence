@@ -13,6 +13,7 @@ import MatchHistory_MainDiv from './components/main_div/MatchHistory_MainDiv';
 import PublicProfile_MainDiv from './components/main_div/PublicProfile_MainDiv';
 import TFASetup from './components/auth/TFASetup';
 import AuthRedirectPage from './components/auth/AuthRedirectPage';
+import TFAVerification from './components/auth/TFAVerification';
 
 const App = () => {
 	const { user, setUser } = useUserContext();
@@ -32,6 +33,7 @@ const App = () => {
                 <Route path="/complete_profile" element={<CompleteProfilePage />} />
 				<Route path="/auth_redirect" element={<AuthRedirectPage />} />
 				<Route path='/setup-2fa' element={<TFASetup />} />
+				<Route path='/verify-2fa' element={<TFAVerification />} />
                 <Route path="/app" element={<UserStartPage />}>
                     <Route path='home' index element={<HomePage />} />
                     <Route path="chat" element={<Arena_Chat_MainDiv userID={user?.userID} friend_set={friend_set}/>} />
