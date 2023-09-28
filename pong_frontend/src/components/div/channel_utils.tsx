@@ -208,10 +208,6 @@ export async function addMuteUser(
 
 
 export async function CreateChannel(props: ChatProps, channelName: string, password: string): Promise<boolean>{
-    if(password === "")
-        var channelType = "public";
-    else
-        channelType = "private";
     console.log(props.user?.passwordHash)
     const ChannelData = {
         "intraUsername": props.user?.intraUsername,
@@ -223,20 +219,45 @@ export async function CreateChannel(props: ChatProps, channelName: string, passw
         // "ownerId": props.userID
     }
     const jsonData = JSON.stringify(ChannelData);
-    return fetch(fetchAddress + 'channel/' + props.user?.userID + '/' + props.user?.userID + '/' + channelName + '/' + channelType, {credentials: "include",
-        method:"POST",
-        headers: {
-            "Content-Type": "application/json"
-          },
-        body:jsonData
-    })
-    .then(response => response.json())
-    .then(data => {
-        console.log("Channel created:", data);
-        return true;
-    })
-    .catch(error => {
-        console.log("Error creating channel:", error);
-        return false;
-    })
+    
+    
+    if(password === ""){
+        var channelType = "public";
+        return fetch(fetchAddress + 'channel/create/new/' + props.user?.userID + '/' + props.user?.userID + '/' + channelName + '/' + channelType, {credentials: "include",
+            method:"POST",
+            headers: {
+                "Content-Type": "application/json"
+              },
+            body:jsonData,
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log("Channel created:", data);
+            return true;
+        })
+        .catch(error => {
+            console.log("Error creating channel:", error);
+            return false;
+        })
+    }
+    else {
+        channelType = "private";
+        const urlWithQueryParam = `${fetchAddress}channel/create/new/${props.user?.userID}/${props.user?.userID}/${channelName}/${channelType}?${password}`;
+        return fetch(urlWithQueryParam, {credentials: "include",
+            method:"POST",
+            headers: {
+                "Content-Type": "application/json"
+              },
+            body:jsonData,
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log("Channel created:", data);
+            return true;
+        })
+        .catch(error => {
+            console.log("Error creating channel:", error);
+            return false;
+        })
+    }
 }

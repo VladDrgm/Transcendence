@@ -69,7 +69,7 @@ export class ChannelService {
 
     channelDb.Name = channelName;
     channelDb.OwnerId = callerId;
-    if (channelPassword != null && channelPassword != '' && channelPassword != undefined ) {
+    if (channelPassword != null || channelPassword != '' || channelPassword != undefined ) {
     channelDb.Password = await this.passwordService.hashPassword(
         channelPassword);
     }

@@ -4,6 +4,7 @@ import * as bcrypt from 'bcrypt';
 @Injectable()
 export class PasswordService {
   async hashPassword(password: string): Promise<string> {
+    console.log("password:" ,password);
     const hashedPassword = await bcrypt.hash(password, 10);
     return hashedPassword;
   }

@@ -39,7 +39,7 @@ export class ChannelController {
     return this.channelService.findOne(id);
   }
 
-  @Post(':callerId/:ownerId/:channelName/:channelType/')
+  @Post('create/new/:callerId/:ownerId/:channelName/:channelType')
   @ApiOperation({
     summary: 'Create a Channel',
     description:
