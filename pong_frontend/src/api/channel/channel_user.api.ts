@@ -269,14 +269,9 @@ export async function getChannelBlockedUser(userId: number | undefined, channelI
         console.error("Error retrieving blocked ChannelUser");
         return false;
       }
-      if (!response.headers.has("content-length")) {
-        return false;
-      }
-      // const json = await response.json();
-      // if(!json) {
-      //   return false;
-      // }
-      return response;
+      return response.json().then(data => {
+        return data;
+      });
     })
   
     .catch (error => {
