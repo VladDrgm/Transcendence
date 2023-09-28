@@ -203,7 +203,7 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 		getUserIDByUserName(currentChat.chatName.toString())
 			.then((result) => {
 				if(result !== undefined){
-					getBlockedUser(result, props.user?.userID, props.user!)
+					getBlockedUser(props.user?.userID, result, props.user!)
 					.then((user) => {
 						setCurrentRoles((prevState) => ( {
 							...prevState,

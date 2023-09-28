@@ -526,7 +526,7 @@ export async function deleteBlockedUser(targetId: number, channelId: number, use
     });
 }
 
-export async function getBlockedUser(callerId: number, targetId: number | undefined, user: User): Promise<boolean> {
+export async function getBlockedUser(callerId: number  | undefined, targetId: number, user: User): Promise<boolean> {
   const ChannelData = {
     "intraUsername": user?.intraUsername,
     "passwordHash": user?.passwordHash
