@@ -60,10 +60,21 @@ export class BlockedService {
         }
     }
 
-    const isBlockedExisting = await this.blockedRepository.findBy( { user: userId, blockedUser: blockId } );
-    if (isBlockedExisting) {
+    const existingBlocked = await this.blockedRepository.findOne({
+      where: {
+        user: userId,
+        blockedUser: blockId,
+      },
+    });
+  
+    if (existingBlocked) {
       throw new HttpException('User already blocked', 400);
     }
+
+    // const isBlockedExisting = await this.blockedRepository.findBy( { user: userId, blockedUser: blockId } );
+    // if (isBlockedExisting) {
+    //   throw new HttpException('User already blocked', 400);
+    // }
 
     const blocked = new Blocked();
     blocked.user = await this.userService.findOne(userId);
