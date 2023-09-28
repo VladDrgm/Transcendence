@@ -162,7 +162,7 @@ export async function modBannedUser(
                 })
                 .catch(error => {
                     console.error("Error banning User:", error);
-                    alert("Error unbanning User");
+                    alert("Error banning User");
                 })
             else
                 deleteChannelUserBlocked(props?.userID, targetID, currentChat.Channel.ChannelId, props.user!)

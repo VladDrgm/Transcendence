@@ -419,7 +419,7 @@ export class ChannelService {
     // }
 
     const result = await this.channelBlockedUserRepository.findOneBy({
-      UserId: callerId,
+      UserId: targetId,
       ChannelId: channelId,
     });
     if (result)
@@ -432,17 +432,66 @@ export class ChannelService {
     callerId: number,
     targetId: number,
     channelId: number,
-  ): Promise<void> {
-    const channelBlockedUser = await this.getChannelBlockedUserByUserId(
+  ): Promise<boolean> {
+    try {
+      if (parseInt(process.env.FEATURE_FLAG) === 1) {
+        const authPass = await this.authProtector.protectorCheck(
+          loggedUser.passwordHash,
+          callerId,
+        );
+        if (!authPass) {
+          throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+        }
+      }
+  
+      if (callerId === targetId) {
+        throw new HttpException(
+          'You cannot unban yourself.',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+  
+      // Check if the user is blocked before attempting to remove
+      const channelBlockedUser = await this.getChannelBlockedUserByUserId(
         loggedUser,
         callerId,
         targetId,
         channelId,
-    );
-    await this.channelBlockedUserRepository.delete(
-      channelBlockedUser.BlockedUserId,
-    );
+      );
+  
+      if (!channelBlockedUser) {
+        throw new HttpException(
+          'User is not blocked.',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+  
+      const callerIsAdmin = await this.getChannelAdminByUserId(
+        callerId,
+        channelId,
+      );
+  
+      if (!callerIsAdmin) {
+        throw new HttpException(
+          'You do not have the credentials to unban a user.',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+  
+      // Remove the user from the blocked list
+      await this.channelBlockedUserRepository.remove(channelBlockedUser);
+  
+      // Return true to indicate successful removal
+      return true;
+    } catch (error) {
+      // Handle any potential errors here
+      console.error('Error removing channelBlockedUser:', error);
+  
+      // Return false to indicate failure
+      return false;
+    }
   }
+  
 
   async changeChannelType(loggedUser: UserAuthDTO, callerId: number, channelId: number): Promise<void> {
     if (parseInt(process.env.FEATURE_FLAG) === 1) {
