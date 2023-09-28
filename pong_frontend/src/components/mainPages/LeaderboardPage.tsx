@@ -46,9 +46,76 @@ const LeaderboardPage: React.FC<LeaderboardProps> = ({friend_set}) => {
     	setScoreMap(scoreMap);
   	}, [leaderboard]);
 
-  	return (
-    	<div style={styles.pageStyle}>
-      		<h1>Leaderboard:</h1>
+	  return (
+		<div style={styles.pageStyle}>
+		  <h1>Leaderboard</h1>
+		  <table style={styles.tableStyle}>
+			<colgroup>
+				<col style={{ width: '25%' }} /> {/* Rank column width */}
+				<col style={{ width: '15%' }} /> {/* User column width */}
+				<col style={{ width: '15%' }} /> {/* Wins column width */}
+				<col style={{ width: '15%' }} /> {/* Losses column width */}
+				<col style={{ width: '15%' }} /> {/* Points column width */}
+			</colgroup>
+			<thead>
+			  <tr style={styles.firstRowStyle}>
+				<th>#Rank</th>
+				<th style={styles.userContainer}>User</th>
+				<th>Wins</th>
+				<th>Losses</th>
+				<th>Points</th>
+			  </tr>
+			</thead>
+			<tbody>
+			  {leaderboard.map((user, index) => (
+				<tr key={index} style={index % 2 === 0 ? styles.rowEven : styles.rowOdd}>
+				  <td style={styles.tableCell}>{scoreMap.get(user.points)}</td>
+				  <td >
+                	{index < 3 ? (
+                  	<div style={styles.userContainer}>
+						<div style={styles.circularImage}>
+						<img
+							src={`/winner.png`}
+							alt={`Top ${index + 1}`}
+							style={styles.profilePicture}
+						/>
+						</div>
+                    	<div style={styles.username}>
+							<Link onClick={() => openFriend(user.userID)} key={index} to={"/app/public_profile"}>
+								{user.username}
+							</Link>
+						</div>
+                  </div>
+                ) : (
+                  <div style={styles.userContainer}>
+                    <div style={styles.circularImage}>
+                      <img
+                        src={`/looser.png`}
+                        alt={`Other`}
+                        style={styles.profilePicture}
+                      />
+                    </div>
+                    <div style={styles.username}>
+						<Link onClick={() => openFriend(user.userID)} key={index} to={"/app/public_profile"}> 
+							{user.username}
+						</Link>
+					</div>
+                  </div>
+                )}
+              </td>
+              <td style={styles.tableCell}>{user.wins}</td>
+              <td style={styles.tableCell}>{user.losses}</td>
+              <td style={styles.tableCell}>{user.points}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+};
+	
+
+      		{/* <h1>Leaderboard:</h1>
       		<ul>
 				{leaderboard.map((user, index) => (
 					<li key={index}>
@@ -62,8 +129,5 @@ const LeaderboardPage: React.FC<LeaderboardProps> = ({friend_set}) => {
 					</li>
 				))}
       		</ul>
-    	</div>
-  	);
-};
-
+    	</div> */}
 export default LeaderboardPage;
