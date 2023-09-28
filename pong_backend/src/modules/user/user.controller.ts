@@ -31,12 +31,11 @@ export class UserController {
   @Get()
   @ApiOperation({ summary: 'Get all users' })
   async findAll(): Promise<UserListDto[]> {
-    var users = await this.userService.findAll();
-    var result = [];
+    const users = await this.userService.findAll();
+    const result = [];
     for (const user of users) {
       result.push(UserListDto.fromEntity(user));
     }
-
 
     return result;
   }
@@ -57,7 +56,7 @@ export class UserController {
   verifyTOTP(@Body() verifyTotpDto: VerifyTotpDTO) {
     const { secret, token } = verifyTotpDto;
     return {
-      isValid: this.userService.verifyTOTP(secret, token)
+      isValid: this.userService.verifyTOTP(secret, token),
     };
   }
 
@@ -79,7 +78,7 @@ export class UserController {
     @Param('callerId', ParseIntPipe) callerId: number,
     @Param('targetId', ParseIntPipe) targetId: number,
     @Param('points', ParseIntPipe) points: number,
-    @Body() loggedUser: UserAuthDTO
+    @Body() loggedUser: UserAuthDTO,
   ): Promise<void> {
     await this.userService.updatePoints(loggedUser, callerId, targetId, points);
   }
@@ -90,24 +89,29 @@ export class UserController {
     @Param('callerId', ParseIntPipe) callerId: number,
     @Param('targetId', ParseIntPipe) targetId: number,
     @Param('username') newUsername: string,
-    @Body() loggedUser: UserAuthDTO
+    @Body() loggedUser: UserAuthDTO,
   ): Promise<User> {
-    return await this.userService.updateUsername(loggedUser, callerId, targetId, newUsername);
+    return await this.userService.updateUsername(
+      loggedUser,
+      callerId,
+      targetId,
+      newUsername,
+    );
   }
 
   @Get('users/points')
   @ApiOperation({ summary: 'Get top 10 users ordered by points' })
   async getUsersOrderedByPoints() {
-    var users = await this.userService.getUsersOrderedByPoints();
+    const users = await this.userService.getUsersOrderedByPoints();
 
     return users;
   }
 
-//   @Post('user/signup')
-//   @ApiOperation({ summary: 'Sign up' })
-//   async postUserLoggedIn(@Body() userDto: UserDTO): Promise<User> {
-//     return this.userService.postUserLoggedIn(userDto);
-//   }
+  //   @Post('user/signup')
+  //   @ApiOperation({ summary: 'Sign up' })
+  //   async postUserLoggedIn(@Body() userDto: UserDTO): Promise<User> {
+  //     return this.userService.postUserLoggedIn(userDto);
+  //   }
 
   @Post(':userName/:password/login/confirm')
   @ApiOperation({ summary: 'Log in' })
@@ -124,9 +128,14 @@ export class UserController {
     @Param('callerId', ParseIntPipe) callerId: number,
     @Param('targetId', ParseIntPipe) targetId: number,
     @Param('password') newPassword: string,
-    @Body() loggedUser: UserAuthDTO
+    @Body() loggedUser: UserAuthDTO,
   ): Promise<User> {
-    return await this.userService.updateUserPassword(loggedUser, callerId, targetId, newPassword);
+    return await this.userService.updateUserPassword(
+      loggedUser,
+      callerId,
+      targetId,
+      newPassword,
+    );
   }
 
   @Put(':id/update/avatar')
@@ -156,9 +165,13 @@ export class UserController {
     @Param('callerId', ParseIntPipe) callerId: number,
     @Param('targetId', ParseIntPipe) targetId: number,
     @Param('secret') secret: string,
-    @Body() loggedUser: UserAuthDTO
-  ) : Promise<User> {
-    return await this.userService.enable2Fa(loggedUser, callerId, targetId, secret);
+    @Body() loggedUser: UserAuthDTO,
+  ): Promise<User> {
+    return await this.userService.enable2Fa(
+      loggedUser,
+      callerId,
+      targetId,
+      secret,
+    );
   }
-
 }

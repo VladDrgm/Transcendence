@@ -20,6 +20,7 @@ import * as uuid from 'uuid';
 import * as qrcode from 'qrcode';
 import { authenticator } from 'otplib';
 import { find } from 'rxjs';
+import { trimAvatarPath } from './utils';
 
 @Injectable()
 export class UserService {
@@ -259,7 +260,11 @@ export class UserService {
 
   async getAvatarPath(id: number): Promise<string | null> {
     const user = await this.findOneBy({ userID: id });
-    return user ? user.avatarPath : null;
+    const avatarPath = user ? user.avatarPath : null;
+
+    const trimmedAvatarPath = trimAvatarPath(avatarPath);
+
+    return trimmedAvatarPath;
   }
 
   async enable2Fa(
