@@ -223,7 +223,9 @@ export async function CreateChannel(props: ChatProps, channelName: string, passw
         // "ownerId": props.userID
     }
     const jsonData = JSON.stringify(ChannelData);
-    return fetch(fetchAddress + 'channel/' + props.user?.userID + '/' + props.user?.userID + '/' + channelName + '/' + channelType, {credentials: "include",
+    var fetchUrl = fetchAddress + 'channel/' + props.user?.userID + '/' + props.user?.userID + '/' + channelName + '/' + channelType;
+    if (channelType == "private") fetchUrl = fetchUrl.concat('?channelPassword=' + password);
+    return fetch(fetchUrl, {credentials: "include",
         method:"POST",
         headers: {
             "Content-Type": "application/json"
