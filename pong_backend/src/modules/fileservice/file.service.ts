@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import * as fs from 'fs/promises';
-import path, { extname } from 'path';
-import { trimAvatarPath } from '../user/utils';
+import { extname } from 'path';
 
 @Injectable()
 export class FileService {
@@ -12,7 +11,8 @@ export class FileService {
   }
 
   async saveAvatar(file: Express.Multer.File, id: number): Promise<string> {
-    const avatarFolderPath = '/home/site/wwwroot/pong_backend/avatars';
+    const avatarFolderPath = process.env.AVATAR_FOLDER_PATH;
+    // '/home/site/wwwroot/pong_backend/avatars'
     const originalFileName = file.originalname;
     const indexOfLastDot = originalFileName.lastIndexOf('.');
     const fileNameWithoutExtension = originalFileName.slice(0, indexOfLastDot);
@@ -20,14 +20,10 @@ export class FileService {
     const filePath = `${avatarFolderPath}/${modifiedFileName}${id}${extname(
       file.originalname,
     )}`;
-    const trimmedAvatarPath = trimAvatarPath(avatarFolderPath);
-    console.log('Saving avatar to:', filePath);
     try {
       await fs.writeFile(filePath, file.buffer);
-      console.log('Trimmed avatarpath:', trimmedAvatarPath);
-      return trimmedAvatarPath;
+      return filePath;
     } catch (error) {
-      console.error('Failed to save avatar:', error);
       throw new Error('Failed to save avatar.');
     }
   }
