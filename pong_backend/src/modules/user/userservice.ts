@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   HttpException,
   HttpStatus,
   Injectable,
@@ -250,6 +251,9 @@ export class UserService {
     }
     userToUpdate.avatarPath = picturePath;
     console.log(picturePath);
+    if (!file) {
+      throw new BadRequestException('No file uploaded');
+    }
     return await this.userRepository.save(userToUpdate);
   }
 
