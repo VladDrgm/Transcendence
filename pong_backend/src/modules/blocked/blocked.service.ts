@@ -125,8 +125,8 @@ export class BlockedService {
       .createQueryBuilder('blocked')
       .leftJoinAndSelect('blocked.user', 'user')
       .leftJoinAndSelect('blocked.blockedUser', 'blockedUser')
-      .where('blocked.user.userID = :userId', { callerId })
-      .andWhere('blocked.blockedUser.userID = :blockId', { targetId })
+      .where('blocked.user.userID = :userId', {userId: targetId })
+      .andWhere('blocked.blockedUser.userID = :blockedUserId', { blockedUserId: callerId })
       .getOne();
 
     if (!result) {

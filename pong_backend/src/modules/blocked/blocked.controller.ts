@@ -79,7 +79,7 @@ export class BlockedController {
     example: 9,
   })
   @ApiParam({
-    name: 'targetId',
+    name: 'blockedId',
     description: 'User to check ID',
     required: true,
     type: Number,
@@ -87,9 +87,9 @@ export class BlockedController {
   })
   async checkIfBlocked(
     @Param('callerId') callerId: number,
-    @Param('targetId') targetId: number,
+    @Param('blockedId') blockedId: number,
     @Body() loggedUser : UserAuthDTO
   ): Promise<Blocked> {
-    return await this.blockedService.getOneBlockedUser(loggedUser, callerId, targetId);
+    return await this.blockedService.getOneBlockedUser(loggedUser, callerId, blockedId);
   }
 }

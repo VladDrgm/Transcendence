@@ -533,7 +533,7 @@ export async function getBlockedUser(callerId: number, targetId: number | undefi
   }
   const jsonData = JSON.stringify(ChannelData);  
   const requestOptions = {
-    method: 'GET',
+    method: 'PUT',
     headers: { 
       "Accept": "*/*",
       "Content-Type": "application/json"
