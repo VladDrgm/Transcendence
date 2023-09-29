@@ -13,6 +13,7 @@ import MatchHistoryMainDiv from './components/main_div/MatchHistoryMainDiv';
 import TFASetup from './components/auth/TFASetup';
 import AuthRedirectPage from './components/auth/AuthRedirectPage';
 import PublicProfileMainDiv from './components/main_div/PublicProfileMainDiv';
+import TFAVerification from './components/auth/TFAVerification';
 
 const App = () => {
 	const { user, setUser } = useUserContext();
@@ -30,8 +31,9 @@ const App = () => {
                 <Route path="/" element={user ? <Navigate to="/app" replace /> : <Navigate to="/login" replace />} />
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/complete_profile" element={<CompleteProfilePage />} />
-				<Route path="/auth_redirect" element={<AuthRedirectPage />} />
-				<Route path='/setup-2fa' element={<TFASetup />} />
+                <Route path="/auth_redirect" element={<AuthRedirectPage />} />
+                <Route path='/setup-2fa' element={<TFASetup />} />
+                <Route path='/verify-2fa' element={<TFAVerification />} />
                 <Route path="/app" element={<UserStartPage />}>
                 <Route path='home' index element={<HomePage />} />
                 <Route path="chat" element={<ArenaChat userID={user?.userID} friend_set={friend_set}/>} />

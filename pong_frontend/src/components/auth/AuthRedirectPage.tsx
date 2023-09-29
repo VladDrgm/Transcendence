@@ -22,23 +22,23 @@ const AuthRedirectPage: React.FC = () => {
 
       try {
         // Fetch the user with the token.
-        const user = await getUserByToken(token);
+        const newUser = await getUserByToken(token);
 
-		if (!user) {
+		if (!newUser) {
 			console.error('Error fetching user with token');
 			return;
 		}
 
 		// Store the user and update userContext
-		localStorage.setItem('user', JSON.stringify(user));
-		setUser(user);
+		localStorage.setItem('user', JSON.stringify(newUser));
+		setUser(newUser);
 
         // Check user fields and redirect accordingly.
-		// if (user.is2FAEnabled) {
-		// 	navigate('/setup-2fa', { replace: true });
-		// } else {
+		if (user!.is2FAEnabled) {
+			navigate('/verify-2fa', { replace: true });
+		} else {
 			navigate('/', { replace: true });
-		// }
+		}
 
       } catch (error) {
         console.error('Error fetching user: ', error);
