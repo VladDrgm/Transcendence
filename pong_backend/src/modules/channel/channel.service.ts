@@ -458,8 +458,10 @@ export class ChannelService {
         targetId,
         channelId,
       );
+
+      const isUserBlocked = channelBlockedUser ? true : false;
   
-      if (!channelBlockedUser) {
+      if (!isUserBlocked) {
         throw new HttpException(
           'User is not blocked.',
           HttpStatus.BAD_REQUEST,
@@ -509,6 +511,11 @@ export class ChannelService {
       throw new HttpException('You are not the owner of this channel', 400);
     }
     channel.Type = channel.Type == 'public' ? 'private' : 'public';
+
+    if (channel.Password === null || channel.Password === '') {
+        throw new HttpException('Channel password is empty', 400);
+    }
+
     await this.channelRepository.save(channel);
   }
 
@@ -764,6 +771,7 @@ export class ChannelService {
     callerId: number,
     channelId: number
   ): Promise<void> {
+
     const channel = await this.channelRepository.findOneByOrFail({
       ChannelId: channelId,
       Type: 'public',
@@ -772,7 +780,7 @@ export class ChannelService {
     if (!channel) {
       throw new HttpException('Channel not found', 400);
     }
-
+    
     const channelUser = await this.getChannelUserByUserId(loggedUser, callerId, callerId, channelId);
     if (channelUser) {
       throw new HttpException(
