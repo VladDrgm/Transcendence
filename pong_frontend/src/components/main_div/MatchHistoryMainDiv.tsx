@@ -114,10 +114,10 @@ const MatchHistoryMainDiv: React.FC<MatchHistoryProps>  = ({userID, friend_set})
             
             
             {item.Player1Id === userID && (<Link to={"/app/profile"}>{findUsername(item.Player1Id)}</Link>)}
-            {item.Player1Id !== userID && (<Link onClick={() => openFriend(item.Player1Id)} to={"/app/public_profile"}>{findUsername(item.Player1Id)}</Link>)}
+            {item.Player1Id !== userID && (<Link onClick={() => openFriend(item.Player1Id)} to={`/app/public_profile/${item.Player1Id}`}>{findUsername(item.Player1Id)}</Link>)}
             <p> vs </p>
             {item.Player2Id === userID && (<Link to={"/app/profile"}>{findUsername(item.Player2Id)}</Link>)}
-            {item.Player2Id !== userID && (<Link onClick={() => openFriend(item.Player2Id)} to={"/app/public_profile"}>{findUsername(item.Player2Id)}</Link>)}
+            {item.Player2Id !== userID && (<Link onClick={() => openFriend(item.Player2Id)} to={`/app/public_profile/${item.Player2Id}`}>{findUsername(item.Player2Id)}</Link>)}
             <p>Score: {item.Player1Points} : {item.Player2Points}</p>
             <p>Winner: {findUsername(item.WinnerId)} by {item.WinningCondition}</p>
         </div>
