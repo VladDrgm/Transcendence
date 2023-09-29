@@ -13,7 +13,7 @@ interface FriendProps
 const FriendList: FC<FriendProps> = ({userID, friend_set}) => {
 	const [friends, setFriends] = useState<FriendProfile[]>([]);
 
-	const { user, setUser } = useUserContext();
+	const { user } = useUserContext();
   	const getData = async() => {
     	const users = await getFriendList(userID, user?.intraUsername, user?.passwordHash);
     	setFriends(users);
@@ -31,8 +31,9 @@ const FriendList: FC<FriendProps> = ({userID, friend_set}) => {
     	<div>
       		<h3>Friend List</h3>
         	{friends?.map((friend) => (
-				<Link onClick={() => openFriend(friend.userID)} key={friend.username} to={"/app/public_profile"}>{friend.username}: {friend.status}<br/></Link>
-				
+				// <Link onClick={() => openFriend(friend.userID)} key={friend.username} to={`/app/public_profile/${friend.userID}`}>{friend.username}: {friend.status}<br/></Link> friend status?
+				<Link onClick={() => openFriend(friend.userID)} key={friend.username} to={`/app/public_profile/${friend.userID}`}>{friend.username} <br/></Link>
+
 
         	))}
     	</div>

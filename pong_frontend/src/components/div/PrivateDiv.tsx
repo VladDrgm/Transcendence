@@ -35,8 +35,7 @@ const PrivateDiv: React.FC<PrivateDivProps> = ({userID}) => {
   	if (user != null) {
     	return (
 			<div>
-				<h1>Personal profile</h1> 
-				<h2>{user.username}</h2> 
+				<h1>{user.username}'s profile</h1> 
 					<img
 					className='user-card__image'
 					src={fetchAddress.slice(0, -1) + `${user.avatarPath?.slice(1)}`}

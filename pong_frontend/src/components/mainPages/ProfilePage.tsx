@@ -1,7 +1,7 @@
 import React from 'react';
 import * as styles from './ProfilePageStyles';
 import PrivateProfile from '../div/PrivateDiv';
-import FriendList from '../div/friend_list_div';
+import FriendList from '../div/FriendListDiv';
 import { useUserContext } from '../context/UserContext';
 
 
