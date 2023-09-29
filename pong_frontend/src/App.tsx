@@ -14,6 +14,7 @@ import TFASetup from './components/auth/TFASetup';
 import AuthRedirectPage from './components/auth/AuthRedirectPage';
 import PublicProfileMainDiv from './components/main_div/PublicProfileMainDiv';
 import TFAVerification from './components/auth/TFAVerification';
+import MyFriendsPage from './components/mainPages/MyFriends';
 
 const App = () => {
 	const { user, setUser } = useUserContext();
@@ -39,6 +40,7 @@ const App = () => {
                 <Route path="chat" element={<ArenaChat userID={user?.userID} friend_set={friend_set}/>} />
                 <Route path="leaderboard" element={<LeaderboardPage friend_set={friend_set} loggedInUsername={user?.username}/>} />
                 <Route path="profile" element={<ProfilePage friend_set={friend_set} />} />
+                <Route path="friends" element={<MyFriendsPage friend_set={friend_set} />} />
                 <Route path="/app/public_profile/:friend_ID"  element={<PublicProfileMainDiv friend_ID={friendID} />} />
                 <Route path="match_history" element={<MatchHistoryMainDiv userID={user?.userID} friend_set={friend_set} />} />
                 <Route path="settings" element={<SettingsPage onLogout={handleLogout} />} />

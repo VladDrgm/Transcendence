@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import * as styles from './private_divStyles';
+import * as styles from './PrivateDivStyles';
 import { getPrivateProfile } from '../../api/profile.api';
 import { useUserContext } from '../context/UserContext';
 import imageAssetAchievement1 from '../assets/achievement1.png'
@@ -25,7 +25,6 @@ const PrivateDiv: React.FC<PrivateDivProps> = ({userID}) => {
       		setUser(user);
     	} catch (error) {
       		console.error(error);
-    		// handle the error appropriately or ignore it
     	}
 	}
   	
@@ -36,8 +35,7 @@ const PrivateDiv: React.FC<PrivateDivProps> = ({userID}) => {
   	if (user != null) {
     	return (
 			<div>
-				<h1>Personal profile</h1> 
-				<h2>{user.username}</h2> 
+				<h1>{user.username}'s profile</h1> 
 					<img
 					className='user-card__image'
 					src={fetchAddress.slice(0, -1) + `${user.avatarPath?.slice(1)}`}
@@ -68,7 +66,10 @@ const PrivateDiv: React.FC<PrivateDivProps> = ({userID}) => {
 				<p>Achievements: {user.achievementsCSV}</p>
 				<ul style={styles.listContainerStyle}>
 					<li style={styles.listStyle}>
-						<img style={styles.achievementListItemStyle} src={imageAssetAchievement1}></img>
+						<img style={styles.achievementListItemStyle} 
+							src={imageAssetAchievement1}
+							alt="Achievement">
+						</img>
 					</li>
 				</ul>
 			</div>

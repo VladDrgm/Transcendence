@@ -13,7 +13,6 @@ interface SettingsPageProps
 	onLogout: () => void;
 }
 
-// Component
 const SettingsPage: React.FC<SettingsPageProps> = ({onLogout}) => {
 	const { user, setUser } = useUserContext();
 	const userID = user?.userID;
@@ -28,12 +27,6 @@ const SettingsPage: React.FC<SettingsPageProps> = ({onLogout}) => {
 	
 	const navigate = useNavigate();
 
-	//   // Add a conditional rendering to check if user is available
-	//   if (!user || !user.avatarPath) {
-	// 	// Return a loading state or null
-	// 	return <p>Loading...</p>;
-	//   }
-
 	const handleUpdateUsername = async () => {
 		if (!(newUsername.trim().length !== 0)) {
 			setError('Please put in a username to continue!');
@@ -41,13 +34,7 @@ const SettingsPage: React.FC<SettingsPageProps> = ({onLogout}) => {
 		}
 		let updatedUser =  null;
 		try {
-			// Call the API function and get the updated user object
 			updatedUser = await updateUsernameApi(userID, newUsername, user?.intraUsername, user?.passwordHash);
-	  
-			// Update the state and local storage with the updated user object
-			
-	  
-			// Clear the input field after successful update
 			setNewUsername('');
 		} catch (error) {
 			setError('Error updating username. Try again!');
@@ -75,7 +62,6 @@ const SettingsPage: React.FC<SettingsPageProps> = ({onLogout}) => {
 			return;
 		}
 		const myProf = await getPrivateProfile(userID, user?.intraUsername, user?.passwordHash);
-		// setUpdatedUser(myProf);
         user!.avatarPath = myProf.avatarPath;
 		setUser(user);
         setSelectedImage(fetchAddress.slice(0, -1) + user?.avatarPath?.slice(1));
@@ -114,7 +100,7 @@ const SettingsPage: React.FC<SettingsPageProps> = ({onLogout}) => {
 			/>
 			<label style={styles.customAvatarUploadButtonStyle}>
 		  		<input type="file" onChange={handleAvatarChange} style={styles.avatarInputFieldStyle}/>
-				<img src={imageAssetUploadAvatar} style={styles.imageUploadButtonIconStyle}></img>
+				<img src={imageAssetUploadAvatar} style={styles.imageUploadButtonIconStyle} alt=""></img>
 				Upload file from computer
 			</label>
 			<button style={styles.updateButtonStyle} onClick={handleUpdateAvatar}>Update avatar</button>
@@ -123,7 +109,7 @@ const SettingsPage: React.FC<SettingsPageProps> = ({onLogout}) => {
 				type="text"
 				placeholder={user?.username}
 				value={newUsername}
-				onChange={(e) => setNewUsername(e.target.value)} // Update state on change
+				onChange={(e) => setNewUsername(e.target.value)}
 				style={styles.formFieldStyle}
 		  	/>
 		  	<button style={styles.updateButtonStyle} onClick={handleUpdateUsername}>Update</button>
