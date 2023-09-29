@@ -11,8 +11,7 @@ interface LeaderboardUserProps {
 }
 
 const LeaderboardUser: React.FC<LeaderboardUserProps> = ({ user, index, loggedInUser, openFriend }) => {
-  console.log('loggedInUser.username:', loggedInUser);
-console.log('user.username:', user.username);
+
   return (
     <td>
       {index < 3 ? (
