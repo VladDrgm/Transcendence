@@ -1,6 +1,6 @@
 import React from 'react';
 import * as styles from './ProfilePageStyles';
-import Private_Div from '../div/private_div';
+import PrivateProfile from '../div/PrivateDiv';
 import FriendList from '../div/friend_list_div';
 import { useUserContext } from '../context/UserContext';
 
@@ -22,7 +22,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({friend_set}) => {
 
 	return (
 		<div style={styles.pageStyle}>
-            <Private_Div userID={user?.userID}/>
+            <PrivateProfile userID={user?.userID}/>
             <hr/>
             <FriendList userID={user?.userID} friend_set={friend_set}/>
         </div>

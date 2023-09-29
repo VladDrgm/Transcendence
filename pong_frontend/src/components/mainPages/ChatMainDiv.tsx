@@ -16,7 +16,7 @@ import immer from "immer";
 import { getIsAdmin, postAdmin } from "../../api/channel/channel_admin.api";
 import { Link } from 'react-router-dom';
 
-const Chat_MainDiv: FC<ChatProps> = (props) => {
+const ChatMainDiv: FC<ChatProps> = (props) => {
 	const [body, setBody] = useState<JSX.Element | null>(null);
 	const [chatInput, setChatInput] = useState<JSX.Element | null>(null);
 	const [channelpanel, setChannelpanel] = useState<JSX.Element | null>(null);
@@ -951,4 +951,4 @@ const Chat_MainDiv: FC<ChatProps> = (props) => {
 	);
 };
 
-export default Chat_MainDiv;
+export default ChatMainDiv;

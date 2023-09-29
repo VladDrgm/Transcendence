@@ -1,7 +1,5 @@
 import React, {useState, useEffect} from 'react';
-// import {main_div_mode_t} from '../MainDivSelector';
-import Public_Div from '../div/public_div';
-
+import PublicDiv from '../div/PublicDiv';
 import Friend_Div from '../div/friend_div';
 import { checkFriend, addFriend, removeFriend } from '../../api/friend_list.api';
 import { useUserContext } from '../context/UserContext';
@@ -19,9 +17,9 @@ interface ProfileProps
   friend_ID: number;
 }
 
-const PublicProfile_MainDiv: React.FC<ProfileProps> = ({friend_ID}) => {
+const PublicProfileMainDiv: React.FC<ProfileProps> = ({friend_ID}) => {
     const [type, set_type] = useState<ProfileType_t>(ProfileType_t.PUBLIC_PROFILE);
-      const { user, setUser } = useUserContext();
+      const { user } = useUserContext();
       const userID = user!.userID;
       const isFriend = async () => {
         try{
@@ -85,7 +83,7 @@ const PublicProfile_MainDiv: React.FC<ProfileProps> = ({friend_ID}) => {
                 <p>This is public profile </p> 
                 <br/> 
                 </div>
-                <Public_Div userID={userID} publicID={friend_ID}/>
+                <PublicDiv userID={userID} publicID={friend_ID}/>
                 <hr/>
                 <button onClick={addFriend_private}>Add Friend</button>
                 <Link to={"/app/profile"}><button>Back to your profile</button></Link>
@@ -94,4 +92,4 @@ const PublicProfile_MainDiv: React.FC<ProfileProps> = ({friend_ID}) => {
     }
 };
 
-export default PublicProfile_MainDiv;
+export default PublicProfileMainDiv;

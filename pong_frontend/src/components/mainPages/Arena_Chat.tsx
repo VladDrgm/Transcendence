@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import Chat_MainDiv from "./Chat_MainDiv";
+import ChatMainDiv from "./ChatMainDiv";
 import Game from './Game';
 import GameForm from "./GameForm";
 import { io, Socket } from "socket.io-client";
@@ -57,7 +57,7 @@ export type CurrentChat = {
 	Channel: Channel;
 };
 
-const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID, friend_set}) => {
+const ArenaChat: React.FC<ArenaDivProps> = ({userID, friend_set}) => {
 	const { user } = useUserContext()
 	/* chat utilities */
 	// const [username, setUsername] = useState("");
@@ -495,7 +495,7 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID, friend_set}) => {
 
 	// let body;
 	// body = (
-	// 	<Chat_MainDiv
+	// 	<ChatMainDiv
 	// 		user={user}
 	// 		userID={userID}
 	// 		yourId={socketRef.current ? socketRef.current.id : ""}
@@ -544,7 +544,7 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID, friend_set}) => {
 			{/* <div>
 				{body}
 			</div> */}
-			<Chat_MainDiv
+			<ChatMainDiv
 			user={user}
 			userID={userID}
 			yourId={socketRef.current ? socketRef.current.id : ""}
@@ -565,4 +565,4 @@ const Arena_Chat_MainDiv: React.FC<ArenaDivProps> = ({userID, friend_set}) => {
 	);
 }
 
-export default Arena_Chat_MainDiv;
+export default ArenaChat;

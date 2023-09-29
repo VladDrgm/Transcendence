@@ -6,7 +6,6 @@ import { UsernameItem } from '../../interfaces/username_list.interface';
 import { getGlobalMatchHistory, getPersonalMatchHistory } from '../../api/matchHistory.api';
 import { getUserList } from '../../api/user_list.api';
 import { useUserContext } from '../context/UserContext';
-// import {main_div_mode_t} from '../MainDivSelector';
 
 const ITEMS_PER_PAGE = 3;
 
@@ -22,12 +21,12 @@ interface MatchHistoryProps
   friend_set: React.Dispatch<React.SetStateAction<number>>;
 }
 
-const MatchHistory_MainDiv: React.FC<MatchHistoryProps>  = ({userID, friend_set}) => {
+const MatchHistoryMainDiv: React.FC<MatchHistoryProps>  = ({userID, friend_set}) => {
   const [jsonData, setJsonData] = useState<MatchHistoryItem[]>([]);
   const [usernameList, setusernameList] = useState<UsernameItem[]>([]);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [historyType, setHistoryType]  = useState<number>(matchHistoryType_t.GLOBAL);
-  const { user, setUser } = useUserContext();
+  const { user } = useUserContext();
 
   const getData = async () => {
     const usenames = await getUserList();
@@ -135,4 +134,4 @@ const MatchHistory_MainDiv: React.FC<MatchHistoryProps>  = ({userID, friend_set}
   );
 };
 
-export default MatchHistory_MainDiv;
+export default MatchHistoryMainDiv;
