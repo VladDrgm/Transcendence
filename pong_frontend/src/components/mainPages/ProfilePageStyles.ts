@@ -17,9 +17,3 @@ export const pageStyle: Properties = {
 	flexDirection: 'column',
 	alignItems: 'center',
 }
-
-/* Usage:
-import * as styles from './ProfilePageStyles';
-
-<p style={styles.formFieldStyle}>Welcome</p>
-*/

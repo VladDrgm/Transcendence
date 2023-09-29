@@ -1,6 +1,6 @@
 import React from 'react';
 import * as styles from './ProfilePageStyles';
-import FriendList from '../div/FriendListDiv';
+import FriendList from '../div/FriendList';
 import { useUserContext } from '../context/UserContext';
 
 interface MyFriendsPageProps

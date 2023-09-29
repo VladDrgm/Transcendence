@@ -59,8 +59,8 @@ const PublicProfileMainDiv: React.FC<ProfileProps> = ({friend_ID}) => {
       };
 
       useEffect(() => {
-        isFriend();
-      }, []);
+        set_type(ProfileType_t.PUBLIC_PROFILE);
+      }, [friend_ID]);
 
       switch(type){
         case (ProfileType_t.FRIEND_PROFILE):

@@ -1,9 +1,7 @@
 import React from 'react';
 import * as styles from './ProfilePageStyles';
 import PrivateProfile from '../div/PrivateDiv';
-import FriendList from '../div/FriendListDiv';
 import { useUserContext } from '../context/UserContext';
-
 
 export enum ProfileType_t
 {
@@ -11,7 +9,6 @@ export enum ProfileType_t
   FRIEND_PROFILE,
   PUBLIC_PROFILE
 }
-
 interface ProfilePageProps
 {
   friend_set: React.Dispatch<React.SetStateAction<number>>;
@@ -22,10 +19,8 @@ const ProfilePage: React.FC<ProfilePageProps> = ({friend_set}) => {
 
 	return (
 		<div style={styles.pageStyle}>
-            <PrivateProfile userID={user?.userID}/>
-            <hr/>
-            <FriendList userID={user?.userID} friend_set={friend_set}/>
-        </div>
+      <PrivateProfile userID={user?.userID}/>
+    </div>
 	)
 };
 

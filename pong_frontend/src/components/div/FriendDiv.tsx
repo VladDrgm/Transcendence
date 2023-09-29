@@ -82,8 +82,8 @@ const FriendDiv: React.FC<FriendProps> = ({ userID, friendID }) => {
             </ul>
           </div>
           <div style={centeredContainerStyle}>
-          {renderAchievements()}
-        </div>
+            {renderAchievements()}
+          </div>
         </div>
       </div>
     );
