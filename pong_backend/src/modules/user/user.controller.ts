@@ -183,7 +183,7 @@ export class UserController {
       @Param('targetId', ParseIntPipe) targetId: number,
       @Param('status') status: string,
       @Body() loggedUser: UserAuthDTO,
-    ): Promise<User> {
+    ): Promise<UserDTO> {
       return await this.userService.updateStatus(
         loggedUser,
         callerId,
