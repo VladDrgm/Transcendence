@@ -84,11 +84,11 @@ export async function getAdmins(channelId: number): Promise<any[]>{
       method: 'POST',
       headers: { 
         "Accept": "*/*",
-        "Container-Type": "application/json"
+        "Content-Type": "application/json"
       },
       body: jsonData
     };
-    return fetch(fetchAddress + 'channel/' + user?.userID +'/' + targetId + '/' + channelId, requestOptions)
+    return fetch(fetchAddress + 'channel/admin/add/' + user?.userID +'/' + targetId + '/' + channelId, requestOptions)
       .then((response) =>{
         if (response.ok){
           return response.json();

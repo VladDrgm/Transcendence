@@ -75,7 +75,7 @@ export class ChannelController {
         await this.channelService.remove(loggedUser, callerId, chanId);
       }
 
-  @Post(':callerId/:targetId/:channelId')
+  @Post('admin/add/:callerId/:targetId/:channelId')
   @ApiOperation({
     summary: 'Add an Admin by his userId. Only Owner can add an Admin.',
   })
