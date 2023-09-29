@@ -6,67 +6,44 @@ import { UsernameItem } from '../../interfaces/username_list.interface';
 import { getGlobalMatchHistory, getPersonalMatchHistory } from '../../api/matchHistory.api';
 import { getUserList } from '../../api/user_list.api';
 import { useUserContext } from '../context/UserContext';
+import { ButtonStyle, MatchHistoryCard, MatchHistoryScore, MatchHistoryTitle, MatchHistoryWinner } from './MatchHistoryStyles';
 
-const ITEMS_PER_PAGE = 3;
+const ITEMS_PER_PAGE = 15;
 
-
-enum matchHistoryType_t {
-    PERSONAL = 0,
-    GLOBAL = 1,
-  }
-
-interface MatchHistoryProps
-{
+interface MatchHistoryProps {
   userID: number | undefined;
   friend_set: React.Dispatch<React.SetStateAction<number>>;
 }
 
-const MatchHistoryMainDiv: React.FC<MatchHistoryProps>  = ({userID, friend_set}) => {
-  const [jsonData, setJsonData] = useState<MatchHistoryItem[]>([]);
+const MatchHistoryMainDiv: React.FC<MatchHistoryProps> = ({ userID, friend_set }) => {
+  const [matchData, setMatchData] = useState<MatchHistoryItem[]>([]);
   const [usernameList, setusernameList] = useState<UsernameItem[]>([]);
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const [historyType, setHistoryType]  = useState<number>(matchHistoryType_t.GLOBAL);
+  const [showPersonalMatches, setShowPersonalMatches] = useState(false);
   const { user } = useUserContext();
 
   const getData = async () => {
     const usenames = await getUserList();
     setusernameList(usenames);
-    if (historyType === matchHistoryType_t.PERSONAL)
-    {
-        try
-        {  
-          const matchData = await getPersonalMatchHistory(userID as number, user?.intraUsername, user?.passwordHash)
-          setJsonData(matchData);
-        }
-        catch(error)
-        {
-          setJsonData([]);
-        }
+
+    try {
+      const data = showPersonalMatches
+        ? await getPersonalMatchHistory(userID as number, user?.intraUsername, user?.passwordHash)
+        : await getGlobalMatchHistory(userID as number, user?.intraUsername, user?.passwordHash);
+
+      setMatchData(data);
+    } catch (error) {
+      setMatchData([]);
     }
-    else if (historyType === matchHistoryType_t.GLOBAL)
-    {   
-      try
-      {  
-        const matchData = await getGlobalMatchHistory(userID as number, user?.intraUsername, user?.passwordHash);
-        setJsonData(matchData);
-      }
-      catch(error)
-      {
-        setJsonData([]);
-      }
-    }
-    else
-    {
-        setJsonData([]);
-    }
+
     setCurrentPage(1);
   };
 
   useEffect(() => {
     getData();
-  }, [historyType]);
+  }, [showPersonalMatches]);
 
-  const openFriend = (FID:number) => {
+  const openFriend = (FID: number) => {
     friend_set(FID);
   };
 
@@ -74,61 +51,83 @@ const MatchHistoryMainDiv: React.FC<MatchHistoryProps>  = ({userID, friend_set})
     return usernameList.find((user) => user.id === idToFind)?.username;
   };
 
+  const filteredData = matchData;
+
   // Split the data into multiple pages
-  const totalPages = Math.ceil(jsonData.length / ITEMS_PER_PAGE);
+  const totalPages = Math.ceil(filteredData.length / ITEMS_PER_PAGE);
   var startIdx;
   var endIdx;
   var currentPageData: MatchHistoryItem[];
-  if (totalPages === 0)
-  {
+  if (totalPages === 0) {
     startIdx = 0;
     endIdx = 0;
     currentPageData = [];
-  }
-  else
-  {
+  } else {
     startIdx = (currentPage - 1) * ITEMS_PER_PAGE;
     endIdx = startIdx + ITEMS_PER_PAGE;
-    try
-    {
-      currentPageData = jsonData.slice(startIdx, endIdx);
-    }
-    catch(error)
-    {
+    try {
+      currentPageData = filteredData.slice(startIdx, endIdx);
+    } catch (error) {
       currentPageData = [];
     }
   }
 
-  // Handle page change
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
 
   return (
     <div>
-      <button onClick={() => setHistoryType(matchHistoryType_t.PERSONAL)}>1 v 1</button>
-      <button onClick={() => setHistoryType(matchHistoryType_t.GLOBAL)}>Global</button>
+      <button style={ButtonStyle} onClick={() => setShowPersonalMatches(!showPersonalMatches)}>
+        {showPersonalMatches ? 'Show All Matches' : 'Show My Matches'}
+      </button>
       {currentPageData.map((item) => (
-        <div key={item.MatchId}>
-            <p>Match: {item.GameType}</p>
-            
-            
-            {item.Player1Id === userID && (<Link to={"/app/profile"}>{findUsername(item.Player1Id)}</Link>)}
-            {item.Player1Id !== userID && (<Link onClick={() => openFriend(item.Player1Id)} to={"/app/public_profile"}>{findUsername(item.Player1Id)}</Link>)}
-            <p> vs </p>
-            {item.Player2Id === userID && (<Link to={"/app/profile"}>{findUsername(item.Player2Id)}</Link>)}
-            {item.Player2Id !== userID && (<Link onClick={() => openFriend(item.Player2Id)} to={"/app/public_profile"}>{findUsername(item.Player2Id)}</Link>)}
-            <p>Score: {item.Player1Points} : {item.Player2Points}</p>
-            <p>Winner: {findUsername(item.WinnerId)} by {item.WinningCondition}</p>
-        </div>
-      ))}
+        <MatchHistoryCard key={item.MatchId}>
+          <div>
+            <p style={MatchHistoryTitle}>
+              {item.Player1Id === userID ? (
+                <Link to={'/app/profile'} style={{ ...MatchHistoryTitle, textDecoration: 'none' }}>
+                  {findUsername(item.Player1Id)}
+                </Link>
+              ) : (
+                <Link
+                  onClick={() => openFriend(item.Player1Id)}
+                  to={`/app/public_profile/${item.Player1Id}`}
+                  style={{ ...MatchHistoryTitle, textDecoration: 'none' }}
+                >
+                  {findUsername(item.Player1Id)}
+                </Link>
+              )}{' '}
+              <span style={{ color: 'white' }}> vs </span>
+              {item.Player2Id === userID ? (
+                <Link to={'/app/profile'} style={{ ...MatchHistoryTitle, textDecoration: 'none' }}>
+                  {findUsername(item.Player2Id)}
+                </Link>
+              ) : (
+                <Link
+                  onClick={() => openFriend(item.Player2Id)}
+                  to={`/app/public_profile/${item.Player2Id}`}
+                  style={{ ...MatchHistoryTitle, textDecoration: 'none' }}
+                >
+                  {findUsername(item.Player2Id)}
+                </Link>
+              )}
+            </p>
+          </div>
 
+          <p style={MatchHistoryScore}>
+            Score: {item.Player1Points} - {item.Player2Points}
+          </p>
+          <p style={MatchHistoryWinner}>
+          Winner: {findUsername(item.WinnerId)}{" "}
+          {item.WinningCondition === "disconnected" && (
+          <span>(game {item.WinningCondition})</span>
+          )}
+          </p>
+        </MatchHistoryCard>
+      ))}
       {totalPages > 0 && (
-        <Pagination
-          totalPages={totalPages}
-          currentPage={currentPage}
-          onPageChange={handlePageChange}
-        />
+        <Pagination totalPages={totalPages} currentPage={currentPage} onPageChange={handlePageChange} />
       )}
     </div>
   );

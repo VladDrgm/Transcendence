@@ -5,7 +5,6 @@ import { checkFriend, addFriend, removeFriend } from '../../api/friend_list.api'
 import { useUserContext } from '../context/UserContext';
 import { Link } from 'react-router-dom';
 
-
 export enum ProfileType_t
 {
   FRIEND_PROFILE,

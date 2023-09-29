@@ -17,7 +17,6 @@ const Pagination: React.FC<PaginationProps> = ({ totalPages, currentPage, onPage
           className={pageNumber === currentPage ? 'active' : ''}
           onClick={() => onPageChange(pageNumber)}
         >
-          {pageNumber}
         </span>
       ))}
     </div>
