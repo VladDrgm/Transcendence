@@ -28,7 +28,7 @@ const TwoFactorVerification: React.FC = () => {
 
 	const verifyToken = async () => {
 		try {
-			const userSecret = user?.tfa_secret ?? secret;
+			const userSecret = secret == '' ? user?.tfa_secret : secret;
 			const res = await verifyTFAToken(userSecret, token);
 			setIsVerified(res);
 			if (qrCode) {
