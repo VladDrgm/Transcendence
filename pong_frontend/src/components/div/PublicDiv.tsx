@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { PublicProfile } from '../../interfaces/public_profile.interface';
 import { getPublicProfile } from '../../api/profile.api';
-import { achievementListItemStyle, achievementTextStyle, centeredContainerStyle, listContainerStyle, listStyle, statListItemStyle } from './UserProfileSyles';
+import { achievementListItemStyle, achievementTextStyle, centeredContainerStyle, listContainerStyle, listStyle, profilePictureStyle, statListItemStyle } from './UserProfileSyles';
 import imageAssetAchievement1 from '../assets/achievement1.png'
+import { fetchAddress } from './channel_div';
 
 interface PublicProps {
   userID: number;
@@ -50,24 +51,23 @@ const PublicDiv: React.FC<PublicProps> = ({ userID, publicID }) => {
     return (
       <div>
         <h2>{user.username}'s profile</h2>
-        <div style={centeredContainerStyle}>
-          <ul style={listContainerStyle}>
-            <li style={listStyle}>
-              <p style={statListItemStyle}>Wins: {user.wins}</p>
-            </li>
-            <li style={listStyle}>
-              <p style={statListItemStyle}>Losses: {user.losses}</p>
-            </li>
-            <li style={listStyle}>
-              <p style={statListItemStyle}>Points: {user.points}</p>
-            </li>
-          </ul>
-        </div>
+        <img
+					className='user-card__image'
+					src={fetchAddress.slice(0, -1) + `${user.avatarPath?.slice(1)}`}
+					alt='user.avatarPath'
+					onError={({ currentTarget }) => {
+						currentTarget.onerror = null;
+						currentTarget.src = '/default_pfp.png';
+					}}
+					style={profilePictureStyle}
+				/>
+				<p>Status: {user.status}</p>
+				<br/>
         <div style={centeredContainerStyle}>{renderAchievements()}</div>
       </div>
     );
   } else {
-    return <div></div>;
+    return <div>Loading...</div>;
   }
 };
 

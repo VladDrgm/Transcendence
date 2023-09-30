@@ -1,11 +1,7 @@
 import { Link, Outlet } from 'react-router-dom';
 import * as styles from './UserStartPageStyles';
 
-interface UserStartPageProps {
-	/* Declare page properties here if needed */
-}
-
-const UserStartPage: React.FC<UserStartPageProps> = ({/* Use UserStartPageProps here */}) => {
+const UserStartPage: React.FC = () => {
 
 	const navigationLinks: { path: string; label: string}[] = [
 		{ path: '/app/home', label: 'Home'},
@@ -14,7 +10,8 @@ const UserStartPage: React.FC<UserStartPageProps> = ({/* Use UserStartPageProps 
 		{ path: '/app/profile', label: 'Profile'},
 		{ path: '/app/friends', label: 'My Friends'},
 		{ path: '/app/settings', label: 'Settings'},
-        { path: '/app/match_history', label: 'Match History'}
+        { path: '/app/match_history', label: 'Match History'},
+        { path: '/app/logout', label: 'Log Out'},
 	];
 
 	return (

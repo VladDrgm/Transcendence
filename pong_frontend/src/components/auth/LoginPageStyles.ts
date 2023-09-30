@@ -50,8 +50,8 @@ export const loginButtonStyle: Properties = {
 export const signupButtonStyle: Properties = {
 	backgroundColor: 'rgba(254, 8, 16, 1)',
 	position: 'relative',
-	height:'40px',
-	width:'160px',
+	height:'50px',
+	width:'180px',
 	fontFamily: 'Shlop',
 	fontSize: '24px',
 	display: 'block',
