@@ -251,11 +251,12 @@ export function popUpCreateChannel(
     channelPasswordLabel.textContent = "Channel Password:";
     popup?.document.body.appendChild(channelPasswordLabel);
 
+    
     var channelPasswordInput = document.createElement('input');
     channelPasswordInput.type = 'text';
-    channelPasswordInput.placeholder = "for public channels leave empty";
+    channelPasswordInput.placeholder = "password";
     popup?.document.body.appendChild(channelPasswordInput);
-
+    
     var createButton = document.createElement('button');
     createButton.innerHTML = 'Create';
     createButton.classList.add("createButton_style"); 
@@ -276,6 +277,10 @@ export function popUpCreateChannel(
         popup?.close();
     });
     popup?.document.body.appendChild(createButton);
+
+    const channelPasswordHint = document.createElement("p");
+    channelPasswordHint.textContent = "(for public Channels leave it empty)";
+    popup?.document.body.appendChild(channelPasswordHint);
 }
 
 export async function popUpJoinPrivateChannel(props: ChatProps, currentChat: ChatData ,joinPrivateRoom: (chatName: ChatName, password: string) => void){
