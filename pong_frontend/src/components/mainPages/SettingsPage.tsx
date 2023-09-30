@@ -107,6 +107,7 @@ const SettingsPage: React.FC<SettingsPageProps> = ({onLogout}) => {
 			<br/>
 		  	<input
 				type="text"
+				maxLength={15}
 				placeholder={user?.username}
 				value={newUsername}
 				onChange={(e) => setNewUsername(e.target.value)}

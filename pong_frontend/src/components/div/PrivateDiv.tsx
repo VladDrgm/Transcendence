@@ -4,6 +4,8 @@ import { getPrivateProfile } from '../../api/profile.api';
 import { useUserContext } from '../context/UserContext';
 import imageAssetAchievement1 from '../assets/achievement1.png'
 import { fetchAddress } from './channel_div';
+import { achievementListItemStyle, achievementTextStyle, centeredContainerStyle, listContainerStyle, listStyle, profilePictureStyle, statListItemStyle } from './UserProfileSyles';
+
 
 interface PrivateDivProps
 {
@@ -28,6 +30,26 @@ const PrivateDiv: React.FC<PrivateDivProps> = ({userID}) => {
     	}
 	}
   	
+	const renderAchievements = () => {
+		if (user?.achievementsCSV) {
+		  const achievements = user.achievementsCSV.split(';');
+		  return (
+			<div>
+			  <h3>Achievements</h3>
+			  <ul style={listContainerStyle}>
+				{achievements.map((achievement, index) => (
+				  <li key={index} style={listStyle}>
+					<img style={achievementListItemStyle} src={imageAssetAchievement1} alt="Achievement" />
+					<span style={achievementTextStyle}>{achievement}</span>
+				  </li>
+				))}
+			  </ul>
+			</div>
+		  );
+		}
+		return null;
+	  };
+
   	useEffect(() => {
    		getData();
   	}, []);
@@ -63,15 +85,9 @@ const PrivateDiv: React.FC<PrivateDivProps> = ({userID}) => {
 					<li style={styles.listStyle}>
 					</li>
 				</ul>
-				<p>Achievements: {user.achievementsCSV}</p>
-				<ul style={styles.listContainerStyle}>
-					<li style={styles.listStyle}>
-						<img style={styles.achievementListItemStyle} 
-							src={imageAssetAchievement1}
-							alt="Achievement">
-						</img>
-					</li>
-				</ul>
+				<div style={centeredContainerStyle}>
+            		{renderAchievements()}
+         		</div>
 			</div>
     	);
   	} else {

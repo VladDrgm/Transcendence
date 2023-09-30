@@ -9,7 +9,6 @@ const UserStartPage: React.FC = () => {
 		{ path: '/app/leaderboard', label: 'Leaderboard'},
 		{ path: '/app/profile', label: 'Profile'},
 		{ path: '/app/friends', label: 'My Friends'},
-		{ path: '/app/settings', label: 'Settings'},
         { path: '/app/match_history', label: 'Match History'},
         { path: '/app/logout', label: 'Log Out'},
 	];
