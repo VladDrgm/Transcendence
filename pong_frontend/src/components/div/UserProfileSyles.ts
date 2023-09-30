@@ -72,7 +72,7 @@ export const achievementTextStyle: CSSProperties = {
     fontSize: '16px',
     fontWeight: 'bold',
     color: 'white',
-    display: 'flex',
+        display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
   }
@@ -81,4 +81,20 @@ export const achievementTextStyle: CSSProperties = {
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
+  };
+
+  export const profileSectionStyle: CSSProperties = {
+    display: 'flex',
+    justifyContent: 'space-between',
+    marginBottom: '10px', // Adjust margin as needed
+  };
+  
+  export const buttonContainerStyle: CSSProperties = {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+  };
+
+  export const profileDataContainerStyle: CSSProperties = {
+    flex: 1, 
   };
