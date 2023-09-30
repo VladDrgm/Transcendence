@@ -5,7 +5,46 @@ import { chatButtonsStyle } from '../mainPages/ChatPageStyles';
 
 export function banUserPopUp(props: &ChatProps, currentChat: ChatData, banUserSocket: any, unbanUserSocket: any) {
     
-    var popup = window.open('', '_blank', 'width=500,height=300,menubar=no,toolbar=no');
+    var popup = window.open('', '_blank', 'width=250,height=200,menubar=no,toolbar=no');
+    if (!popup) {
+        alert("Popup blocked. Please allow popups for this site.");
+        return;
+    }
+    const popupDocument = popup.document;
+    
+    // Create a <style> element to add CSS styles
+    const styleElement = popupDocument.createElement("style");
+    styleElement.textContent = `
+        body {
+            background-color: black;
+            color: white;
+            font-family: Shlop, sans-serif;
+        }
+        h1 {
+            font-size: 24px;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 5px;
+            margin-bottom: 10px;
+        }
+        button {
+            background-color: rgba(254, 8, 16, 1);
+            font-family: Shlop;
+            font-size: 13px;
+            color: white;
+            border: 2px solid white;
+            border-radius: 6px;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+        p {
+            font-size: 14px;
+        }
+    `;
+
+    // Append the <style> element to the popup's <head>
+    popupDocument.head.appendChild(styleElement);
 
     const newBlockedLabel = document.createElement("h1");
     newBlockedLabel.textContent = "User to be Banned / Unbanned from the Channel";
@@ -35,7 +74,51 @@ export function banUserPopUp(props: &ChatProps, currentChat: ChatData, banUserSo
 }
 
 export function muteUserPopUp(props: &ChatProps, currentChat: ChatData, muteUserSocket: any) {
-    var popup = window.open('', '_blank', 'width=500,height=300,menubar=no,toolbar=no');
+    var popup = window.open('', '_blank', 'width=250,height=200,menubar=no,toolbar=no');
+    if (!popup) {
+        alert("Popup blocked. Please allow popups for this site.");
+        return;
+    }
+    const popupDocument = popup.document;
+    
+    // Create a <style> element to add CSS styles
+    const styleElement = popupDocument.createElement("style");
+    styleElement.textContent = `
+        body {
+            background-color: black;
+            color: white;
+            font-family: Shlop, sans-serif;
+        }
+        h1 {
+            font-size: 24px;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 5px;
+            margin-bottom: 10px;
+        }
+        input[type="number"] {
+            width: 100%;
+            padding: 5px;
+            margin-bottom: 10px;
+        }
+        button {
+            background-color: rgba(254, 8, 16, 1);
+            font-family: Shlop;
+            font-size: 13px;
+            color: white;
+            border: 2px solid white;
+            border-radius: 6px;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+        p {
+            font-size: 14px;
+        }
+    `;
+
+    // Append the <style> element to the popup's <head>
+    popupDocument.head.appendChild(styleElement);
 
     const newBlockedLabel = document.createElement("h1");
     newBlockedLabel.textContent = "User to be Muted in the Channel";
@@ -70,7 +153,46 @@ export function muteUserPopUp(props: &ChatProps, currentChat: ChatData, muteUser
 export function kickUserPopUp(props: &ChatProps, currenchat: ChatData, banUserSocket: any, unbanUserSocket: any) {
     
     // Open Window
-    var popup = window.open('', '_blank', 'width=500,height=300,menubar=no,toolbar=no');
+    var popup = window.open('', '_blank', 'width=250,height=150,menubar=no,toolbar=no');
+    if (!popup) {
+        alert("Popup blocked. Please allow popups for this site.");
+        return;
+    }
+    const popupDocument = popup.document;
+    
+    // Create a <style> element to add CSS styles
+    const styleElement = popupDocument.createElement("style");
+    styleElement.textContent = `
+        body {
+            background-color: black;
+            color: white;
+            font-family: Shlop, sans-serif;
+        }
+        h1 {
+            font-size: 24px;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 5px;
+            margin-bottom: 10px;
+        }
+        button {
+            background-color: rgba(254, 8, 16, 1);
+            font-family: Shlop;
+            font-size: 13px;
+            color: white;
+            border: 2px solid white;
+            border-radius: 6px;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+        p {
+            font-size: 14px;
+        }
+    `;
+
+    // Append the <style> element to the popup's <head>
+    popupDocument.head.appendChild(styleElement);
 
     const newBlockedLabel = document.createElement("h1");
     newBlockedLabel.textContent = "User to be Kicked from the Channel";
@@ -110,8 +232,46 @@ export function kickUserPopUp(props: &ChatProps, currenchat: ChatData, banUserSo
 
 //opens the window for adding Usersnames as Admins and passes the input to addAdmin()
 export function addAdminPopUp(props:  &ChatProps, addAdminRights:(TargetName: string, chatName: ChatName) => void, currentChat: ChatData) {
-    // Open Window
-    var popup = window.open('', '_blank', 'width=500,height=300,menubar=no,toolbar=no');
+    var popup = window.open('', '_blank', 'width=250,height=150,menubar=no,toolbar=no');
+    if (!popup) {
+        alert("Popup blocked. Please allow popups for this site.");
+        return;
+    }
+    const popupDocument = popup.document;
+    
+    // Create a <style> element to add CSS styles
+    const styleElement = popupDocument.createElement("style");
+    styleElement.textContent = `
+        body {
+            background-color: black;
+            color: white;
+            font-family: Shlop, sans-serif;
+        }
+        h1 {
+            font-size: 24px;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 5px;
+            margin-bottom: 10px;
+        }
+        button {
+            background-color: rgba(254, 8, 16, 1);
+            font-family: Shlop;
+            font-size: 13px;
+            color: white;
+            border: 2px solid white;
+            border-radius: 6px;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+        p {
+            font-size: 14px;
+        }
+    `;
+
+    // Append the <style> element to the popup's <head>
+    popupDocument.head.appendChild(styleElement);
 
     const newAdminLabel = document.createElement("h1");
     newAdminLabel.textContent = "New Admin:";
@@ -140,11 +300,52 @@ export function changePasswordPopUp(
     currentChat: ChatData,
     updateChannellist: () => void,
     changeChatRoom: (chatName: ChatName) => void) {
-    // Open Window
-    var popup = window.open('', '_blank', 'width=500,height=300,menubar=no,toolbar=no');
+    var popup = window.open('', '_blank', 'width=250,height=200,menubar=no,toolbar=no');
+
+    // Check if the popup was blocked
+    if (!popup) {
+        alert("Popup blocked. Please allow popups for this site.");
+        return;
+    }
+
+    const popupDocument = popup.document;
+    
+    // Create a <style> element to add CSS styles
+    const styleElement = popupDocument.createElement("style");
+    styleElement.textContent = `
+        body {
+            background-color: black;
+            color: white;
+            font-family: Shlop, sans-serif;
+        }
+        h1 {
+            font-size: 24px;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 5px;
+            margin-bottom: 10px;
+        }
+        button {
+            background-color: rgba(254, 8, 16, 1);
+            font-family: Shlop;
+            font-size: 13px;
+            color: white;
+            border: 2px solid white;
+            border-radius: 6px;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+        p {
+            font-size: 14px;
+        }
+    `;
+
+    // Append the <style> element to the popup's <head>
+    popupDocument.head.appendChild(styleElement);
 
     const newPwLabel = document.createElement("h1");
-    newPwLabel.textContent = "New Passowrd:";
+    newPwLabel.textContent = "New Password:";
     popup?.document.body.appendChild(newPwLabel);
 
     var newPwInput = document.createElement('input');
@@ -177,24 +378,28 @@ export function changePasswordPopUp(
                 console.error("Error removing Password:", error);
             });
         }
-        putChannelPassword(props.userID, currentChat.Channel.ChannelId, newPw, props.user!)
-        .then(() => {
-            console.log("Password updated");
-            if (currentChat.Channel.Type === "public"){
-                putChannelType(props.userID, currentChat.Channel.ChannelId, props.user!)
-                .then(() => {
-                    changeChatRoom(currentChat.chatName);
-                    updateChannellist();
-                    console.log("Channel Type changed to private");
-                })
-                .catch(error => {
-                    console.error("Error changing channele type:", error);
-                });
-            }
-        })
-        .catch(error => {
-            console.error("Error changing Password:", error);
-        })
+        if (newPw.length > 15){
+            window.alert('Passwort can not be longer than 15 characters');
+        } else {
+            putChannelPassword(props.userID, currentChat.Channel.ChannelId, newPw, props.user!)
+            .then(() => {
+                console.log("Password updated");
+                if (currentChat.Channel.Type === "public"){
+                    putChannelType(props.userID, currentChat.Channel.ChannelId, props.user!)
+                    .then(() => {
+                        changeChatRoom(currentChat.chatName);
+                        updateChannellist();
+                        console.log("Channel Type changed to private");
+                    })
+                    .catch(error => {
+                        console.error("Error changing channele type:", error);
+                    });
+                }
+            })
+            .catch(error => {
+                console.error("Error changing Password:", error);
+            })
+        }
         popup?.close();
     });
     popup?.document.body.appendChild(changePwButton);
@@ -227,77 +432,6 @@ export function changePasswordPopUp(
 
 }
 
-const popupStyles = `
-  <style>
-    body {
-      background-color: black;
-      color: white;
-      font-family: Shlop, sans-serif;
-    }
-    /* Add any other styles you need */
-  </style>
-`;
-
-// export function popUpCreateChannel(
-//     props: ChatProps,
-//     updateChannellist: any,
-//     addChatRoom: (chatName: ChatName) => void
-//   ) {
-//     // Open Window
-//     var popup = window.open('', '_blank', 'width=500,height=300,menubar=no,toolbar=no');
-
-//     const channelNameLabel = document.createElement("h1");
-//     channelNameLabel.textContent = "Channel Name:";
-//     popup?.document.body.appendChild(channelNameLabel);
-  
-//     var channelNameInput = document.createElement('input');
-//     channelNameInput.type = 'text';
-//     channelNameInput.placeholder = "Enter new Channel Name";
-//     channelNameInput.style.marginBottom = '10px'; // Add margin to space elements
-//     popup?.document.body.appendChild(channelNameInput);
-  
-//     const channelPasswordLabel = document.createElement("h1");
-//     channelPasswordLabel.textContent = "Channel Password:";
-//     popup?.document.body.appendChild(channelPasswordLabel);
-  
-//     var channelPasswordInput = document.createElement('input');
-//     channelPasswordInput.type = 'text';
-//     channelPasswordInput.placeholder = "Password";
-//     channelPasswordInput.style.marginBottom = '10px'; // Add margin
-//     popup?.document.body.appendChild(channelPasswordInput);
-  
-//     var createButton = document.createElement('button');
-//     createButton.innerHTML = 'Create';
-//     Object.assign(createButton.style, chatButtonsStyle);
-//     createButton.addEventListener('click', function(e) {
-//       e.preventDefault();
-//       const channelName = channelNameInput.value;
-//       const password = channelPasswordInput.value;
-  
-//       if (channelName.length < 1 || channelName.length > 15) {
-//         popup?.close();
-//         window.alert('Channel Name must be between 1 and 15 characters.');
-//       } else {
-//         CreateChannel(props, channelName, password)
-//           .then(result => {
-//             if (result) {
-//               // Updating Channel lists
-//               addChatRoom(channelName);
-//               updateChannellist();
-//             }
-//           })
-//           .catch(error => {
-//             console.error("Error creating Channel: ", error);
-//           });
-//         popup?.close();
-//       }
-//     });
-//     popup?.document.body.appendChild(createButton);
-  
-//     const channelPasswordHint = document.createElement("p");
-//     channelPasswordHint.textContent = "(For public Channels, leave it empty)";
-//     popup?.document.body.appendChild(channelPasswordHint);
-//   }
 
 export function popUpCreateChannel(
     props: ChatProps,
@@ -305,7 +439,7 @@ export function popUpCreateChannel(
     addChatRoom: (chatName: ChatName) => void
 ) {
     // Open Window
-    var popup = window.open('', '_blank', 'width=500,height=300,menubar=no,toolbar=no');
+    var popup = window.open('', '_blank', 'width=250,height=300,menubar=no,toolbar=no');
 
     // Check if the popup was blocked
     if (!popup) {
@@ -336,7 +470,7 @@ export function popUpCreateChannel(
             font-family: Shlop;
             font-size: 13px;
             color: white;
-            border: none;
+            border: 2px solid white;
             border-radius: 6px;
             padding: 5px 10px;
             cursor: pointer;
@@ -436,7 +570,7 @@ export async function popUpJoinPrivateChannel(props: ChatProps, currentChat: Cha
             font-family: Shlop;
             font-size: 13px;
             color: white;
-            border: none;
+            border: 2px solid white;
             border-radius: 6px;
             padding: 5px 10px;
             cursor: pointer;
