@@ -4,7 +4,7 @@ import { getPrivateProfile } from '../../api/profile.api';
 import { useUserContext } from '../context/UserContext';
 import imageAssetAchievement1 from '../assets/achievement1.png'
 import { fetchAddress } from './channel_div';
-import { achievementListItemStyle, achievementTextStyle, centeredContainerStyle, listContainerStyle, listStyle, profilePictureStyle, statListItemStyle } from './UserProfileSyles';
+import { achievementListItemStyle, achievementTextStyle, centeredContainerStyle, listContainerStyle, listStyle } from './UserProfileSyles';
 
 
 interface PrivateDivProps

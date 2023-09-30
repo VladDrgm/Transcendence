@@ -6,15 +6,11 @@ import * as styles from './CompleteProfilePageStyles';
 import imageAssetUploadAvatar from '../assets/uploadAvatar.png';
 import { User } from '../../interfaces/user.interface';
 import { updateAvatarApi, updateUsernameApi } from '../../api/userApi';
-import { fetchAddress } from '../div/channel_div';
 import ErrorPopup from '../Popups/ErrorPopup';
 
-interface CompleteProfilePageProps {
-	/* Declare page properties here if needed */
-}
 
-const CompleteProfilePage: React.FC<CompleteProfilePageProps> = ({/* Use CompleteProfilePageProps here */}) => {
-	const { user, setUser } = useUserContext();
+const CompleteProfilePage: React.FC = () => {{
+	const { setUser } = useUserContext();
 	const navigate = useNavigate();
 	const location = useLocation();
 
@@ -31,7 +27,6 @@ const CompleteProfilePage: React.FC<CompleteProfilePageProps> = ({/* Use Complet
 	// Extract the filename from the File object and update the state
 	const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const file = e.target.files ? e.target.files[0] : null;
-		console.log('Selected file:', file);
 		if (file) {
 			setNewAvatar(file);
 			setSelectedImage(URL.createObjectURL(file));
@@ -39,8 +34,7 @@ const CompleteProfilePage: React.FC<CompleteProfilePageProps> = ({/* Use Complet
 	};
 
 	const handleCreatingUser = async () => {
-		if (!(newUsername.trim().length !== 0)) {
-			setError('Please put in a username to continue!');
+		if (newUsername.trim().length < 1 || newUsername.trim().length > 15) {			setError('Please put in a username(max 15 characters) to continue!');
   			return;
 		}
 		const newUser: User = {
@@ -100,23 +94,6 @@ const CompleteProfilePage: React.FC<CompleteProfilePageProps> = ({/* Use Complet
 		}
 	}
 
-	//   const handleUpdateAvatar = async () => {
-	// 	try {
-	// 	  if (!newAvatar) {
-	// 		throw new Error('Please select an image to upload');
-	// 	  }
-	
-	// 	  const formData = new FormData();
-    //       formData.append('img', newAvatar);
-		//   const userObject = await updateAvatarApi(userID, formData);
-		//   setUpdatedUser(userObject);
-		//   setUser(userObject);
-		//   localStorage.setItem('user', JSON.stringify(userObject));
-	// 	} catch (error) {
-	// 	  throw new Error('Error updating avatar. Try again!');
-	// 	}
-	//   };
-
     return (
 		<div style={styles.pageStyle} >
 			<p style={styles.pageTitleStyle}>Complete your profile {intraName}</p>
@@ -133,7 +110,7 @@ const CompleteProfilePage: React.FC<CompleteProfilePageProps> = ({/* Use Complet
 			<form>
 				<label style={styles.customAvatarUploadButtonStyle}>
 					<input type="file" onChange={handleAvatarChange} style={styles.avatarInputFieldStyle}/>
-					<img src={imageAssetUploadAvatar} style={styles.imageUploadButtonIconStyle}></img>
+					<img src={imageAssetUploadAvatar} style={styles.imageUploadButtonIconStyle} alt=""></img>
 					Upload file from computer
 				</label>
 			</form>
@@ -142,7 +119,7 @@ const CompleteProfilePage: React.FC<CompleteProfilePageProps> = ({/* Use Complet
 				type="text"
 				placeholder='Type in a username'
 				value={newUsername}
-				onChange={(e) => setNewUsername(e.target.value)} // Update state on change
+				onChange={(e) => setNewUsername(e.target.value)}
 				style={styles.formFieldStyle}
 			/>
 			</form>
@@ -155,5 +132,5 @@ const CompleteProfilePage: React.FC<CompleteProfilePageProps> = ({/* Use Complet
 		</div>
 	)
 };
-
+}
 export default CompleteProfilePage;
