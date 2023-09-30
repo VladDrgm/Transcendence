@@ -5,6 +5,7 @@ import { checkFriend, addFriend, removeFriend } from '../../api/friend_list.api'
 import { useUserContext } from '../context/UserContext';
 import { Link, useParams } from 'react-router-dom';
 import { ButtonStyle } from '../div/UserProfileSyles';
+import { postBlockedUser, deleteBlockedUser, getBlockedUser } from '../../api/channel/channel_user.api'
 
 export enum ProfileType_t {
   FRIEND_PROFILE,
@@ -17,6 +18,7 @@ interface ProfileProps {
 
 const PublicProfileMainDiv: React.FC<ProfileProps> = () => {
   const [type, set_type] = useState<ProfileType_t | null>(null);
+  const [blocked, set_blocked] = useState<boolean>(false);
   const [loading, setLoading] = useState(true);
   const { user } = useUserContext();
   const userID = user!.userID;
@@ -37,6 +39,11 @@ const PublicProfileMainDiv: React.FC<ProfileProps> = () => {
   }
   };
 
+  const isBlocked = async () => {
+    const ret = await getBlockedUser(userID ,Number(friend_ID), user!);
+    set_blocked(ret);
+  };
+
   const addFriend_private = async () => {
     try {
       await addFriend(userID, Number(friend_ID), user?.intraUsername, user?.passwordHash);
@@ -55,7 +62,26 @@ const PublicProfileMainDiv: React.FC<ProfileProps> = () => {
     }
   };
 
+  const blockUser = async () => {
+    try {
+      await postBlockedUser(Number(friend_ID), user!);
+      isBlocked();
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const unblockUser = async () => {
+    try {
+      await deleteBlockedUser(Number(friend_ID), user!);
+      isBlocked();
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   useEffect(() => {
+    isBlocked();
     isFriend();
   }, [friend_ID]);
 
@@ -85,6 +111,17 @@ const PublicProfileMainDiv: React.FC<ProfileProps> = () => {
           </Link>
         </div>
       )}
+      { blocked === false  ? (
+        <div>
+          <button style={ButtonStyle} onClick={blockUser}>
+            Block
+          </button>
+        </div>
+      ) : (
+        <button style={ButtonStyle} onClick={unblockUser}>
+          Unblock
+        </button>
+      ) }
     </div>
   );
 };
