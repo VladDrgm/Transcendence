@@ -1,4 +1,6 @@
 import React, { FC, useEffect } from 'react';
+import { useUserContext } from '../context/UserContext';
+import { postUserStatus } from '../../api/statusUpdateAPI.api';
 
 let BG_COLOR = '#000';
 let FILL_COLOR = '#fff';
@@ -237,6 +239,7 @@ class Pong {
 
 const Game: FC<GameProps> = (props) => {
 		const { canvasRef, socket, updateGameStatus, gameSession, setGameSession } = props;
+		const { user } = useUserContext();
 		let gameState:GameState = {
 			sessionId: null,
 			gameStatus: 0,
@@ -299,6 +302,7 @@ const Game: FC<GameProps> = (props) => {
 			}
 			
 			function endGame(gameStateUpdated: GameState) {
+				postUserStatus("Online", user!);
 				console.log("End game reached");
 				if (gameState.playerOne.score === 0 && gameState.playerTwo.score === 0) {
 					

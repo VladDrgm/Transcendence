@@ -10,6 +10,7 @@ import { Channel } from '../../interfaces/channel.interface';
 import { useUserContext } from '../context/UserContext';
 import { GameContainerStyle } from './GamePageStyles';
 import { ArenaStyle } from './ChatPageStyles';
+import { postUserStatus } from '../../api/statusUpdateAPI.api';
 // import { main_div_mode_t } from '../MainDivSelector';
 // import { Channel } from 'diagnostics_channel';
 
@@ -283,6 +284,7 @@ const ArenaChat: React.FC<ArenaDivProps> = ({userID, friend_set}) => {
 			alert("You have been invited to a game by User: " + username
 			+ " ,please go to your private conversation to join the game via the invite/start button");
 		}
+		postUserStatus("InGameQueue", user!);
 	}
 
 	function invitePlayer(invitationNew: Invitation) {
@@ -295,6 +297,7 @@ const ArenaChat: React.FC<ArenaDivProps> = ({userID, friend_set}) => {
 			console.log("Invite player " + invitation!.playerTwoSocket + " action triggered");
 			//console.log("Joining que emitting from Arena Chat, socketRef is: " + socketRef.current.id);
 			alert("Invite/Accept To Game Session");
+			postUserStatus("InGameQueue", user!);
 			socketRef.current.emit('invite player', invitation, user?.userID, user?.username);
 		}
 		else if (socketRef.current?.id && gameSession.playerOne && !gameSession.playerTwo) {
@@ -368,6 +371,7 @@ const ArenaChat: React.FC<ArenaDivProps> = ({userID, friend_set}) => {
 					}));
 					console.log("Player 1 set");
 					alert("Joined a Session as Player 1");
+					postUserStatus("InGameQueue", user!);
 				} else if (playerInput === 2) {
 					setGameSession((prevSession) => ({
 						...prevSession,
@@ -377,6 +381,7 @@ const ArenaChat: React.FC<ArenaDivProps> = ({userID, friend_set}) => {
 					}));
 					console.log("Player 2 set");
 					alert("Joined a session as Player 2");
+					postUserStatus("InGameQueue", user!);
 				}
 				console.log("Set new gameSession in session joined: " + JSON.stringify(gameSession));
 			});
@@ -453,13 +458,16 @@ const ArenaChat: React.FC<ArenaDivProps> = ({userID, friend_set}) => {
 			if (gameSession.playerOne || gameSession.playerTwo || invitation?.sessionId) {
 				if ((socketRef.current?.id === gameSession.playerOne || socketRef.current?.id === gameSession.playerTwo) && gameStatus === 0) {
 					socketRef.current?.emit('quit queue', gameSession.sessionId);
+					postUserStatus("Online", user!);
 				}
 				if ((socketRef.current?.id === gameSession.playerOne || socketRef.current?.id === gameSession.playerTwo) && gameStatus === 1) {
 					socketRef.current?.emit('quit game', gameSession.sessionId);
+					postUserStatus("Online", user!);
 				}
 				if (invitation?.sessionId != null) {
 					alert("Cancelling active invitation");
 					socketRef.current?.emit('remove invite', invitation);
+					postUserStatus("Online", user!);
 					if (invitation.sessionId) {
 						invitation.playerOneSocket = null;
 						invitation.playerTwoSocket = null;
@@ -483,6 +491,7 @@ const ArenaChat: React.FC<ArenaDivProps> = ({userID, friend_set}) => {
 		// Game Starting Listener
 			socketRef.current?.on('game starting', () => {
 				setGameStatus(1);
+				postUserStatus("inGame", user!);
 				setIsGameStarting(true); // Set isGameStarting to true immediately
 				if (invitation != null) {
 					invitation.playerOneSocket = null;
