@@ -157,8 +157,14 @@ export async function modBannedUser(
         {
             if (add === true)
                 postChannelUserBlocked(props?.userID, targetID, currentChat.Channel.ChannelId, props.user!)
-                .then(() => {
-                    banUserSocket(targetID, currentChat.chatName);
+                .then((response) => {
+                    if (response){
+                        banUserSocket(targetID, currentChat.chatName);
+                        alert("User is banned");
+                    }
+                    else
+                        alert("Error banning User");
+
                 })
                 .catch(error => {
                     console.error("Error banning User:", error);
@@ -191,9 +197,12 @@ export async function addMuteUser(
     .then((targetID) => {
         if (targetID !== undefined) {
             postMuteUser(props?.userID, targetID, currentChat.Channel.ChannelId, duration, props.user!)
-             .then(() => {
+             .then((response) => {
                  const socketDuration = (duration * 60 * 1000) + 100;
-                 muteUserSocket(targetID, currentChat.chatName, socketDuration);
+                 if (response)
+                    muteUserSocket(targetID, currentChat.chatName, socketDuration);
+                else
+                    alert ("Error muting User")
              })
 
         }

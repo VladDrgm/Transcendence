@@ -5,5 +5,6 @@ export interface PublicProfile {
     wins: number;
     losses: number;
     points: number;
+    status: string;
     achievementsCSV: string;
   }

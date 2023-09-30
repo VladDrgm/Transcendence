@@ -381,6 +381,15 @@ export class ChannelService {
             HttpStatus.BAD_REQUEST,
         );
         }
+    const channel = await this.findOne(channelId);
+
+    if (!channel) {
+      throw new HttpException('Channel not found', 400);
+    }
+
+    if (channel.OwnerId == targetId) {
+      throw new HttpException('You can not ban the Channel Owner', 400);
+    }
 
     const channelBlockedUser = new ChannelBlockedUser();
     channelBlockedUser.UserId = targetId;
@@ -649,7 +658,11 @@ export class ChannelService {
         HttpStatus.BAD_REQUEST,
       );
     }
-
+    
+    if (channel.OwnerId == targetId) {
+        throw new HttpException('You can not ban the Channel Owner', 400);
+      }
+      
     const isAdmin = (await this.getChannelAdminByUserId(callerId, channelId))
       ? true
       : false;

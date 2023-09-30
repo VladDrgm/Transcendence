@@ -461,8 +461,11 @@ const ChatMainDiv: FC<ChatProps> = (props) => {
 				return;
 			}
 			postBlockedUser(Number(targetID), props.user!)
-			.then(() => {
-				blockUserSocket(Number(targetID), props.user?.username);
+			.then((response) => {
+				if (response)
+					blockUserSocket(Number(targetID), props.user?.username);
+				else
+					alert("Error while banning User");
 			})
 			.catch(error => {
 				console.error("Error blocking user with Username:" , targetName);
@@ -505,7 +508,7 @@ const ChatMainDiv: FC<ChatProps> = (props) => {
 			setCurrentChat((prevChat) => {
 			// console.log("currenchat", prevChat.chatName);
 				if( prevChat.chatName === roomName){
-					alert("You are now an admin of this Channel.");
+					// alert("You are now an admin of this Channel.");
 					setCurrentRoles((prevRoles) => ({
 						...prevRoles,
 						isAdmin: true
@@ -546,7 +549,7 @@ const ChatMainDiv: FC<ChatProps> = (props) => {
 			// console.log("currenchat", prevChat.chatName);
 
 				if( prevChat.chatName === roomName){
-					alert("You can use this Channel again.")
+					// alert("You can use this Channel again.")
 					setCurrentRoles((prevRoles) => ({
 						...prevRoles,
 						isBlocked: false
@@ -571,7 +574,7 @@ const ChatMainDiv: FC<ChatProps> = (props) => {
 						...prevRoles,
 						isMuted: false
 					}));
-					alert("You have been unmuted.");
+					// alert("You have been unmuted.");
 				}
 				return prevChat;
 			});
@@ -592,7 +595,7 @@ const ChatMainDiv: FC<ChatProps> = (props) => {
 						...prevRoles,
 						isMuted: true
 					}));
-					alert("You have been muted.");
+					// alert("You have been muted.");
 				}
 				return prevChat;
 			});

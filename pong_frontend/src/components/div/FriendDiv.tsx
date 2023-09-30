@@ -69,6 +69,8 @@ const FriendDiv: React.FC<FriendProps> = ({ userID, friendID }) => {
             }}
             style={profilePictureStyle}
           />
+        <p>Status: {friend.status}</p>
+				<br/>
         <div style={centeredContainerStyle}>
             <ul style={listContainerStyle}>
               <li style={listStyle}>
@@ -89,7 +91,7 @@ const FriendDiv: React.FC<FriendProps> = ({ userID, friendID }) => {
       </div>
     );
   } else {
-    return <div></div>;
+    return <div>Loading...</div>;
   }
 };
 

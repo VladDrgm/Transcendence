@@ -201,6 +201,7 @@ export function deleteChannelUserBlocked(callerId: number | undefined, targetId:
     })
     .then(data => {
       console.log("ChannelUser " + targetId + " unblocked from Channel");
+      alert("User is unbanned");
     })
     .catch(error => {
       console.log("Error allowing ChannelUser " + targetId + ":", error);
@@ -209,38 +210,67 @@ export function deleteChannelUserBlocked(callerId: number | undefined, targetId:
 }
   
   //to be tested
-export function postChannelUserBlocked(callerId: number | undefined, targetId: number, channelId: number, user: User) {
+// export function postChannelUserBlocked(callerId: number | undefined, targetId: number, channelId: number, user: User): Promise<boolean{
+//   const ChannelData = {
+//     "intraUsername": user?.intraUsername,
+//     "passwordHash": user?.passwordHash
+//   }
+//   const jsonData = JSON.stringify(ChannelData);  
+//   const requestOptions = {
+//       method: 'POST',
+//       headers: { 
+//         "Accept": "*/*",
+//         "Content-Type": "application/json"
+//       },
+//       body: jsonData
+//     };
+//     // /channel/{callerId}/{targetId}/{channelId}/blocked
+//     console.log("intra:", user.intraUsername);
+//     console.log("hash:", user.passwordHash);
+//     return fetch(fetchAddress + 'channel/ban/blocked/' + callerId +'/' + targetId + '/' + channelId + '/blocked', requestOptions)
+//       .then(response => {
+//         if (!response.ok) {
+//           throw new Error('Request failed with status: ' + response.status);
+//         }
+//         return false;
+//       })
+//       .then(data => {
+//         console.log("ChannelUser with UserId :" + targetId +" blocked");
+//       })
+//       .catch(error => {
+//         console.error("Error blocking ChannelUser with UserId :" + targetId +":", error);
+//         alert("Error banning User");
+//       });
+// }
+
+export function postChannelUserBlocked(callerId: number | undefined, targetId: number, channelId: number, user: User): Promise<boolean> {
   const ChannelData = {
     "intraUsername": user?.intraUsername,
     "passwordHash": user?.passwordHash
   }
   const jsonData = JSON.stringify(ChannelData);  
   const requestOptions = {
-      method: 'POST',
-      headers: { 
-        "Accept": "*/*",
-        "Content-Type": "application/json"
-      },
-      body: jsonData
-    };
-    // /channel/{callerId}/{targetId}/{channelId}/blocked
-    console.log("intra:", user.intraUsername);
-    console.log("hash:", user.passwordHash);
-    return fetch(fetchAddress + 'channel/ban/blocked/' + callerId +'/' + targetId + '/' + channelId + '/blocked', requestOptions)
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Request failed with status: ' + response.status);
-        }
-        return response.text();
-      })
-      .then(data => {
-        console.log("ChannelUser with UserId :" + targetId +" blocked");
-      })
-      .catch(error => {
-        console.error("Error blocking ChannelUser with UserId :" + targetId +":", error);
-        alert("Error banning User");
-      });
+    method: 'POST',
+    headers: { 
+      "Accept": "*/*",
+      "Content-Type": "application/json"
+    },
+    body: jsonData
+  };
+
+  return fetch(fetchAddress + 'channel/ban/blocked/' + callerId +'/' + targetId + '/' + channelId + '/blocked', requestOptions)
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Request failed with status: ' + response.status);
+      }
+      return true;
+    })
+    .catch(error => {
+      console.error("Error blocking ChannelUser with UserId :" + targetId +":", error);
+      return false;
+    });
 }
+
 
 //to be tested#
 // checks if userId is on the list of blocked Users in Channel with ChannelId
@@ -281,38 +311,77 @@ export async function getChannelBlockedUser(userId: number | undefined, channelI
 }
 
 
-export function postMuteUser(callerId: number | undefined, targetId: number, channelId: number, duration: number, user: User) {
-  return new Promise<void>((resolve, reject) => {
+// export function postMuteUser(callerId: number | undefined, targetId: number, channelId: number, duration: number, user: User): Promise<boolean {
+//   return new Promise<void>((resolve, reject) => {
+//     const ChannelData = {
+//       "intraUsername": user?.intraUsername,
+//       "passwordHash": user?.passwordHash
+//     }
+//     const jsonData = JSON.stringify(ChannelData);   
+//     const requestOptions = {
+//         method: 'POST',
+//         headers: { 
+//           "Accept": "*/*",
+//           "Content-Type": "application/json"
+//         },
+//         body:  jsonData
+//       };
+//       fetch(fetchAddress + 'channel/' + callerId +'/' + targetId + '/' + channelId + '/mute/' + duration, requestOptions)
+//       .then(response => {
+//         if (!response.ok) {
+//           console.log('Request failed with status: ' + response.status);
+//         }
+//         return response.text();
+//       })
+//       .then(data => {
+//         console.log("ChannelUser with UserId :" + targetId +" muted:");
+//         resolve();
+//       })
+//       .catch(error => {
+//         console.log("Error muting ChannelUser with UserId :" + targetId +":", error);
+//         reject(error);
+//       });  
+//     });  
+// }
+
+export function postMuteUser(callerId: number | undefined, targetId: number, channelId: number, duration: number, user: User): Promise<boolean> {
+  return new Promise<boolean>((resolve) => {
     const ChannelData = {
       "intraUsername": user?.intraUsername,
       "passwordHash": user?.passwordHash
     }
     const jsonData = JSON.stringify(ChannelData);   
     const requestOptions = {
-        method: 'POST',
-        headers: { 
-          "Accept": "*/*",
-          "Content-Type": "application/json"
-        },
-        body:  jsonData
-      };
-      fetch(fetchAddress + 'channel/' + callerId +'/' + targetId + '/' + channelId + '/mute/' + duration, requestOptions)
+      method: 'POST',
+      headers: { 
+        "Accept": "*/*",
+        "Content-Type": "application/json"
+      },
+      body: jsonData
+    };
+
+    fetch(fetchAddress + 'channel/' + callerId +'/' + targetId + '/' + channelId + '/mute/' + duration, requestOptions)
       .then(response => {
         if (!response.ok) {
           console.log('Request failed with status: ' + response.status);
+          // alert("Error muting User");
+          resolve(false); // Indicate failure
         }
         return response.text();
       })
       .then(data => {
         console.log("ChannelUser with UserId :" + targetId +" muted:");
-        resolve();
+        alert("User is muted");
+        resolve(true); // Indicate success
       })
       .catch(error => {
         console.log("Error muting ChannelUser with UserId :" + targetId +":", error);
-        reject(error);
+        // alert("Error muting User");
+        resolve(false); // Indicate failure
       });  
-    });  
+  });  
 }
+
 
 interface ApiResponseItem {
   CUserId: number;
@@ -466,37 +535,74 @@ export function putChannelType(userId: number | undefined, channelId: number, us
 
 //Blocked Users
 
-export async function postBlockedUser(targetId: number, user: User): Promise<void> {
+// export async function postBlockedUser(targetId: number, user: User): Promise<void> {
+//   const ChannelData = {
+//     "intraUsername": user?.intraUsername,
+//     "passwordHash": user?.passwordHash
+//   }
+//   const jsonData = JSON.stringify(ChannelData);    
+//   const requestOptions = {
+//     method: 'POST',
+//     headers: { 
+//       "Accept": "*/*",
+//       "Content-Type": "application/json"
+//     },
+//     body: jsonData
+//   };
+//   fetch(fetchAddress + 'blocked/' + user.userID + '/' + targetId, requestOptions)
+//     .then(response => {
+//       if (response.ok) {
+//         console.log("ChannelUser with UserId :" + targetId +" blocked");
+//         alert("User has been blocked.");
+//       } else {
+//         console.error("Error blocking User with UserId :" + targetId +":", response.status);
+//         alert("Error blocking User: " + response);
+//         // throw new Error ("Error blocking User");
+//       }
+//     })
+//     .catch(error => {
+//       console.error("Error blocking User with UserId :" + targetId +":", error);
+//       // alert("Error blocking User: " + error);
+//       // throw error;
+//     });
+// }
+
+export async function postBlockedUser(targetId: number, user: User): Promise<boolean> {
   const ChannelData = {
-    "intraUsername": user?.intraUsername,
-    "passwordHash": user?.passwordHash
-  }
-  const jsonData = JSON.stringify(ChannelData);    
+    intraUsername: user?.intraUsername,
+    passwordHash: user?.passwordHash
+  };
+
+  const jsonData = JSON.stringify(ChannelData);
+
   const requestOptions = {
     method: 'POST',
-    headers: { 
-      "Accept": "*/*",
-      "Content-Type": "application/json"
+    headers: {
+      Accept: '*/*',
+      'Content-Type': 'application/json'
     },
     body: jsonData
   };
-  fetch(fetchAddress + 'blocked/' + user.userID + '/' + targetId, requestOptions)
-    .then(response => {
-      if (response.ok) {
-        console.log("ChannelUser with UserId :" + targetId +" blocked");
-        alert("User has been blocked.");
-      } else {
-        console.error("Error blocking User with UserId :" + targetId +":", response.status);
-        alert("Error blocking User: " + response);
-        // throw new Error ("Error blocking User");
-      }
-    })
-    .catch(error => {
-      console.error("Error blocking User with UserId :" + targetId +":", error);
-      // alert("Error blocking User: " + error);
-      // throw error;
-    });
+
+  try {
+    const response = await fetch(fetchAddress + 'blocked/' + user.userID + '/' + targetId, requestOptions);
+
+    if (response.ok) {
+      console.log('ChannelUser with UserId :' + targetId + ' blocked');
+      alert('User has been blocked.');
+      return true; // Successful
+    } else {
+      console.error('Error blocking User with UserId :' + targetId + ':', response.status);
+      alert('Error blocking User: ' + response.status);
+      return false; // Error
+    }
+  } catch (error) {
+    console.error('Error blocking User with UserId :' + targetId + ':', error);
+    alert('Error blocking User: ' + error);
+    return false; // Error
+  }
 }
+
 
 export async function deleteBlockedUser(targetId: number, user: User): Promise<void> {
   const ChannelData = {
