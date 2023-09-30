@@ -34,7 +34,7 @@ const AuthRedirectPage: React.FC = () => {
 		setUser(newUser);
 
         // Check user fields and redirect accordingly.
-		if (user!.is2FAEnabled) {
+		if (newUser.is2FAEnabled) {
 			navigate('/verify-2fa', { replace: true });
 		} else {
 			navigate('/', { replace: true });
