@@ -49,6 +49,7 @@ export class MatchService {
     loser.losses += 1;
     winner.wins += 1;
     winner.points += 1;
+    loser.points -= 0.1;
 
     this.achievementsService(winner);
 
