@@ -31,6 +31,7 @@ const App = () => {
             <Routes>
                 <Route path="/" element={user ? <Navigate to="/app" replace /> : <Navigate to="/login" replace />} />
                 <Route path="/login" element={<LoginPage />} />
+                <Route path="app/logout" element={<Navigate to="/login" state={{ logout: true }} />} />
                 <Route path="/complete_profile" element={<CompleteProfilePage />} />
                 <Route path="/auth_redirect" element={<AuthRedirectPage />} />
                 <Route path='/setup-2fa' element={<TFASetup />} />
@@ -43,7 +44,7 @@ const App = () => {
                 <Route path="friends" element={<MyFriendsPage friend_set={friend_set} />} />
                 <Route path="/app/public_profile/:friend_ID"  element={<PublicProfileMainDiv friend_ID={friendID} />} />
                 <Route path="match_history" element={<MatchHistoryMainDiv userID={user?.userID} friend_set={friend_set} />} />
-                <Route path="settings" element={<SettingsPage onLogout={handleLogout} />} />
+                <Route path="settings" element={<SettingsPage onLogout={handleLogout} />} />    
                 </Route>
             </Routes>
         </Router>
