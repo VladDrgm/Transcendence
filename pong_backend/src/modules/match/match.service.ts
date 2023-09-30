@@ -56,9 +56,6 @@ export class MatchService {
     await this.userRepository.save(winner);
     await this.userRepository.save(loser);
 
-
-
-
     return match;
   }
 
@@ -122,6 +119,5 @@ export class MatchService {
     if (user.wins === 10) {
       user.achievementsCSV = user.achievementsCSV + ", Achievement 3: 10 wins";
     }
-
   }
 }
