@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { PublicProfile } from '../../interfaces/public_profile.interface';
 import { getPublicProfile } from '../../api/profile.api';
-import { achievementListItemStyle, achievementTextStyle, centeredContainerStyle, listContainerStyle, listStyle, profilePictureStyle, statListItemStyle } from './UserProfileSyles';
+import { achievementListItemStyle, achievementTextStyle, centeredContainerStyle, listContainerStyle, listStyle, profilePictureStyle } from './UserProfileSyles';
 import imageAssetAchievement1 from '../assets/achievement1.png'
 import { fetchAddress } from './channel_div';
 
