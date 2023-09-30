@@ -1,8 +1,7 @@
-import { Dispatch, SetStateAction } from 'react';
-import { Channel, ChatData, ChatName, ChatProps } from '../../interfaces/channel.interface';
-import { modBannedUser, CreateChannel, addMuteUser, fetchAllChannels} from './channel_utils';
-import { deleteChannelPassword, postChannelUser, postMuteUser, postPrivateChannelUser, putChannelPassword, putChannelType } from '../../api/channel/channel_user.api';
-import { getChannel } from '../../api/channel/channel.api';
+import { ChatData, ChatName, ChatProps } from '../../interfaces/channel.interface';
+import { modBannedUser, CreateChannel, addMuteUser} from './channel_utils';
+import { deleteChannelPassword, putChannelPassword, putChannelType } from '../../api/channel/channel_user.api';
+import { chatButtonsStyle } from '../mainPages/ChatPageStyles';
 
 export function banUserPopUp(props: &ChatProps, currentChat: ChatData, banUserSocket: any, unbanUserSocket: any) {
     
@@ -20,7 +19,6 @@ export function banUserPopUp(props: &ChatProps, currentChat: ChatData, banUserSo
     var addBlockButton = document.createElement('button');
     addBlockButton.innerHTML = 'Ban';
     addBlockButton.addEventListener('click', function() {
-        var newBlockedUserName = newBlockedUserNameInput.value;
         var newBlockedUserName = newBlockedUserNameInput.value;
         modBannedUser(true, newBlockedUserName, props, currentChat, banUserSocket, unbanUserSocket);
         popup?.close();
@@ -229,8 +227,227 @@ export function changePasswordPopUp(
 
 }
 
+const popupStyles = `
+  <style>
+    body {
+      background-color: black;
+      color: white;
+      font-family: Shlop, sans-serif;
+    }
+    /* Add any other styles you need */
+  </style>
+`;
+
+// export function popUpCreateChannel(
+//     props: ChatProps,
+//     updateChannellist: any,
+//     addChatRoom: (chatName: ChatName) => void
+//   ) {
+//     // Open Window
+//     var popup = window.open('', '_blank', 'width=500,height=300,menubar=no,toolbar=no');
+
+//     const channelNameLabel = document.createElement("h1");
+//     channelNameLabel.textContent = "Channel Name:";
+//     popup?.document.body.appendChild(channelNameLabel);
+  
+//     var channelNameInput = document.createElement('input');
+//     channelNameInput.type = 'text';
+//     channelNameInput.placeholder = "Enter new Channel Name";
+//     channelNameInput.style.marginBottom = '10px'; // Add margin to space elements
+//     popup?.document.body.appendChild(channelNameInput);
+  
+//     const channelPasswordLabel = document.createElement("h1");
+//     channelPasswordLabel.textContent = "Channel Password:";
+//     popup?.document.body.appendChild(channelPasswordLabel);
+  
+//     var channelPasswordInput = document.createElement('input');
+//     channelPasswordInput.type = 'text';
+//     channelPasswordInput.placeholder = "Password";
+//     channelPasswordInput.style.marginBottom = '10px'; // Add margin
+//     popup?.document.body.appendChild(channelPasswordInput);
+  
+//     var createButton = document.createElement('button');
+//     createButton.innerHTML = 'Create';
+//     Object.assign(createButton.style, chatButtonsStyle);
+//     createButton.addEventListener('click', function(e) {
+//       e.preventDefault();
+//       const channelName = channelNameInput.value;
+//       const password = channelPasswordInput.value;
+  
+//       if (channelName.length < 1 || channelName.length > 15) {
+//         popup?.close();
+//         window.alert('Channel Name must be between 1 and 15 characters.');
+//       } else {
+//         CreateChannel(props, channelName, password)
+//           .then(result => {
+//             if (result) {
+//               // Updating Channel lists
+//               addChatRoom(channelName);
+//               updateChannellist();
+//             }
+//           })
+//           .catch(error => {
+//             console.error("Error creating Channel: ", error);
+//           });
+//         popup?.close();
+//       }
+//     });
+//     popup?.document.body.appendChild(createButton);
+  
+//     const channelPasswordHint = document.createElement("p");
+//     channelPasswordHint.textContent = "(For public Channels, leave it empty)";
+//     popup?.document.body.appendChild(channelPasswordHint);
+//   }
+
+export function popUpCreateChannel(
+    props: ChatProps,
+    updateChannellist: any,
+    addChatRoom: (chatName: ChatName) => void
+) {
+    // Open Window
+    var popup = window.open('', '_blank', 'width=500,height=300,menubar=no,toolbar=no');
+
+    // Check if the popup was blocked
+    if (!popup) {
+        alert("Popup blocked. Please allow popups for this site.");
+        return;
+    }
+
+    const popupDocument = popup.document;
+    
+    // Create a <style> element to add CSS styles
+    const styleElement = popupDocument.createElement("style");
+    styleElement.textContent = `
+        body {
+            background-color: black;
+            color: white;
+            font-family: Shlop, sans-serif;
+        }
+        h1 {
+            font-size: 24px;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 5px;
+            margin-bottom: 10px;
+        }
+        button {
+            background-color: rgba(254, 8, 16, 1);
+            font-family: Shlop;
+            font-size: 13px;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+        p {
+            font-size: 14px;
+        }
+    `;
+
+    // Append the <style> element to the popup's <head>
+    popupDocument.head.appendChild(styleElement);
+
+    const channelNameLabel = popupDocument.createElement("h1");
+    channelNameLabel.textContent = "Channel Name:";
+    popupDocument.body.appendChild(channelNameLabel);
+
+    var channelNameInput = popupDocument.createElement('input');
+    channelNameInput.type = 'text';
+    channelNameInput.placeholder = "Enter new Channel Name";
+    popupDocument.body.appendChild(channelNameInput);
+
+    const channelPasswordLabel = popupDocument.createElement("h1");
+    channelPasswordLabel.textContent = "Channel Password:";
+    popupDocument.body.appendChild(channelPasswordLabel);
+
+    var channelPasswordInput = popupDocument.createElement('input');
+    channelPasswordInput.type = 'text';
+    channelPasswordInput.placeholder = "Password";
+    popupDocument.body.appendChild(channelPasswordInput);
+    
+    const channelPasswordHint = popupDocument.createElement("p");
+    channelPasswordHint.textContent = "(For public Channels, leave it empty)";
+    popupDocument.body.appendChild(channelPasswordHint);
+
+    var createButton = popupDocument.createElement('button');
+    createButton.innerHTML = 'Create';
+    createButton.addEventListener('click', function(e) {
+        e.preventDefault();
+        const channelName = channelNameInput.value;
+        const password = channelPasswordInput.value;
+
+        if (channelName.length < 1 || channelName.length > 15) {
+            popup?.close();
+            window.alert('Channel Name must be between 1 and 15 characters.');
+        } else if( password.length > 15){
+            popup?.close();
+            window.alert('Passwort can not be longer than 15 characters');
+        } else {
+            CreateChannel(props, channelName, password)
+                .then(result => {
+                    if (result) {
+                        // Updating Channel lists
+                        addChatRoom(channelName);
+                        updateChannellist();
+                    }
+                })
+                .catch(error => {
+                    console.error("Error creating Channel: ", error);
+                });
+            popup?.close();
+        }
+    });
+    popupDocument.body.appendChild(createButton);
+
+}
+
+  
 export async function popUpJoinPrivateChannel(props: ChatProps, currentChat: ChatData ,joinPrivateRoom: (chatName: ChatName, password: string) => void){
     var popup = window.open('', '_blank', 'width=500,height=300,menubar=no,toolbar=no');
+
+    // Check if the popup was blocked
+    if (!popup) {
+        alert("Popup blocked. Please allow popups for this site.");
+        return;
+    }
+
+    const popupDocument = popup.document;
+    
+    // Create a <style> element to add CSS styles
+    const styleElement = popupDocument.createElement("style");
+    styleElement.textContent = `
+        body {
+            background-color: black;
+            color: white;
+            font-family: Shlop, sans-serif;
+        }
+        h1 {
+            font-size: 24px;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 5px;
+            margin-bottom: 10px;
+        }
+        button {
+            background-color: rgba(254, 8, 16, 1);
+            font-family: Shlop;
+            font-size: 13px;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+        p {
+            font-size: 14px;
+        }
+    `;
+
+    // Append the <style> element to the popup's <head>
+    popupDocument.head.appendChild(styleElement);
 
     const channelPasswordLabel = document.createElement("h1");
     channelPasswordLabel.textContent = "Channel Password:";
@@ -249,64 +466,4 @@ export async function popUpJoinPrivateChannel(props: ChatProps, currentChat: Cha
         popup?.close();
     });
     popup?.document.body.appendChild(createButton);
-}
-
-export function popUpCreateChannel(
-    props: ChatProps,
-    updateChannellist: any,
-    addChatRoom: (chatName: ChatName) => void
-    ){
-    // Open Window
-    var popup = window.open('', '_blank', 'width=500,height=300,menubar=no,toolbar=no');
-    
-    const channelNameLabel = document.createElement("h1");
-    channelNameLabel.textContent = "Channel Name:";
-    popup?.document.body.appendChild(channelNameLabel);
-
-    var channelNameInput = document.createElement('input');
-    channelNameInput.type = 'text';
-    channelNameInput.placeholder = "Enter new Channel Name";
-    popup?.document.body.appendChild(channelNameInput);
-
-    const channelPasswordLabel = document.createElement("h1");
-    channelPasswordLabel.textContent = "Channel Password:";
-    popup?.document.body.appendChild(channelPasswordLabel);
-
-    
-    var channelPasswordInput = document.createElement('input');
-    channelPasswordInput.type = 'text';
-    channelPasswordInput.placeholder = "password";
-    popup?.document.body.appendChild(channelPasswordInput);
-    
-    var createButton = document.createElement('button');
-    createButton.innerHTML = 'Create';
-    createButton.classList.add("createButton_style"); 
-    createButton.addEventListener('click', function(e) {
-        e.preventDefault();
-        const channelName = channelNameInput.value;
-        const password = channelPasswordInput.value;
-
-        if (channelName.length < 1 || channelName.length > 15) {
-            popup?.close();
-            window.alert('Channel Name must be between 1 and 15 characters.');
-        } else {
-        CreateChannel(props, channelName, password)
-        .then(result => {
-            if (result){
-                //updating Channelllists
-                addChatRoom(channelName);
-				updateChannellist();
-            }
-        })
-        .catch(error => {
-            console.error("Error creating Channel: ", error);
-        })
-        popup?.close();
-        }
-    });
-    popup?.document.body.appendChild(createButton);
-
-    const channelPasswordHint = document.createElement("p");
-    channelPasswordHint.textContent = "(for public Channels leave it empty)";
-    popup?.document.body.appendChild(channelPasswordHint);
 }
