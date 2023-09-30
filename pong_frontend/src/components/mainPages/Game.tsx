@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useEffect } from 'react';
 
 let BG_COLOR = '#000';
 let FILL_COLOR = '#fff';
@@ -7,7 +7,6 @@ let CNVWIDTH = 600;
 let CNVHEIGHT = 300;
 
 let gamePixel = 6;
-let userCount = 0;
 let CHARS:HTMLCanvasElement[];
 let CHAR_PIXEL:number;
 
@@ -259,135 +258,132 @@ const Game: FC<GameProps> = (props) => {
 
 
 		useEffect(() => {
+			//const canvas = document.createElement('canvas');
+			const canvas = canvasRef.current;
+			if (!canvas) return;
 
+			canvas.height = CNVHEIGHT;
+			canvas.width = CNVWIDTH;
+			const context = canvas.getContext('2d');
+			if (context) {
+					context.fillStyle = FILL_COLOR;
+			}
 
-		//const canvas = document.createElement('canvas');
-		const canvas = canvasRef.current;
-		if (!canvas) return;
+			// Initialize the Pong object once during the initial mount
+			let pong: Pong | null = new Pong(canvas);
 
-		canvas.height = CNVHEIGHT;
-		canvas.width = CNVWIDTH;
-		const context = canvas.getContext('2d');
-		if (context) {
-				context.fillStyle = FILL_COLOR;
-		}
+			pong.draw();
 
-		// Initialize the Pong object once during the initial mount
-		let pong: Pong | null = new Pong(canvas);
-
-		pong.draw();
-
-		//useEffect(() => {
-
-		function handleInit(msg:string) {
-			console.log(msg);
-		}
-		
-		function updateGameState(gameStateUpdated: GameState) {
-			gameState = gameStateUpdated;
+			function handleInit(msg:string) {
+				console.log(msg);
+			}
 			
-			if (pong) {
-				pong.ball.position = gameState.ball.position;
-				pong.ball.vel = gameState.ball.vel;
-				pong.players[0].position = gameState.playerOne.position;
-				pong.players[1].position = gameState.playerTwo.position;
-				pong.players[0].score = gameState.playerOne.score;
-				pong.players[1].score = gameState.playerTwo.score;
-				pong.draw();
-			}
-		};
-
-		function playerDisconnected() {
-			alert("Game Over: A Player Disconnected");
-			endGame(gameState);
-		}
-		
-		function endGame(gameStateUpdated: GameState) {
-			console.log("End game reached");
-			if (gameState.playerOne.score === 0 && gameState.playerTwo.score === 0) {
+			function updateGameState(gameStateUpdated: GameState) {
+				// eslint-disable-next-line
+				gameState = gameStateUpdated;
 				
-			}
-			else if (socket.id === gameSession.playerOne && gameState.playerOne.score > gameState.playerTwo.score ) {
-				alert("You won!");
-			}
-			else if (socket.id === gameSession.playerOne && gameState.playerOne.score < gameState.playerTwo.score ) {
-				alert("You lost!");
-			}
-			else if (socket.id === gameSession.playerTwo && gameState.playerOne.score > gameState.playerTwo.score ) {
-				alert("You lost!");
-			}
-			else if (socket.id === gameSession.playerTwo && gameState.playerOne.score < gameState.playerTwo.score ) {
-				alert("You won!");
-			}
-			else if (gameState.playerOne.score === gameState.playerTwo.score) {
-				alert("It's a tie!");
-			}
-			socket.emit('endSession', gameState);
-			setGameSession({
-				sessionId: null,
-				player: null,
-				playerOne: null,
-				playerTwo: null,
-			});
-			updateGameStatus(0);
-			pong = null;
-			return;
-		};
-
-		socket.on('init', handleInit);
-		socket.on('updateGameState', updateGameState);
-		socket.on('playerDisconnected', playerDisconnected);
-		socket.on('endGame', endGame);
-
-
-		/* update initial gameState */
-		gameState.playerOne.position = pong.players[0].position;
-		gameState.playerOne.size = pong.players[0].size;
-		gameState.playerOne.score = pong.players[0].score;
-
-		gameState.playerTwo.position = pong.players[1].position;
-		gameState.playerTwo.size = pong.players[1].size;
-		gameState.playerTwo.score = pong.players[1].score;
-
-		gameState.ball.size = pong.ball.size;
-		
-
-		/* Starts the game session */
-		socket.emit('kickOffGame', gameState);
-
-
-		const handleRandomize = (event: KeyboardEvent) => {
-			if (event.key === 'r' || event.key === 'R') {
-				let randomColor = "#" + Math.floor(Math.random()*16777215).toString(16);
-				while (randomColor === "#FFFFFF") {
-					randomColor = "#" + Math.floor(Math.random()*16777215).toString(16);
-				}
-				BG_COLOR = randomColor;
 				if (pong) {
+					pong.ball.position = gameState.ball.position;
+					pong.ball.vel = gameState.ball.vel;
+					pong.players[0].position = gameState.playerOne.position;
+					pong.players[1].position = gameState.playerTwo.position;
+					pong.players[0].score = gameState.playerOne.score;
+					pong.players[1].score = gameState.playerTwo.score;
 					pong.draw();
 				}
-			}
-		};
-
-		const handlePowerup = (event: KeyboardEvent) => {
-			if (event.key === 'p' || event.key === 'P') {
-				socket.emit('updatePowerup', event.key);
-			}
-		};
-
-		document.addEventListener('keydown', handleRandomize);
-		document.addEventListener('keydown', handlePowerup);
-		
-		return () => {
-				socket.off('init', handleInit);
-				socket.off('updateGameState', updateGameState);
-				socket.off('playerDisconnected', playerDisconnected);
-				socket.off('endGame', endGame);
-				document.removeEventListener('keydown', handleRandomize);
-				document.removeEventListener('keydown', handlePowerup);
 			};
 
-		}, []);
+			function playerDisconnected() {
+				alert("Game Over: A Player Disconnected");
+				endGame(gameState);
+			}
+			
+			function endGame(gameStateUpdated: GameState) {
+				console.log("End game reached");
+				if (gameState.playerOne.score === 0 && gameState.playerTwo.score === 0) {
+					
+				}
+				else if (socket.id === gameSession.playerOne && gameState.playerOne.score > gameState.playerTwo.score ) {
+					alert("You won!");
+				}
+				else if (socket.id === gameSession.playerOne && gameState.playerOne.score < gameState.playerTwo.score ) {
+					alert("You lost!");
+				}
+				else if (socket.id === gameSession.playerTwo && gameState.playerOne.score > gameState.playerTwo.score ) {
+					alert("You lost!");
+				}
+				else if (socket.id === gameSession.playerTwo && gameState.playerOne.score < gameState.playerTwo.score ) {
+					alert("You won!");
+				}
+				else if (gameState.playerOne.score === gameState.playerTwo.score) {
+					alert("It's a tie!");
+				}
+				socket.emit('endSession', gameState);
+				setGameSession({
+					sessionId: null,
+					player: null,
+					playerOne: null,
+					playerTwo: null,
+				});
+				updateGameStatus(0);
+				pong = null;
+				return;
+			};
+
+			socket.on('init', handleInit);
+			socket.on('updateGameState', updateGameState);
+			socket.on('playerDisconnected', playerDisconnected);
+			socket.on('endGame', endGame);
+
+
+			/* update initial gameState */
+			gameState.playerOne.position = pong.players[0].position;
+			gameState.playerOne.size = pong.players[0].size;
+			gameState.playerOne.score = pong.players[0].score;
+
+			gameState.playerTwo.position = pong.players[1].position;
+			gameState.playerTwo.size = pong.players[1].size;
+			gameState.playerTwo.score = pong.players[1].score;
+
+			gameState.ball.size = pong.ball.size;
+			
+
+			/* Starts the game session */
+			socket.emit('kickOffGame', gameState);
+
+
+			const handleRandomize = (event: KeyboardEvent) => {
+				if (event.key === 'r' || event.key === 'R') {
+					let randomColor = "#" + Math.floor(Math.random()*16777215).toString(16);
+					while (randomColor === "#FFFFFF") {
+						randomColor = "#" + Math.floor(Math.random()*16777215).toString(16);
+					}
+					BG_COLOR = randomColor;
+					if (pong) {
+						pong.draw();
+					}
+				}
+			};
+
+			const handlePowerup = (event: KeyboardEvent) => {
+				if (event.key === 'p' || event.key === 'P') {
+					socket.emit('updatePowerup', event.key);
+				}
+			};
+
+			document.addEventListener('keydown', handleRandomize);
+			document.addEventListener('keydown', handlePowerup);
+			
+			return () => {
+					socket.off('init', handleInit);
+					socket.off('updateGameState', updateGameState);
+					socket.off('playerDisconnected', playerDisconnected);
+					socket.off('endGame', endGame);
+					document.removeEventListener('keydown', handleRandomize);
+					document.removeEventListener('keydown', handlePowerup);
+				};
+
+		});
 
 		useEffect(() => {
 		const handleKeyDown = (event: KeyboardEvent) => {
@@ -421,7 +417,7 @@ const Game: FC<GameProps> = (props) => {
 			document.removeEventListener('keydown', handleKeyDown);
 			document.removeEventListener('keyup', handleKeyUp);
 		};
-	}, []);
+	});
 
 		return <canvas ref={canvasRef as React.RefObject<HTMLCanvasElement>} width={CNVWIDTH} height={CNVHEIGHT} />;
 	};
