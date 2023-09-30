@@ -324,6 +324,7 @@ const ArenaChat: React.FC<ArenaDivProps> = ({userID, friend_set}) => {
 			playerTwo: null,
 		});
 		
+		// eslint-disable-next-line
 		let [invitation, setInvitation] = useState<{
 			sessionId: any;
 			playerOneSocket: any;
@@ -402,6 +403,7 @@ const ArenaChat: React.FC<ArenaDivProps> = ({userID, friend_set}) => {
 				}
 			});
 
+			// eslint-disable-next-line
 			socketRef.current?.on('clean queue', cleanQueue);
 
 			return () => {
@@ -409,6 +411,7 @@ const ArenaChat: React.FC<ArenaDivProps> = ({userID, friend_set}) => {
 				socketRef.current?.off('opponent joined');
 				socketRef.current?.off('clean queue', cleanQueue);
 			};
+			// eslint-disable-next-line
 		}, [gameSession]);
 
 
@@ -488,6 +491,7 @@ const ArenaChat: React.FC<ArenaDivProps> = ({userID, friend_set}) => {
 				}
 			});
 		
+		// eslint-disable-next-line
 		function handleGameChange(e: React.ChangeEvent<HTMLInputElement>) {
 		 //does nothing
 		}
