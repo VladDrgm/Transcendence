@@ -304,25 +304,25 @@ const Game: FC<GameProps> = (props) => {
 			function endGame(gameStateUpdated: GameState) {
 				postUserStatus("Online", user!);
 				console.log("End game reached");
-				if (gameState.playerOne.score === 0 && gameState.playerTwo.score === 0) {
+				if (gameStateUpdated.playerOne.score === 0 && gameStateUpdated.playerTwo.score === 0) {
 					
 				}
-				else if (socket.id === gameSession.playerOne && gameState.playerOne.score > gameState.playerTwo.score ) {
+				else if (socket.id === gameSession.playerOne && gameStateUpdated.playerOne.score > gameStateUpdated.playerTwo.score ) {
 					alert("You won!");
 				}
-				else if (socket.id === gameSession.playerOne && gameState.playerOne.score < gameState.playerTwo.score ) {
+				else if (socket.id === gameSession.playerOne && gameStateUpdated.playerOne.score < gameStateUpdated.playerTwo.score ) {
 					alert("You lost!");
 				}
-				else if (socket.id === gameSession.playerTwo && gameState.playerOne.score > gameState.playerTwo.score ) {
+				else if (socket.id === gameSession.playerTwo && gameStateUpdated.playerOne.score > gameStateUpdated.playerTwo.score ) {
 					alert("You lost!");
 				}
-				else if (socket.id === gameSession.playerTwo && gameState.playerOne.score < gameState.playerTwo.score ) {
+				else if (socket.id === gameSession.playerTwo && gameStateUpdated.playerOne.score < gameStateUpdated.playerTwo.score ) {
 					alert("You won!");
 				}
-				else if (gameState.playerOne.score === gameState.playerTwo.score) {
+				else if (gameStateUpdated.playerOne.score === gameStateUpdated.playerTwo.score) {
 					alert("It's a tie!");
 				}
-				socket.emit('endSession', gameState);
+				socket.emit('endSession');
 				setGameSession({
 					sessionId: null,
 					player: null,
@@ -387,41 +387,42 @@ const Game: FC<GameProps> = (props) => {
 					document.removeEventListener('keydown', handlePowerup);
 				};
 
-		});
+		// eslint-disable-next-line
+		}, []);
 
 		useEffect(() => {
-		const handleKeyDown = (event: KeyboardEvent) => {
-				if (event.key === 'w' || event.key === 'W') {
-					if (socket.id === gameSession.playerOne) {
-						socket.emit('updateMovementPlayerOne', event.key);
+			const handleKeyDown = (event: KeyboardEvent) => {
+					if (event.key === 'w' || event.key === 'W') {
+						if (socket.id === gameSession.playerOne) {
+							socket.emit('updateMovementPlayerOne', event.key);
+						}
+						if (socket.id === gameSession.playerTwo) {
+							socket.emit('updateMovementPlayerTwo', event.key);
+						}
+
 					}
-					if (socket.id === gameSession.playerTwo) {
-						socket.emit('updateMovementPlayerTwo', event.key);
+			};
+
+			const handleKeyUp = (event: KeyboardEvent) => {
+					if (event.key === 's' || event.key === 'S') {
+						if (socket.id === gameSession.playerOne) {
+							socket.emit('updateMovementPlayerOne', event.key);
+						}
+						if (socket.id === gameSession.playerTwo) {
+							socket.emit('updateMovementPlayerTwo', event.key);
+						}
 					}
+			};
 
-				}
-		};
+			document.addEventListener('keydown', handleKeyDown);
+			document.addEventListener('keyup', handleKeyUp);
 
-		const handleKeyUp = (event: KeyboardEvent) => {
-				if (event.key === 's' || event.key === 'S') {
-					if (socket.id === gameSession.playerOne) {
-						socket.emit('updateMovementPlayerOne', event.key);
-					}
-					if (socket.id === gameSession.playerTwo) {
-						socket.emit('updateMovementPlayerTwo', event.key);
-					}
-				}
-		};
-
-
-		document.addEventListener('keydown', handleKeyDown);
-		document.addEventListener('keyup', handleKeyUp);
-
-		return () => {
-			document.removeEventListener('keydown', handleKeyDown);
-			document.removeEventListener('keyup', handleKeyUp);
-		};
-	});
+			return () => {
+				document.removeEventListener('keydown', handleKeyDown);
+				document.removeEventListener('keyup', handleKeyUp);
+			};
+		// eslint-disable-next-line
+		}, []);
 
 		return <canvas ref={canvasRef as React.RefObject<HTMLCanvasElement>} width={CNVWIDTH} height={CNVHEIGHT} />;
 	};

@@ -4,7 +4,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common/pipes/validation.pipe';
 import { Socket, Server } from 'socket.io';
 
-// const fetch = require('node-fetch');
+const fetch = require('node-fetch');
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -847,7 +847,7 @@ async function bootstrap() {
       }
     });
 
-    socket.on('endSession', (gameState: GameState) => {
+    socket.on('endSession', () => {
       console.log('Reached endSession');
       const matchResults = {} as MatchEntity;
 

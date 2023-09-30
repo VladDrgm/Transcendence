@@ -489,16 +489,28 @@ const ArenaChat: React.FC<ArenaDivProps> = ({userID, friend_set}) => {
 		}); */
 	
 		// Game Starting Listener
-			socketRef.current?.on('game starting', () => {
+
+			useEffect(() => {
+				socketRef.current?.on('game starting', () => {
 				setGameStatus(1);
 				postUserStatus("inGame", user!);
 				setIsGameStarting(true); // Set isGameStarting to true immediately
 				if (invitation != null) {
-					invitation.playerOneSocket = null;
+					/* invitation.playerOneSocket = null;
 					invitation.playerTwoSocket = null;
-					invitation.sessionId = null;
+					invitation.sessionId = null; */
+					setInvitation({
+						sessionId: null,
+						playerOneSocket: null,
+						playerTwoSocket: null,
+					});
 				}
-			});
+				});
+
+				return () => {
+				socketRef.current?.off('game starting'); // Unsubscribe from the event when the component unmounts
+				};
+			}, []);
 		
 		// eslint-disable-next-line
 		function handleGameChange(e: React.ChangeEvent<HTMLInputElement>) {
