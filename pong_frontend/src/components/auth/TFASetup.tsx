@@ -48,7 +48,11 @@ const TwoFactorSetup: React.FC = () => {
 				setError("Verifying token went wrong. Please try again!");
 				console.error('Error storing the secret to the backend', error);
 			}
-			await postUserStatus("Online", localParsedUser);
+			if (await postUserStatus("Online", localParsedUser) == true) {
+				localParsedUser.status = "Online";
+				localStorage.setItem('user', JSON.stringify(localParsedUser));
+				setUser(localParsedUser);
+			}
 			navigate(`/`);
 		} else { 
 			setError("Error: Invalid token");
