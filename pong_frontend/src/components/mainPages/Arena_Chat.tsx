@@ -537,7 +537,6 @@ const ArenaChat: React.FC<ArenaDivProps> = ({userID, friend_set}) => {
 	let gameBody, gameBodyForm;
 	if (gameStatus === 1) {
 		if (isGameStarting) {
-			console.log("Game data is: \nCurrent socket: " + socketRef.current?.id + "\ngameStatus: " + gameStatus + "\ngameSession: " + JSON.stringify(gameSession) + "\ncanvasRef: " + JSON.stringify(canvasRef) );
 			gameBody = (
 			<Game
 				canvasRef={canvasRef}
