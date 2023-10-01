@@ -289,6 +289,9 @@ const ArenaChat: React.FC<ArenaDivProps> = ({userID, friend_set}) => {
 
 	function invitePlayer(invitationNew: Invitation) {
 		console.log("invitationNew", invitationNew);
+		if (invitation?.sessionId !== null) {
+			alert("Already invited");
+		}
 		if (invitation?.sessionId === null) {
 			invitation.playerOneSocket = invitationNew?.playerOneSocket;
 			invitation.playerTwoSocket = invitationNew?.playerTwoSocket;
@@ -410,6 +413,9 @@ const ArenaChat: React.FC<ArenaDivProps> = ({userID, friend_set}) => {
 
 			// eslint-disable-next-line
 			socketRef.current?.on('clean queue', cleanQueue);
+			socketRef.current?.on('already in session', () => {
+				alert("Can't invite: player already in session/game");
+			});
 
 			return () => {
 				socketRef.current?.off('session joined');
