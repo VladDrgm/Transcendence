@@ -88,7 +88,11 @@ const CompleteProfilePage: React.FC = () => {{
 			if (enable2FA) { 
 				navigate(`/setup-2fa`);
 			} else {
-				await postUserStatus("Online", newCreatedUser!);
+				if (await postUserStatus("Online", newCreatedUser) == true) {
+					newCreatedUser.status = "Online";
+					localStorage.setItem('user', JSON.stringify(newCreatedUser));
+					setUser(newCreatedUser);
+				}
 				navigate(`/`);
 			}
 		} catch (error) {
