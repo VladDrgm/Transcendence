@@ -495,15 +495,17 @@ const ArenaChat: React.FC<ArenaDivProps> = ({userID, friend_set}) => {
 				setGameStatus(1);
 				postUserStatus("inGame", user!);
 				setIsGameStarting(true); // Set isGameStarting to true immediately
+				console.log("Invitation before change is: " + JSON.stringify(invitation));
 				if (invitation != null) {
-					/* invitation.playerOneSocket = null;
+					invitation.playerOneSocket = null;
 					invitation.playerTwoSocket = null;
-					invitation.sessionId = null; */
-					setInvitation({
+					invitation.sessionId = null;
+					/* setInvitation({
 						sessionId: null,
 						playerOneSocket: null,
 						playerTwoSocket: null,
-					});
+					}); */
+					console.log("Invitation after change is: " + JSON.stringify(invitation));
 				}
 				});
 
