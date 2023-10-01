@@ -58,7 +58,6 @@ const FriendDiv: React.FC<FriendProps> = ({ userID, friendID }) => {
       <div>
         <div>
           <h2>{friend.username}'s profile</h2>
-          <p> Status : {friend.status}</p>
           <img
             className='user-card__image'
             src={fetchAddress.slice(0, -1) + `${friend.avatarPath.slice(1)}`}

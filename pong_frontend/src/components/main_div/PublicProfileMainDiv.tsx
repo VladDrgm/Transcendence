@@ -5,7 +5,7 @@ import { checkFriend, addFriend, removeFriend } from '../../api/friend_list.api'
 import { useUserContext } from '../context/UserContext';
 import { Link, useParams } from 'react-router-dom';
 import { ButtonStyle } from '../div/UserProfileSyles';
-import { postBlockedUser, deleteBlockedUser, getBlockedUser } from '../../api/channel/channel_user.api'
+import { postBlockedUser, deleteBlockedUser, getBlockedUser } from '../../api/block_user.api'
 
 export enum ProfileType_t {
   FRIEND_PROFILE,
@@ -20,6 +20,7 @@ const PublicProfileMainDiv: React.FC<ProfileProps> = () => {
   const [type, set_type] = useState<ProfileType_t | null>(null);
   const [blocked, set_blocked] = useState<boolean>(false);
   const [loading, setLoading] = useState(true);
+  const [reset, setReset] = useState(true);
   const { user } = useUserContext();
   const userID = user!.userID;
   const { friend_ID } = useParams<{ friend_ID: string }>();
@@ -47,7 +48,7 @@ const PublicProfileMainDiv: React.FC<ProfileProps> = () => {
   const addFriend_private = async () => {
     try {
       await addFriend(userID, Number(friend_ID), user?.intraUsername, user?.passwordHash);
-      isFriend();
+      setReset(true);
     } catch (error) {
       console.error(error);
     }
@@ -56,7 +57,7 @@ const PublicProfileMainDiv: React.FC<ProfileProps> = () => {
   const removeFriend_private = async () => {
     try {
       await removeFriend(userID, Number(friend_ID), user?.intraUsername, user?.passwordHash);
-      isFriend();
+      setReset(true);
     } catch (error) {
       console.error(error);
     }
@@ -65,7 +66,7 @@ const PublicProfileMainDiv: React.FC<ProfileProps> = () => {
   const blockUser = async () => {
     try {
       await postBlockedUser(Number(friend_ID), user!);
-      isBlocked();
+      setReset(true);
     } catch (error) {
       console.error(error);
     }
@@ -74,16 +75,18 @@ const PublicProfileMainDiv: React.FC<ProfileProps> = () => {
   const unblockUser = async () => {
     try {
       await deleteBlockedUser(Number(friend_ID), user!);
-      isBlocked();
+      setReset(true);
     } catch (error) {
       console.error(error);
     }
+    isFriend();
   };
 
   useEffect(() => {
     isBlocked();
     isFriend();
-  }, [friend_ID]);
+    setReset(false);
+  }, );
 
   if (loading) {
     return <div>Loading...</div>;
