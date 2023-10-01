@@ -24,15 +24,11 @@ const App = () => {
   	const [appStateVisible, setAppStateVisible] = useState(appState.current);
 
 	useEffect(() => {
-		AppState.addEventListener("change", _handleAppStateChange);
-
 		const localUser = localStorage.getItem('user');
 		const localParsedUser = JSON.parse(localUser!);
 		setUser(localParsedUser);
 	
-		return () => {
-		//   AppState.removeEventListener("change", _handleAppStateChange);
-		};
+		return () => {};
 	  }, []);
 
 	const { user, setUser } = useUserContext();
@@ -48,35 +44,6 @@ const App = () => {
 		localStorage.removeItem('user');
     	setUser(null);
 	}
-
-	const _handleAppStateChange = (nextAppState: any) => {
-		const localUser = localStorage.getItem('user');
-		const localParsedUser = JSON.parse(localUser!);
-		if (
-		  appState.current.match(/inactive|background/) &&
-		  nextAppState === "active"
-		) {
-			if (localParsedUser != null) {
-				postUserStatus("Online", localParsedUser);
-			}
-		} else {
-			if (localParsedUser != null) {
-				postUserStatus("Offline", localParsedUser);
-			}
-		}
-	
-		appState.current = nextAppState;
-		setAppStateVisible(appState.current);
-		console.log("AppState", appState.current);
-	  };
-
-	window.addEventListener("beforeunload", (ev) => {  
-		const localUser = localStorage.getItem('user');
-		const localParsedUser = JSON.parse(localUser!);
-		if (localParsedUser != null) {
-			postUserStatus("Online", localParsedUser);
-		}
-	});
 
 	return (
         <Router>
