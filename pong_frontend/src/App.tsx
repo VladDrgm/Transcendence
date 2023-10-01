@@ -81,7 +81,7 @@ const App = () => {
 	return (
         <Router>
             <Routes>
-                <Route path="/" element={user ? <Navigate to="/app" replace /> : <Navigate to="/login" replace />} />
+                <Route path="/" element={user ? <Navigate to="/app/home" replace /> : <Navigate to="/login" replace />} />
                 <Route path="/login" element={<LoginPage />} />
 				<Route path="app/logout" element={<LogoutHandler onLogout={handleLogout} />}/>
 	            <Route path="/complete_profile" element={<CompleteProfilePage />} />

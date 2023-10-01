@@ -61,7 +61,6 @@ const PublicDiv: React.FC<PublicProps> = ({ userID, publicID }) => {
 					}}
 					style={profilePictureStyle}
 				/>
-				<p>Status: {user.status}</p>
 				<br/>
         <div style={centeredContainerStyle}>{renderAchievements()}</div>
       </div>
