@@ -19,7 +19,7 @@ const PrivateDiv: React.FC<PrivateDivProps> = ({userID}) => {
   	const getData = async () => {
     	try {
       		const myProf = await getPrivateProfile(userID, user?.intraUsername, user?.passwordHash);
-			user!.status = myProf.status;
+			user!.status = 'Online';
 			user!.wins = myProf.wins;
 			user!.losses = myProf.losses;
 			user!.points = myProf.points;

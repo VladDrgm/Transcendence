@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import * as styles from './ProfilePageStyles';
 import PrivateProfile from '../div/PrivateDiv';
 import { useUserContext } from '../context/UserContext';
 import { Link } from 'react-router-dom';
 import { ButtonStyle } from '../div/UserProfileSyles';
+import { postUserStatus } from '../../api/statusUpdateAPI.api';
 
 export enum ProfileType_t
 {
@@ -19,6 +20,9 @@ interface ProfilePageProps
 const ProfilePage: React.FC<ProfilePageProps> = ({friend_set}) => {
 	const { user } = useUserContext();
 
+  useEffect(() => {
+		postUserStatus("Online", user!);
+  }, []);
 	return (
 		<div style={styles.pageStyle}>
       <PrivateProfile userID={user?.userID}/>
