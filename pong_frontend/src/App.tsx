@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { Route, BrowserRouter as Router, Navigate, Routes } from 'react-router-dom';
 import { useUserContext } from './components/context/UserContext';
 import LoginPage from './components/auth/LoginPage';
@@ -15,16 +15,67 @@ import AuthRedirectPage from './components/auth/AuthRedirectPage';
 import PublicProfileMainDiv from './components/main_div/PublicProfileMainDiv';
 import TFAVerification from './components/auth/TFAVerification';
 import MyFriendsPage from './components/mainPages/MyFriends';
+import { postUserStatus } from './api/statusUpdateAPI.api';
+import { AppState } from "react-native";
 
 const App = () => {
+	const appState = useRef(AppState.currentState);
+  	const [appStateVisible, setAppStateVisible] = useState(appState.current);
+
+	useEffect(() => {
+		AppState.addEventListener("change", _handleAppStateChange);
+
+		const localUser = localStorage.getItem('user');
+		const localParsedUser = JSON.parse(localUser!);
+		setUser(localParsedUser);
+	
+		return () => {
+		//   AppState.removeEventListener("change", _handleAppStateChange);
+		};
+	  }, []);
+
 	const { user, setUser } = useUserContext();
 
 	const [friendID, friend_set] = useState<number>(-1);
 
-	const handleLogout = () => {
+	const handleLogout = async () => {
+		const localUser = localStorage.getItem('user');
+		const localParsedUser = JSON.parse(localUser!);
+		if (localParsedUser != null) {
+			await postUserStatus("Offline", localParsedUser);
+		}
 		localStorage.removeItem('user');
     	setUser(null);
 	}
+
+	const _handleAppStateChange = (nextAppState: any) => {
+		const localUser = localStorage.getItem('user');
+		const localParsedUser = JSON.parse(localUser!);
+		if (
+		  appState.current.match(/inactive|background/) &&
+		  nextAppState === "active"
+		) {
+			if (localParsedUser != null) {
+				postUserStatus("Online", localParsedUser);
+			}
+		} else {
+			if (localParsedUser != null) {
+				postUserStatus("Offline", localParsedUser);
+			}
+		}
+	
+		appState.current = nextAppState;
+		setAppStateVisible(appState.current);
+		console.log("AppState", appState.current);
+	  };
+
+	window.addEventListener("beforeunload", (ev) => {  
+		const localUser = localStorage.getItem('user');
+		const localParsedUser = JSON.parse(localUser!);
+		if (localParsedUser != null) {
+			postUserStatus("Online", localParsedUser);
+		}
+	});
 
 	return (
         <Router>

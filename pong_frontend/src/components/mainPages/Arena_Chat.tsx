@@ -113,7 +113,7 @@ const ArenaChat: React.FC<ArenaDivProps> = ({userID, friend_set}) => {
 				setAllUsers(allUsers);
 				console.log(allUsers);
 			});
-			socketRef.current.on("new message", ({ content, sender, chatName }: { content: string; sender: string; chatName: ChatName }) => {
+			socketRef.current.on("new message", ({ content, sender, chatName}: { content: string; sender: string; chatName: ChatName ;}) => {
 				console.log("sender", sender);
 				console.log("chatNAme", chatName);
 				console.log("content:", content)
@@ -489,16 +489,30 @@ const ArenaChat: React.FC<ArenaDivProps> = ({userID, friend_set}) => {
 		}); */
 	
 		// Game Starting Listener
-			socketRef.current?.on('game starting', () => {
+
+			useEffect(() => {
+				socketRef.current?.on('game starting', () => {
 				setGameStatus(1);
 				postUserStatus("inGame", user!);
 				setIsGameStarting(true); // Set isGameStarting to true immediately
+				console.log("Invitation before change is: " + JSON.stringify(invitation));
 				if (invitation != null) {
 					invitation.playerOneSocket = null;
 					invitation.playerTwoSocket = null;
 					invitation.sessionId = null;
+					/* setInvitation({
+						sessionId: null,
+						playerOneSocket: null,
+						playerTwoSocket: null,
+					}); */
+					console.log("Invitation after change is: " + JSON.stringify(invitation));
 				}
-			});
+				});
+
+				return () => {
+				socketRef.current?.off('game starting'); // Unsubscribe from the event when the component unmounts
+				};
+			}, []);
 		
 		// eslint-disable-next-line
 		function handleGameChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -525,7 +539,6 @@ const ArenaChat: React.FC<ArenaDivProps> = ({userID, friend_set}) => {
 	let gameBody, gameBodyForm;
 	if (gameStatus === 1) {
 		if (isGameStarting) {
-			console.log("Game data is: \nCurrent socket: " + socketRef.current?.id + "\ngameStatus: " + gameStatus + "\ngameSession: " + JSON.stringify(gameSession) + "\ncanvasRef: " + JSON.stringify(canvasRef) );
 			gameBody = (
 			<Game
 				canvasRef={canvasRef}

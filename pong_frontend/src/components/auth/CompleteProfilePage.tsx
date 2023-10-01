@@ -7,10 +7,11 @@ import imageAssetUploadAvatar from '../assets/uploadAvatar.png';
 import { User } from '../../interfaces/user.interface';
 import { updateAvatarApi, updateUsernameApi } from '../../api/userApi';
 import ErrorPopup from '../Popups/ErrorPopup';
+import { postUserStatus } from '../../api/statusUpdateAPI.api';
 
 
 const CompleteProfilePage: React.FC = () => {{
-	const { setUser } = useUserContext();
+	const { user, setUser } = useUserContext();
 	const navigate = useNavigate();
 	const location = useLocation();
 
@@ -23,7 +24,6 @@ const CompleteProfilePage: React.FC = () => {{
 	const [error, setError] = useState<string | null>(null);
 	const [selectedImage, setSelectedImage] = useState<string>('/default_pfp.png');
 
-
 	// Extract the filename from the File object and update the state
 	const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const file = e.target.files ? e.target.files[0] : null;
@@ -34,7 +34,8 @@ const CompleteProfilePage: React.FC = () => {{
 	};
 
 	const handleCreatingUser = async () => {
-		if (newUsername.trim().length < 1 || newUsername.trim().length > 15) {			setError('Please put in a username(max 15 characters) to continue!');
+		if (newUsername.trim().length < 1 || newUsername.trim().length > 15) {
+			setError('Please put in a username(max 15 characters) to continue!');
   			return;
 		}
 		const newUser: User = {
@@ -68,7 +69,7 @@ const CompleteProfilePage: React.FC = () => {{
 					const formData = new FormData();
 					formData.append('file', newAvatar);
 					const userObjectWithAvatar = await updateAvatarApi(newCreatedUser.userID, formData, newCreatedUser.intraUsername, newCreatedUser.passwordHash);
-					newCreatedUser = userObjectWithAvatar;
+					newCreatedUser.avatarPath = userObjectWithAvatar.avatarPath;
 				} catch (error) {
 					setError('Error uploading avatar');
 				}
@@ -76,7 +77,7 @@ const CompleteProfilePage: React.FC = () => {{
             if (newUsername) {
                 try {
                     const updatedUser = await updateUsernameApi(newCreatedUser.userID, newUsername, newCreatedUser.intraUsername, newCreatedUser.passwordHash);
-                    newCreatedUser = updatedUser;
+					newCreatedUser.username = updatedUser.username;
                 } catch (error) {
                     setError('Error uploading username');
                 }
@@ -87,6 +88,7 @@ const CompleteProfilePage: React.FC = () => {{
 			if (enable2FA) { 
 				navigate(`/setup-2fa`);
 			} else {
+				await postUserStatus("Online", newCreatedUser!);
 				navigate(`/`);
 			}
 		} catch (error) {

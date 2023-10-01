@@ -115,6 +115,24 @@ export const chatButtonsStyle: Properties = {
 	padding:'5px',
 }
 
+export const PopUpStyle: Properties = {
+	backgroundColor: 'black',
+	position: 'static',
+	flexGrow: '1',
+	// height: '100vh',
+	width: '100vw',
+	display: 'flex',
+	flexDirection: 'row',
+	fontFamily: 'Shlop',
+	fontSize: '12px',
+	alignSelf: 'center',
+	// borderRadius: '6px',
+	// border: '2px solid',
+	color:'white',
+	// marginTop: '100px',
+	// marginBottom: '0px',
+}
+
 
 /* Usage:
 import * as styles from './ChatPageStyles';
