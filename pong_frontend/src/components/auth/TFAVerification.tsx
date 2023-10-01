@@ -14,7 +14,6 @@ const TwoFactorVerification: React.FC = () => {
 		try {
 			const localUser = localStorage.getItem('user');
 			const localParsedUser = JSON.parse(localUser!);
-			console.log(localParsedUser);
 			const userSecret = localParsedUser.TFASecret;
 			const res = await verifyTFAToken(userSecret, token);
 			if (res) { 
@@ -22,6 +21,7 @@ const TwoFactorVerification: React.FC = () => {
 				navigate(`/`);
 			} else { 
 				setError("Error: Invalid token");
+				console.error("Token is invalid");
 			}
 		} catch (error) {
 			setError("Something went wrong. Please try again");

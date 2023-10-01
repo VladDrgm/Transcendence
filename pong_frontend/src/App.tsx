@@ -24,6 +24,10 @@ const App = () => {
 
 	useEffect(() => {
 		AppState.addEventListener("change", _handleAppStateChange);
+
+		const localUser = localStorage.getItem('user');
+		const localParsedUser = JSON.parse(localUser!);
+		setUser(localParsedUser);
 	
 		return () => {
 		//   AppState.removeEventListener("change", _handleAppStateChange);
@@ -35,24 +39,28 @@ const App = () => {
 	const [friendID, friend_set] = useState<number>(-1);
 
 	const handleLogout = async () => {
-		if (user != null) {
-			await postUserStatus("Offline", user!);
+		const localUser = localStorage.getItem('user');
+		const localParsedUser = JSON.parse(localUser!);
+		if (localParsedUser != null) {
+			await postUserStatus("Offline", localParsedUser);
 		}
 		localStorage.removeItem('user');
     	setUser(null);
 	}
 
 	const _handleAppStateChange = (nextAppState: any) => {
+		const localUser = localStorage.getItem('user');
+		const localParsedUser = JSON.parse(localUser!);
 		if (
 		  appState.current.match(/inactive|background/) &&
 		  nextAppState === "active"
 		) {
-			if (user != null) {
-				postUserStatus("Online", user);
+			if (localParsedUser != null) {
+				postUserStatus("Online", localParsedUser);
 			}
 		} else {
-			if (user != null) {
-				postUserStatus("Offline", user);
+			if (localParsedUser != null) {
+				postUserStatus("Offline", localParsedUser);
 			}
 		}
 	
@@ -62,8 +70,10 @@ const App = () => {
 	  };
 
 	window.addEventListener("beforeunload", (ev) => {  
-		if (user != null) {
-			postUserStatus("Online", user);
+		const localUser = localStorage.getItem('user');
+		const localParsedUser = JSON.parse(localUser!);
+		if (localParsedUser != null) {
+			postUserStatus("Online", localParsedUser);
 		}
 	});
 

@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { fetchAddress } from '../div/channel_div';
 import { api } from '../../api/utils/api';
 import { enableTFA } from '../../api/userApi';
 import { useNavigate } from 'react-router-dom';
@@ -26,11 +25,8 @@ const TwoFactorSetup: React.FC = () => {
 		const res = await api('user/generate-totp');
 		setQrCode(res.dataURL);
 		setSecret(res.secret);
-		const localUser = localStorage.getItem('user');
-		const localParsedUser = JSON.parse(localUser!);
-		console.log(localParsedUser);
 	  } catch (error) {
-		setError("Something went wrong. Please try again");
+		setError("Error generating QR code. Please try again!");
 		console.error('Error generating TOTP:', error);
 	  }
   };
@@ -39,7 +35,6 @@ const TwoFactorSetup: React.FC = () => {
 	try {
 		const localUser = localStorage.getItem('user');
 		const localParsedUser = JSON.parse(localUser!);
-		console.log(localParsedUser);
 		const res = await api('user/verify-totp', { body: { secret, token } });
 		setIsVerified(res.isValid);
 		if (res.isValid) {
@@ -57,6 +52,7 @@ const TwoFactorSetup: React.FC = () => {
 			navigate(`/`);
 		} else { 
 			setError("Error: Invalid token");
+			console.error("Error: Invalid token");
 		}
 	  } catch (error) {
 		setError("Something went wrong. Please try again");

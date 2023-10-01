@@ -11,7 +11,6 @@ const AuthRedirectPage: React.FC = () => {
 
   useEffect(() => {
     const fetchUserAndRedirect = async () => {
-      // Get token from URL.
       const params = new URLSearchParams(location.search);
       const token = params.get('token');
 
@@ -31,7 +30,7 @@ const AuthRedirectPage: React.FC = () => {
 
 		// Store the user and update userContext
 		localStorage.setItem('user', JSON.stringify(newUser));
-		// setUser(newUser);
+		setUser(newUser);
 
 
         // Check user fields and redirect accordingly.

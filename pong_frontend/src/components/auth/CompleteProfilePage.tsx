@@ -70,7 +70,6 @@ const CompleteProfilePage: React.FC = () => {{
 					formData.append('file', newAvatar);
 					const userObjectWithAvatar = await updateAvatarApi(newCreatedUser.userID, formData, newCreatedUser.intraUsername, newCreatedUser.passwordHash);
 					newCreatedUser.avatarPath = userObjectWithAvatar.avatarPath;
-					// newCreatedUser = userObjectWithAvatar;
 				} catch (error) {
 					setError('Error uploading avatar');
 				}
@@ -79,7 +78,6 @@ const CompleteProfilePage: React.FC = () => {{
                 try {
                     const updatedUser = await updateUsernameApi(newCreatedUser.userID, newUsername, newCreatedUser.intraUsername, newCreatedUser.passwordHash);
 					newCreatedUser.username = updatedUser.username;
-                    // newCreatedUser = updatedUser;
                 } catch (error) {
                     setError('Error uploading username');
                 }
