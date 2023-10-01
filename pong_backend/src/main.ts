@@ -284,6 +284,12 @@ async function bootstrap() {
             chatName,
             sender,
           };
+          if (messages[chatName]) {
+            messages[chatName].push({
+              sender,
+              content,
+            });
+          };
           socket.to(to).emit('new message', payload);
         } else {
           const payload = {
@@ -291,14 +297,22 @@ async function bootstrap() {
             chatName: sender,
             sender,
           };
+          // if(!messages[chatName])
+          //   messages[chatName] = [];
+          if (messages[chatName]) {
+            messages[chatName].push({
+              sender,
+              content,
+            });
+          };
           socket.to(receiver).emit('new message', payload);
         }
-        if (messages[chatName]) {
-          messages[chatName].push({
-            sender,
-            content,
-          });
-        }
+        // if (messages[chatName]) {
+        //   messages[chatName].push({
+        //     sender,
+        //     content,
+        //   });
+        // }
       },
     );
 

@@ -14,6 +14,7 @@ export function renderUser(user: User, props: ChatProps, toggleChat: any) {
     chatName: user.username,
     isChannel: false,
     receiverId: user.socketId,
+    senderId: props.user?.socketId,
     isResolved: true,
     Channel: {} as Channel,
     };

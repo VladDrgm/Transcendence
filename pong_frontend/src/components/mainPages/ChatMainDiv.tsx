@@ -27,6 +27,7 @@ const ChatMainDiv: FC<ChatProps> = (props) => {
 		isChannel: true,
 		chatName: "general",
 		receiverId: "",
+		senderId: undefined,
 		isResolved: true,
 		Channel: {
 			ChannelId: 41,
@@ -40,6 +41,7 @@ const ChatMainDiv: FC<ChatProps> = (props) => {
 		isChannel: true,
 		chatName: "general",
 		receiverId: "",
+		senderId: undefined,
 		isResolved: true,
 		Channel: {
 			ChannelId: 41,

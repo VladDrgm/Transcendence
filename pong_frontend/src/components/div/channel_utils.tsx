@@ -27,6 +27,7 @@ export function renderRooms(props: ChatProps, room: Channel, toggleChat: any) {
     chatName: room.Name,
     isChannel: true,
     receiverId: "",
+    senderId: undefined,
     isResolved: true,
     Channel: room,
     };

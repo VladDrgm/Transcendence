@@ -54,6 +54,7 @@ export type CurrentChat = {
 	isChannel: boolean;
 	chatName: ChatName;
 	receiverId: string | number;
+	senderId: string | undefined; 
 	isResolved: boolean;
 	Channel: Channel;
 };

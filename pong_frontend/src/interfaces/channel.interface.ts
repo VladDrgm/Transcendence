@@ -59,6 +59,7 @@ export interface ChatProps {
 	isChannel: boolean;
 	chatName: ChatName;
 	receiverId: string | number;
+	senderId: string | undefined;
 	isResolved: boolean;
 	Channel: Channel ;
 };
