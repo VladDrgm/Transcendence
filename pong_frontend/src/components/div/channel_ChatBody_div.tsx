@@ -14,7 +14,7 @@ interface ChatBodyProps {
   currentChat: ChatData;
 }
 
-const ChatBody_Div: React.FC<ChatBodyProps> = ({
+const ChatBodyDiv: React.FC<ChatBodyProps> = ({
   props,
   messages,
   ChannelUserRoles,
@@ -80,5 +80,5 @@ const ChatBody_Div: React.FC<ChatBodyProps> = ({
     }
 };
 
-export default ChatBody_Div;
+export default ChatBodyDiv;
 

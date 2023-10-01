@@ -13,7 +13,7 @@ export interface chatInputProps {
   currentChat: ChatData
 }
 
-const ChatInput_Div: FC<chatInputProps> = ({
+const ChannelInputDiv: FC<chatInputProps> = ({
   props,
   value, 
   onChange,
@@ -103,5 +103,5 @@ const ChatInput_Div: FC<chatInputProps> = ({
     }
 };
 
-export default ChatInput_Div;
+export default ChannelInputDiv;
 

@@ -29,7 +29,7 @@ export var fetchAddress= `${process.env.REACT_APP_BASE_URL}`
 //     }
 // }
 
-const Channel_Div: React.FC<Channel_Div_props> = (props) => {
+const ChannelDiv: React.FC<Channel_Div_props> = (props) => {
     const [publicChannels, setPublicChannels] = useState<Channel[]>([]);
     const [privateChannels, setPrivateChannels] = useState<Channel[]>([]);
     const [loading, setLoading] = useState(true);
@@ -61,4 +61,4 @@ const Channel_Div: React.FC<Channel_Div_props> = (props) => {
 
 };
 
-export default Channel_Div;
+export default ChannelDiv;

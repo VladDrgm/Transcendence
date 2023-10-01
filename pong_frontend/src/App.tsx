@@ -17,6 +17,7 @@ import TFAVerification from './components/auth/TFAVerification';
 import MyFriendsPage from './components/mainPages/MyFriends';
 import { postUserStatus } from './api/statusUpdateAPI.api';
 import { AppState } from "react-native";
+import LogoutHandler from './components/main_div/LogOutHandler';
 
 const App = () => {
 	const appState = useRef(AppState.currentState);
@@ -82,8 +83,8 @@ const App = () => {
             <Routes>
                 <Route path="/" element={user ? <Navigate to="/app/home" replace /> : <Navigate to="/login" replace />} />
                 <Route path="/login" element={<LoginPage />} />
-                <Route path="app/logout" element={<Navigate to="/login" state={{ logout: true }} />} />
-                <Route path="/complete_profile" element={<CompleteProfilePage />} />
+				<Route path="app/logout" element={<LogoutHandler onLogout={handleLogout} />}/>
+	            <Route path="/complete_profile" element={<CompleteProfilePage />} />
                 <Route path="/auth_redirect" element={<AuthRedirectPage />} />
                 <Route path='/setup-2fa' element={<TFASetup />} />
                 <Route path='/verify-2fa' element={<TFAVerification />} />

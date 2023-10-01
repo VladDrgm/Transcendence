@@ -1,21 +1,10 @@
 import { Properties } from 'csstype';
 import styled from "styled-components";
 
-export const exampleStyle: Properties = {
-	color: 'rgba(254, 8, 16, 1)',
-	position: 'relative',
-	textAlign: 'center',
-	top: '8px',
-	padding: '4px',
-	fontFamily: 'Shlop',
-	fontSize: '40px',
-}
-
 export const ChatContainerStyle: Properties = {
 	backgroundColor: 'lightgray',
 	position: 'static',
 	flexGrow: '1',
-	// height: '100%',
   	width: '70vw',
   	display: 'flex',
 	flexDirection: 'row',
@@ -25,7 +14,6 @@ export const ChatContainerStyle: Properties = {
 	borderRadius: '6px',
 	border: '2px solid white',
 	color:'black',
-	// marginTop: '100px',
 	marginBottom: '0px',
 }
 
@@ -54,13 +42,6 @@ export const SideBarStyle: Properties = {
   	borderRight: '1px solid white',
 	color: 'white'
 }
-
-// export const SideBar = styled.div`
-//   height: 100%;
-//   width: 15%;
-//   border-right: 1px solid black;
-//   backgroundColor: 'blue';
-// `;
 
 export const ChatPanel = styled.div`
   height: 100vh;
@@ -102,8 +83,6 @@ export const Messages = styled.div`
 export const chatButtonsStyle: Properties = {
 	backgroundColor: 'rgba(254, 8, 16, 1)',
 	position: 'relative',
-	// height:'40px',
-	// width:'160px',
 	fontFamily: 'Shlop',
 	fontSize: '13px',
 	alignSelf: 'center',
@@ -119,23 +98,32 @@ export const PopUpStyle: Properties = {
 	backgroundColor: 'black',
 	position: 'static',
 	flexGrow: '1',
-	// height: '100vh',
 	width: '100vw',
 	display: 'flex',
 	flexDirection: 'row',
 	fontFamily: 'Shlop',
 	fontSize: '12px',
 	alignSelf: 'center',
-	// borderRadius: '6px',
-	// border: '2px solid',
 	color:'white',
-	// marginTop: '100px',
-	// marginBottom: '0px',
 }
 
+export const linkTextStyle = {
+	display: 'flex',
+	alignItems: 'center',
+	justifyContent: 'center',
+	color: 'white',
+	fontSize: '14px',
+	fontWeight: 600,
+	marginTop: '10px',
+  };
 
-/* Usage:
-import * as styles from './ChatPageStyles';
-
-<p style={styles.exampleStyle}>Welcome</p>
-*/
+  export const userButtonStyle: Properties = {
+	backgroundColor: 'lightgray',
+	borderStyle: 'none',
+	cursor: 'pointer',
+	color: 'black',
+	fontSize: '16px',
+	fontWeight: 600,
+	marginTop: '2px',
+	textDecoration: 'underline',
+  };

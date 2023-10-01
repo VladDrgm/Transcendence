@@ -457,7 +457,7 @@ async function bootstrap() {
         //console.log('Invite Player was triggered');
         let existingSession: any;
 
-        // check if player is already in a queue or session
+        // check if player SENDER is already in a queue or session
         if (gameSessions.length !== 0) {
           const playerIsInSession = gameSessions.some((session) =>
             session.playerIds.includes(socket.id),
@@ -466,6 +466,17 @@ async function bootstrap() {
             return;
           }
         }
+
+			// check if player RECEIVER is already in a queue or session
+			if (gameSessions.length !== 0) {
+				const playerIsInSession = gameSessions.some((session) =>
+					session.playerIds.includes(invitation.playerTwoSocket),
+				);
+				if (playerIsInSession) {
+					socket.emit('already in session');
+					return;
+				}
+			}
 
         // Check if a session exists with the given invitation.sessionId
         if (invitation.sessionId) {
