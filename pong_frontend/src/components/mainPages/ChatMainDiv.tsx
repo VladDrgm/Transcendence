@@ -26,6 +26,7 @@ const ChatMainDiv: FC<ChatProps> = (props) => {
 	const [currentChat, setCurrentChat] = useState<CurrentChat>({
 		isChannel: true,
 		chatName: "general",
+		chatId: undefined,
 		receiverId: "",
 		senderId: undefined,
 		isResolved: true,
@@ -40,6 +41,7 @@ const ChatMainDiv: FC<ChatProps> = (props) => {
 	const[generalChat, setGeneralChat] = useState<CurrentChat>({
 		isChannel: true,
 		chatName: "general",
+		chatId: undefined,
 		receiverId: "",
 		senderId: undefined,
 		isResolved: true,

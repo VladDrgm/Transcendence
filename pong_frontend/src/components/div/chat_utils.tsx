@@ -12,6 +12,7 @@ export function renderUser(user: User, props: ChatProps, toggleChat: any) {
     }
     const currentChat: ChatData = {
     chatName: user.username,
+    chatId: `${user.username}-${props.user!.userID}`,
     isChannel: false,
     receiverId: user.socketId,
     senderId: props.user?.socketId,

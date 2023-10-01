@@ -58,6 +58,7 @@ export interface ChatProps {
  export type ChatData = {
 	isChannel: boolean;
 	chatName: ChatName;
+	chatId: string | undefined;
 	receiverId: string | number;
 	senderId: string | undefined;
 	isResolved: boolean;
