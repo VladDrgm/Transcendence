@@ -31,7 +31,8 @@ const AuthRedirectPage: React.FC = () => {
 
 		// Store the user and update userContext
 		localStorage.setItem('user', JSON.stringify(newUser));
-		setUser(newUser);
+		// setUser(newUser);
+
 
         // Check user fields and redirect accordingly.
 		if (newUser.is2FAEnabled) {

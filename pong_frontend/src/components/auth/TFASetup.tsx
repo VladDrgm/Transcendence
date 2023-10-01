@@ -5,6 +5,7 @@ import { enableTFA } from '../../api/userApi';
 import { useNavigate } from 'react-router-dom';
 import ErrorPopup from '../Popups/ErrorPopup';
 import { useUserContext } from '../context/UserContext';
+import { postUserStatus } from '../../api/statusUpdateAPI.api';
 
 const TwoFactorSetup: React.FC = () => {
 	const navigate = useNavigate();
@@ -24,7 +25,10 @@ const TwoFactorSetup: React.FC = () => {
 	try {
 		const res = await api('user/generate-totp');
 		setQrCode(res.dataURL);
-		await setSecret(res.secret);
+		setSecret(res.secret);
+		const localUser = localStorage.getItem('user');
+		const localParsedUser = JSON.parse(localUser!);
+		console.log(localParsedUser);
 	  } catch (error) {
 		setError("Something went wrong. Please try again");
 		console.error('Error generating TOTP:', error);
@@ -33,17 +37,23 @@ const TwoFactorSetup: React.FC = () => {
 
   const verifyToken = async () => {
 	try {
+		const localUser = localStorage.getItem('user');
+		const localParsedUser = JSON.parse(localUser!);
+		console.log(localParsedUser);
 		const res = await api('user/verify-totp', { body: { secret, token } });
 		setIsVerified(res.isValid);
-		try {
-			const updatedUser = await enableTFA(user?.userID, secret, user?.intraUsername, user?.passwordHash);
-			localStorage.setItem('user', JSON.stringify(updatedUser));
-			// setUser(updatedUser);
-		} catch (error) {
-			setError("Verifying token went wrong. Please try again!");
-			console.error('Error storing the secret to the backend', error);
-		}
 		if (res.isValid) {
+			try {
+				const updatedUser = await enableTFA(localParsedUser.userID, secret, localParsedUser.intraUsername, localParsedUser.passwordHash);
+				localParsedUser.is2FAEnabled = updatedUser.is2FAEnabled;
+				localParsedUser.tfa_secret = updatedUser.tfa_secret;
+				localStorage.setItem('user', JSON.stringify(localParsedUser));
+				setUser(localParsedUser);
+			} catch (error) {
+				setError("Verifying token went wrong. Please try again!");
+				console.error('Error storing the secret to the backend', error);
+			}
+			await postUserStatus("Online", localParsedUser);
 			navigate(`/`);
 		} else { 
 			setError("Error: Invalid token");
@@ -67,11 +77,6 @@ const TwoFactorSetup: React.FC = () => {
             placeholder="Enter the token"
           />
           <button onClick={verifyToken}>Verify Code</button>
-          {isVerified !== null && (
-            <div>
-              {isVerified ? 'Token is valid!' : 'Token is invalid!'}
-            </div>
-          )}
         </div>
       )}
 	  <ErrorPopup message={error} onClose={() => setError(null)} />
