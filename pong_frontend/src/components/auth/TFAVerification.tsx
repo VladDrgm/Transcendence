@@ -1,45 +1,27 @@
 import React, { useState, useEffect } from 'react';
-import { fetchAddress } from '../div/channel_div';
-import { api } from '../../api/utils/api';
 import { useNavigate } from 'react-router-dom';
 import ErrorPopup from '../Popups/ErrorPopup';
 import { useUserContext } from '../context/UserContext';
-import { enableTFA, verifyTFAToken } from '../../api/userApi';
+import { verifyTFAToken } from '../../api/userApi';
 
 const TwoFactorVerification: React.FC = () => {
 	const navigate = useNavigate();
 	const { user, setUser } = useUserContext();
-	const [qrCode, setQrCode] = useState<string>('');
-	const [secret, setSecret] = useState<string>('');
 	const [token, setToken] = useState<string>('');
-	const [isVerified, setIsVerified] = useState<boolean | null>(null);
 	const [error, setError] = useState<string | null>(null);
-
-	const generateTOTP = async () => {
-		try {
-			const res = await api('user/generate-totp');
-			setQrCode(res.dataURL);
-			await setSecret(res.secret);
-		} catch (error) {
-			setError("Something went wrong. Please try again");
-			console.error('Error generating TOTP:', error);
-		}
-	};
 
 	const verifyToken = async () => {
 		try {
-			const userSecret = secret == '' ? user?.tfa_secret : secret;
+			const localUser = localStorage.getItem('user');
+			const localParsedUser = JSON.parse(localUser!);
+			const userSecret = localParsedUser.TFASecret;
 			const res = await verifyTFAToken(userSecret, token);
-			setIsVerified(res);
-			if (qrCode) {
-				const updatedUser = await enableTFA(user?.userID, secret, user?.intraUsername, user?.passwordHash);
-				localStorage.setItem('user', JSON.stringify(updatedUser));
-				setUser(updatedUser);
-			}
 			if (res) { 
+				setUser(localParsedUser)
 				navigate(`/`);
 			} else { 
 				setError("Error: Invalid token");
+				console.error("Token is invalid");
 			}
 		} catch (error) {
 			setError("Something went wrong. Please try again");
@@ -50,10 +32,6 @@ const TwoFactorVerification: React.FC = () => {
   return (
     <div>
         <div>
-			<button onClick={generateTOTP}>Generate new QR Code</button>
-			{ qrCode && (
-          		<img src={qrCode} alt="QR Code" />
-			)}
           	<input
 				type="text"
 				value={token}
@@ -61,11 +39,6 @@ const TwoFactorVerification: React.FC = () => {
 				placeholder="Enter the token"
           	/>
           	<button onClick={verifyToken}>Verify Token</button>
-          	{ isVerified !== null && (
-            	<div>
-              		{ isVerified ? 'Token is valid!' : 'Token is invalid!' }
-            	</div>
-          	)}
         </div>
 	  	<ErrorPopup message={error} onClose={() => setError(null)} />
     </div>

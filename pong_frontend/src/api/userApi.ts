@@ -13,6 +13,10 @@ export const getUsers = async () => {
 	return json;
 };
 
+export const updateUserStatus = async () => {
+	
+}
+
 export const getUserByToken = async (token:string | undefined): Promise<User> => {
 	  try {
 		// Make API call and get the response
