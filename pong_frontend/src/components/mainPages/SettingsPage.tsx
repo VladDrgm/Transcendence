@@ -81,7 +81,7 @@ const SettingsPage: React.FC<SettingsPageProps> = ({onLogout}) => {
 
 	const OnLogoutButtonClick = async () => {
 		onLogout()
-		navigate(`/`);
+		navigate(`/login`);
 	};
 	
 	return (

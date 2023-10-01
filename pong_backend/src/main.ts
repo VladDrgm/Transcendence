@@ -270,12 +270,13 @@ async function bootstrap() {
 
     socket.on(
       'send message',
-      ({ content, to, sender, chatName, isChannel }) => {
+      ({ content, to, sender, chatName, isChannel, receiver }) => {
         console.log('content:', content);
         console.log('sender:', sender);
         console.log('chatName:', chatName);
         console.log('isChannel', isChannel);
         console.log('to:', to);
+        console.log('receiver: ', receiver)
         console.log('Messages:', messages);
         if (isChannel) {
           const payload = {
@@ -290,7 +291,7 @@ async function bootstrap() {
             chatName: sender,
             sender,
           };
-          socket.to(to).emit('new message', payload);
+          socket.to(receiver).emit('new message', payload);
         }
         if (messages[chatName]) {
           messages[chatName].push({

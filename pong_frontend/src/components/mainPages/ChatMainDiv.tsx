@@ -112,12 +112,21 @@ const ChatMainDiv: FC<ChatProps> = (props) => {
 		console.log("currentchat: ", currentChat);
 		console.log("username : ", props.user?.username);
 		const trimmedMessage = message.trim();
+		let receiverId = null; // Initialize receiverId as null
+
+		if (!currentChat.isChannel) {
+		const receiverUser = props.allUsers.find(user => user.username === currentChat.chatName);
+		if (receiverUser) {
+			receiverId = receiverUser.socketId;
+		}
+		}
 		const payload = {
 		content: trimmedMessage,
 		to: currentChat.isChannel ? currentChat.chatName : currentChat.receiverId,
 		sender: props.user?.username,
 		chatName: currentChat.chatName,
-		isChannel: currentChat.isChannel
+		isChannel: currentChat.isChannel,
+		receiver: receiverId
 		};
 
 		props.socketRef.current?.emit("send message", payload);
