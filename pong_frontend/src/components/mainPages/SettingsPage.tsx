@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUserContext } from '../context/UserContext';
 import { fetchAddress } from '../div/channel_div';
@@ -7,6 +7,7 @@ import { getPrivateProfile } from '../../api/profile.api';
 import * as styles from './SettingsPageStyles';
 import imageAssetUploadAvatar from '../assets/uploadAvatar.png'
 import ErrorPopup from '../Popups/ErrorPopup';
+import { postUserStatus } from '../../api/statusUpdateAPI.api';
 
 interface SettingsPageProps
 {
@@ -83,6 +84,10 @@ const SettingsPage: React.FC<SettingsPageProps> = ({onLogout}) => {
 		onLogout()
 		navigate(`/login`);
 	};
+
+	useEffect(() => {
+		postUserStatus("Online", user!);
+  	}, []);
 	
 	return (
 		<div style={styles.pageStyle}>

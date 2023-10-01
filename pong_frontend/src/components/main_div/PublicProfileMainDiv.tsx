@@ -6,6 +6,7 @@ import { useUserContext } from '../context/UserContext';
 import { Link, useParams } from 'react-router-dom';
 import { ButtonStyle } from '../div/UserProfileSyles';
 import { postBlockedUser, deleteBlockedUser, getBlockedUser } from '../../api/block_user.api'
+import { postUserStatus } from '../../api/statusUpdateAPI.api';
 
 export enum ProfileType_t {
   FRIEND_PROFILE,
@@ -87,6 +88,10 @@ const PublicProfileMainDiv: React.FC<ProfileProps> = () => {
     isFriend();
     setReset(false);
   }, );
+
+  useEffect(() => {
+    postUserStatus("Online", user!);
+  }, []);
 
   if (loading) {
     return <div>Loading...</div>;

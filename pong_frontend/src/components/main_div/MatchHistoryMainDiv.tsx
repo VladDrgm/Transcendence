@@ -7,6 +7,7 @@ import { getGlobalMatchHistory, getPersonalMatchHistory } from '../../api/matchH
 import { getUserList } from '../../api/user_list.api';
 import { useUserContext } from '../context/UserContext';
 import { ButtonStyle, MatchHistoryCard, MatchHistoryScore, MatchHistoryTitle, MatchHistoryWinner } from './MatchHistoryStyles';
+import { postUserStatus } from '../../api/statusUpdateAPI.api';
 
 const ITEMS_PER_PAGE = 15;
 
@@ -42,6 +43,10 @@ const MatchHistoryMainDiv: React.FC<MatchHistoryProps> = ({ userID, friend_set }
   useEffect(() => {
     getData();
   }, [showPersonalMatches]);
+
+  useEffect(() => {
+    postUserStatus("Online", user!);
+  }, []);
 
   const openFriend = (FID: number) => {
     friend_set(FID);

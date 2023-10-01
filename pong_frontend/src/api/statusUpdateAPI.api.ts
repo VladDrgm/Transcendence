@@ -3,6 +3,7 @@ import { fetchAddress } from "../components/div/channel_div";
 import { User } from "../interfaces/user.interface";
 
 export function postUserStatus(status: string, user: User): Promise<boolean> {
+    user!.status = status;
     const ChannelData = {
       "intraUsername": user?.intraUsername,
       "passwordHash": user?.passwordHash

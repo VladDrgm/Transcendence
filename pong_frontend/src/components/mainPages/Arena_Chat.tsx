@@ -89,7 +89,9 @@ const ArenaChat: React.FC<ArenaDivProps> = ({userID, friend_set}) => {
 	// 	setUsername(e.target.value);
 	// }
 
-
+	useEffect(() => {
+		postUserStatus("Online", user!);
+	  }, []);
 
 	useEffect(() => {
 		const baseUrl = process.env.REACT_APP_BASE_URL || "http://localhost:3000";
@@ -186,6 +188,7 @@ const ArenaChat: React.FC<ArenaDivProps> = ({userID, friend_set}) => {
 				const userOneName = data.username;
 				handlePlayerTwoInvite(sessionId, playerOneSocket, playerTwoSocket, userOneName);
 			});
+			
 		}
 		connect();
 
