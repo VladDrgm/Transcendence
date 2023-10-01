@@ -145,7 +145,9 @@ export class BlockedService {
                             .where('blocked.blockedUser.userID = :targetId', { targetId })
                             .getOne();
 
-    if (!result) {
+
+
+    if (!result || result.user.userID != callerId) {
       throw new HttpException('No such blocked user', 200);
     }
 
