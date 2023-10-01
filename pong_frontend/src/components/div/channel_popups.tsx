@@ -438,7 +438,7 @@ export function popUpCreateChannel(
     addChatRoom: (chatName: ChatName) => void
 ) {
     // Open Window
-    var popup = window.open('', '_blank', 'width=250,height=300,menubar=no,toolbar=no');
+    var popup = window.open('', '_blank', 'width=250,height=320,menubar=no,toolbar=no');
 
     // Check if the popup was blocked
     if (!popup) {
