@@ -26,7 +26,7 @@ export interface ownerButtonProps {
 
 
 
-export const ChannelOwner_Buttons_Div: React.FC<ownerButtonProps> = (props ) => {
+export const ChatBodyDivChannelOwnerButtonsDiv: React.FC<ownerButtonProps> = (props ) => {
     return (
         props.loadingChannelPanel ? (
             <div>Loading Channel Name and Buttons...</div> // Show a loading spinner or placeholder
@@ -89,7 +89,7 @@ export const ChannelOwner_Buttons_Div: React.FC<ownerButtonProps> = (props ) => 
 
 
 
-export const ChannelAdmin_Buttons_Div: React.FC<ownerButtonProps> = (props) => {
+export const ChannelAdminButtonsDiv: React.FC<ownerButtonProps> = (props) => {
     return (
         props.loadingChannelPanel ? (
             <div>Loading Channel Name and Buttons...</div> // Show a loading spinner or placeholder
