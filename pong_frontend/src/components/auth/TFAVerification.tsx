@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import ErrorPopup from '../Popups/ErrorPopup';
 import { useUserContext } from '../context/UserContext';
 import { verifyTFAToken } from '../../api/userApi';
+import { postUserStatus } from '../../api/statusUpdateAPI.api';
 
 const TwoFactorVerification: React.FC = () => {
 	const navigate = useNavigate();
@@ -17,7 +18,11 @@ const TwoFactorVerification: React.FC = () => {
 			const userSecret = localParsedUser.TFASecret;
 			const res = await verifyTFAToken(userSecret, token);
 			if (res) { 
-				setUser(localParsedUser)
+				if (await postUserStatus("Online", localParsedUser) == true) {
+					localParsedUser.status = "Online";
+					localStorage.setItem('user', JSON.stringify(localParsedUser));
+				}
+				setUser(localParsedUser);
 				navigate(`/`);
 			} else { 
 				setError("Error: Invalid token");
