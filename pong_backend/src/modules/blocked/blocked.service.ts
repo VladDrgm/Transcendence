@@ -139,13 +139,7 @@ export class BlockedService {
         }
     }
 
-    const result = await this.blockedRepository
-      .createQueryBuilder('blocked')
-      .leftJoinAndSelect('blocked.user', 'user')
-      .leftJoinAndSelect('blocked.blockedUser', 'user')
-      .where('blocked.user.userID = :userId', {userId: targetId })
-      .andWhere('blocked.blockedUser.userID = :blockedUserId', { blockedUserId: callerId })
-      .getOne();
+    const result = await this.blockedRepository.findOneBy({ user: callerId, blockedUser: targetId });
 
     if (!result) {
       throw new HttpException('No such blocked user', 200);
