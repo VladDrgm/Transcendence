@@ -139,18 +139,19 @@ export class BlockedService {
         }
     }
 
-    const result = await this.blockedRepository
+    const isBlocked = await this.blockedRepository
                             .createQueryBuilder('blocked')
-                            .leftJoinAndSelect('blocked.blockedUser', 'user')
+                            .leftJoinAndSelect('blocked.user', 'user')
+                            .leftJoinAndSelect('blocked.blockedUser', 'blockedUser')
                             .where('blocked.blockedUser.userID = :targetId', { targetId })
                             .getOne();
 
 
-
-    if (!result || result.user.userID != callerId) {
+    if (!isBlocked || isBlocked.user.userID != callerId) {
       throw new HttpException('No such blocked user', 200);
     }
-
+    const result = await this.blockedRepository.findOneBy({ blockId: isBlocked.blockId });
+    
     return result;
   }
 }
