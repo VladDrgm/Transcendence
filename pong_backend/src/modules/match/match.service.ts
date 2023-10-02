@@ -4,9 +4,11 @@ import { Repository } from 'typeorm';
 import { Match } from 'src/models/orm_models/match.entity';
 import { MatchDTO } from './matchDTO';
 import { MatchHistory } from 'src/models/orm_models/matchHistory.entity';
-import { AuthProtector, UserAuthDTO } from '../authProtectorService/authProtector';
+import {
+  AuthProtector,
+  UserAuthDTO,
+} from '../authProtectorService/authProtector';
 import { User } from 'src/models/orm_models/user.entity';
-
 
 @Injectable()
 export class MatchService {
@@ -43,8 +45,13 @@ export class MatchService {
     matchHistory.Player2Id = match.Player2Id;
     this.matchHistoryRepository.save(matchHistory);
 
-    const winner = await this.userRepository.findOneBy({ userID: match.WinnerId });
-    const loser = await this.userRepository.findOneBy({ userID: match.WinnerId === match.Player1Id ? match.Player2Id : match.Player1Id });
+    const winner = await this.userRepository.findOneBy({
+      userID: match.WinnerId,
+    });
+    const loser = await this.userRepository.findOneBy({
+      userID:
+        match.WinnerId === match.Player1Id ? match.Player2Id : match.Player1Id,
+    });
 
     loser.losses += 1;
     winner.wins += 1;
@@ -59,23 +66,36 @@ export class MatchService {
     return match;
   }
 
-  async getMatchById(loggedUser: UserAuthDTO, callerId: number, matchId: number): Promise<Match> {
+  async getMatchById(
+    loggedUser: UserAuthDTO,
+    callerId: number,
+    matchId: number,
+  ): Promise<Match> {
     if (parseInt(process.env.FEATURE_FLAG) === 1) {
-        const passCheck = await this.authProtector.protectorCheck(loggedUser.passwordHash, callerId);
-        if (!passCheck) {
-            throw new HttpException('Unauthorized', 401);
-        }
+      const passCheck = await this.authProtector.protectorCheck(
+        loggedUser.passwordHash,
+        callerId,
+      );
+      if (!passCheck) {
+        throw new HttpException('Unauthorized', 401);
+      }
     }
 
     return this.matchRepository.findOneBy({ MatchId: matchId });
   }
 
-  async getAllMatches(loggedUser: UserAuthDTO, callerId: number): Promise<Match[]> {
+  async getAllMatches(
+    loggedUser: UserAuthDTO,
+    callerId: number,
+  ): Promise<Match[]> {
     if (parseInt(process.env.FEATURE_FLAG) === 1) {
-        const passCheck = await this.authProtector.protectorCheck(loggedUser.passwordHash, callerId);
-        if (!passCheck) {
-            throw new HttpException('Unauthorized', 401);
-        }
+      const passCheck = await this.authProtector.protectorCheck(
+        loggedUser.passwordHash,
+        callerId,
+      );
+      if (!passCheck) {
+        throw new HttpException('Unauthorized', 401);
+      }
     }
 
     return this.matchRepository.find();
@@ -87,12 +107,19 @@ export class MatchService {
     await this.matchRepository.delete(matchId);
   }
 
-  async getMatchHistory(loggedUser: UserAuthDTO, callerId: number, targetId: number): Promise<Match[]> {
+  async getMatchHistory(
+    loggedUser: UserAuthDTO,
+    callerId: number,
+    targetId: number,
+  ): Promise<Match[]> {
     if (parseInt(process.env.FEATURE_FLAG) === 1) {
-        const passCheck = await this.authProtector.protectorCheck(loggedUser.passwordHash, callerId);
-        if (!passCheck) {
-            throw new HttpException('Unauthorized', 401);
-        }
+      const passCheck = await this.authProtector.protectorCheck(
+        loggedUser.passwordHash,
+        callerId,
+      );
+      if (!passCheck) {
+        throw new HttpException('Unauthorized', 401);
+      }
     }
 
     const result1 = await this.matchRepository.find({
@@ -107,17 +134,17 @@ export class MatchService {
     return result;
   }
 
-  achievementsService(user : User) {
+  achievementsService(user: User) {
     if (user.wins === 1) {
-      user.achievementsCSV = user.achievementsCSV +"Achievement 1: First win";
+      user.achievementsCSV = user.achievementsCSV + 'Achievement 1: First win';
     }
 
     if (user.wins === 5) {
-      user.achievementsCSV = user.achievementsCSV + ", Achievement 2: 5 wins";
+      user.achievementsCSV = user.achievementsCSV + ', Achievement 2: 5 wins';
     }
 
     if (user.wins === 10) {
-      user.achievementsCSV = user.achievementsCSV + ", Achievement 3: 10 wins";
+      user.achievementsCSV = user.achievementsCSV + ', Achievement 3: 10 wins';
     }
   }
 }

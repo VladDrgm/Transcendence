@@ -3,23 +3,11 @@ import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common/pipes/validation.pipe';
 import { Socket, Server } from 'socket.io';
-
-const fetch = require('node-fetch');
+import fetch from 'node-fetch';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  // const sessionOptions: SessionOptions = {
-  //   //@Andrej when implementing authetication feel free to change this.
-  //   secret: process.env.SESSION_SECRET, //keep in mind that u havet fix shared session services and delete GET login function from users.
-  //   resave: false,
-  //   saveUninitialized: true,
-  //   cookie: {
-  //     secure: false,
-  //   },
-  // };
-
-  // app.use(session(sessionOptions));
   app.enableCors({
     origin: process.env.FRONTEND_URL,
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
@@ -276,7 +264,7 @@ async function bootstrap() {
         console.log('chatName:', chatName);
         console.log('isChannel', isChannel);
         console.log('to:', to);
-        console.log('receiver: ', receiver)
+        console.log('receiver: ', receiver);
         console.log('Messages:', messages);
         if (isChannel) {
           const payload = {
@@ -467,16 +455,16 @@ async function bootstrap() {
           }
         }
 
-			// check if player RECEIVER is already in a queue or session
-			if (gameSessions.length !== 0) {
-				const playerIsInSession = gameSessions.some((session) =>
-					session.playerIds.includes(invitation.playerTwoSocket),
-				);
-				if (playerIsInSession) {
-					socket.emit('already in session');
-					return;
-				}
-			}
+        // check if player RECEIVER is already in a queue or session
+        if (gameSessions.length !== 0) {
+          const playerIsInSession = gameSessions.some((session) =>
+            session.playerIds.includes(invitation.playerTwoSocket),
+          );
+          if (playerIsInSession) {
+            socket.emit('already in session');
+            return;
+          }
+        }
 
         // Check if a session exists with the given invitation.sessionId
         if (invitation.sessionId) {
@@ -1040,7 +1028,6 @@ async function bootstrap() {
   });
 
   await app.listen(port);
-  // await server.listen(port);
   console.log('Server is running on port ' + port + '.');
   console.log('Access the app at http://localhost:' + port + '/');
 }

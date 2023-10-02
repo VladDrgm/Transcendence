@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { FriendProfile } from './interfaces/friend_profile.interface';
+import { FriendProfile } from './interfaces/IFriendProfile';
 import { User } from 'src/models/orm_models/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { PrivateProfile } from './interfaces/private_profile.interface';
-import { PublicProfile } from './interfaces/public_profile.interface';
+import { PrivateProfile } from './interfaces/IPrivateProfile';
+import { PublicProfile } from './interfaces/IPublicProfile';
 
 @Injectable()
 export class ProfileService {

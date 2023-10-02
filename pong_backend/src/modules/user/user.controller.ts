@@ -12,7 +12,7 @@ import {
   UseInterceptors,
   UploadedFile,
   BadRequestException,
-  Patch
+  Patch,
 } from '@nestjs/common';
 import { UserService } from './userservice';
 import { User } from 'src/models/orm_models/user.entity';
@@ -108,12 +108,6 @@ export class UserController {
     return users;
   }
 
-  //   @Post('user/signup')
-  //   @ApiOperation({ summary: 'Sign up' })
-  //   async postUserLoggedIn(@Body() userDto: UserDTO): Promise<User> {
-  //     return this.userService.postUserLoggedIn(userDto);
-  //   }
-
   @Post(':userName/:password/login/confirm')
   @ApiOperation({ summary: 'Log in' })
   async confirmUserLoggedIn(
@@ -176,20 +170,19 @@ export class UserController {
     );
   }
 
-    @Patch(':callerId/:targetId/:status')
-    @ApiOperation({ summary: 'Update the status of a user' })
-    async updateStatus(
-      @Param('callerId', ParseIntPipe) callerId: number,
-      @Param('targetId', ParseIntPipe) targetId: number,
-      @Param('status') status: string,
-      @Body() loggedUser: UserAuthDTO,
-    ): Promise<UserDTO> {
-      return await this.userService.updateStatus(
-        loggedUser,
-        callerId,
-        targetId,
-        status,
-      );
-    }
-
+  @Patch(':callerId/:targetId/:status')
+  @ApiOperation({ summary: 'Update the status of a user' })
+  async updateStatus(
+    @Param('callerId', ParseIntPipe) callerId: number,
+    @Param('targetId', ParseIntPipe) targetId: number,
+    @Param('status') status: string,
+    @Body() loggedUser: UserAuthDTO,
+  ): Promise<UserDTO> {
+    return await this.userService.updateStatus(
+      loggedUser,
+      callerId,
+      targetId,
+      status,
+    );
+  }
 }
