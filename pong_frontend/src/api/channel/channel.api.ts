@@ -1,5 +1,5 @@
-import { Channel, ChatData, ChatName, ChatProps } from "../../interfaces/channel.interface";
-import { fetchAddress } from "../../components/div/channel_div";
+import { Channel, ChatData, ChatName, ChatProps } from "../../interfaces/Channel";
+import { fetchAddress } from "../../components/div/ChannelDiv";
 
 export async function getChannels():  Promise<Channel[]> {
 	const response = await fetch(fetchAddress + 'channel', {credentials: "include", method: 'PUT'});

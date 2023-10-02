@@ -15,8 +15,8 @@ import {
   AuthProtector,
   UserAuthDTO,
 } from '../authProtectorService/authProtector';
-import * as speakeasy from 'speakeasy';
-import * as uuid from 'uuid';
+// import * as speakeasy from 'speakeasy';
+// import * as uuid from 'uuid';
 import * as qrcode from 'qrcode';
 import { authenticator } from 'otplib';
 

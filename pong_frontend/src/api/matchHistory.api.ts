@@ -1,5 +1,4 @@
-import { fetchAddress } from "../components/div/channel_div";
-import { UserProvider } from "../interfaces/user.interface";
+import { fetchAddress } from "../components/div/ChannelDiv";
 
 export const getGlobalMatchHistory = async (userID:number, intra:string | undefined, token:string | undefined) => {
     const response = await fetch(fetchAddress + 'match/' + userID + "/all", {

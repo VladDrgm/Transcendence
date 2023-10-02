@@ -1,5 +1,5 @@
-import { fetchAddress } from "../components/div/channel_div";
-import { User } from "../interfaces/user.interface";
+import { fetchAddress } from "../components/div/ChannelDiv";
+import { User } from "../interfaces/User";
 
 export async function postBlockedUser(targetId: number, user: User): Promise<boolean> {
     const ChannelData = {
@@ -22,16 +22,16 @@ export async function postBlockedUser(targetId: number, user: User): Promise<boo
       const response = await fetch(fetchAddress + 'blocked/' + user.userID + '/' + targetId, requestOptions);
   
       if (response.ok) {
-        return true; // Successful
+        return true;
       } else {
         console.error('Error blocking User with UserId :' + targetId + ':', response.status);
         alert('Error blocking User: ' + response.status);
-        return false; // Error
+        return false;
       }
     } catch (error) {
       console.error('Error blocking User with UserId :' + targetId + ':', error);
       alert('Error blocking User: ' + error);
-      return false; // Error
+      return false; 
     }
   }
   

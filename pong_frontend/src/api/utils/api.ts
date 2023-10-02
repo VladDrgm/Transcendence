@@ -1,4 +1,4 @@
-const fetchAddress = `${process.env.REACT_APP_BASE_URL}`; // Make sure to replace with your actual NestJS backend URL
+const fetchAddress = `${process.env.REACT_APP_BASE_URL}`;
 
 interface FetchConfig extends RequestInit {
 	headers?: {

@@ -1,5 +1,5 @@
-import { ChatData, ChatName, ChatProps } from '../../interfaces/channel.interface';
-import { modBannedUser, CreateChannel, addMuteUser} from './channel_utils';
+import { ChatData, ChatName, ChatProps } from '../../interfaces/Channel';
+import { modBannedUser, CreateChannel, addMuteUser} from './ChannelUtils';
 import { deleteChannelPassword, putChannelPassword, putChannelType } from '../../api/channel/channel_user.api';
 
 export function banUserPopUp(props: &ChatProps, currentChat: ChatData, banUserSocket: any, unbanUserSocket: any) {

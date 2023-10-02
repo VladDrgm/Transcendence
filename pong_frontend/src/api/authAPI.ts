@@ -1,4 +1,4 @@
-import { User } from "../interfaces/user.interface";
+import { User } from "../interfaces/User";
 
 // var newFetchAddress = process.env.REACT_APP_SRVR_URL ||  'http://localhost:3000/';
 // var fetchAddress = 'http://localhost:3000/';

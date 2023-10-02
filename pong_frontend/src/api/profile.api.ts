@@ -1,4 +1,4 @@
-import { fetchAddress } from "../components/div/channel_div";
+import { fetchAddress } from "../components/div/ChannelDiv";
 
 export async function getFriendProfile(userID:number, friendID:number, intra:string | undefined, token:string | undefined)  {
 	const response = await fetch(fetchAddress + 'friend/' + userID + '/friend/' + friendID, {

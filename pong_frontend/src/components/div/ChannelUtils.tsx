@@ -1,14 +1,14 @@
 import { Dispatch, SetStateAction } from 'react';
-import { Channel, ChatData, ChatProps } from '../../interfaces/channel.interface';
+import { Channel, ChatData, ChatProps } from '../../interfaces/Channel';
 import { getChannels} from '../../api/channel/channel.api';
-import { postAdmin } from '../../api/channel/channel_admin.api';
-import { postChannelUserBlocked, deleteChannelUserBlocked, getUsers, postChannelUser, postMuteUser, postPrivateChannelUser} from '../../api/channel/channel_user.api';
-import styled from "styled-components";
-import {IUser} from '../../interfaces/interface';
-import { fetchAddress } from './channel_div';
+// import { postAdmin } from '../../api/channel/channel_admin.api';
+import { postChannelUserBlocked, deleteChannelUserBlocked, getUsers, postMuteUser} from '../../api/channel/channel_user.api';
+// import styled from "styled-components";
+import {IUser} from '../../interfaces/IUser';
+import { fetchAddress } from './ChannelDiv';
 import { Row } from '../mainPages/ChatPageStyles';
-import { ChatName, getChannelFromChannellist } from '../mainPages/Arena_Chat';
-import { useUserContext } from '../context/UserContext';
+import { ChatName } from '../mainPages/Arena_Chat';
+// import { useUserContext } from '../context/UserContext';
 
 export function mapChannel(item: any) {
     const { ChannelId, OwnerId, Name, Type, Password } = item;
@@ -233,7 +233,7 @@ export async function CreateChannel(props: ChatProps, channelName: string, passw
     }
     const jsonData = JSON.stringify(ChannelData);
     var fetchUrl = fetchAddress + 'channel/' + props.user?.userID + '/' + props.user?.userID + '/' + channelName + '/' + channelType;
-    if (channelType == "private") fetchUrl = fetchUrl.concat('?channelPassword=' + password);
+    if (channelType === "private") fetchUrl = fetchUrl.concat('?channelPassword=' + password);
     return fetch(fetchUrl, {credentials: "include",
         method:"POST",
         headers: {

@@ -20,9 +20,9 @@ import { UserDTO, UserListDto } from './userDTO';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UploadAvatarDto } from './UploadAvatarDTO';
 import { UserAuthDTO } from '../authProtectorService/authProtector';
-import { GenerateTotpDTO } from '../auth/dto/generate-totp.dto';
+// import { GenerateTotpDTO } from '../auth/dto/generate-totp.dto';
 import { VerifyTotpDTO } from '../auth/dto/verify-totp.dto';
-import { VerifyTotpResponseDTO } from '../auth/dto/verify-totp-response.dto';
+// import { VerifyTotpResponseDTO } from '../auth/dto/verify-totp-response.dto';
 
 @ApiTags('User')
 @Controller('user')

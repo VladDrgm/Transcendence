@@ -3,7 +3,7 @@ import * as styles from './PrivateDivStyles';
 import { getPrivateProfile } from '../../api/profile.api';
 import { useUserContext } from '../context/UserContext';
 import imageAssetAchievement1 from '../assets/achievement1.png'
-import { fetchAddress } from './channel_div';
+import { fetchAddress } from './ChannelDiv';
 import { achievementListItemStyle, achievementTextStyle, centeredContainerStyle, listContainerStyle, listStyle } from './UserProfileSyles';
 
 

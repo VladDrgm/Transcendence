@@ -1,7 +1,6 @@
-import { User } from "../interfaces/user.interface";
-import { fetchAddress } from "../components/div/channel_div";
+import { User } from "../interfaces/User";
+import { fetchAddress } from "../components/div/ChannelDiv";
 
-// var fetchAddress = 'http://localhost:3000/';
 var fetchUserAddress = fetchAddress + 'user/';
 const slash = '/';
 const updatePasswordEndpoint = '/update/password';
@@ -19,7 +18,6 @@ export const updateUserStatus = async () => {
 
 export const getUserByToken = async (token:string | undefined): Promise<User> => {
 	  try {
-		// Make API call and get the response
 		const response = await fetch(fetchUserAddress + 'authToken/' + token, {
 		  method: "GET",
 		  headers: {
@@ -96,7 +94,6 @@ export const enableTFA = async (userID: number | undefined, secret: string, intr
 
 export const updatePasswordApi = async (userID: number | undefined, newPassword: string, intra:string | undefined, token:string | undefined): Promise<User> => {
 	try {
-	  // Make API call and get the response
 	  const response = await fetch(fetchUserAddress + userID + slash + newPassword + updatePasswordEndpoint, {
 		method: "PUT",
 		headers: {
@@ -121,7 +118,6 @@ export const updatePasswordApi = async (userID: number | undefined, newPassword:
 
   export const updateUsernameApi = async (userID: number | undefined, newUsername: string, intra:string | undefined, token:string | undefined): Promise<User> => {
 	try {
-	  // Make API call and get the response
 	  const response = await fetch(fetchUserAddress + userID + "/" + userID  + updateUsernameEndpoint + newUsername, {
 		method: "PUT",
 		headers: {

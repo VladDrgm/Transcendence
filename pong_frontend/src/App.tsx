@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, {  useState, useEffect } from 'react';
 import { Route, BrowserRouter as Router, Navigate, Routes } from 'react-router-dom';
 import { useUserContext } from './components/context/UserContext';
 import LoginPage from './components/auth/LoginPage';
@@ -16,12 +16,12 @@ import PublicProfileMainDiv from './components/main_div/PublicProfileMainDiv';
 import TFAVerification from './components/auth/TFAVerification';
 import MyFriendsPage from './components/mainPages/MyFriends';
 import { postUserStatus } from './api/statusUpdateAPI.api';
-import { AppState } from "react-native";
+// import { AppState } from "react-native";
 import LogoutHandler from './components/main_div/LogOutHandler';
 
 const App = () => {
-	const appState = useRef(AppState.currentState);
-  	const [appStateVisible, setAppStateVisible] = useState(appState.current);
+	const { user, setUser } = useUserContext();
+	const [friendID, friend_set] = useState<number>(-1);
 
 	useEffect(() => {
 		const localUser = localStorage.getItem('user');
@@ -29,11 +29,9 @@ const App = () => {
 		setUser(localParsedUser);
 	
 		return () => {};
+	  // eslint-disable-next-line react-hooks/exhaustive-deps
 	  }, []);
 
-	const { user, setUser } = useUserContext();
-
-	const [friendID, friend_set] = useState<number>(-1);
 
 	const handleLogout = async () => {
 		const localUser = localStorage.getItem('user');
