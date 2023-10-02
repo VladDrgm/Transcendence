@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import Pagination from '../div/Paginationn';
+import Pagination from '../div/Pagination';
 import { MatchHistoryItem } from '../../interfaces/MatchHistory';
 import { UsernameItem } from '../../interfaces/UsernameList';
 import { getGlobalMatchHistory, getPersonalMatchHistory } from '../../api/matchHistory.api';
