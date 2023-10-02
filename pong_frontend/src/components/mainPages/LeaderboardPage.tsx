@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import * as styles from './LeaderboardPageStyles';
 import { getLeaderboard } from '../../api/leaderboard.api';
 import LeaderboardUser from './LeaderboardUser';
-import { User } from '../../interfaces/user.interface';
+import { User } from '../../interfaces/User';
 import { postUserStatus } from '../../api/statusUpdateAPI.api';
 import { useUserContext } from '../context/UserContext';
 

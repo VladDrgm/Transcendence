@@ -1,5 +1,5 @@
 import { FC, useEffect, useState } from 'react';
-import { IUser } from '../interfaces/interface';
+import { IUser } from '../interfaces/IUser';
 import { getUsers } from '../api/userApi';
 
 export const UserList: FC = () => {

@@ -12,7 +12,7 @@ import {
   UseInterceptors,
   UploadedFile,
   BadRequestException,
-  Patch
+  Patch,
 } from '@nestjs/common';
 import { UserService } from './userservice';
 import { User } from 'src/models/orm_models/user.entity';
@@ -20,9 +20,9 @@ import { UserDTO, UserListDto } from './userDTO';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UploadAvatarDto } from './UploadAvatarDTO';
 import { UserAuthDTO } from '../authProtectorService/authProtector';
-import { GenerateTotpDTO } from '../auth/dto/generate-totp.dto';
+// import { GenerateTotpDTO } from '../auth/dto/generate-totp.dto';
 import { VerifyTotpDTO } from '../auth/dto/verify-totp.dto';
-import { VerifyTotpResponseDTO } from '../auth/dto/verify-totp-response.dto';
+// import { VerifyTotpResponseDTO } from '../auth/dto/verify-totp-response.dto';
 
 @ApiTags('User')
 @Controller('user')
@@ -108,12 +108,6 @@ export class UserController {
     return users;
   }
 
-  //   @Post('user/signup')
-  //   @ApiOperation({ summary: 'Sign up' })
-  //   async postUserLoggedIn(@Body() userDto: UserDTO): Promise<User> {
-  //     return this.userService.postUserLoggedIn(userDto);
-  //   }
-
   @Post(':userName/:password/login/confirm')
   @ApiOperation({ summary: 'Log in' })
   async confirmUserLoggedIn(
@@ -176,20 +170,19 @@ export class UserController {
     );
   }
 
-    @Patch(':callerId/:targetId/:status')
-    @ApiOperation({ summary: 'Update the status of a user' })
-    async updateStatus(
-      @Param('callerId', ParseIntPipe) callerId: number,
-      @Param('targetId', ParseIntPipe) targetId: number,
-      @Param('status') status: string,
-      @Body() loggedUser: UserAuthDTO,
-    ): Promise<UserDTO> {
-      return await this.userService.updateStatus(
-        loggedUser,
-        callerId,
-        targetId,
-        status,
-      );
-    }
-
+  @Patch(':callerId/:targetId/:status')
+  @ApiOperation({ summary: 'Update the status of a user' })
+  async updateStatus(
+    @Param('callerId', ParseIntPipe) callerId: number,
+    @Param('targetId', ParseIntPipe) targetId: number,
+    @Param('status') status: string,
+    @Body() loggedUser: UserAuthDTO,
+  ): Promise<UserDTO> {
+    return await this.userService.updateStatus(
+      loggedUser,
+      callerId,
+      targetId,
+      status,
+    );
+  }
 }

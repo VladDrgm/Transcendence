@@ -5,7 +5,10 @@ import { Repository } from 'typeorm';
 import { User } from 'src/models/orm_models/user.entity';
 import { UserService } from '../user/userservice';
 import { FriendDto } from './friendDto';
-import { AuthProtector, UserAuthDTO } from '../authProtectorService/authProtector';
+import {
+  AuthProtector,
+  UserAuthDTO,
+} from '../authProtectorService/authProtector';
 import { UserDTO } from '../user/userDTO';
 
 export class FriendRepository extends Repository<Friend> {}
@@ -16,20 +19,26 @@ export class FriendService {
     @InjectRepository(Friend)
     private readonly friendRepository: Repository<Friend>,
     private readonly userService: UserService,
-    private readonly authProtector: AuthProtector
+    private readonly authProtector: AuthProtector,
   ) {}
 
   async findOne(id: number): Promise<Friend> {
     return this.friendRepository.findOneBy({ FId: id });
   }
 
-  async remove(loggedUser:UserAuthDTO, userId: number, friendId: number): Promise<Friend> {
-
-    if(parseInt(process.env.FEATURE_FLAG) === 1) {
-        const authPass  = await this.authProtector.protectorCheck(loggedUser.passwordHash, userId);
-        if (!authPass) {
-            throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
-        }
+  async remove(
+    loggedUser: UserAuthDTO,
+    userId: number,
+    friendId: number,
+  ): Promise<Friend> {
+    if (parseInt(process.env.FEATURE_FLAG) === 1) {
+      const authPass = await this.authProtector.protectorCheck(
+        loggedUser.passwordHash,
+        userId,
+      );
+      if (!authPass) {
+        throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+      }
     }
 
     if (userId === friendId) {
@@ -53,41 +62,51 @@ export class FriendService {
     return friend;
   }
 
-  async findUserFriends(loggedUser: UserAuthDTO, callerId: number): Promise<UserDTO[]> {
-
-    if(parseInt(process.env.FEATURE_FLAG) === 1) {
-        const authPass  = await this.authProtector.protectorCheck(loggedUser.passwordHash, callerId);
-        if (!authPass) {
-            throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
-        }
+  async findUserFriends(
+    loggedUser: UserAuthDTO,
+    callerId: number,
+  ): Promise<UserDTO[]> {
+    if (parseInt(process.env.FEATURE_FLAG) === 1) {
+      const authPass = await this.authProtector.protectorCheck(
+        loggedUser.passwordHash,
+        callerId,
+      );
+      if (!authPass) {
+        throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+      }
     }
-
 
     const friends = await this.friendRepository.findBy({ UserId: callerId });
 
     const result = [];
 
     for (const friend of friends) {
-        const user = await this.userService.findOne(friend.FriendId);
-        const userDto = UserDTO.fromEntity(user);
-        result.push(userDto);
+      const user = await this.userService.findOne(friend.FriendId);
+      const userDto = UserDTO.fromEntity(user);
+      result.push(userDto);
     }
 
     return result;
   }
 
-  async findFriendById(loggedUser: UserAuthDTO, callerId: number, targetId: number): Promise<UserDTO> {
-
-    if(parseInt(process.env.FEATURE_FLAG) === 1) {
-        const authPass  = await this.authProtector.protectorCheck(loggedUser.passwordHash, callerId);
-        if (!authPass) {
-            throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
-        }
+  async findFriendById(
+    loggedUser: UserAuthDTO,
+    callerId: number,
+    targetId: number,
+  ): Promise<UserDTO> {
+    if (parseInt(process.env.FEATURE_FLAG) === 1) {
+      const authPass = await this.authProtector.protectorCheck(
+        loggedUser.passwordHash,
+        callerId,
+      );
+      if (!authPass) {
+        throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+      }
     }
 
     const friend = await this.friendRepository.findOneBy({
       UserId: callerId,
-      FriendId: targetId
+      FriendId: targetId,
     });
 
     if (!friend) {
@@ -99,18 +118,27 @@ export class FriendService {
     return UserDTO.fromEntity(result);
   }
 
-  async getFriendStatus(loggedUser: UserAuthDTO, callerId: number, targetId: number): Promise<string> {
+  async getFriendStatus(
+    loggedUser: UserAuthDTO,
+    callerId: number,
+    targetId: number,
+  ): Promise<string> {
     return (await this.findFriendById(loggedUser, callerId, targetId)).status;
   }
 
-  async getFriendsStatuses(loggedUser: UserAuthDTO, userId: number): Promise<string[]> {
-    if(parseInt(process.env.FEATURE_FLAG) === 1) {
-        const authPass  = await this.authProtector.protectorCheck(loggedUser.passwordHash, userId);
-        if (!authPass) {
-            throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
-        }
+  async getFriendsStatuses(
+    loggedUser: UserAuthDTO,
+    userId: number,
+  ): Promise<string[]> {
+    if (parseInt(process.env.FEATURE_FLAG) === 1) {
+      const authPass = await this.authProtector.protectorCheck(
+        loggedUser.passwordHash,
+        userId,
+      );
+      if (!authPass) {
+        throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+      }
     }
-
 
     const result = [];
     const friends = await this.findUserFriends(loggedUser, userId);
@@ -123,12 +151,14 @@ export class FriendService {
   }
 
   async addFriend(loggedUser: UserAuthDTO, dto: FriendDto): Promise<User> {
-
-    if(parseInt(process.env.FEATURE_FLAG) === 1) {
-        const authPass  = await this.authProtector.protectorCheck(loggedUser.passwordHash, dto.UserId);
-        if (!authPass) {
-            throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
-        }
+    if (parseInt(process.env.FEATURE_FLAG) === 1) {
+      const authPass = await this.authProtector.protectorCheck(
+        loggedUser.passwordHash,
+        dto.UserId,
+      );
+      if (!authPass) {
+        throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+      }
     }
 
     if (dto.UserId === dto.FriendId) {

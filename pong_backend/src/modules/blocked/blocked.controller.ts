@@ -3,8 +3,7 @@ import { Controller, Put, Post, Delete, Body, Param } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiParam } from '@nestjs/swagger';
 import { BlockedService } from './blocked.service';
 import { Blocked } from 'src/models/orm_models/blocked.entity';
-import { CreateBlockedDto } from './blockedDTO';
-import { AuthProtector, UserAuthDTO } from '../authProtectorService/authProtector';
+import { UserAuthDTO } from '../authProtectorService/authProtector';
 
 @ApiTags('Blocked')
 @Controller('blocked')
@@ -16,12 +15,15 @@ export class BlockedController {
   @ApiParam({ name: 'requesterId', description: 'Caller ID' })
   async getBlockedUserById(
     @Param('requesterId') requesterId: number,
-    @Body() loggedUser : UserAuthDTO
+    @Body() loggedUser: UserAuthDTO,
   ): Promise<Blocked[]> {
-    return this.blockedService.findAllBlockedForOneUser(loggedUser, requesterId);
+    return this.blockedService.findAllBlockedForOneUser(
+      loggedUser,
+      requesterId,
+    );
   }
 
-  @Post(":callerId/:targetId")
+  @Post(':callerId/:targetId')
   @ApiOperation({ summary: 'Block a user' })
   @ApiParam({
     name: 'callerId',
@@ -40,12 +42,12 @@ export class BlockedController {
   async blockUser(
     @Param('callerId') callerId: number,
     @Param('targetId') targetId: number,
-    @Body() loggedUser : UserAuthDTO
+    @Body() loggedUser: UserAuthDTO,
   ): Promise<Blocked> {
     return this.blockedService.blockUser(loggedUser, callerId, targetId);
   }
 
-  @Delete(":callerId/:targetId")
+  @Delete(':callerId/:targetId')
   @ApiOperation({ summary: 'Unblock a user' })
   @ApiParam({
     name: 'callerId',
@@ -64,9 +66,13 @@ export class BlockedController {
   async unblockUser(
     @Param('callerId') callerId: number,
     @Param('targetId') targetId: number,
-    @Body() loggedUser : UserAuthDTO
+    @Body() loggedUser: UserAuthDTO,
   ): Promise<string> {
-    return await this.blockedService.unblockUser(loggedUser, callerId, targetId);
+    return await this.blockedService.unblockUser(
+      loggedUser,
+      callerId,
+      targetId,
+    );
   }
 
   @Put(':callerId/:blockedId')
@@ -88,8 +94,12 @@ export class BlockedController {
   async checkIfBlocked(
     @Param('callerId') callerId: number,
     @Param('blockedId') blockedId: number,
-    @Body() loggedUser : UserAuthDTO
+    @Body() loggedUser: UserAuthDTO,
   ): Promise<Blocked> {
-    return await this.blockedService.getOneBlockedUser(loggedUser, callerId, blockedId);
+    return await this.blockedService.getOneBlockedUser(
+      loggedUser,
+      callerId,
+      blockedId,
+    );
   }
 }

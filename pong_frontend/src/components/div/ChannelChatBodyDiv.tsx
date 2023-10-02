@@ -1,7 +1,7 @@
-import React, { KeyboardEvent } from 'react';
-import { ChannelUserRoles, ChatData, ChatName, ChatProps, Message } from '../../interfaces/channel.interface';
-import {renderMessages } from './chat_utils';
-import { popUpJoinPrivateChannel } from './channel_popups';
+import React from 'react';
+import { ChannelUserRoles, ChatData, ChatName, ChatProps, Message } from '../../interfaces/Channel';
+import {renderMessages } from './ChatUtils';
+import { popUpJoinPrivateChannel } from './ChannelPopups';
 import { Messages, chatButtonsStyle } from '../mainPages/ChatPageStyles';
 
 interface ChatBodyProps {

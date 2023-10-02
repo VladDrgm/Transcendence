@@ -41,7 +41,6 @@ export class ProfileController {
     else return ret;
   }
 
-
   @Get('myID')
   getMyID(@Session() session: Record<string, any>): string {
     return 'This session ID is: ' + this.sharedSession.getMyID(session);

@@ -3,8 +3,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Blocked } from 'src/models/orm_models/blocked.entity';
 import { Repository } from 'typeorm';
 import { UserService } from '../user/userservice';
-import { CreateBlockedDto } from './blockedDTO';
-import { AuthProtector, UserAuthDTO } from '../authProtectorService/authProtector';
+import {
+  AuthProtector,
+  UserAuthDTO,
+} from '../authProtectorService/authProtector';
 
 export class BlockedRepository extends Repository<Blocked> {}
 
@@ -14,15 +16,21 @@ export class BlockedService {
     @InjectRepository(Blocked)
     private readonly blockedRepository: Repository<Blocked>,
     private readonly userService: UserService,
-    private readonly authProtector: AuthProtector
+    private readonly authProtector: AuthProtector,
   ) {}
 
-  async findAllBlockedForOneUser(loggedUser: UserAuthDTO, callerId: number): Promise<Blocked[]> {
+  async findAllBlockedForOneUser(
+    loggedUser: UserAuthDTO,
+    callerId: number,
+  ): Promise<Blocked[]> {
     if (parseInt(process.env.FEATURE_FLAG) === 1) {
-        const authPass  = await this.authProtector.protectorCheck(loggedUser.passwordHash, callerId);
-        if (!authPass) {
-            throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
-        }
+      const authPass = await this.authProtector.protectorCheck(
+        loggedUser.passwordHash,
+        callerId,
+      );
+      if (!authPass) {
+        throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+      }
     }
 
     const result = await this.blockedRepository
@@ -39,8 +47,6 @@ export class BlockedService {
     const userId = callerId;
     const blockId = targetId;
 
-    
-
     if (userId == blockId) {
       throw new HttpException('Cannot block yourself', 400);
     }
@@ -54,18 +60,15 @@ export class BlockedService {
     }
 
     if (parseInt(process.env.FEATURE_FLAG) === 1) {
-        const authPass  = await this.authProtector.protectorCheck(loggedUser.passwordHash, callerId);
-        if (!authPass) {
-            throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
-        }
+      const authPass = await this.authProtector.protectorCheck(
+        loggedUser.passwordHash,
+        callerId,
+      );
+      if (!authPass) {
+        throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+      }
     }
 
-    // const existingBlocked = await this.blockedRepository.findOne({
-    //   where: {
-    //     user: userId,
-    //     blockedUser: blockId,
-    //   },
-    // });
     const existingBlocked = await this.blockedRepository
       .createQueryBuilder('blocked')
       .leftJoinAndSelect('blocked.user', 'user')
@@ -73,15 +76,10 @@ export class BlockedService {
       .where('blocked.user.userID = :userId', { userId })
       .andWhere('blocked.blockedUser.userID = :blockId', { blockId })
       .getOne();
-  
+
     if (existingBlocked) {
       throw new HttpException('User already blocked', 400);
     }
-
-    // const isBlockedExisting = await this.blockedRepository.findBy( { user: userId, blockedUser: blockId } );
-    // if (isBlockedExisting) {
-    //   throw new HttpException('User already blocked', 400);
-    // }
 
     const blocked = new Blocked();
     blocked.user = await this.userService.findOne(userId);
@@ -91,27 +89,29 @@ export class BlockedService {
   }
 
   async unblockUser(loggedUser, callerId, targetId): Promise<string> {
-
     const userId = callerId;
     const blockId = targetId;
 
     if (userId == blockId) {
-        throw new HttpException('Cannot unblock yourself', 400);
+      throw new HttpException('Cannot unblock yourself', 400);
     }
 
     if (!userId) {
-        throw new HttpException('No user id provided', 400);
+      throw new HttpException('No user id provided', 400);
     }
 
     if (!blockId) {
-        throw new HttpException('No block id provided', 400);
+      throw new HttpException('No block id provided', 400);
     }
 
     if (parseInt(process.env.FEATURE_FLAG) === 1) {
-        const authPass  = await this.authProtector.protectorCheck(loggedUser.passwordHash, callerId);
-        if (!authPass) {
-            throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
-        }
+      const authPass = await this.authProtector.protectorCheck(
+        loggedUser.passwordHash,
+        callerId,
+      );
+      if (!authPass) {
+        throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+      }
     }
 
     const blocked = await this.blockedRepository
@@ -131,27 +131,30 @@ export class BlockedService {
   }
 
   async getOneBlockedUser(loggedUser, callerId, targetId): Promise<Blocked> {
-
     if (parseInt(process.env.FEATURE_FLAG) === 1) {
-        const authPass  = await this.authProtector.protectorCheck(loggedUser.passwordHash, callerId);
-        if (!authPass) {
-            throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
-        }
+      const authPass = await this.authProtector.protectorCheck(
+        loggedUser.passwordHash,
+        callerId,
+      );
+      if (!authPass) {
+        throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+      }
     }
 
     const isBlocked = await this.blockedRepository
-                            .createQueryBuilder('blocked')
-                            .leftJoinAndSelect('blocked.user', 'user')
-                            .leftJoinAndSelect('blocked.blockedUser', 'blockedUser')
-                            .where('blocked.blockedUser.userID = :targetId', { targetId })
-                            .getOne();
-
+      .createQueryBuilder('blocked')
+      .leftJoinAndSelect('blocked.user', 'user')
+      .leftJoinAndSelect('blocked.blockedUser', 'blockedUser')
+      .where('blocked.blockedUser.userID = :targetId', { targetId })
+      .getOne();
 
     if (!isBlocked || isBlocked.user.userID != callerId) {
       throw new HttpException('No such blocked user', 200);
     }
-    const result = await this.blockedRepository.findOneBy({ blockId: isBlocked.blockId });
-    
+    const result = await this.blockedRepository.findOneBy({
+      blockId: isBlocked.blockId,
+    });
+
     return result;
   }
 }

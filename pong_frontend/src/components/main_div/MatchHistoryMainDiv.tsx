@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import Pagination from '../div/pagination';
-import { MatchHistoryItem } from '../../interfaces/matchHistory.interface';
-import { UsernameItem } from '../../interfaces/username_list.interface';
+import Pagination from '../div/Pagination';
+import { MatchHistoryItem } from '../../interfaces/MatchHistory';
+import { UsernameItem } from '../../interfaces/UsernameList';
 import { getGlobalMatchHistory, getPersonalMatchHistory } from '../../api/matchHistory.api';
 import { getUserList } from '../../api/user_list.api';
 import { useUserContext } from '../context/UserContext';

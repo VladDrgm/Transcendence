@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { Channel, Channel_Div_props } from '../../interfaces/channel.interface';
-import  {ChatProps} from '../../interfaces/channel.interface';
-import {renderRooms, fetchPublicChannels, fetchPrivateChannels} from './channel_utils';
-import { popUpJoinPrivateChannel, popUpCreateChannel } from './channel_popups';
+import { Channel, Channel_Div_props } from '../../interfaces/Channel';
+import {renderRooms, fetchPublicChannels, fetchPrivateChannels} from './ChannelUtils';
+import {  popUpCreateChannel } from './ChannelPopups';
 import { chatButtonsStyle } from '../mainPages/ChatPageStyles';
 
 // export var fetchAddress = 'http://localhost:3000/';

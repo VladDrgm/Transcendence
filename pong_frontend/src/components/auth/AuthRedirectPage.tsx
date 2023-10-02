@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { getUserByToken } from '../../api/userApi';
@@ -8,7 +9,7 @@ const AuthRedirectPage: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const { user, setUser } = useUserContext();
+  const { setUser } = useUserContext();
 
   useEffect(() => {
     const fetchUserAndRedirect = async () => {
@@ -38,7 +39,7 @@ const AuthRedirectPage: React.FC = () => {
 		if (newUser.is2FAEnabled) {
 			navigate('/verify-2fa', { replace: true });
 		} else {
-			if (await postUserStatus("Online", newUser) == true) {
+			if (await postUserStatus("Online", newUser) === true) {
 				newUser.status = "Online";
 				localStorage.setItem('user', JSON.stringify(newUser));
 				setUser(newUser);

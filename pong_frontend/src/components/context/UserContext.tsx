@@ -1,6 +1,5 @@
-// UserContext.tsx
 import { createContext, useContext, useState } from 'react';
-import { User } from '../../interfaces/user.interface';
+import { User } from '../../interfaces/User';
 import React from 'react';
 
 interface UserContextValue {

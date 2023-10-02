@@ -1,9 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
-import { Blocked } from './blocked.entity';
-import { Friend } from './friend.entity';
-import { ChannelAdmin } from './channel_admin.entity';
-import { ChannelBlockedUser } from './channel_blocked_user.entity';
-import { ChannelUser } from './channel_user.entity';
+import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
 @Entity({ name: 'User' })
 export class User {
@@ -18,7 +13,7 @@ export class User {
   username: string;
 
   @Column({
-	nullable: true,
+    nullable: true,
     name: 'avatar',
     type: 'text',
   })
@@ -56,9 +51,9 @@ export class User {
   achievementsCSV: string;
 
   @Column({
-	type: 'text',
-	name: '42IntraUsername',
-	default: null,
+    type: 'text',
+    name: '42IntraUsername',
+    default: null,
   })
   intraUsername: string;
 
@@ -70,19 +65,19 @@ export class User {
 
   @Column({
     type: 'boolean',
-    default: false
+    default: false,
   })
   isTFAEnabled: boolean;
 
   @Column({
     type: 'text',
-    default: null
+    default: null,
   })
   token: string;
 
   @Column({
     type: 'text',
-    default: null
+    default: null,
   })
   TFASecret: string;
 

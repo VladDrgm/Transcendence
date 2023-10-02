@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Delete, Param, Body, Put } from '@nestjs/common';
+import { Controller, Post, Delete, Param, Body, Put } from '@nestjs/common';
 import { ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 import { Friend } from 'src/models/orm_models/friend.entity';
 import { FriendService } from './friend.service';
@@ -16,7 +16,8 @@ export class FriendController {
   @ApiOperation({ summary: 'Get all friends of a user' })
   async getUserFriends(
     @Param('id') id: number,
-    @Body() loggedUser: UserAuthDTO): Promise<UserDTO[]> {
+    @Body() loggedUser: UserAuthDTO,
+  ): Promise<UserDTO[]> {
     const friends = await this.friendService.findUserFriends(loggedUser, id);
     return friends;
   }
@@ -28,9 +29,13 @@ export class FriendController {
   async getFriendById(
     @Param('callerId') callerId: number,
     @Param('targetId') targetId: number,
-    @Body() loggedUser: UserAuthDTO
+    @Body() loggedUser: UserAuthDTO,
   ): Promise<UserDTO> {
-    const friend = await this.friendService.findFriendById(loggedUser, callerId, targetId);
+    const friend = await this.friendService.findFriendById(
+      loggedUser,
+      callerId,
+      targetId,
+    );
     return friend;
   }
 
@@ -41,7 +46,7 @@ export class FriendController {
   async getFriendStatus(
     @Param('callerId') callerId: number,
     @Param('targetId') targetId: number,
-    @Body() loggedUser: UserAuthDTO
+    @Body() loggedUser: UserAuthDTO,
   ): Promise<string> {
     return this.friendService.getFriendStatus(loggedUser, callerId, targetId);
   }
@@ -49,7 +54,10 @@ export class FriendController {
   @Put(':id/friends/status')
   @ApiOperation({ summary: 'Get the statuses of all friends of a user' })
   @ApiParam({ name: 'id', description: 'User ID' })
-  async getFriendsStatuses(@Param('id') id: number, @Body() loggedUser: UserAuthDTO): Promise<string[]> {
+  async getFriendsStatuses(
+    @Param('id') id: number,
+    @Body() loggedUser: UserAuthDTO,
+  ): Promise<string[]> {
     return this.friendService.getFriendsStatuses(loggedUser, id);
   }
 
@@ -60,7 +68,7 @@ export class FriendController {
   async remove(
     @Param('callerId') callerId: number,
     @Param('targetId') targetId: number,
-    @Body() loggedUser: UserAuthDTO
+    @Body() loggedUser: UserAuthDTO,
   ): Promise<Friend> {
     return await this.friendService.remove(loggedUser, callerId, targetId);
   }
@@ -72,7 +80,7 @@ export class FriendController {
   async add(
     @Param('callerId') callerId: number,
     @Param('targetId') targetId: number,
-    @Body() loggedUser: UserAuthDTO
+    @Body() loggedUser: UserAuthDTO,
   ): Promise<User> {
     const dto: FriendDto = { UserId: callerId, FriendId: targetId };
     return await this.friendService.addFriend(loggedUser, dto);

@@ -4,14 +4,14 @@ import { userSignupAPI } from '../../api/authAPI';
 import { useUserContext } from '../context/UserContext';
 import * as styles from './CompleteProfilePageStyles';
 import imageAssetUploadAvatar from '../assets/uploadAvatar.png';
-import { User } from '../../interfaces/user.interface';
+import { User } from '../../interfaces/User';
 import { updateAvatarApi, updateUsernameApi } from '../../api/userApi';
 import ErrorPopup from '../Popups/ErrorPopup';
 import { postUserStatus } from '../../api/statusUpdateAPI.api';
 
 
 const CompleteProfilePage: React.FC = () => {{
-	const { user, setUser } = useUserContext();
+	const { setUser } = useUserContext();
 	const navigate = useNavigate();
 	const location = useLocation();
 
@@ -88,7 +88,7 @@ const CompleteProfilePage: React.FC = () => {{
 			if (enable2FA) { 
 				navigate(`/setup-2fa`);
 			} else {
-				if (await postUserStatus("Online", newCreatedUser) == true) {
+				if (await postUserStatus("Online", newCreatedUser) === true) {
 					newCreatedUser.status = "Online";
 					localStorage.setItem('user', JSON.stringify(newCreatedUser));
 					setUser(newCreatedUser);

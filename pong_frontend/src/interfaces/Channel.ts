@@ -1,7 +1,7 @@
-import React, { FC, ChangeEvent, KeyboardEvent } from "react";
-import { Invitation, User } from "./user.interface";
+import React from "react";
+import { Invitation, User } from "./User";
 import { Socket } from "socket.io-client";
-import { CurrentChat } from "../components/mainPages/Arena_Chat";
+// import { CurrentChat } from "../components/mainPages/Arena_Chat";
 // import { main_div_mode_t } from "../components/MainDivSelector";
 
 export interface Channel {

@@ -1,6 +1,5 @@
-import { json } from "stream/consumers";
-import { fetchAddress } from "../../components/div/channel_div";
-import { User } from "../../interfaces/user.interface";
+import { fetchAddress } from "../../components/div/ChannelDiv";
+import { User } from "../../interfaces/User";
 
 //to be tested
 export async function getAdmins(channelId: number): Promise<any[]>{

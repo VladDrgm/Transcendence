@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUserContext } from '../context/UserContext';
-import { fetchAddress } from '../div/channel_div';
+import { fetchAddress } from '../div/ChannelDiv';
 import { updateAvatarApi, updateUsernameApi } from '../../api/userApi';
 import { getPrivateProfile } from '../../api/profile.api';
 import * as styles from './SettingsPageStyles';
