@@ -6,7 +6,6 @@ import imageAssetAchievement1 from '../assets/achievement1.png'
 import { fetchAddress } from './ChannelDiv';
 import { achievementListItemStyle, achievementTextStyle, centeredContainerStyle, listContainerStyle, listStyle } from './UserProfileSyles';
 
-
 interface PrivateDivProps
 {
   userID: number | undefined;
