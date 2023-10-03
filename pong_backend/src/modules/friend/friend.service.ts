@@ -191,13 +191,16 @@ export class FriendService {
         }
     }
 
-    const friend = await this.friendRepository.findOneBy({
-      UserId: callerId,
-      FriendId: targetId,
-    });
+    // const friends = await this.friendRepository.findBy({
+    //   UserId: callerId
+    // });
+
+    // const friend = friends.find(friend => friend.FriendId === targetId);
+
+    const friend = await this.friendRepository.findOneBy({ UserId: callerId, FriendId: targetId });
 
     if (!friend) {
-      return "Not friend.";
+      return "Not a friend";
     }
 
     return "Is a friend.";
