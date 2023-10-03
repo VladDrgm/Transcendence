@@ -62,12 +62,7 @@ const App = () => {
                 <Route path="/" element={user ? <Navigate to="/app/home" replace /> : <Navigate to="/login" replace />} />
                 <Route path="/login" element={<LoginPage />} />
 				<Route path="app/logout" element={<LogoutHandler onLogout={handleLogout} />}/>
-				<Route path="/complete_profile" element={user == null ? (
-					<Navigate to="/login" replace /> 
-					) : (
-					<CompleteProfilePage />
-					)}
-				/>
+	            <Route path="/complete_profile" element={<CompleteProfilePage />} />
                 <Route path="/auth_redirect" element={<AuthRedirectPage />} />
                 <Route path='/setup-2fa' element={<TFASetup />} />
                 <Route path='/verify-2fa' element={<TFAVerification />} />
