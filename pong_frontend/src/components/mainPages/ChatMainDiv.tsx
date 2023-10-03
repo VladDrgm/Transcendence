@@ -729,10 +729,10 @@ const ChatMainDiv: FC<ChatProps> = (props) => {
 						<button
 						style={userButtonStyle}
 						onClick={() => {
-						openFriend(currentChat.chatName.toString())
+						openFriend(currentChat.chatId!.toString())
 						}}
 						>
-						{currentChat.chatName.toString()}
+						{currentChat.chatId!.toString()}
 						</button>
 					</div>
 
