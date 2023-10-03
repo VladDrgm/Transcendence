@@ -63,7 +63,7 @@ const ChatMainDiv: FC<ChatProps> = (props) => {
 				.then((channels) => {
 					setAllChannels(channels);
 					const currentChannel = getChannelFromChannellist(channels, "general");
-					console.log("Channels: ", currentChannel);
+					// console.log("Channels: ", currentChannel);
 					if (currentChannel) {
 						// console.log("gotChannel");
 						setCurrentChat((prevState) => ( {
@@ -202,7 +202,7 @@ const ChatMainDiv: FC<ChatProps> = (props) => {
 		else if(!currentChat.isChannel){
 			handleUserDirektMessageStatus();
 		}
-		console.log("in effect currentChat:", currentChat);
+		// console.log("in effect currentChat:", currentChat);
 	}, [currentChat.chatName])
 
 
@@ -214,6 +214,7 @@ const ChatMainDiv: FC<ChatProps> = (props) => {
 		if (!currentChat.isResolved){
 			return;
 		}
+		console.log(currentChat);
 		getUserIDByUserName(currentChat.chatId!.toString())
 			.then((result) => {
 				if(result !== undefined){
@@ -625,7 +626,7 @@ const ChatMainDiv: FC<ChatProps> = (props) => {
 			setCurrentChat((prevChat) => {
 			console.log("currenchat", prevChat.chatName);
 	
-				if( prevChat.chatName === callerName){
+				if( prevChat.chatId === callerName){
 					setCurrentRoles((prevRoles) => ({
 						...prevRoles,
 						isBlocked: true
@@ -646,7 +647,7 @@ const ChatMainDiv: FC<ChatProps> = (props) => {
 			setCurrentChat((prevChat) => {
 			console.log("currenchat", prevChat.chatName);
 	
-				if( prevChat.chatName === callerName){
+				if( prevChat.chatId === callerName){
 					setCurrentRoles((prevRoles) => ({
 						...prevRoles,
 						isBlocked: false
@@ -691,8 +692,8 @@ const ChatMainDiv: FC<ChatProps> = (props) => {
 			currentChat={currentChat}
 			joinPrivateRoom={joinPrivateRoom}
 		/>);
-		console.log(currentChat.chatName);
-		console.log(messages[currentChat.chatName]);
+		// console.log(currentChat.chatName);
+		// console.log(messages[currentChat.chatName]);
 	}, [messages, currentRoles]);
 
 	const openFriend = async (userName: string) => {
@@ -825,10 +826,14 @@ const ChatMainDiv: FC<ChatProps> = (props) => {
 
 	//SOCKET FUNCTIONS
 	function blockUserSocket(targetId: string | number, username: string | undefined) {
+		console.log("targetID:", targetId);
+		console.log("username:", username);
 		props.socketRef.current?.emit('block user', {targetId, username});
 	}
 
 	function unblockUserSocket(targetId: string | number, username: string | undefined) {
+		console.log("targetID:", targetId);
+		console.log("username:", username);
 		props.socketRef.current?.emit('unblock user', {targetId, username});
 	}
 
