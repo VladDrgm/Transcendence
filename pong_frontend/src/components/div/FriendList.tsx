@@ -1,9 +1,9 @@
 import { FC, useEffect, useState } from 'react';
-import { FriendProfile } from '../../interfaces/friend_profile.interface';
+import { FriendProfile } from '../../interfaces/FriendProfile';
 import { getFriendList } from '../../api/friend_list.api';
 import { useUserContext } from '../context/UserContext';
 import { Link } from 'react-router-dom';
-import { fetchAddress } from './channel_div';
+import { fetchAddress } from './ChannelDiv';
 import { profilePictureStyle } from './UserProfileSyles';
 import { friendCardContainerStyle, friendCardStyle } from '../mainPages/MyFriendsStyles';
 

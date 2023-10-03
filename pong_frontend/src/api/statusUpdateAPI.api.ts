@@ -1,8 +1,8 @@
-import { json } from "stream/consumers";
-import { fetchAddress } from "../components/div/channel_div";
-import { User } from "../interfaces/user.interface";
+import { fetchAddress } from "../components/div/ChannelDiv";
+import { User } from "../interfaces/User";
 
 export function postUserStatus(status: string, user: User): Promise<boolean> {
+    user!.status = status;
     const ChannelData = {
       "intraUsername": user?.intraUsername,
       "passwordHash": user?.passwordHash

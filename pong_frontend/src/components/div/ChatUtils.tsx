@@ -1,5 +1,5 @@
-import { ChatProps, ChatData, Channel, Message } from "../../interfaces/channel.interface";
-import { User } from "../../interfaces/user.interface";
+import { ChatProps, ChatData, Channel, Message } from "../../interfaces/Channel";
+import { User } from "../../interfaces/User";
 import { Row } from "../mainPages/ChatPageStyles";
 
 export function renderUser(user: User, props: ChatProps, toggleChat: any) {

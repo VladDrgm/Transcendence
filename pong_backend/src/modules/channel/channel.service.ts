@@ -6,9 +6,11 @@ import { Repository } from 'typeorm';
 import { ChannelUser } from 'src/models/orm_models/channel_user.entity';
 import { ChannelBlockedUser } from 'src/models/orm_models/channel_blocked_user.entity';
 import { HttpException, HttpStatus } from '@nestjs/common';
-import { CreateChannelDto } from './channelDTO';
 import { PasswordService } from '../password/password.service';
-import { AuthProtector, UserAuthDTO } from '../authProtectorService/authProtector';
+import {
+  AuthProtector,
+  UserAuthDTO,
+} from '../authProtectorService/authProtector';
 
 export class ChannelRepository extends Repository<Channel> {}
 
@@ -24,7 +26,7 @@ export class ChannelService {
     @InjectRepository(ChannelBlockedUser)
     private readonly channelBlockedUserRepository: Repository<ChannelBlockedUser>,
     private readonly passwordService: PasswordService,
-    private readonly authProtector: AuthProtector
+    private readonly authProtector: AuthProtector,
   ) {}
 
   async findAll(): Promise<Channel[]> {
@@ -40,38 +42,47 @@ export class ChannelService {
     return await this.channelRepository.findOneBy({ ChannelId: id });
   }
 
-  async create(loggedUser,
-        callerId,
-        ownerId,
-        channelName,
-        channelType,
-        channelPassword) :Promise<Channel>{
-
-    
+  async create(
+    loggedUser,
+    callerId,
+    ownerId,
+    channelName,
+    channelType,
+    channelPassword,
+  ): Promise<Channel> {
     if (ownerId != callerId) {
+      throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+    }
+
+    if (parseInt(process.env.FEATURE_FLAG) === 1) {
+      const authPass = await this.authProtector.protectorCheck(
+        loggedUser.passwordHash,
+        callerId,
+      );
+      if (!authPass) {
         throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+      }
     }
 
-    if(parseInt(process.env.FEATURE_FLAG) === 1) {
-        const authPass  = await this.authProtector.protectorCheck(loggedUser.passwordHash, callerId);
-        if (!authPass) {
-            throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
-        }
-    }
-
-
-    const channel = await this.channelRepository.findOneBy({ Name: channelName });
+    const channel = await this.channelRepository.findOneBy({
+      Name: channelName,
+    });
     if (channel) {
-        throw new HttpException('Channel name already exists', 400);
+      throw new HttpException('Channel name already exists', 400);
     }
 
     const channelDb = new Channel();
 
     channelDb.Name = channelName;
     channelDb.OwnerId = callerId;
-    if (channelPassword != null && channelPassword != '' && channelPassword != undefined ) {
-    channelDb.Password = await this.passwordService.hashPassword(
-        channelPassword);
+    if (
+      channelPassword != null &&
+      channelPassword != '' &&
+      channelPassword != undefined
+    ) {
+      channelDb.Password = await this.passwordService.hashPassword(
+        channelPassword,
+      );
     }
     channelDb.Type = channelType;
 
@@ -88,25 +99,30 @@ export class ChannelService {
     return channelDb;
   }
 
-  async remove(loggedUser: UserAuthDTO, callerId: number, channelId:number): Promise<void> {
-
+  async remove(
+    loggedUser: UserAuthDTO,
+    callerId: number,
+    channelId: number,
+  ): Promise<void> {
     if (parseInt(process.env.FEATURE_FLAG) === 1) {
-        const authPass  = await this.authProtector.protectorCheck(loggedUser.passwordHash, callerId);
-        if (!authPass) {
-            throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
-        }
+      const authPass = await this.authProtector.protectorCheck(
+        loggedUser.passwordHash,
+        callerId,
+      );
+      if (!authPass) {
+        throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+      }
     }
 
     const channel = await this.findOne(channelId);
     if (!channel) {
-        throw new HttpException('Channel not found', 400);
+      throw new HttpException('Channel not found', 400);
     }
 
     const isOwner = channel.OwnerId == callerId;
     if (!isOwner) {
-        throw new HttpException('You are not the owner of this channel', 400);
+      throw new HttpException('You are not the owner of this channel', 400);
     }
-
 
     await this.channelAdminRepository.delete({ ChannelId: channelId });
     await this.channelUserRepository.delete({ ChannelId: channelId });
@@ -129,10 +145,13 @@ export class ChannelService {
     }
 
     if (parseInt(process.env.FEATURE_FLAG) === 1) {
-        const authPass  = await this.authProtector.protectorCheck(loggedUser.passwordHash, callerId);
-        if (!authPass) {
-            throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
-        }
+      const authPass = await this.authProtector.protectorCheck(
+        loggedUser.passwordHash,
+        callerId,
+      );
+      if (!authPass) {
+        throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+      }
     }
 
     const channel = await this.findOne(channelId);
@@ -176,7 +195,12 @@ export class ChannelService {
       throw new HttpException('Channel not found', 400);
     }
 
-    const channel_user = await this.getChannelUserByUserId(loggedUser, callerId, targetId, channelId);
+    const channel_user = await this.getChannelUserByUserId(
+      loggedUser,
+      callerId,
+      targetId,
+      channelId,
+    );
     if (channel_user) {
       throw new HttpException(
         'User is already in channel.',
@@ -196,10 +220,13 @@ export class ChannelService {
     }
 
     if (parseInt(process.env.FEATURE_FLAG) === 1) {
-        const authPass  = await this.authProtector.protectorCheck(loggedUser.passwordHash, callerId);
-        if (!authPass) {
-            throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
-        }
+      const authPass = await this.authProtector.protectorCheck(
+        loggedUser.passwordHash,
+        callerId,
+      );
+      if (!authPass) {
+        throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+      }
     }
 
     const channelUser = new ChannelUser();
@@ -230,23 +257,28 @@ export class ChannelService {
     channelId: number,
   ): Promise<ChannelUser> {
     if (parseInt(process.env.FEATURE_FLAG) === 1) {
-        const authPass  = await this.authProtector.protectorCheck(loggedUser.passwordHash, callerId);
-        if (!authPass) {
-            throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
-        }
+      const authPass = await this.authProtector.protectorCheck(
+        loggedUser.passwordHash,
+        callerId,
+      );
+      if (!authPass) {
+        throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+      }
     }
 
-    const isChannelOwner = await this.GetChannelOwner(channelId) == userId;
+    const isChannelOwner = (await this.GetChannelOwner(channelId)) == userId;
 
-    const isChannelAdmin = await this.getChannelAdminByUserId(callerId, channelId);
+    const isChannelAdmin = await this.getChannelAdminByUserId(
+      callerId,
+      channelId,
+    );
 
     if (!isChannelOwner && !isChannelAdmin && callerId != userId) {
-        throw new HttpException(
-            'You do not have the credentials to get a user.',
-            HttpStatus.BAD_REQUEST,
-        );
+      throw new HttpException(
+        'You do not have the credentials to get a user.',
+        HttpStatus.BAD_REQUEST,
+      );
     }
-
 
     const user = await this.channelUserRepository.findOneBy({
       UserId: userId,
@@ -266,7 +298,12 @@ export class ChannelService {
     if (!channel) {
       throw new HttpException('Channel not found', 400);
     }
-    const channelUser = await this.getChannelUserByUserId(loggedUser, callerId, targetId, channelId);
+    const channelUser = await this.getChannelUserByUserId(
+      loggedUser,
+      callerId,
+      targetId,
+      channelId,
+    );
     if (!channelUser) {
       throw new HttpException(
         'User is not part of this channel.',
@@ -303,10 +340,13 @@ export class ChannelService {
       );
     }
     if (parseInt(process.env.FEATURE_FLAG) === 1) {
-        const authPass  = await this.authProtector.protectorCheck(loggedUser.passwordHash, userId);
-        if (!authPass) {
-            throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
-        }
+      const authPass = await this.authProtector.protectorCheck(
+        loggedUser.passwordHash,
+        userId,
+      );
+      if (!authPass) {
+        throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+      }
     }
 
     const TargetAdmin = await this.getChannelAdminByUserId(targetId, channelId);
@@ -345,16 +385,15 @@ export class ChannelService {
     targetId: number,
     channelId: number,
   ): Promise<ChannelBlockedUser> {
-
     if (parseInt(process.env.FEATURE_FLAG) === 1) {
-        const authPass = await this.authProtector.protectorCheck(
-          loggedUser.passwordHash,
-          callerId,
-        );
-        if (!authPass) {
-          throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
-        }
+      const authPass = await this.authProtector.protectorCheck(
+        loggedUser.passwordHash,
+        callerId,
+      );
+      if (!authPass) {
+        throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
       }
+    }
 
     if (callerId == targetId) {
       throw new HttpException(
@@ -363,24 +402,33 @@ export class ChannelService {
       );
     }
 
-    if (await this.getChannelBlockedUserByUserId(loggedUser, callerId, targetId, channelId)) {
+    if (
+      await this.getChannelBlockedUserByUserId(
+        loggedUser,
+        callerId,
+        targetId,
+        channelId,
+      )
+    ) {
       throw new HttpException(
         'User is already blocked.',
         HttpStatus.BAD_REQUEST,
       );
     }
 
-    const callerIsAdmin = await this.getChannelAdminByUserId(
-        callerId,
-        channelId,
-        ) ? true : false;
+    const callerIsAdmin = (await this.getChannelAdminByUserId(
+      callerId,
+      channelId,
+    ))
+      ? true
+      : false;
 
     if (callerIsAdmin == false) {
-        throw new HttpException(
-            'You do not have the credentials to ban a user.',
-            HttpStatus.BAD_REQUEST,
-        );
-        }
+      throw new HttpException(
+        'You do not have the credentials to ban a user.',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
     const channel = await this.findOne(channelId);
 
     if (!channel) {
@@ -411,10 +459,13 @@ export class ChannelService {
     channelId: number,
   ): Promise<ChannelBlockedUser> {
     if (parseInt(process.env.FEATURE_FLAG) === 1) {
-        const authPass  = await this.authProtector.protectorCheck(loggedUser.passwordHash, callerId);
-        if (!authPass) {
-            throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
-        }
+      const authPass = await this.authProtector.protectorCheck(
+        loggedUser.passwordHash,
+        callerId,
+      );
+      if (!authPass) {
+        throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+      }
     }
 
     // const isChannelOwner = await this.GetChannelOwner(channelId) == callerId;
@@ -431,8 +482,7 @@ export class ChannelService {
       UserId: targetId,
       ChannelId: channelId,
     });
-    if (result)
-      return result;
+    if (result) return result;
     return null;
   }
 
@@ -452,14 +502,14 @@ export class ChannelService {
           throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
         }
       }
-  
+
       if (callerId === targetId) {
         throw new HttpException(
           'You cannot unban yourself.',
           HttpStatus.BAD_REQUEST,
         );
       }
-  
+
       // Check if the user is blocked before attempting to remove
       const channelBlockedUser = await this.getChannelBlockedUserByUserId(
         loggedUser,
@@ -469,47 +519,50 @@ export class ChannelService {
       );
 
       const isUserBlocked = channelBlockedUser ? true : false;
-  
+
       if (!isUserBlocked) {
-        throw new HttpException(
-          'User is not blocked.',
-          HttpStatus.BAD_REQUEST,
-        );
+        throw new HttpException('User is not blocked.', HttpStatus.BAD_REQUEST);
       }
-  
+
       const callerIsAdmin = await this.getChannelAdminByUserId(
         callerId,
         channelId,
       );
-  
+
       if (!callerIsAdmin) {
         throw new HttpException(
           'You do not have the credentials to unban a user.',
           HttpStatus.BAD_REQUEST,
         );
       }
-  
+
       // Remove the user from the blocked list
       await this.channelBlockedUserRepository.remove(channelBlockedUser);
-  
+
       // Return true to indicate successful removal
       return true;
     } catch (error) {
       // Handle any potential errors here
       console.error('Error removing channelBlockedUser:', error);
-  
+
       // Return false to indicate failure
       return false;
     }
   }
-  
 
-  async changeChannelType(loggedUser: UserAuthDTO, callerId: number, channelId: number): Promise<void> {
+  async changeChannelType(
+    loggedUser: UserAuthDTO,
+    callerId: number,
+    channelId: number,
+  ): Promise<void> {
     if (parseInt(process.env.FEATURE_FLAG) === 1) {
-        const authPass  = await this.authProtector.protectorCheck(loggedUser.passwordHash, callerId);
-        if (!authPass) {
-            throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
-        }
+      const authPass = await this.authProtector.protectorCheck(
+        loggedUser.passwordHash,
+        callerId,
+      );
+      if (!authPass) {
+        throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+      }
     }
     const channel = await this.findOne(channelId);
     if (!channel) {
@@ -522,7 +575,7 @@ export class ChannelService {
     channel.Type = channel.Type == 'public' ? 'private' : 'public';
 
     if (channel.Password === null || channel.Password === '') {
-        throw new HttpException('Channel password is empty', 400);
+      throw new HttpException('Channel password is empty', 400);
     }
 
     await this.channelRepository.save(channel);
@@ -538,10 +591,13 @@ export class ChannelService {
       throw new HttpException('Channel not found', 400);
     }
     if (parseInt(process.env.FEATURE_FLAG) === 1) {
-        const authPass  = await this.authProtector.protectorCheck(loggedUser.passwordHash, callerId);
-        if (!authPass) {
-            throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
-        }
+      const authPass = await this.authProtector.protectorCheck(
+        loggedUser.passwordHash,
+        callerId,
+      );
+      if (!authPass) {
+        throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+      }
     }
     const isOwner = channel.OwnerId == callerId;
     if (!isOwner) {
@@ -558,10 +614,13 @@ export class ChannelService {
     password: string,
   ): Promise<void> {
     if (parseInt(process.env.FEATURE_FLAG) === 1) {
-        const authPass  = await this.authProtector.protectorCheck(loggedUser.passwordHash, callerId);
-        if (!authPass) {
-            throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
-        }
+      const authPass = await this.authProtector.protectorCheck(
+        loggedUser.passwordHash,
+        callerId,
+      );
+      if (!authPass) {
+        throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+      }
     }
     const channel = await this.findOne(channelId);
     if (!channel) {
@@ -583,10 +642,13 @@ export class ChannelService {
     password: string,
   ): Promise<void> {
     if (parseInt(process.env.FEATURE_FLAG) === 1) {
-        const authPass  = await this.authProtector.protectorCheck(loggedUser.passwordHash, callerId);
-        if (!authPass) {
-            throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
-        }
+      const authPass = await this.authProtector.protectorCheck(
+        loggedUser.passwordHash,
+        callerId,
+      );
+      if (!authPass) {
+        throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+      }
     }
     const channel = await this.findOne(channelId);
     if (!channel) {
@@ -605,7 +667,12 @@ export class ChannelService {
     ) {
       throw new HttpException('Wrong password.', 400);
     }
-    const channelUser = await this.getChannelUserByUserId(loggedUser, callerId, targetId, channelId);
+    const channelUser = await this.getChannelUserByUserId(
+      loggedUser,
+      callerId,
+      targetId,
+      channelId,
+    );
     if (channelUser) {
       throw new HttpException(
         'User is already in channel.',
@@ -613,10 +680,10 @@ export class ChannelService {
       );
     }
     const channelBlockedUser = await this.getChannelBlockedUserByUserId(
-        loggedUser,
-        callerId,
-        targetId,
-        channelId
+      loggedUser,
+      callerId,
+      targetId,
+      channelId,
     );
     if (channelBlockedUser) {
       throw new HttpException(
@@ -624,7 +691,10 @@ export class ChannelService {
         HttpStatus.BAD_REQUEST,
       );
     }
-    const channelAdmin = await this.getChannelAdminByUserId(targetId, channelId);
+    const channelAdmin = await this.getChannelAdminByUserId(
+      targetId,
+      channelId,
+    );
     if (channelAdmin) {
       throw new HttpException(
         'User is already an admin.',
@@ -651,18 +721,23 @@ export class ChannelService {
       throw new HttpException('Channel not found', 400);
     }
 
-    const channelUser = await this.getChannelUserByUserId(loggedUser, callerId, targetId, channelId);
+    const channelUser = await this.getChannelUserByUserId(
+      loggedUser,
+      callerId,
+      targetId,
+      channelId,
+    );
     if (!channelUser) {
       throw new HttpException(
         'User is not part of this channel.',
         HttpStatus.BAD_REQUEST,
       );
     }
-    
+
     if (channel.OwnerId == targetId) {
-        throw new HttpException('You can not ban the Channel Owner', 400);
-      }
-      
+      throw new HttpException('You can not ban the Channel Owner', 400);
+    }
+
     const isAdmin = (await this.getChannelAdminByUserId(callerId, channelId))
       ? true
       : false;
@@ -738,7 +813,12 @@ export class ChannelService {
       throw new HttpException('Channel not found', 400);
     }
 
-    const channelUser = await this.getChannelUserByUserId(loggedUser, callerId, targetId, channelId);
+    const channelUser = await this.getChannelUserByUserId(
+      loggedUser,
+      callerId,
+      targetId,
+      channelId,
+    );
     if (!channelUser) {
       throw new HttpException(
         'User is not part of this channel.',
@@ -782,9 +862,8 @@ export class ChannelService {
   async createPublicChannelUser(
     loggedUser: UserAuthDTO,
     callerId: number,
-    channelId: number
+    channelId: number,
   ): Promise<void> {
-
     const channel = await this.channelRepository.findOneByOrFail({
       ChannelId: channelId,
       Type: 'public',
@@ -793,8 +872,13 @@ export class ChannelService {
     if (!channel) {
       throw new HttpException('Channel not found', 400);
     }
-    
-    const channelUser = await this.getChannelUserByUserId(loggedUser, callerId, callerId, channelId);
+
+    const channelUser = await this.getChannelUserByUserId(
+      loggedUser,
+      callerId,
+      callerId,
+      channelId,
+    );
     if (channelUser) {
       throw new HttpException(
         'User is already in channel.',

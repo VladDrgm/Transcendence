@@ -1,7 +1,5 @@
-import React, { FC, KeyboardEvent, useEffect, useState } from 'react';
-import { ChannelUserRoles, ChatData, ChatProps, Message } from '../../interfaces/channel.interface';
-import { renderMessages } from './chat_utils';
-import { popUpJoinPrivateChannel } from './channel_popups';
+import React, { FC, KeyboardEvent } from 'react';
+import { ChannelUserRoles, ChatData, ChatProps } from '../../interfaces/Channel';
 import { TextBox } from '../mainPages/ChatPageStyles';
 
 export interface chatInputProps {
@@ -13,7 +11,7 @@ export interface chatInputProps {
   currentChat: ChatData
 }
 
-const ChatInput_Div: FC<chatInputProps> = ({
+const ChannelInputDiv: FC<chatInputProps> = ({
   props,
   value, 
   onChange,
@@ -103,5 +101,5 @@ const ChatInput_Div: FC<chatInputProps> = ({
     }
 };
 
-export default ChatInput_Div;
+export default ChannelInputDiv;
 

@@ -1,7 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
-import { ChannelAdmin } from './channel_admin.entity';
-import { ChannelBlockedUser } from './channel_blocked_user.entity';
-import { ChannelUser } from './channel_user.entity';
+import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
 @Entity({ name: 'Channels' })
 export class Channel {

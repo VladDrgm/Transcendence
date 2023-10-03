@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { FriendProfile } from '../../interfaces/friend_profile.interface';
+import { FriendProfile } from '../../interfaces/FriendProfile';
 import { getFriendProfile } from '../../api/profile.api';
-import { fetchAddress } from './channel_div';
+import { fetchAddress } from './ChannelDiv';
 import { useUserContext } from '../context/UserContext';
 import imageAssetAchievement1 from '../assets/achievement1.png'
 import { achievementListItemStyle, achievementTextStyle, centeredContainerStyle, listContainerStyle, listStyle, profilePictureStyle, statListItemStyle } from './UserProfileSyles';
@@ -58,7 +58,6 @@ const FriendDiv: React.FC<FriendProps> = ({ userID, friendID }) => {
       <div>
         <div>
           <h2>{friend.username}'s profile</h2>
-          <p> Status : {friend.status}</p>
           <img
             className='user-card__image'
             src={fetchAddress.slice(0, -1) + `${friend.avatarPath.slice(1)}`}

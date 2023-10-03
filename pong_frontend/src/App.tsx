@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, {  useState, useEffect } from 'react';
 import { Route, BrowserRouter as Router, Navigate, Routes } from 'react-router-dom';
 import { useUserContext } from './components/context/UserContext';
 import LoginPage from './components/auth/LoginPage';
@@ -16,27 +16,33 @@ import PublicProfileMainDiv from './components/main_div/PublicProfileMainDiv';
 import TFAVerification from './components/auth/TFAVerification';
 import MyFriendsPage from './components/mainPages/MyFriends';
 import { postUserStatus } from './api/statusUpdateAPI.api';
-import { AppState } from "react-native";
+// import { AppState } from "react-native";
+import LogoutHandler from './components/main_div/LogOutHandler';
 
 const App = () => {
-	const appState = useRef(AppState.currentState);
-  	const [appStateVisible, setAppStateVisible] = useState(appState.current);
+	const { user, setUser } = useUserContext();
+	const [friendID, friend_set] = useState<number>(-1);
 
 	useEffect(() => {
-		AppState.addEventListener("change", _handleAppStateChange);
-
 		const localUser = localStorage.getItem('user');
 		const localParsedUser = JSON.parse(localUser!);
 		setUser(localParsedUser);
-	
-		return () => {
-		//   AppState.removeEventListener("change", _handleAppStateChange);
-		};
+		const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+			// Your custom logic here
+			e.preventDefault();
+			e.returnValue = ''; // Required for some browsers
+			// Call your function here
+			postUserStatus("Offline", user!);
+		  };
+	  
+		  window.addEventListener('beforeunload', handleBeforeUnload);
+	  
+		  return () => {
+			window.removeEventListener('beforeunload', handleBeforeUnload);
+		  };
+	  // eslint-disable-next-line react-hooks/exhaustive-deps
 	  }, []);
 
-	const { user, setUser } = useUserContext();
-
-	const [friendID, friend_set] = useState<number>(-1);
 
 	const handleLogout = async () => {
 		const localUser = localStorage.getItem('user');
@@ -46,44 +52,17 @@ const App = () => {
 		}
 		localStorage.removeItem('user');
     	setUser(null);
+
+		
 	}
-
-	const _handleAppStateChange = (nextAppState: any) => {
-		const localUser = localStorage.getItem('user');
-		const localParsedUser = JSON.parse(localUser!);
-		if (
-		  appState.current.match(/inactive|background/) &&
-		  nextAppState === "active"
-		) {
-			if (localParsedUser != null) {
-				postUserStatus("Online", localParsedUser);
-			}
-		} else {
-			if (localParsedUser != null) {
-				postUserStatus("Offline", localParsedUser);
-			}
-		}
-	
-		appState.current = nextAppState;
-		setAppStateVisible(appState.current);
-		console.log("AppState", appState.current);
-	  };
-
-	window.addEventListener("beforeunload", (ev) => {  
-		const localUser = localStorage.getItem('user');
-		const localParsedUser = JSON.parse(localUser!);
-		if (localParsedUser != null) {
-			postUserStatus("Online", localParsedUser);
-		}
-	});
 
 	return (
         <Router>
             <Routes>
-                <Route path="/" element={user ? <Navigate to="/app" replace /> : <Navigate to="/login" replace />} />
+                <Route path="/" element={user ? <Navigate to="/app/home" replace /> : <Navigate to="/login" replace />} />
                 <Route path="/login" element={<LoginPage />} />
-                <Route path="app/logout" element={<Navigate to="/login" state={{ logout: true }} />} />
-                <Route path="/complete_profile" element={<CompleteProfilePage />} />
+				<Route path="app/logout" element={<LogoutHandler onLogout={handleLogout} />}/>
+	            <Route path="/complete_profile" element={<CompleteProfilePage />} />
                 <Route path="/auth_redirect" element={<AuthRedirectPage />} />
                 <Route path='/setup-2fa' element={<TFASetup />} />
                 <Route path='/verify-2fa' element={<TFAVerification />} />

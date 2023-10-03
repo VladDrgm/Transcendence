@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { PublicProfile } from '../../interfaces/public_profile.interface';
+import { PublicProfile } from '../../interfaces/PublicProfile';
 import { getPublicProfile } from '../../api/profile.api';
 import { achievementListItemStyle, achievementTextStyle, centeredContainerStyle, listContainerStyle, listStyle, profilePictureStyle } from './UserProfileSyles';
 import imageAssetAchievement1 from '../assets/achievement1.png'
-import { fetchAddress } from './channel_div';
+import { fetchAddress } from './ChannelDiv';
 
 interface PublicProps {
   userID: number;
@@ -61,7 +61,6 @@ const PublicDiv: React.FC<PublicProps> = ({ userID, publicID }) => {
 					}}
 					style={profilePictureStyle}
 				/>
-				<p>Status: {user.status}</p>
 				<br/>
         <div style={centeredContainerStyle}>{renderAchievements()}</div>
       </div>

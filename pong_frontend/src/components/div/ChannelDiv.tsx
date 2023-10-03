@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { Channel, Channel_Div_props } from '../../interfaces/channel.interface';
-import  {ChatProps} from '../../interfaces/channel.interface';
-import {renderRooms, fetchPublicChannels, fetchPrivateChannels} from './channel_utils';
-import { popUpJoinPrivateChannel, popUpCreateChannel } from './channel_popups';
+import { Channel, Channel_Div_props } from '../../interfaces/Channel';
+import {renderRooms, fetchPublicChannels, fetchPrivateChannels} from './ChannelUtils';
+import {  popUpCreateChannel } from './ChannelPopups';
 import { chatButtonsStyle } from '../mainPages/ChatPageStyles';
 
 // export var fetchAddress = 'http://localhost:3000/';
@@ -29,7 +28,7 @@ export var fetchAddress= `${process.env.REACT_APP_BASE_URL}`
 //     }
 // }
 
-const Channel_Div: React.FC<Channel_Div_props> = (props) => {
+const ChannelDiv: React.FC<Channel_Div_props> = (props) => {
     const [publicChannels, setPublicChannels] = useState<Channel[]>([]);
     const [privateChannels, setPrivateChannels] = useState<Channel[]>([]);
     const [loading, setLoading] = useState(true);
@@ -61,4 +60,4 @@ const Channel_Div: React.FC<Channel_Div_props> = (props) => {
 
 };
 
-export default Channel_Div;
+export default ChannelDiv;

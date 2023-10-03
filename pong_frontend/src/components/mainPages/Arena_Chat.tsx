@@ -5,8 +5,8 @@ import GameForm from "./GameForm";
 import { io, Socket } from "socket.io-client";
 import { Draft } from "immer";
 import "../../App.css";
-import {fetchChannelNames} from "../div/channel_utils"
-import { Channel } from '../../interfaces/channel.interface';
+import {fetchChannelNames} from "../div/ChannelUtils"
+import { Channel } from '../../interfaces/Channel';
 import { useUserContext } from '../context/UserContext';
 import { GameContainerStyle } from './GamePageStyles';
 import { ArenaStyle } from './ChatPageStyles';
@@ -91,7 +91,9 @@ const ArenaChat: React.FC<ArenaDivProps> = ({userID, friend_set}) => {
 	// 	setUsername(e.target.value);
 	// }
 
-
+	useEffect(() => {
+		postUserStatus("Online", user!);
+	  }, []);
 
 	useEffect(() => {
 		const baseUrl = process.env.REACT_APP_BASE_URL || "http://localhost:3000";
@@ -188,6 +190,7 @@ const ArenaChat: React.FC<ArenaDivProps> = ({userID, friend_set}) => {
 				const userOneName = data.username;
 				handlePlayerTwoInvite(sessionId, playerOneSocket, playerTwoSocket, userOneName);
 			});
+			
 		}
 		connect();
 
@@ -291,6 +294,9 @@ const ArenaChat: React.FC<ArenaDivProps> = ({userID, friend_set}) => {
 
 	function invitePlayer(invitationNew: Invitation) {
 		console.log("invitationNew", invitationNew);
+		if (invitation?.sessionId !== null) {
+			alert("Already invited");
+		}
 		if (invitation?.sessionId === null) {
 			invitation.playerOneSocket = invitationNew?.playerOneSocket;
 			invitation.playerTwoSocket = invitationNew?.playerTwoSocket;
@@ -412,6 +418,9 @@ const ArenaChat: React.FC<ArenaDivProps> = ({userID, friend_set}) => {
 
 			// eslint-disable-next-line
 			socketRef.current?.on('clean queue', cleanQueue);
+			socketRef.current?.on('already in session', () => {
+				alert("Can't invite: player already in session/game");
+			});
 
 			return () => {
 				socketRef.current?.off('session joined');

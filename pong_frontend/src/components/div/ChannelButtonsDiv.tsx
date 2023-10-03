@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import  {ChatData, ChatName, ChatProps} from '../../interfaces/channel.interface';
-import { addAdminPopUp, banUserPopUp, changePasswordPopUp, kickUserPopUp, muteUserPopUp } from './channel_popups';
+import React from 'react';
+import  {ChatData, ChatName, ChatProps} from '../../interfaces/Channel';
+import { addAdminPopUp, banUserPopUp, changePasswordPopUp, kickUserPopUp, muteUserPopUp } from './ChannelPopups';
 import { deleteChannel } from '../../api/channel/channel.api';
 import { ChannelInfo } from '../mainPages/ChatPageStyles';
 import { chatButtonsStyle } from '../mainPages/ChatPageStyles';
@@ -26,10 +26,10 @@ export interface ownerButtonProps {
 
 
 
-export const ChannelOwner_Buttons_Div: React.FC<ownerButtonProps> = (props ) => {
+export const ChatBodyDivChannelOwnerButtonsDiv: React.FC<ownerButtonProps> = (props ) => {
     return (
         props.loadingChannelPanel ? (
-            <div>Loading Channel Name and Buttons...</div> // Show a loading spinner or placeholder
+            <div>Loading Channel Name and Buttons...</div> 
         ) : (
             <ChannelInfo>
                 <h3>{props.currentChat.chatName}</h3>
@@ -89,10 +89,10 @@ export const ChannelOwner_Buttons_Div: React.FC<ownerButtonProps> = (props ) => 
 
 
 
-export const ChannelAdmin_Buttons_Div: React.FC<ownerButtonProps> = (props) => {
+export const ChannelAdminButtonsDiv: React.FC<ownerButtonProps> = (props) => {
     return (
         props.loadingChannelPanel ? (
-            <div>Loading Channel Name and Buttons...</div> // Show a loading spinner or placeholder
+            <div>Loading Channel Name and Buttons...</div> 
         ) : (
             <ChannelInfo>
                 <h3>{props.currentChat.chatName}</h3>

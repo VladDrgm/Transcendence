@@ -1,7 +1,5 @@
-import { json } from "stream/consumers";
-import { fetchAddress } from "../../components/div/channel_div";
-import { IUser } from "../../interfaces/interface";
-import { User } from "../../interfaces/user.interface";
+import { fetchAddress } from "../../components/div/ChannelDiv";
+import { User } from "../../interfaces/User";
 
 
 export async function getUsers():  Promise<any> {

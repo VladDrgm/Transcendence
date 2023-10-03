@@ -1,5 +1,4 @@
-import { fetchAddress } from "../../components/div/channel_div";
-import { User } from "../../interfaces/user.interface";
+import { fetchAddress } from "../../components/div/ChannelDiv";
 
 
 // export async function getIsOwner(channelId: number, userId: number): Promise<boolean> {

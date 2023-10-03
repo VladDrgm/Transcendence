@@ -1,9 +1,16 @@
-import { Controller, Post, Body, Get, Delete, Param, Put, ParseIntPipe } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Delete,
+  Param,
+  Put,
+  ParseIntPipe,
+} from '@nestjs/common';
 import { MatchService } from './match.service';
 import { Match } from 'src/models/orm_models/match.entity';
 import { MatchDTO } from './matchDTO';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { User } from 'src/models/orm_models/user.entity';
 import { UserAuthDTO } from '../authProtectorService/authProtector';
 
 @ApiTags('Match')

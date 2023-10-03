@@ -1,7 +1,7 @@
 import * as styles from './LeaderboardPageStyles';
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { User } from '../../interfaces/user.interface';
+import { User } from '../../interfaces/User';
 
 interface LeaderboardUserProps {
   user: User;

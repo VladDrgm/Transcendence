@@ -1,6 +1,5 @@
 import {
   Controller,
-  Get,
   Post,
   Put,
   Delete,
@@ -11,7 +10,6 @@ import {
   Query,
   HttpException,
   HttpStatus,
-  ParseIntPipe,
 } from '@nestjs/common';
 import { ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 import { Channel } from 'src/models/orm_models/channel.entity';
@@ -19,7 +17,6 @@ import { ChannelService } from './channel.service';
 import { ChannelAdmin } from 'src/models/orm_models/channel_admin.entity';
 import { ChannelUser } from 'src/models/orm_models/channel_user.entity';
 import { ChannelBlockedUser } from 'src/models/orm_models/channel_blocked_user.entity';
-import { CreateChannelDto } from './channelDTO';
 import { UserAuthDTO } from '../authProtectorService/authProtector';
 
 @ApiTags('Channel')
@@ -52,14 +49,16 @@ export class ChannelController {
     @Param('channelName') channelName: string,
     @Param('channelType') channelType: string,
     @Body() loggedInUser: UserAuthDTO,
-    @Query('channelPassword') channelPassword?: string
+    @Query('channelPassword') channelPassword?: string,
   ): Promise<Channel> {
-    return this.channelService.create(loggedInUser,
-                                           callerId,
-                                            ownerId,
-                                            channelName,
-                                            channelType,
-                                            channelPassword);
+    return this.channelService.create(
+      loggedInUser,
+      callerId,
+      ownerId,
+      channelName,
+      channelType,
+      channelPassword,
+    );
   }
 
   @Delete(':callerId/:channelId')
@@ -67,13 +66,17 @@ export class ChannelController {
   async remove(
     @Param('channelId') chanId: number,
     @Param('callerId') callerId: number,
-    @Body() loggedUser: UserAuthDTO): Promise<void> {
-        if (isNaN(chanId) || isNaN(callerId)) {
-          throw new HttpException('Invalid channelId or callerId', HttpStatus.BAD_REQUEST);
-        }
-      
-        await this.channelService.remove(loggedUser, callerId, chanId);
-      }
+    @Body() loggedUser: UserAuthDTO,
+  ): Promise<void> {
+    if (isNaN(chanId) || isNaN(callerId)) {
+      throw new HttpException(
+        'Invalid channelId or callerId',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    await this.channelService.remove(loggedUser, callerId, chanId);
+  }
 
   @Post('admin/add/:callerId/:targetId/:channelId')
   @ApiOperation({
@@ -85,7 +88,12 @@ export class ChannelController {
     @Param('channelId') channelId: number,
     @Body() loggedUser: UserAuthDTO,
   ): Promise<ChannelAdmin> {
-    return this.channelService.addAdmin(loggedUser, callerId, targetId, channelId);
+    return this.channelService.addAdmin(
+      loggedUser,
+      callerId,
+      targetId,
+      channelId,
+    );
   }
 
   @Put(':channelId/admins')
@@ -119,9 +127,14 @@ export class ChannelController {
     @Param('userId') userId: number,
     @Param('targetId') targetId: number,
     @Param('channelId') channelId: number,
-    @Body() loggedUser: UserAuthDTO
+    @Body() loggedUser: UserAuthDTO,
   ): Promise<void> {
-    await this.channelService.removeChannelAdmin(loggedUser, userId, targetId, channelId);
+    await this.channelService.removeChannelAdmin(
+      loggedUser,
+      userId,
+      targetId,
+      channelId,
+    );
   }
 
   @Post(':callerId/:targetId/:channelId/user')
@@ -132,9 +145,14 @@ export class ChannelController {
     @Param('callerId') callerId: number,
     @Param('targetId') targetId: number,
     @Param('channelId') channelId: number,
-    @Body() loggedUser: UserAuthDTO
+    @Body() loggedUser: UserAuthDTO,
   ): Promise<ChannelUser> {
-    return this.channelService.addChannelUser(loggedUser, callerId, targetId, channelId);
+    return this.channelService.addChannelUser(
+      loggedUser,
+      callerId,
+      targetId,
+      channelId,
+    );
   }
 
   @Put(':channelId/users')
@@ -159,9 +177,14 @@ export class ChannelController {
     @Param('callerId') callerId: number,
     @Param('userId') userId: number,
     @Param('channelId') channelId: number,
-    @Body() loggedUser: UserAuthDTO
+    @Body() loggedUser: UserAuthDTO,
   ): Promise<ChannelUser> {
-    return this.channelService.getChannelUserByUserId(loggedUser, callerId, userId, channelId);
+    return this.channelService.getChannelUserByUserId(
+      loggedUser,
+      callerId,
+      userId,
+      channelId,
+    );
   }
 
   @Delete(':userId/:channelId/user')
@@ -174,21 +197,31 @@ export class ChannelController {
     @Param('targetId') targetId: number,
     @Param('channelId') channelId: number,
   ): Promise<void> {
-    await this.channelService.removeChannelUser(loggedUser, callerId, targetId, channelId);
+    await this.channelService.removeChannelUser(
+      loggedUser,
+      callerId,
+      targetId,
+      channelId,
+    );
   }
 
   @Post('ban/blocked/:callerId/:targetId/:channelId/blocked')
-    @ApiOperation({
-        summary: 'Ban a user from a Channel. Only Admins/Owner can ban users.',
-    })
-    async addChannelBlockedUser(
-        @Param('callerId') callerId: number,
-        @Param('targetId') targetId: number,
-        @Param('channelId') channelId: number,
-        @Body() loggedUser: UserAuthDTO
-    ): Promise<ChannelBlockedUser> {
-        return await this.channelService.addChannelBlockedUserService(loggedUser, callerId, targetId, channelId);
-    }
+  @ApiOperation({
+    summary: 'Ban a user from a Channel. Only Admins/Owner can ban users.',
+  })
+  async addChannelBlockedUser(
+    @Param('callerId') callerId: number,
+    @Param('targetId') targetId: number,
+    @Param('channelId') channelId: number,
+    @Body() loggedUser: UserAuthDTO,
+  ): Promise<ChannelBlockedUser> {
+    return await this.channelService.addChannelBlockedUserService(
+      loggedUser,
+      callerId,
+      targetId,
+      channelId,
+    );
+  }
 
   @Put(':channelId/blockedUsers')
   @ApiOperation({ summary: 'Get all blocked users of a Channel' })
@@ -204,11 +237,15 @@ export class ChannelController {
     @Param('callerId') callerId: number,
     @Param('targetId') targetId: number,
     @Param('channelId') channelId: number,
-    @Body() loggedUser: UserAuthDTO
-  ): Promise<Boolean> {
-    const result = await this.channelService.getChannelBlockedUserByUserId(loggedUser, callerId, targetId , channelId);
-    if (result)
-      return true;
+    @Body() loggedUser: UserAuthDTO,
+  ): Promise<boolean> {
+    const result = await this.channelService.getChannelBlockedUserByUserId(
+      loggedUser,
+      callerId,
+      targetId,
+      channelId,
+    );
+    if (result) return true;
     return false;
   }
 
@@ -220,9 +257,14 @@ export class ChannelController {
     @Param('callerId') callerId: number,
     @Param('targetId') targetId: number,
     @Param('channelId') channelId: number,
-    @Body() loggedUser: UserAuthDTO
+    @Body() loggedUser: UserAuthDTO,
   ): Promise<void> {
-    await this.channelService.removeChannelBlockedUser(loggedUser, callerId, targetId, channelId);
+    await this.channelService.removeChannelBlockedUser(
+      loggedUser,
+      callerId,
+      targetId,
+      channelId,
+    );
   }
 
   @Put(':callerId/:channelId/type')
@@ -233,9 +275,13 @@ export class ChannelController {
   async changeChannelType(
     @Param('callerId') callerId: number,
     @Param('channelId') channelId: number,
-    @Body() loggedUser: UserAuthDTO
+    @Body() loggedUser: UserAuthDTO,
   ): Promise<void> {
-    await this.channelService.changeChannelType(loggedUser, callerId, channelId);
+    await this.channelService.changeChannelType(
+      loggedUser,
+      callerId,
+      channelId,
+    );
   }
 
   @Delete(':callerId/:channelId/password')
@@ -245,9 +291,13 @@ export class ChannelController {
   async deleteChannelPassword(
     @Param('callerId') callerId: number,
     @Param('channelId') channelId: number,
-    @Body() loggedUser: UserAuthDTO
+    @Body() loggedUser: UserAuthDTO,
   ): Promise<void> {
-    await this.channelService.deleteChannelPassword(loggedUser, callerId, channelId);
+    await this.channelService.deleteChannelPassword(
+      loggedUser,
+      callerId,
+      channelId,
+    );
   }
 
   @Put(':callerId/:channelId/:password/password')
@@ -259,13 +309,13 @@ export class ChannelController {
     @Param('callerId') callerId: number,
     @Param('channelId') channelId: number,
     @Param('password') password: string,
-    @Body() loggedUser: UserAuthDTO
+    @Body() loggedUser: UserAuthDTO,
   ): Promise<void> {
     await this.channelService.changeChannelPassword(
-        loggedUser,
-        callerId,
-        channelId,
-        password
+      loggedUser,
+      callerId,
+      channelId,
+      password,
     );
   }
 
@@ -278,10 +328,10 @@ export class ChannelController {
     @Param('targetId') targetId: number,
     @Param('channelId') channelId: number,
     @Param('password') password: string,
-    @Body() loggedUser: UserAuthDTO
+    @Body() loggedUser: UserAuthDTO,
   ): Promise<void> {
     return this.channelService.addUserToPrivateChannel(
-        loggedUser,
+      loggedUser,
       callerId,
       targetId,
       channelId,
@@ -299,10 +349,10 @@ export class ChannelController {
     @Param('targetId') targetId: number,
     @Param('channelId') channelId: number,
     @Param('duration') duration: number,
-    @Body() loggedUser: UserAuthDTO
+    @Body() loggedUser: UserAuthDTO,
   ): Promise<void> {
     await this.channelService.muteUserForDuration(
-        loggedUser,
+      loggedUser,
       callerId,
       targetId,
       channelId,
@@ -341,9 +391,14 @@ export class ChannelController {
     @Param('callerId') callerId: number,
     @Param('targetId') targetId: number,
     @Param('channelId') channelId: number,
-    @Body() loggedUser: UserAuthDTO
+    @Body() loggedUser: UserAuthDTO,
   ): Promise<boolean> {
-    return this.channelService.getMutedStatus(loggedUser, callerId, targetId, channelId);
+    return this.channelService.getMutedStatus(
+      loggedUser,
+      callerId,
+      targetId,
+      channelId,
+    );
   }
 
   @Post(':callerId/:channelId') //add here
@@ -351,8 +406,12 @@ export class ChannelController {
   async postChannelUserInPublicChannel(
     @Param('callerId') callerId: number,
     @Param('channelId') channelId: number,
-    @Body() loggedUser: UserAuthDTO
+    @Body() loggedUser: UserAuthDTO,
   ): Promise<void> {
-    await this.channelService.createPublicChannelUser(loggedUser, callerId, channelId);
+    await this.channelService.createPublicChannelUser(
+      loggedUser,
+      callerId,
+      channelId,
+    );
   }
 }

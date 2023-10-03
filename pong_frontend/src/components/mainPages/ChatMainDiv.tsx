@@ -1,28 +1,28 @@
 import React, { FC, useEffect, useState, useCallback} from "react";
-import { renderUser} from "../div/chat_utils"; 
-import {ChatContainerStyle, BodyContainer, ChannelInfo, ChatPanel, SideBarStyle, chatButtonsStyle } from "./ChatPageStyles";
-import Channel_Div from '../div/channel_div';
-import { ChannelAdmin_Buttons_Div, ChannelOwner_Buttons_Div } from "../div/channel_buttons_div";
-import ChatBody_Div from "../div/channel_ChatBody_div";
-import ChatInput_Div from "../div/channel_ChatPanel_div";
-import { Channel, ChannelUserRoles, ChatName, ChatProps } from "../../interfaces/channel.interface";
-import { chatInputProps } from "../div/channel_ChatPanel_div";
+import { renderUser} from "../div/ChatUtils"; 
+import {ChatContainerStyle, BodyContainer, ChannelInfo, ChatPanel, SideBarStyle, chatButtonsStyle, linkTextStyle, userButtonStyle } from "./ChatPageStyles";
+import ChannelDiv from '../div/ChannelDiv';
+import { ChannelAdminButtonsDiv, ChatBodyDivChannelOwnerButtonsDiv } from "../div/ChannelButtonsDiv";
+import ChatBodyDiv from "../div/ChannelChatBodyDiv";
+import ChannelInputDiv from "../div/ChannelChatPanelDiv";
+import { Channel, ChannelUserRoles, ChatName, ChatProps } from "../../interfaces/Channel";
+// import { chatInputProps } from "../div/channel_ChatPanel_div";
 // import { main_div_mode_t } from "../MainDivSelector";
-import { fetchAllChannels, getUserIDByUserName } from "../div/channel_utils";
-import { User } from "../../interfaces/user.interface";
+import { fetchAllChannels, getUserIDByUserName } from "../div/ChannelUtils";
+import { User } from "../../interfaces/User";
 import { deleteBlockedUser, deleteChannelUser, deleteFriend, getBlockedUser, getChannelBlockedUser, getChannelUser, getIsFriend, getMutedStatus, postBlockedUser, postChannelUser, postFriend, postPrivateChannelUser } from "../../api/channel/channel_user.api";
 import { CurrentChat, WritableDraft, getChannelFromChannellist, initialMessagesState, initializeMessagesState } from "./Arena_Chat";
 import immer from "immer";
 import { getIsAdmin, postAdmin } from "../../api/channel/channel_admin.api";
-import { Link } from 'react-router-dom';
 
 const ChatMainDiv: FC<ChatProps> = (props) => {
 	const [body, setBody] = useState<JSX.Element | null>(null);
-	const [chatInput, setChatInput] = useState<JSX.Element | null>(null);
+	// const [chatInput, setChatInput] = useState<JSX.Element | null>(null);
 	const [channelpanel, setChannelpanel] = useState<JSX.Element | null>(null);
 	const [loadingChannelpanel, setLoadingChannelpanel] = useState(true);
 	const [channelPanelLoaded, setChannelPanelLoaded] = useState(false);
 	const [allChannels, setAllChannels] = useState<any[]>([]);
+
 	const [currentChat, setCurrentChat] = useState<CurrentChat>({
 		isChannel: true,
 		chatName: "general",
@@ -365,10 +365,10 @@ const ChatMainDiv: FC<ChatProps> = (props) => {
 			});
 	}
 
-	function leaveRoom(chatName: ChatName) {
-		console.log("Removing User ", props.user?.userID, " from Channel:", currentChat.Channel.ChannelId);
-		deleteChannelUser(props.user?.userID, currentChat.Channel.ChannelId, props.user!);
-	}
+	// function leaveRoom(chatName: ChatName) {
+	// 	console.log("Removing User ", props.user?.userID, " from Channel:", currentChat.Channel.ChannelId);
+	// 	deleteChannelUser(props.user?.userID, currentChat.Channel.ChannelId, props.user!);
+	// }
 
 	function roomJoinCallback(incomingMessages: any, room: keyof typeof messages) {
 		const newMessages = immer(messages, (draft: WritableDraft<typeof messages>) => {
@@ -682,7 +682,7 @@ const ChatMainDiv: FC<ChatProps> = (props) => {
 	}
 
 	const handleBody = useCallback (() =>{
-		setBody(<ChatBody_Div
+		setBody(<ChatBodyDiv
 			props = {props}
 			messages={messages[currentChat.chatName]}
 			joinRoom={joinRoom}
@@ -694,16 +694,12 @@ const ChatMainDiv: FC<ChatProps> = (props) => {
 		console.log(messages[currentChat.chatName]);
 	}, [messages, currentRoles]);
 
-	const openFriend = (userName: string) => {
-		getUserIDByUserName(userName)
-		.then(result => {
-			if (result !== undefined) {
-				props.friend_set(result);
-				// props.mode_set(main_div_mode_t.PUBLIC_PROFILE);
-			}
-		}).catch(error => {
-			console.error("Error retrieving UserID:", error);
-		})
+	const openFriend = async (userName: string) => {
+		const userID = await getUserIDByUserName(userName);
+	  
+		if (userID !== undefined) {
+		  window.location.href = `/app/public_profile/${userID}`;
+		}
 	  };
 	
 	const handleChannelPanel = useCallback(() =>{
@@ -719,21 +715,33 @@ const ChatMainDiv: FC<ChatProps> = (props) => {
 			  </ChannelInfo>
 			)
 		  );
+
 		if (!currentChat.isChannel){
 			setChannelpanel(
 				loadingChannelpanel ? (
-				  <div>Loading Channel Name...</div> // Show a loading spinner or placeholder
+				  <div>Loading Channel Name...</div> 
 				) : (
 				  <ChannelInfo>
 
 	
-					<Link onClick={() => openFriend(currentChat.chatName.toString())} key={"chat_frined " + currentChat.chatName.toString()} to={"/app/public_profile"}>{currentChat.chatName.toString()}</Link>
+					<div style={linkTextStyle}>
+						<h3 style={{ marginBottom: '10px' }}>Private DM with:</h3>
+						<button
+						style={userButtonStyle}
+						onClick={() => {
+						openFriend(currentChat.chatName.toString())
+						}}
+						>
+						{currentChat.chatName.toString()}
+						</button>
+					</div>
+
 					<div>
-					<button 
-					style={chatButtonsStyle}
-					onClick={() => inviteButton(props.allUsers.find(user => user.username === currentChat.chatName))}>
-						Invite for a Game
-					</button>
+						<button 
+						style={chatButtonsStyle}
+						onClick={() => inviteButton(props.allUsers.find(user => user.username === currentChat.chatName))}>
+							Invite for a Game
+						</button>
 					<button 
 					style={chatButtonsStyle}
 					onClick={() => addBlockedUser(currentChat.chatName)}>
@@ -775,7 +783,7 @@ const ChatMainDiv: FC<ChatProps> = (props) => {
 		}
 		else if (currentRoles.isOwner){
 			  setChannelpanel(
-				  <ChannelOwner_Buttons_Div 
+				  <ChatBodyDivChannelOwnerButtonsDiv 
 				  	chatProps={props} 
 					loadingChannelPanel={loadingChannelpanel} 
 					currentChat={currentChat}
@@ -792,7 +800,7 @@ const ChatMainDiv: FC<ChatProps> = (props) => {
 		  }
 		else if (currentRoles.isAdmin && currentRoles.isAdminResolved) {
 			setChannelpanel(
-				<ChannelAdmin_Buttons_Div
+				<ChannelAdminButtonsDiv
 				chatProps={props} 
 				loadingChannelPanel={loadingChannelpanel} 
 				currentChat={currentChat}
@@ -833,75 +841,75 @@ const ChatMainDiv: FC<ChatProps> = (props) => {
 		props.socketRef.current?.emit('unblock user', {targetId, username});
 	}
 
-	function addFriend(targetName: string | number){
-		getUserIDByUserName(targetName.toString())
-		.then((targetID) => {
-			if(targetID === undefined){
-				alert("User could not be found. Please try another Username.");
-				return;
-			}
-			getIsFriend(props.user?.userID, Number(targetID), props.user!)
-			.then((result) => {
-				if (result){
-					alert("User is already a Friend");
-					return;
-				}
-				postFriend(Number(targetID), props.user?.userID, props.user!)
-				.then(() => {
-					console.log('Friend added with UserId:', targetID);
-					alert("User "+ targetName + " added as Friend");
-					// blockUserSocket(Number(targetID), user.username);
-				})
-				.catch(error => {
-					console.error("Error adding user as Friend with Username:" , targetName);
-					alert("Error while adding User as Friend:" + error);
-				});
-			})
-			.catch(error => {
-				console.error("Error adding user as Friend with Username:" , targetName);
-				alert("Error while adding User as Friend:" + error);
-			});
-		})
-		.catch(error => {
-			console.error('Error getting UserID from User:' ,error);
-			alert("Error adding User as Friend" + error);
-		});
-	}
+	// function addFriend(targetName: string | number){
+	// 	getUserIDByUserName(targetName.toString())
+	// 	.then((targetID) => {
+	// 		if(targetID === undefined){
+	// 			alert("User could not be found. Please try another Username.");
+	// 			return;
+	// 		}
+	// 		getIsFriend(props.user?.userID, Number(targetID), props.user!)
+	// 		.then((result) => {
+	// 			if (result){
+	// 				alert("User is already a Friend");
+	// 				return;
+	// 			}
+	// 			postFriend(Number(targetID), props.user?.userID, props.user!)
+	// 			.then(() => {
+	// 				console.log('Friend added with UserId:', targetID);
+	// 				alert("User "+ targetName + " added as Friend");
+	// 				// blockUserSocket(Number(targetID), user.username);
+	// 			})
+	// 			.catch(error => {
+	// 				console.error("Error adding user as Friend with Username:" , targetName);
+	// 				alert("Error while adding User as Friend:" + error);
+	// 			});
+	// 		})
+	// 		.catch(error => {
+	// 			console.error("Error adding user as Friend with Username:" , targetName);
+	// 			alert("Error while adding User as Friend:" + error);
+	// 		});
+	// 	})
+	// 	.catch(error => {
+	// 		console.error('Error getting UserID from User:' ,error);
+	// 		alert("Error adding User as Friend" + error);
+	// 	});
+	// }
 
-	function removeFriend(targetName: string | number){
-		getUserIDByUserName(targetName.toString())
-		.then((targetID) => {
-			if(targetID === undefined){
-				alert("User could not be found. Please try another Username.");
-				return;
-			}
-			getIsFriend(props.user?.userID, Number(targetID), props.user!)
-			.then((result) => {
-				if (!result){
-					alert("User is not a Friend");
-					return;
-				}
-				deleteFriend(Number(targetID), props.user?.userID, props.user!)
-				.then(() => {
-					console.log('Friend removed with UserId:', targetID);
-					alert("User "+ targetName + " removed as Friend");
-					// blockUserSocket(Number(targetID), user.username);
-				})
-				.catch(error => {
-					console.error("Error removing user as Friend with Username:" , targetName);
-					alert("Error while removing User as Friend:" + error);
-				});
-			})
-			.catch(error => {
-				console.error('Error getting Friendship Status from User:' ,error);
-				alert("Error getting Friendship Status" + error);
-			})
-		})
-		.catch(error => {
-			console.error('Error getting UserID from User:' ,error);
-			alert("Error removing User as Friend" + error);
-		});
-	}
+	// function removeFriend(targetName: string | number){
+	// 	getUserIDByUserName(targetName.toString())
+	// 	.then((targetID) => {
+	// 		if(targetID === undefined){
+	// 			alert("User could not be found. Please try another Username.");
+	// 			return;
+	// 		}
+	// 		getIsFriend(props.user?.userID, Number(targetID), props.user!)
+	// 		.then((result) => {
+	// 			if (!result){
+	// 				alert("User is not a Friend");
+	// 				return;
+	// 			}
+	// 			deleteFriend(Number(targetID), props.user?.userID, props.user!)
+	// 			.then(() => {
+	// 				console.log('Friend removed with UserId:', targetID);
+	// 				alert("User "+ targetName + " removed as Friend");
+	// 				// blockUserSocket(Number(targetID), user.username);
+	// 			})
+	// 			.catch(error => {
+	// 				console.error("Error removing user as Friend with Username:" , targetName);
+	// 				alert("Error while removing User as Friend:" + error);
+	// 			});
+	// 		})
+	// 		.catch(error => {
+	// 			console.error('Error getting Friendship Status from User:' ,error);
+	// 			alert("Error getting Friendship Status" + error);
+	// 		})
+	// 	})
+	// 	.catch(error => {
+	// 		console.error('Error getting UserID from User:' ,error);
+	// 		alert("Error removing User as Friend" + error);
+	// 	});
+	// }
 
 	function deleteChatRoom(roomName: string | number) {
 		props.socketRef.current?.emit('delete room', roomName);
@@ -936,7 +944,7 @@ const ChatMainDiv: FC<ChatProps> = (props) => {
 	return (
 		<div style={ChatContainerStyle}>
 			<div style={SideBarStyle}>
-				<Channel_Div 
+				<ChannelDiv 
 				ChatProps={props} 
 				allChannels={allChannels} 
 				toggleChat={toggleChat}
@@ -954,7 +962,7 @@ const ChatMainDiv: FC<ChatProps> = (props) => {
 				<BodyContainer>
 				{body}
 				</BodyContainer>
-				<ChatInput_Div
+				<ChannelInputDiv
 					props={props}
 					value={message}
 					onChange={handleMessageChange}

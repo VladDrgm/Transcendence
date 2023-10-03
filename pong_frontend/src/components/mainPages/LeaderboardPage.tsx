@@ -2,7 +2,9 @@ import React, { useEffect, useState } from 'react';
 import * as styles from './LeaderboardPageStyles';
 import { getLeaderboard } from '../../api/leaderboard.api';
 import LeaderboardUser from './LeaderboardUser';
-import { User } from '../../interfaces/user.interface';
+import { User } from '../../interfaces/User';
+import { postUserStatus } from '../../api/statusUpdateAPI.api';
+import { useUserContext } from '../context/UserContext';
 
 interface LeaderboardProps {
 	friend_set: React.Dispatch<React.SetStateAction<number>>;
@@ -12,7 +14,8 @@ interface LeaderboardProps {
 const LeaderboardPage: React.FC<LeaderboardProps> = ({friend_set, loggedInUsername}) => {
 	const [leaderboard, setLeaderboard] = useState<User[]>([]);
 	const [scoreMap, setScoreMap] = useState<Map<number, number>>(new Map());
-	
+	const { user } = useUserContext();
+
 	const getData = async () => {
 		const leaderboardData = await getLeaderboard();
     	setLeaderboard(leaderboardData);
@@ -20,11 +23,11 @@ const LeaderboardPage: React.FC<LeaderboardProps> = ({friend_set, loggedInUserna
 
   	useEffect(() => {
     	getData();
+		postUserStatus("Online", user!);
   	}, []);
 
   	const openFriend = (FID:number) => {
     	friend_set(FID);
-		console.log("TUK: " + FID);
   	};
 
   	useEffect(() => {

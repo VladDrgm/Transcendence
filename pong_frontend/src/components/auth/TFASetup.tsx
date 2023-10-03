@@ -11,9 +11,9 @@ const TwoFactorSetup: React.FC = () => {
 	const [qrCode, setQrCode] = useState<string>('');
 	const [secret, setSecret] = useState<string>('');
 	const [token, setToken] = useState<string>('');
-	const [isVerified, setIsVerified] = useState<boolean | null>(null);
+	const [, setIsVerified] = useState<boolean | null>(null);
 	const [error, setError] = useState<string | null>(null);
-	const { user, setUser } = useUserContext();
+	const { setUser } = useUserContext();
 
   useEffect(() => {
 	console.log("The secret from useEffect is", secret);
@@ -48,7 +48,11 @@ const TwoFactorSetup: React.FC = () => {
 				setError("Verifying token went wrong. Please try again!");
 				console.error('Error storing the secret to the backend', error);
 			}
-			await postUserStatus("Online", localParsedUser);
+			if (await postUserStatus("Online", localParsedUser) === true) {
+				localParsedUser.status = "Online";
+				localStorage.setItem('user', JSON.stringify(localParsedUser));
+				setUser(localParsedUser);
+			}
 			navigate(`/`);
 		} else { 
 			setError("Error: Invalid token");

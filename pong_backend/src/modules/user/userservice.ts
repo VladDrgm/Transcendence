@@ -15,11 +15,10 @@ import {
   AuthProtector,
   UserAuthDTO,
 } from '../authProtectorService/authProtector';
-import * as speakeasy from 'speakeasy';
-import * as uuid from 'uuid';
+// import * as speakeasy from 'speakeasy';
+// import * as uuid from 'uuid';
 import * as qrcode from 'qrcode';
 import { authenticator } from 'otplib';
-import { find } from 'rxjs';
 
 @Injectable()
 export class UserService {
@@ -301,30 +300,38 @@ export class UserService {
     return user;
   }
 
-
-    async updateStatus( loggedUser: UserAuthDTO, callerId: number, targetId: number, userStatus: string ): Promise<UserDTO> {
-        
-        if (parseInt(process.env.FEATURE_FLAG) === 1) {
-            const authPass = await this.authProtector.protectorCheck(
-            loggedUser.passwordHash,
-            callerId,
-            );
-            if (!authPass) {
-            throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
-            }
-        }
-
-        if (callerId !== targetId) {
-            throw new HttpException('Caller must be target.', HttpStatus.UNAUTHORIZED);
-        }
-
-        const userToUpdate = await this.userRepository.findOneBy({ userID: callerId });
-        if (!userToUpdate) {
-            throw new HttpException('User not found', HttpStatus.NOT_FOUND);
-        }
-
-        this.userRepository.update(targetId, { status: userStatus });
-
-        return await this.userRepository.findOneBy({ userID: targetId });
+  async updateStatus(
+    loggedUser: UserAuthDTO,
+    callerId: number,
+    targetId: number,
+    userStatus: string,
+  ): Promise<UserDTO> {
+    if (parseInt(process.env.FEATURE_FLAG) === 1) {
+      const authPass = await this.authProtector.protectorCheck(
+        loggedUser.passwordHash,
+        callerId,
+      );
+      if (!authPass) {
+        throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+      }
     }
+
+    if (callerId !== targetId) {
+      throw new HttpException(
+        'Caller must be target.',
+        HttpStatus.UNAUTHORIZED,
+      );
+    }
+
+    const userToUpdate = await this.userRepository.findOneBy({
+      userID: callerId,
+    });
+    if (!userToUpdate) {
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    }
+
+    this.userRepository.update(targetId, { status: userStatus });
+
+    return await this.userRepository.findOneBy({ userID: targetId });
+  }
 }

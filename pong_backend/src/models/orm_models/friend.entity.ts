@@ -1,6 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn, Column } from 'typeorm';
-import { User } from './user.entity';
-import { ForeignKeyMetadata } from 'typeorm/metadata/ForeignKeyMetadata';
+import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
 @Entity({ name: 'Friend' })
 export class Friend {
