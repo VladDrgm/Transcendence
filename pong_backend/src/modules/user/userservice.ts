@@ -201,6 +201,9 @@ export class UserService {
       intraUsername: ftUserName,
     });
     if (this.passwordService.comparePassword(user.passwordHash, password)) {
+      // Set the user as logged in
+      user.isLoggedIn = true;
+      await this.userRepository.save(user);
       return user;
     }
     throw new HttpException('Wrong password', HttpStatus.UNAUTHORIZED);

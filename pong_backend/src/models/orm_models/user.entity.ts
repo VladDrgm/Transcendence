@@ -87,4 +87,10 @@ export class User {
     default: 'false',
   })
   is2FAEnabled: boolean;
+
+  @Column({
+    type: 'boolean',
+    default: false, // Default to false when a user is created
+  })
+  isLoggedIn: boolean;
 }
