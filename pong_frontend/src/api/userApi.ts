@@ -146,16 +146,13 @@ export const updateAvatarApi = async (userID: number | undefined, formData: Form
 		method: 'PUT',
         body: formData,
 	  });
-      console.log("Test")
 	  if (response.ok) {
-        console.log("Test3")
 		const userObject: User = await response.json();
 		return userObject;
 	  } else {
 		throw new Error(response.statusText);
 	  }
 	} catch (error) {
-        console.log("Test2")
 		throw new Error('Error uploading avatar. Try again!');
 	}
   };
