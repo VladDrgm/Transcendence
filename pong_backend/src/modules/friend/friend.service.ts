@@ -181,4 +181,25 @@ export class FriendService {
 
     return this.userService.findOne(dto.FriendId);
   }
+
+  async checkFriend(loggedUser: UserAuthDTO, callerId: number, targetId: number): Promise<string> {
+
+    if(parseInt(process.env.FEATURE_FLAG) === 1) {
+        const authPass  = await this.authProtector.protectorCheck(loggedUser.passwordHash, callerId);
+        if (!authPass) {
+            throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+        }
+    }
+
+    const friend = await this.friendRepository.findOneBy({
+      UserId: callerId,
+      FriendId: targetId,
+    });
+
+    if (!friend) {
+      return "Not friend.";
+    }
+
+    return "Is a friend.";
+  }
 }
