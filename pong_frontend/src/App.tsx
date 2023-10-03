@@ -27,8 +27,19 @@ const App = () => {
 		const localUser = localStorage.getItem('user');
 		const localParsedUser = JSON.parse(localUser!);
 		setUser(localParsedUser);
-	
-		return () => {};
+		const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+			// Your custom logic here
+			e.preventDefault();
+			e.returnValue = ''; // Required for some browsers
+			// Call your function here
+			postUserStatus("Offline", user!);
+		  };
+	  
+		  window.addEventListener('beforeunload', handleBeforeUnload);
+	  
+		  return () => {
+			window.removeEventListener('beforeunload', handleBeforeUnload);
+		  };
 	  // eslint-disable-next-line react-hooks/exhaustive-deps
 	  }, []);
 
@@ -41,6 +52,8 @@ const App = () => {
 		}
 		localStorage.removeItem('user');
     	setUser(null);
+
+		
 	}
 
 	return (
