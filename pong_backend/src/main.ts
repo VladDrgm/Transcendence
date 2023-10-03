@@ -266,27 +266,19 @@ async function bootstrap() {
         console.log('to:', to);
         console.log('receiver: ', receiver);
         console.log('Messages:', messages);
-        if (isChannel) {
-          const payload = {
-            content,
-            chatName,
-            sender,
-          };
-          socket.to(to).emit('new message', payload);
-        } else {
-          const payload = {
-            content,
-            chatName: sender,
-            sender,
-          };
-          socket.to(receiver).emit('new message', payload);
-        }
+
+        const payload = {
+          content,
+          chatName,
+          sender,
+        };
         if (messages[chatName]) {
           messages[chatName].push({
             sender,
             content,
           });
-        }
+        };
+        socket.to(to).emit('new message', payload);
       },
     );
 

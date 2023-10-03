@@ -85,4 +85,16 @@ export class FriendController {
     const dto: FriendDto = { UserId: callerId, FriendId: targetId };
     return await this.friendService.addFriend(loggedUser, dto);
   }
+
+  @Put(':callerId/friend/:targetId/check')
+  @ApiOperation({ summary: 'Check if a user is a friend of another user' })
+  @ApiParam({ name: 'callerId', description: 'User ID' })
+  @ApiParam({ name: 'targetId', description: 'Friend ID' })
+    async checkFriend(
+        @Param('callerId') callerId: number,
+        @Param('targetId') targetId: number,
+        @Body() loggedUser: UserAuthDTO
+    ): Promise<string> {
+        return await this.friendService.checkFriend(loggedUser, callerId, targetId);
+    }
 }
