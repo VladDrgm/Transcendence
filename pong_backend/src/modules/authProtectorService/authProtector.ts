@@ -28,24 +28,6 @@ export class AuthProtector {
 
     return false;
   }
-
-  async protectorCheckAuthorization(intraName: string): Promise<boolean> {
-    // Implement your authorization logic here.
-    // Check if the user with the provided intraName is authorized.
-
-    // You can perform additional authorization checks here, if needed.
-    // For now, we assume that if the user exists, they are authorized.
-
-    const user = await this.userRepository.findOne({
-      where: { intraUsername: intraName },
-    });
-
-    if (user && user.isLoggedIn) {
-      return true; // Authorized and logged in
-    }
-
-    return false; // Not authorized
-  }
 }
 
 export class UserAuthDTO {
