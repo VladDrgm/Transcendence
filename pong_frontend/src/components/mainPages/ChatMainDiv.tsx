@@ -213,7 +213,7 @@ const ChatMainDiv: FC<ChatProps> = (props) => {
 		if (!currentChat.isResolved){
 			return;
 		}
-		getUserIDByUserName(currentChat.chatName.toString())
+		getUserIDByUserName(currentChat.chatId!.toString())
 			.then((result) => {
 				if(result !== undefined){
 					getBlockedUser(props.user?.userID, result, props.user!)
