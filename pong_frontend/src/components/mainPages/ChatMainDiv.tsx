@@ -126,7 +126,8 @@ const ChatMainDiv: FC<ChatProps> = (props) => {
 		}
 		const payload = {
 		content: trimmedMessage,
-		to: currentChat.isChannel ? currentChat.chatName : currentChat.receiverId,
+		// to: currentChat.isChannel ? currentChat.chatName : currentChat.receiverId,
+		to: currentChat.chatName,
 		sender: props.user?.username,
 		chatName: currentChat.chatName,
 		isChannel: currentChat.isChannel,
@@ -739,29 +740,19 @@ const ChatMainDiv: FC<ChatProps> = (props) => {
 					<div>
 						<button 
 						style={chatButtonsStyle}
-						onClick={() => inviteButton(props.allUsers.find(user => user.username === currentChat.chatName))}>
-							Invite for a Game
+						onClick={() => inviteButton(props.allUsers.find(user => user.username === currentChat.chatId))}>
+							Invite for/ Accept a Game
 						</button>
 					<button 
 					style={chatButtonsStyle}
-					onClick={() => addBlockedUser(currentChat.chatName)}>
+					onClick={() => addBlockedUser(currentChat.chatId!)}>
 						Block User
 					</button>
 					<button 
 					style={chatButtonsStyle}
-					onClick={() => unblockUser(currentChat.chatName)}>
+					onClick={() => unblockUser(currentChat.chatId!)}>
 						Unblock User
 					</button>
-					{/* <button 
-					style={chatButtonsStyle}
-					onClick={() => addFriend(currentChat.chatName)}>
-						Add as Friend
-					</button>
-					<button 
-					style={chatButtonsStyle}
-					onClick={() => removeFriend(currentChat.chatName)}>
-						Remove Friend
-					</button> */}
 					</div>
 				  </ChannelInfo>
 				)
