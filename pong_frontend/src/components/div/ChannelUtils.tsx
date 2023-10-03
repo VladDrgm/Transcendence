@@ -26,7 +26,9 @@ export function renderRooms(props: ChatProps, room: Channel, toggleChat: any) {
     let currentChat: ChatData = {
     chatName: room.Name,
     isChannel: true,
+    chatId: undefined,
     receiverId: "",
+    senderId: undefined,
     isResolved: true,
     Channel: room,
     };
