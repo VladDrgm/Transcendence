@@ -11,13 +11,13 @@ import { postUserStatus } from '../../api/statusUpdateAPI.api';
 
 
 const CompleteProfilePage: React.FC = () => {{
-	const { setUser } = useUserContext();
+	const { user, setUser } = useUserContext();
 	const navigate = useNavigate();
 	const location = useLocation();
 
 	const queryParams = new URLSearchParams(location.search);
 	const intraName = queryParams.get('intraName');
-
+	const intraNameFromURL = queryParams.get('intraName');
 	const [newUsername, setNewUsername] = useState('');
 	const [newAvatar, setNewAvatar] = useState<File | null>(null);
 	const [enable2FA, setEnable2FA] = useState(false);
@@ -34,6 +34,10 @@ const CompleteProfilePage: React.FC = () => {{
 	};
 
 	const handleCreatingUser = async () => {
+		if (intraNameFromURL !== user?.intraUsername) {
+			setError('Unauthorized access');
+			return;
+		  }
 		if (newUsername.trim().length < 1 || newUsername.trim().length > 15) {
 			setError('Please put in a username(max 15 characters) to continue!');
   			return;
