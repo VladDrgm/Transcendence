@@ -75,7 +75,7 @@ export interface Channel_Div_props {
 	allChannels: Channel[];
 	// joinRoom: (chatName: ChatName) => void;
 	toggleChat: (currentChat: ChatData) => void;
-	updateChannellist: () => void;
+	updateChannellist: any;
 	addChatRoom: (chatName: ChatName) => void;
 	currentChat: ChatData;
 	joinPrivateRoom: (chatName: ChatName, password: string) => void;

@@ -223,7 +223,7 @@ export async function CreateChannel(props: ChatProps, channelName: string, passw
         var channelType = "public";
     else
         channelType = "private";
-    console.log(props.user?.passwordHash)
+    // console.log(props.user?.passwordHash)
     const ChannelData = {
         "intraUsername": props.user?.intraUsername,
         "passwordHash": props.user?.passwordHash
@@ -245,7 +245,7 @@ export async function CreateChannel(props: ChatProps, channelName: string, passw
     })
     .then(response => response.json())
     .then(data => {
-        console.log("Channel created:", data);
+        // console.log("Channel created:", data);
         return true;
     })
     .catch(error => {
