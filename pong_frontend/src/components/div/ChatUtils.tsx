@@ -30,7 +30,7 @@ export function renderUser(user: User, props: ChatProps, toggleChat: any) {
             isResolved: true,
             Channel: {} as Channel,
         };
-        console.log(newName);
+        // console.log(newName);
     })
     .catch((error) => {
         console.error("Error fetching user ID:", error);
