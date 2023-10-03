@@ -103,7 +103,7 @@ const ArenaChat: React.FC<ArenaDivProps> = ({userID, friend_set}) => {
 			transports: ["websocket"],
 			withCredentials: true,
 			});
-			console.log("What is being sent as username is: " + user?.username);
+			// console.log("What is being sent as username is: " + user?.username);
 			const data = {
 				username: user?.username,
 				userId: user?.userID,
@@ -115,7 +115,7 @@ const ArenaChat: React.FC<ArenaDivProps> = ({userID, friend_set}) => {
 			socketRef.current.on("new user", (allUsers: any) => {
 				// allUsersRef.current = allUsers;
 				setAllUsers(allUsers);
-				console.log(allUsers);
+				// console.log(allUsers);
 			});
 			socketRef.current.on("new message", ({ content, sender, chatName}: { content: string; sender: string; chatName: ChatName ;}) => {
 				console.log("sender", sender);

@@ -949,7 +949,11 @@ const ChatMainDiv: FC<ChatProps> = (props) => {
 				currentChat={currentChat}
 				joinPrivateRoom={joinPrivateRoom}/>
 				<h3>All Users</h3>
-				{props.allUsers.map((user) => renderUser(user, props, toggleChat))}
+				{props.allUsers.map((user) => (
+					<div key={user.userID}>
+						{renderUser(user, props, toggleChat)}
+					</div>
+					))}
 			</div>
 			<ChatPanel>
 				<ChannelInfo>
