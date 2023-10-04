@@ -118,9 +118,9 @@ const ArenaChat: React.FC<ArenaDivProps> = ({userID, friend_set}) => {
 				// console.log(allUsers);
 			});
 			socketRef.current.on("new message", ({ content, sender, chatName}: { content: string; sender: string; chatName: ChatName ;}) => {
-				console.log("sender", sender);
-				console.log("chatNAme", chatName);
-				console.log("content:", content)
+				// console.log("sender", sender);
+				// console.log("chatNAme", chatName);
+				// console.log("content:", content)
 				if (chatMainDivRef.current?.newMessages)
 					chatMainDivRef.current.newMessages(content, sender, chatName);
 			});

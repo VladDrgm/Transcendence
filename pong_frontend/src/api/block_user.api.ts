@@ -97,4 +97,39 @@ export async function postBlockedUser(targetId: number, user: User): Promise<boo
       }
       );
   }
+
+  export async function getBlockedUsers(user: User): Promise<any> {
+    const ChannelData = {
+      "intraUsername": user?.intraUsername,
+      "passwordHash": user?.passwordHash
+    }
+    const jsonData = JSON.stringify(ChannelData);  
+    const requestOptions = {
+      method: 'PUT',
+      headers: { 
+        "Accept": "*/*",
+        "Content-Type": "application/json"
+      },
+      body: jsonData
+    };
+    return fetch(fetchAddress + 'blocked/'+ user.userID, requestOptions)
+      // .then(response => response.json())
+      .then(response => {
+        if (response.ok) {
+            return response.json();
+        } else {
+          console.error("Error fetching blocked Users: ", response.status);
+          // alert('Error unblocking User: ' + response.status);
+          return undefined;
+        }
+      })
+      .then(data => {
+       return data;
+      })
+      .catch(error => {
+        return false;
+      }
+      );
+  }
+  
   
