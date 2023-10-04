@@ -28,11 +28,12 @@ const App = () => {
 		const localParsedUser = JSON.parse(localUser!);
 		setUser(localParsedUser);
 		const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-			// Your custom logic here
+			const localUser = localStorage.getItem('user');
+			const localParsedUser = JSON.parse(localUser!);
 			e.preventDefault();
 			e.returnValue = ''; // Required for some browsers
 			// Call your function here
-			postUserStatus("Offline", user!);
+			postUserStatus("Offline", localParsedUser);
 		  };
 	  
 		  window.addEventListener('beforeunload', handleBeforeUnload);
