@@ -111,10 +111,10 @@ const ChatMainDiv: FC<ChatProps> = (props) => {
   	// }, [message]);
 
 	function sendMessage() {
-		console.log("message:", message);
-		console.log("Messages :", messages);
-		console.log("currentchat: ", currentChat);
-		console.log("username : ", props.user?.username);
+		// console.log("message:", message);
+		// console.log("Messages :", messages);
+		// console.log("currentchat: ", currentChat);
+		// console.log("username : ", props.user?.username);
 		const trimmedMessage = message.trim();
 		let receiverId = null; // Initialize receiverId as null
 
@@ -146,7 +146,7 @@ const ChatMainDiv: FC<ChatProps> = (props) => {
 				content: message
 			});
 		});
-		console.log('New Messages:', newMessages);
+		// console.log('New Messages:', newMessages);
 		setMessages(newMessages);
 		setMessage("");
 	}
