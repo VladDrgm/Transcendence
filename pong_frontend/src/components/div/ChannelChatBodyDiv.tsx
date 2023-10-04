@@ -60,6 +60,7 @@ const ChatBodyDiv: React.FC<ChatBodyProps> = ({
           if (
             ChannelUserRoles.isUser ||
             (ChannelUserRoles.isAdmin && ChannelUserRoles.isUser) ||
+            ChannelUserRoles.isOwner ||
             !currentChat.isChannel
           ) {
             setContent(
@@ -86,6 +87,7 @@ const ChatBodyDiv: React.FC<ChatBodyProps> = ({
           if (
             ChannelUserRoles.isUser ||
             (ChannelUserRoles.isAdmin && ChannelUserRoles.isUser)||
+            ChannelUserRoles.isOwner ||
             !currentChat.isChannel
           ) {
             setContent(
