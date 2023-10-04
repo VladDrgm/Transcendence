@@ -289,10 +289,10 @@ export class ChannelService {
   }
 
   async removeChannelUser(
-    loggedUser: UserAuthDTO,
     callerId: number,
     targetId: number,
     channelId: number,
+    loggedUser: UserAuthDTO,
   ): Promise<void> {
     const channel = await this.findOne(channelId);
     if (!channel) {
@@ -316,7 +316,7 @@ export class ChannelService {
 
     const isOwner = channel.OwnerId == callerId;
 
-    if (!isAdmin && !isOwner) {
+    if (!isAdmin && !isOwner && (callerId != targetId)) {
       throw new HttpException(
         'You do not have the credentials to remove a user.',
         HttpStatus.BAD_REQUEST,

@@ -22,6 +22,7 @@ export interface ownerButtonProps {
     unbanUserSocket: (targetId: number, chatName: ChatName) => void;
     muteUserSocket: (targetId: number, chatName: ChatName, mutedDuration: number) => void;
     deleteChatRoom: (chatName: ChatName) => void;
+    leaveRoom: (ChatName: ChatName) => void;
   }
 
 
@@ -97,6 +98,11 @@ export const ChannelAdminButtonsDiv: React.FC<ownerButtonProps> = (props) => {
             <ChannelInfo>
                 <h3>{props.currentChat.chatName}</h3>
                 <div>
+                    <button
+					style={chatButtonsStyle}
+					onClick={() => props.leaveRoom(props.currentChat.chatName)}>
+					Leave {props.currentChat.chatName}
+					</button>
                     <button
                     style={chatButtonsStyle}
                     onClick={() => banUserPopUp(
