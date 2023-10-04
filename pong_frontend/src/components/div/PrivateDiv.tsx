@@ -18,7 +18,7 @@ const PrivateDiv: React.FC<PrivateDivProps> = ({userID}) => {
   	const getData = async () => {
     	try {
       		const myProf = await getPrivateProfile(userID, user?.intraUsername, user?.passwordHash);
-			user!.status = myProf.status;
+			user!.status = "Online";
 			user!.wins = myProf.wins;
 			user!.losses = myProf.losses;
 			user!.points = myProf.points;
@@ -84,7 +84,7 @@ const PrivateDiv: React.FC<PrivateDivProps> = ({userID}) => {
 			<div>
 				<h1>{user.username}&apos;s profile</h1> 
 				{renderProfilePicture()}
-				<p>Status: {user.status}</p>
+				<p>Status: Online</p>
 				<br/>
 				<ul style={styles.listContainerStyle}>
 					<li style={styles.listStyle}>
