@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { FriendProfile } from '../../interfaces/FriendProfile';
 import { getFriendProfile } from '../../api/profile.api';
-import { fetchAddress } from './ChannelDiv';
 import { useUserContext } from '../context/UserContext';
 import imageAssetAchievement1 from '../assets/achievement1.png'
 import { achievementListItemStyle, achievementTextStyle, centeredContainerStyle, listContainerStyle, listStyle, profilePictureStyle, statListItemStyle } from './UserProfileSyles';
+import UserProfilePicture from './UserProfilePicture';
 
 interface FriendProps {
   userID: number;
@@ -17,13 +17,11 @@ const FriendDiv: React.FC<FriendProps> = ({ userID, friendID }) => {
   const { user } = useUserContext();
 
   const getData = async () => {
-    if (friendID > 0)
-    {
-      try{
-        const friend = await getFriendProfile(userID, friendID,  user?.intraUsername, user?.passwordHash);
+    if (friendID > 0) {
+      try {
+        const friend = await getFriendProfile(userID, friendID, user?.intraUsername, user?.passwordHash);
         setFriend(friend);
-      }
-      catch (error) {
+      } catch (error) {
         console.error(error);
       }
     }
@@ -57,20 +55,15 @@ const FriendDiv: React.FC<FriendProps> = ({ userID, friendID }) => {
     return (
       <div>
         <div>
-          <h2>{friend.username}'s profile</h2>
-          <img
-            className='user-card__image'
-            src={fetchAddress.slice(0, -1) + `${friend.avatarPath.slice(1)}`}
-            alt='user.avatarPath'
-            onError={({ currentTarget }) => {
-              currentTarget.onerror = null;
-              currentTarget.src = '/default_pfp.png';
-            }}
-            style={profilePictureStyle}
+            <h2>{friend.username}&apos;s profile</h2>          <UserProfilePicture
+            imagePath={friend?.avatarPath}
+            defaultImageSrc='/default_pfp.png'
+            altText={friend?.username || 'Friend'}
+            imageStyle={profilePictureStyle}
           />
-        <p>Status: {friend.status}</p>
-				<br/>
-        <div style={centeredContainerStyle}>
+          <p>Status: {friend.status}</p>
+          <br/>
+          <div style={centeredContainerStyle}>
             <ul style={listContainerStyle}>
               <li style={listStyle}>
                 <p style={statListItemStyle}>Wins: {friend.wins}</p>

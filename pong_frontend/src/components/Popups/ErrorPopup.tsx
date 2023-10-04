@@ -1,3 +1,4 @@
+import React from 'react';
 import * as styles from './ErrorPopupStyle';
 
 const ErrorPopup: React.FC<{ message: string | null, onClose: () => void }> = ({ message, onClose }) => {

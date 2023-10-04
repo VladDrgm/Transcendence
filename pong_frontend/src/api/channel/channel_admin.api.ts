@@ -1,33 +1,7 @@
 import { fetchAddress } from "../../components/div/ChannelDiv";
 import { User } from "../../interfaces/User";
-
-//to be tested
-export async function getAdmins(channelId: number): Promise<any[]>{
-    return fetch(fetchAddress + 'channel/' + channelId + '/admin', {credentials: "include", method: 'PUT'})
-    .then(response => {
-      if (response.ok) {
-        return response.json();
-      } else {
-        throw new Error("Error retrieving admins for channelId " + channelId + ": " + response.status);
-      }
-    })
-      .then(data => {
-        if (data && data.lenght > 0) {
-          console.log("Admins of channlId " + channelId + ":", data);
-          return data;
-        } else {
-          console.log("No Admins for channelId " + channelId);
-          return [];
-        }
-      })
-      .catch(error => {
-        console.log("Error returning Admins of channelId " + channelId + ":", error);
-        return [];
-      });
-  }
   
-  //tested
-  export async function getIsAdmin(channelId: number, userId: number | undefined): Promise<boolean> {
+export async function getIsAdmin(channelId: number, userId: number | undefined): Promise<boolean> {
     try {
       const response = await fetch(fetchAddress + 'channel/' + userId + '/' + channelId + '/admin', {credentials: "include", method: 'PUT'})
       if (!response.ok) {
@@ -39,7 +13,7 @@ export async function getAdmins(channelId: number): Promise<any[]>{
       }
       const contentLength = response.headers.get("content-length");
       if (contentLength === "0") {
-        return false; // No JSON data in the response
+        return false; 
       }
       const data = await response.json();
       if(!data) {
