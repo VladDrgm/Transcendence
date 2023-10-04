@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import * as styles from './PrivateDivStyles';
 import { getPrivateProfile } from '../../api/profile.api';
 import { useUserContext } from '../context/UserContext';
@@ -12,8 +12,8 @@ interface PrivateDivProps
 }
 
 const PrivateDiv: React.FC<PrivateDivProps> = ({userID}) => {
-	const { user, setUser } = useUserContext();
-
+	const { user, setUser } = useUserContext();	
+	const [profilePicture, setProfilePicture] = useState(false);
 
   	const getData = async () => {
     	try {
@@ -29,6 +29,32 @@ const PrivateDiv: React.FC<PrivateDivProps> = ({userID}) => {
     	}
 	}
   	
+	const handleProfilePicture = () => {
+		setProfilePicture(true);
+	  }
+
+	  const renderProfilePicture = () => {
+		if (profilePicture || !user?.avatarPath) {
+		  return (
+			<img
+			  className='user-card__image'
+			  src='/default_pfp.png'
+			  alt=''
+			  style={styles.profilePictureStyle}
+			/>
+		  );
+		} else {
+		  return (
+			<img
+			  className='user-card__image'
+			  src={fetchAddress.slice(0, -1) + `${user.avatarPath?.slice(1)}`}
+			  alt='user.avatarPath'
+			  onError={handleProfilePicture}
+			  style={styles.profilePictureStyle}
+			/>
+		  );
+		}
+	  }
 	const renderAchievements = () => {
 		if (user?.achievementsCSV) {
 		  const achievements = user.achievementsCSV.split(';');
@@ -56,17 +82,8 @@ const PrivateDiv: React.FC<PrivateDivProps> = ({userID}) => {
   	if (user != null) {
     	return (
 			<div>
-				<h1>{user.username}'s profile</h1> 
-					<img
-					className='user-card__image'
-					src={fetchAddress.slice(0, -1) + `${user.avatarPath?.slice(1)}`}
-					alt='user.avatarPath'
-					onError={({ currentTarget }) => {
-						currentTarget.onerror = null;
-						currentTarget.src = '/default_pfp.png';
-					}}
-					style={styles.profilePictureStyle}
-				/>
+				<h1>{user.username}&apos;s profile</h1> 
+				{renderProfilePicture()}
 				<p>Status: {user.status}</p>
 				<br/>
 				<ul style={styles.listContainerStyle}>

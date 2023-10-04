@@ -1,14 +1,11 @@
-import { Dispatch, SetStateAction } from 'react';
+import React, { Dispatch, SetStateAction } from 'react';
 import { Channel, ChatData, ChatProps } from '../../interfaces/Channel';
 import { getChannels} from '../../api/channel/channel.api';
-// import { postAdmin } from '../../api/channel/channel_admin.api';
 import { postChannelUserBlocked, deleteChannelUserBlocked, getUsers, postMuteUser} from '../../api/channel/channel_user.api';
-// import styled from "styled-components";
 import {IUser} from '../../interfaces/IUser';
 import { fetchAddress } from './ChannelDiv';
 import { Row } from '../mainPages/ChatPageStyles';
 import { ChatName } from '../mainPages/Arena_Chat';
-// import { useUserContext } from '../context/UserContext';
 
 export function mapChannel(item: any) {
     const { ChannelId, OwnerId, Name, Type, Password } = item;
@@ -22,7 +19,6 @@ export function mapChannel(item: any) {
 }
 
 export function renderRooms(props: ChatProps, room: Channel, toggleChat: any) {
-    // const newChannel = getChannelFromChannellist(props.allChannels, room.Name);
     let currentChat: ChatData = {
     chatName: room.Name,
     isChannel: true,
@@ -92,7 +88,6 @@ export async function copyChannelByName(channelName: string): Promise<Channel | 
 
 export async function getUserIDByUserName(UserName: string): Promise<number | undefined> {
     const UserList = await getUsers();
-    // const UserListArray = [...UserList];
     const TargetUser = UserList.find((user: IUser) => user.username === UserName)
     if (TargetUser) {
         return TargetUser.id;
@@ -114,25 +109,6 @@ export async function getChannelIdByChannelName(ChannelName: string): Promise<nu
     console.log('returned undefined ChannelId from getChannelIdByChannelName:');
     return undefined;
 }
-
-// export async function joinPrivateChannel(ChannelID: number, ChannelPassword: string) : Promise<Channel | undefined>{
-//     //fetching Channel with ChannelName
-//     try {
-//         // const ChannelId = getChannelIdByChannelName(ChannelName);
-//         // const TargetChannel = await copyChannelByName(ChannelName);
-//         // if (TargetChannel?.Password === ChannelPassword)
-
-//         // sending Password to backend to check if its the same
-//         // new method for joining private channels?
-//         return TargetChannel;
-
-//     } catch (error){
-//         console.error("Error joining private Channel: ", error);
-//     }
-//     //Checking if Channel PW is equal to parameter ChannelPassword
-//     //AddChannelUser
-//     // return;
-// }
 
 export async function fetchChannelNames(): Promise<string[]> {
     try{
@@ -223,15 +199,9 @@ export async function CreateChannel(props: ChatProps, channelName: string, passw
         var channelType = "public";
     else
         channelType = "private";
-    // console.log(props.user?.passwordHash)
     const ChannelData = {
         "intraUsername": props.user?.intraUsername,
         "passwordHash": props.user?.passwordHash
-        // "passwordHash": "$2b$10$ZrGltCBM3NsOPTEo3wc6GePgb3yjaSn73kfAfO7fdhb0gSzI0fSt."
-        // "channelName": channelName,
-        // "channelType": channelType,
-        // "channelPassword": password,
-        // "ownerId": props.userID
     }
     const jsonData = JSON.stringify(ChannelData);
     var fetchUrl = fetchAddress + 'channel/' + props.user?.userID + '/' + props.user?.userID + '/' + channelName + '/' + channelType;
@@ -245,7 +215,6 @@ export async function CreateChannel(props: ChatProps, channelName: string, passw
     })
     .then(response => response.json())
     .then(data => {
-        // console.log("Channel created:", data);
         return true;
     })
     .catch(error => {

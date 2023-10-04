@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { IUser } from '../interfaces/IUser';
 import { getUsers } from '../api/userApi';
 

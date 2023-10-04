@@ -15,8 +15,6 @@ import {
   AuthProtector,
   UserAuthDTO,
 } from '../authProtectorService/authProtector';
-// import * as speakeasy from 'speakeasy';
-// import * as uuid from 'uuid';
 import * as qrcode from 'qrcode';
 import { authenticator } from 'otplib';
 
@@ -87,6 +85,8 @@ export class UserService {
         Date.now().toString(),
       );
     }
+    // user.avatarPath = 'default_pfp.png';
+
     return await this.userRepository.save(user);
   }
 

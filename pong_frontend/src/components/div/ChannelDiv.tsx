@@ -4,29 +4,7 @@ import {renderRooms, fetchPublicChannels, fetchPrivateChannels} from './ChannelU
 import {  popUpCreateChannel } from './ChannelPopups';
 import { chatButtonsStyle } from '../mainPages/ChatPageStyles';
 
-// export var fetchAddress = 'http://localhost:3000/';
-// export var fetchAddress = process.env.REACT_APP_SRVR_URL || 'http://localhost:3000/';
 export var fetchAddress= `${process.env.REACT_APP_BASE_URL}` 
-
-// export async function isChannelUser(userId: number, channelId: number): Promise<boolean> {
-//     try {
-//         console.log('userId:', userId);
-//         console.log('channelId:', channelId);
-//         const response = await getChannelUser(userId, channelId);
-//         if (!response.headers.has("content-length")) {
-//             return false;
-//         }
-//         if (!response.ok) {
-//             console.error("Error retrieving ChannelUser: ", error);
-//             return false;
-//         }
-//         const json = await response.json();
-//         return !!json; // Converts channelUser to boolean 
-//     } catch (error){
-//         console.log('Error occured, or empty JSON response from getChannelUser, in isUserChannel:', error);
-// 		return false;
-//     }
-// }
 
 const ChannelDiv: React.FC<Channel_Div_props> = (props) => {
     const [publicChannels, setPublicChannels] = useState<Channel[]>([]);

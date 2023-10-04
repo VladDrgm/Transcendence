@@ -13,15 +13,6 @@ export async function getUsers():  Promise<any> {
   }
 }
 
-
-//to be tested
-export async function getChannelUsers(channelId: number):  Promise<any[]> {
-	const response = await fetch(fetchAddress + 'channel/' + channelId + '/users', {credentials: "include", method: 'PUT'});
-  const json = await response.json();
-	return json as any[];
-}
-
-//to be tested
 export async function getChannelUser(callerId: number | undefined, channelId: number, targetId: number | undefined, user: User): Promise<any> {
   if (callerId === undefined || channelId === undefined || targetId === undefined) {
     throw new Error("Invalid userId or channelId");

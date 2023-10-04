@@ -1,7 +1,7 @@
+import React from 'react';
 import { getBlockedUsers } from "../../api/block_user.api";
 import { ChatProps, ChatData, Channel, Message } from "../../interfaces/Channel";
 import { User } from "../../interfaces/User";
-import { UserContextProvider, useUserContext } from "../context/UserContext";
 import { Row } from "../mainPages/ChatPageStyles";
 import { getUserIDByUserName } from "./ChannelUtils";
 
@@ -33,7 +33,6 @@ export function renderUser(user: User, props: ChatProps, toggleChat: any) {
             isResolved: true,
             Channel: {} as Channel,
         };
-        // console.log(newName);
     })
     .catch((error) => {
         console.error("Error fetching user ID:", error);
@@ -46,15 +45,6 @@ export function renderUser(user: User, props: ChatProps, toggleChat: any) {
     </Row>
     );
 }
-
-// export function renderMessages(message: Message, index: number) {
-//     return (
-//         <div key={index} style={{ display: 'flex', alignItems: 'center'}}>
-//         <h3 style={{ marginRight: '5px' }}> {message.sender}:</h3>
-//         <p>{message.content}</p>
-//         </div>
-//     );
-// }
 
 export async function extractExcludedSenders(user: User): Promise<string[]> {
   try {
@@ -71,20 +61,6 @@ export async function extractExcludedSenders(user: User): Promise<string[]> {
     return [];
   }
 }
-
-// // Usage example:
-// extractExcludedSenders()
-//   .then((excludedSenders) => {
-//     // You can use the excludedSenders array here
-//     console.log('Excluded senders:', excludedSenders);
-//   })
-//   .catch((error) => {
-//     // Handle any errors that may occur during the extraction
-//     console.error('Error during extraction:', error);
-//   });
-
-
-
 
 export function renderMessages(message: Message, index: number, excludedSenders: string[]) {
     if(message.sender){

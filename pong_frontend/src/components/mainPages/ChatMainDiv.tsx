@@ -6,8 +6,6 @@ import { ChannelAdminButtonsDiv, ChatBodyDivChannelOwnerButtonsDiv } from "../di
 import ChatBodyDiv from "../div/ChannelChatBodyDiv";
 import ChannelInputDiv from "../div/ChannelChatPanelDiv";
 import { Channel, ChannelUserRoles, ChatName, ChatProps } from "../../interfaces/Channel";
-// import { chatInputProps } from "../div/channel_ChatPanel_div";
-// import { main_div_mode_t } from "../MainDivSelector";
 import { fetchAllChannels, getUserIDByUserName } from "../div/ChannelUtils";
 import { User } from "../../interfaces/User";
 import { deleteBlockedUser, deleteChannelUser, deleteFriend, getBlockedUser, getChannelBlockedUser, getChannelUser, getIsFriend, getMutedStatus, postBlockedUser, postChannelUser, postFriend, postPrivateChannelUser } from "../../api/channel/channel_user.api";
@@ -17,7 +15,6 @@ import { getIsAdmin, postAdmin } from "../../api/channel/channel_admin.api";
 
 const ChatMainDiv: FC<ChatProps> = (props) => {
 	const [body, setBody] = useState<JSX.Element | null>(null);
-	// const [chatInput, setChatInput] = useState<JSX.Element | null>(null);
 	const [channelpanel, setChannelpanel] = useState<JSX.Element | null>(null);
 	const [loadingChannelpanel, setLoadingChannelpanel] = useState(true);
 	const [channelPanelLoaded, setChannelPanelLoaded] = useState(false);
@@ -63,9 +60,7 @@ const ChatMainDiv: FC<ChatProps> = (props) => {
 				.then((channels) => {
 					setAllChannels(channels);
 					const currentChannel = getChannelFromChannellist(channels, "general");
-					// console.log("Channels: ", currentChannel);
 					if (currentChannel) {
-						// console.log("gotChannel");
 						setCurrentChat((prevState) => ( {
 							...prevState,
 							Channel: currentChannel,
@@ -98,25 +93,15 @@ const ChatMainDiv: FC<ChatProps> = (props) => {
 	const [messages, setMessages] = useState<{
 		[key in ChatName]: { sender: string | undefined; content: string }[];
 	}>(initialMessagesState);
-		// console.log('initialMessageState:', initialMessagesState);
 
 	const [message, setMessage] = useState("");
 
 	function handleMessageChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
 		setMessage(e.target.value);
 	}
-
-	// useEffect(() => {
-    // 	setMessage(message.trim());
-  	// }, [message]);
-
 	function sendMessage() {
-		// console.log("message:", message);
-		// console.log("Messages :", messages);
-		// console.log("currentchat: ", currentChat);
-		// console.log("username : ", props.user?.username);
 		const trimmedMessage = message.trim();
-		let receiverId = null; // Initialize receiverId as null
+		let receiverId = null;
 
 		if (!currentChat.isChannel) {
 		const receiverUser = props.allUsers.find(user => user.username === currentChat.chatName);
@@ -126,7 +111,6 @@ const ChatMainDiv: FC<ChatProps> = (props) => {
 		}
 		const payload = {
 		content: trimmedMessage,
-		// to: currentChat.isChannel ? currentChat.chatName : currentChat.receiverId,
 		to: currentChat.chatName,
 		sender: props.user?.username,
 		chatName: currentChat.chatName,
@@ -137,7 +121,6 @@ const ChatMainDiv: FC<ChatProps> = (props) => {
 		props.socketRef.current?.emit("send message", payload);
 		const newMessages = immer(messages, (draft: WritableDraft<typeof messages>) => {
 		//if the element doesn't exist, an empty one will be added
-		// console.log('Inside Immer callback');
 			if(!draft[currentChat.chatName]) {
 				draft[currentChat.chatName] = [];
 			}
@@ -146,14 +129,9 @@ const ChatMainDiv: FC<ChatProps> = (props) => {
 				content: message
 			});
 		});
-		// console.log('New Messages:', newMessages);
 		setMessages(newMessages);
 		setMessage("");
 	}
-
-
-		// const messages = useMemo(() =>
-		// 	props.messages || [], [props.messages])
 
 	function handleKeyPress(e: React.KeyboardEvent<HTMLTextAreaElement>) {
 		if (e.key === "Enter") {
@@ -202,7 +180,6 @@ const ChatMainDiv: FC<ChatProps> = (props) => {
 		else if(!currentChat.isChannel){
 			handleUserDirektMessageStatus();
 		}
-		// console.log("in effect currentChat:", currentChat);
 	}, [currentChat.chatName])
 
 
@@ -340,10 +317,8 @@ const ChatMainDiv: FC<ChatProps> = (props) => {
 		var ownerStatus = false;
 		if (currentChat.Channel.OwnerId === props.user?.userID){
 			ownerStatus = true;
-			// console.log("true UserID:", userID , "owner:", ownerStatus);
 		} else {
 			ownerStatus = false;
-			// console.log("false UserID:", userID , "owner:", ownerStatus);
 		};
 		setCurrentRoles((prevState) => ({
 			...prevState,
@@ -403,9 +378,6 @@ const ChatMainDiv: FC<ChatProps> = (props) => {
 
 
 	};
-	// const proroomJoinCallbackRef = useRef<(incomingMessages: any, room: keyof typeof messages) => void>(roomJoinCallback);
-
-
 
 
 	function joinPrivateRoom(chatName: ChatName, password: string) {
@@ -533,9 +505,7 @@ const ChatMainDiv: FC<ChatProps> = (props) => {
 		if (newAdminUserID === props.user?.userID)
 		{
 			setCurrentChat((prevChat) => {
-			// console.log("currenchat", prevChat.chatName);
 				if( prevChat.chatName === roomName){
-					// alert("You are now an admin of this Channel.");
 					setCurrentRoles((prevRoles) => ({
 						...prevRoles,
 						isAdmin: true
@@ -543,7 +513,6 @@ const ChatMainDiv: FC<ChatProps> = (props) => {
 				}
 				return prevChat;
 			});
-			// console.log("currenchat", currentChat.chatName);
 		}
 	}
 
@@ -573,10 +542,8 @@ const ChatMainDiv: FC<ChatProps> = (props) => {
 		if (targetId === props.user?.userID)
 		{
 			setCurrentChat((prevChat) => {
-			// console.log("currenchat", prevChat.chatName);
 
 				if( prevChat.chatName === roomName){
-					// alert("You can use this Channel again.")
 					setCurrentRoles((prevRoles) => ({
 						...prevRoles,
 						isBlocked: false
@@ -584,7 +551,6 @@ const ChatMainDiv: FC<ChatProps> = (props) => {
 				}
 				return prevChat;
 			});
-			// console.log("currenchat", currentChat.chatName);
 		}
 	}
 
@@ -601,7 +567,6 @@ const ChatMainDiv: FC<ChatProps> = (props) => {
 						...prevRoles,
 						isMuted: false
 					}));
-					// alert("You have been unmuted.");
 				}
 				return prevChat;
 			});
@@ -622,7 +587,6 @@ const ChatMainDiv: FC<ChatProps> = (props) => {
 						...prevRoles,
 						isMuted: true
 					}));
-					// alert("You have been muted.");
 				}
 				return prevChat;
 			});
@@ -631,8 +595,6 @@ const ChatMainDiv: FC<ChatProps> = (props) => {
 	}
 
 	function handleBlockedUserSocket(targetId: number, callerName: string) {
-		// console.log("targetID", targetId);
-		// console.log("userId", props.user?.userID);
 		if (targetId === props.user?.userID)
 		{
 			setCurrentChat((prevChat) => {
@@ -643,11 +605,9 @@ const ChatMainDiv: FC<ChatProps> = (props) => {
 						...prevRoles,
 						isBlocked: true
 					}));
-					// alert("You have been blocked by the User.");
 				}
 				return prevChat;
 			});
-			// console.log("currenchat", currentChat.chatName);
 		}
 	}
 
@@ -664,11 +624,9 @@ const ChatMainDiv: FC<ChatProps> = (props) => {
 						...prevRoles,
 						isBlocked: false
 					}));
-					// alert("You have been unblocked by the User.");
 				}
 				return prevChat;
 			});
-			// console.log("currenchat", currentChat.chatName);
 		}
 	}
 

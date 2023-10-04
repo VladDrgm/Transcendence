@@ -1,3 +1,4 @@
+import React from "react";
 import imageAssetBilly from '../assets/billy.png'
 import * as styles from './LoginPageStyles';
 

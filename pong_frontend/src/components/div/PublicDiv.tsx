@@ -3,7 +3,7 @@ import { PublicProfile } from '../../interfaces/PublicProfile';
 import { getPublicProfile } from '../../api/profile.api';
 import { achievementListItemStyle, achievementTextStyle, centeredContainerStyle, listContainerStyle, listStyle, profilePictureStyle } from './UserProfileSyles';
 import imageAssetAchievement1 from '../assets/achievement1.png'
-import { fetchAddress } from './ChannelDiv';
+import UserProfilePicture from './UserProfilePicture';
 
 interface PublicProps {
   userID: number;
@@ -11,14 +11,13 @@ interface PublicProps {
 }
 
 const PublicDiv: React.FC<PublicProps> = ({ userID, publicID }) => {
-  const [user, setFriend] = useState<PublicProfile>();
+  const [user, setUser] = useState<PublicProfile>();
 
   const getData = async () => {
-    try{
+    try {
       const friend = await getPublicProfile(publicID);
-      setFriend(friend);
-    }
-    catch (error) {
+      setUser(friend);
+    } catch (error) {
       console.error(error);
     }
   };
@@ -50,18 +49,14 @@ const PublicDiv: React.FC<PublicProps> = ({ userID, publicID }) => {
   if (user != null) {
     return (
       <div>
-        <h2>{user.username}'s profile</h2>
-        <img
-					className='user-card__image'
-					src={fetchAddress.slice(0, -1) + `${user.avatarPath?.slice(1)}`}
-					alt='user.avatarPath'
-					onError={({ currentTarget }) => {
-						currentTarget.onerror = null;
-						currentTarget.src = '/default_pfp.png';
-					}}
-					style={profilePictureStyle}
-				/>
-				<br/>
+        <h2>{user.username}&apos;s profile</h2>
+        <UserProfilePicture
+          imagePath={user?.avatarPath}
+          defaultImageSrc='/default_pfp.png'
+          altText={user?.username || 'User'}
+          imageStyle={profilePictureStyle}
+        />
+        <br/>
         <div style={centeredContainerStyle}>{renderAchievements()}</div>
       </div>
     );

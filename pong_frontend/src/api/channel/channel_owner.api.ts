@@ -1,27 +1,5 @@
 import { fetchAddress } from "../../components/div/ChannelDiv";
 
-
-// export async function getIsOwner(channelId: number, userId: number): Promise<boolean> {
-//     try {
-//       const response = await fetch(fetchAddress + 'channel/' + userId + '/' + channelId + '/owner', {credentials: "include",})
-//       if (!response.ok) {
-//         console.error("Error retrieving ChannelOwner");
-//         return false;
-//       }
-//       if (!response.headers.has("content-length")) {
-//         return false;
-//       }
-//       const data = await response.json();
-//       if(!data) {
-//         return false;
-//       }
-//       return true
-//     } catch (error) {
-//         console.log("Error returning Owner of channelId " + channelId + ":", error);
-//         return false;
-//     }
-// }
-
 export async function getOwnerId(channelId: number): Promise<number | undefined> {
   try {
     const response = await fetch(fetchAddress + 'channel/' + channelId + '/owner', {credentials: "include",})
@@ -46,7 +24,6 @@ export async function getOwnerId(channelId: number): Promise<number | undefined>
   }
 }
 
-
 export function deleteOwner(channelId: number) {
     fetch(fetchAddress + 'channel/' + channelId + '/owner', {method: 'DELETE'})
       .then(response => response.json())
@@ -68,18 +45,3 @@ export function putOwner(channelId: number, targetId: number) {
       .then(data => {console.log("Channel Owner with UserId :" + targetId +" added:", data);})
       .catch(error => {console.log("Error adding Channel Owner with UserId :" + targetId +":", error);});
 }
-
-// export function postOwner(channelId: number, targetId: number, userId: number) {
-//     const requestOptions = {
-//       method: 'POST',
-//       headers: { 
-//         "Accept": "*/*",
-//         "Container-Type": "application/json"
-//       },
-//       body:  ''
-//     };
-//     fetch(fetchAddress + 'channel/' + userId +'/' + targetId + '/' + channelId + '/owner', requestOptions)
-//       .then(response => response.json())
-//       .then(data => {console.log("Channel Owner with UserId :" + userId +" added:", data);})
-//       .catch(error => {console.log("Error adding Channel Owner with UserId :" + userId +":", error);});
-// }

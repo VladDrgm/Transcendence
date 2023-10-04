@@ -16,7 +16,6 @@ import PublicProfileMainDiv from './components/main_div/PublicProfileMainDiv';
 import TFAVerification from './components/auth/TFAVerification';
 import MyFriendsPage from './components/mainPages/MyFriends';
 import { postUserStatus } from './api/statusUpdateAPI.api';
-// import { AppState } from "react-native";
 import LogoutHandler from './components/main_div/LogOutHandler';
 
 const App = () => {
@@ -32,7 +31,6 @@ const App = () => {
 			const localParsedUser = JSON.parse(localUser!);
 			e.preventDefault();
 			e.returnValue = ''; // Required for some browsers
-			// Call your function here
 			postUserStatus("Offline", localParsedUser);
 		  };
 	  
@@ -41,7 +39,6 @@ const App = () => {
 		  return () => {
 			window.removeEventListener('beforeunload', handleBeforeUnload);
 		  };
-	  // eslint-disable-next-line react-hooks/exhaustive-deps
 	  }, []);
 
 
