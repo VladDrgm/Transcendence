@@ -465,6 +465,7 @@ const ChatMainDiv: FC<ChatProps> = (props) => {
 						roomName: roomName
 					};
 					props.socketRef.current?.emit('add admin', data);
+					
 				})
 				.catch(error => {
 					console.error("Error posting admin with Username:" , newAdminUsername);
@@ -720,14 +721,21 @@ const ChatMainDiv: FC<ChatProps> = (props) => {
 			loadingChannelpanel ? (
 			  <div>Loading Channel Name...</div> // Show a loading spinner or placeholder
 			) : (
+				currentRoles.isUserResolved ? (
 			  <ChannelInfo>
 				<h3>{currentChat.chatName}</h3>
-				<button
-				style={userButtonStyle}
-				onClick={() => leaveRoom(currentChat.chatName)}>
-						Leave {currentChat.chatName}
-				</button>
+				{currentRoles.isUser && currentChat.chatName !== "general" && (
+					<button
+					style={chatButtonsStyle}
+					onClick={() => leaveRoom(currentChat.chatName)}
+					>
+					Leave {currentChat.chatName}
+					</button>
+				)}
 			  </ChannelInfo>
+				) : (
+					<div>Loading Channel Name...</div>
+				)
 			)
 		  );
 
@@ -806,7 +814,7 @@ const ChatMainDiv: FC<ChatProps> = (props) => {
 					leaveRoom = {leaveRoom}/>
 			  );
 		  }
-		else if (currentRoles.isAdmin && currentRoles.isAdminResolved) {
+		else if (currentRoles.isAdmin && currentRoles.isAdminResolved && currentRoles.isUser && currentRoles.isUserResolved) {
 			setChannelpanel(
 				<ChannelAdminButtonsDiv
 				chatProps={props} 

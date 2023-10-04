@@ -59,7 +59,7 @@ const ChatBodyDiv: React.FC<ChatBodyProps> = ({
         case 'private':
           if (
             ChannelUserRoles.isUser ||
-            ChannelUserRoles.isAdmin ||
+            (ChannelUserRoles.isAdmin && ChannelUserRoles.isUser) ||
             !currentChat.isChannel
           ) {
             setContent(
@@ -85,7 +85,7 @@ const ChatBodyDiv: React.FC<ChatBodyProps> = ({
         case 'public':
           if (
             ChannelUserRoles.isUser ||
-            ChannelUserRoles.isAdmin ||
+            (ChannelUserRoles.isAdmin && ChannelUserRoles.isUser)||
             !currentChat.isChannel
           ) {
             setContent(

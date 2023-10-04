@@ -85,7 +85,8 @@ export async function deleteChannelUser(userId: number | undefined, targetId: nu
       console.log("ChannelUser with UserId :" + userId +" removed");
     } else {
       console.error("Error removing ChannelUser with UserId :" + userId +":", response.status);
-      throw new Error ("Error removing ChannelUser");
+      alert("Error while leaving Channel");
+      // throw new Error ("Error removing ChannelUser");
     }
   })
   .catch(error => {

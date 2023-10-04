@@ -273,7 +273,7 @@ export class ChannelService {
       channelId,
     );
 
-    if (!isChannelOwner && !isChannelAdmin && callerId != userId) {
+    if (!isChannelOwner && !isChannelAdmin && (callerId != userId)) {
       throw new HttpException(
         'You do not have the credentials to get a user.',
         HttpStatus.BAD_REQUEST,
