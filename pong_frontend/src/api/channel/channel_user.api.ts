@@ -56,7 +56,7 @@ export async function getChannelUser(callerId: number | undefined, channelId: nu
 }
 
 
-export function deleteChannelUser(userId: number | undefined, channelId: number, user: User) {
+export async function deleteChannelUser(userId: number | undefined, targetId: number | undefined, channelId: number, user: User): Promise<void>  {
   const ChannelData = {
     "intraUsername": user?.intraUsername,
     "passwordHash": user?.passwordHash
@@ -70,10 +70,20 @@ export function deleteChannelUser(userId: number | undefined, channelId: number,
       },
       body: jsonData
     };  
-  fetch(fetchAddress + 'channel/' + userId + '/' + channelId + '/user', requestOptions)
-      .then(response => response.json())
-      .then(data => {console.log("ChannelUser" + userId + " deleted:", data);})
-      .catch(error => {console.log("Error deleting ChannelUser " + userId + ":" , error);})
+  fetch(fetchAddress + 'channel/' + userId + '/' + targetId + '/' + channelId + '/user', requestOptions)
+  .then(response => {
+    if (response.ok) {
+      console.log("ChannelUser with UserId :" + userId +" removed");
+    } else {
+      console.error("Error removing ChannelUser with UserId :" + userId +":", response.status);
+      alert("Error while leaving Channel");
+      // throw new Error ("Error removing ChannelUser");
+    }
+  })
+  .catch(error => {
+    console.error("Error removing ChannelUser with UserId :" + userId +":", error);
+    throw error;
+  });
 }
   
   //to be tested

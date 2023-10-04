@@ -61,7 +61,7 @@ export const TextBox = styled.textarea`
 `;
 
 export const ChannelInfo = styled.div`
-  height: 15%;
+  height: 15vh;
   width: 100%;
 //   border-bottom: 1px solid black;
 `;

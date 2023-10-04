@@ -187,21 +187,21 @@ export class ChannelController {
     );
   }
 
-  @Delete(':userId/:channelId/user')
+  @Delete(':callerId/:targetId/:channelId/user')
   @ApiOperation({
-    summary: 'Delete a User by his userId. Only Admins can delete a User.',
+    summary: 'Delete a User by his userId. Only Admins and the user itself can delete the User.',
   })
   async removeChannelUser(
-    @Body() loggedUser: UserAuthDTO,
     @Param('callerId') callerId: number,
     @Param('targetId') targetId: number,
     @Param('channelId') channelId: number,
+    @Body() loggedUser: UserAuthDTO,
   ): Promise<void> {
-    await this.channelService.removeChannelUser(
-      loggedUser,
+    return await this.channelService.removeChannelUser(
       callerId,
       targetId,
       channelId,
+      loggedUser,
     );
   }
 

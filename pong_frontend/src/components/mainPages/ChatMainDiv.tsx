@@ -342,10 +342,19 @@ const ChatMainDiv: FC<ChatProps> = (props) => {
 			});
 	}
 
-	// function leaveRoom(chatName: ChatName) {
-	// 	console.log("Removing User ", props.user?.userID, " from Channel:", currentChat.Channel.ChannelId);
-	// 	deleteChannelUser(props.user?.userID, currentChat.Channel.ChannelId, props.user!);
-	// }
+	function leaveRoom(chatName: ChatName) {
+		console.log("Deleting User ", props.user?.userID, " from Channel:", currentChat.Channel.ChannelId);
+		deleteChannelUser(props.user?.userID, props.user?.userID, currentChat.Channel.ChannelId, props.user!)
+			.then((response)=> {
+			// props.socketRef.current?.emit("leave room", chatName)
+			setCurrentRoles((prevState) => ({
+				...prevState,
+				isUser: false
+			}))
+			}).catch(error => {
+				console.error("Error in leaveRoom when removing User to Channel: ", error);
+			});
+	}
 
 	function roomJoinCallback(incomingMessages: any, room: keyof typeof messages) {
 		const newMessages = immer(messages, (draft: WritableDraft<typeof messages>) => {
@@ -428,6 +437,7 @@ const ChatMainDiv: FC<ChatProps> = (props) => {
 						roomName: roomName
 					};
 					props.socketRef.current?.emit('add admin', data);
+					
 				})
 				.catch(error => {
 					console.error("Error posting admin with Username:" , newAdminUsername);
@@ -669,12 +679,21 @@ const ChatMainDiv: FC<ChatProps> = (props) => {
 			loadingChannelpanel ? (
 			  <div>Loading Channel Name...</div> // Show a loading spinner or placeholder
 			) : (
+				currentRoles.isUserResolved ? (
 			  <ChannelInfo>
 				<h3>{currentChat.chatName}</h3>
-				{/* <button onClick={() => props.leaveRoom(props.currentChat.chatName)}>
-						Leave {props.currentChat.chatName}
-					</button> */}
+				{currentRoles.isUser && currentChat.chatName !== "general" && (
+					<button
+					style={chatButtonsStyle}
+					onClick={() => leaveRoom(currentChat.chatName)}
+					>
+					Leave {currentChat.chatName}
+					</button>
+				)}
 			  </ChannelInfo>
+				) : (
+					<div>Loading Channel Name...</div>
+				)
 			)
 		  );
 
@@ -726,9 +745,11 @@ const ChatMainDiv: FC<ChatProps> = (props) => {
 				) : (
 				  <ChannelInfo>
 					{currentChat.chatName}
-					{/* <button onClick={() => props.leaveRoom(props.currentChat.chatName)}>
-							Leave {props.currentChat.chatName}
-						</button> */}
+					<button
+						style={userButtonStyle}
+						onClick={() => leaveRoom(currentChat.chatName)}>
+								Leave {currentChat.chatName}
+					</button>
 				  </ChannelInfo>
 				)
 			);
@@ -747,10 +768,11 @@ const ChatMainDiv: FC<ChatProps> = (props) => {
 					banUserSocket={banUserSocket}
 					unbanUserSocket={unbanUserSocket}
 					muteUserSocket={muteUserSocket}
-					deleteChatRoom={deleteChatRoom}/>
+					deleteChatRoom={deleteChatRoom}
+					leaveRoom = {leaveRoom}/>
 			  );
 		  }
-		else if (currentRoles.isAdmin && currentRoles.isAdminResolved) {
+		else if (currentRoles.isAdmin && currentRoles.isAdminResolved && currentRoles.isUser && currentRoles.isUserResolved) {
 			setChannelpanel(
 				<ChannelAdminButtonsDiv
 				chatProps={props} 
@@ -764,7 +786,8 @@ const ChatMainDiv: FC<ChatProps> = (props) => {
 				banUserSocket={banUserSocket}
 				unbanUserSocket={unbanUserSocket}
 				muteUserSocket={muteUserSocket}
-				deleteChatRoom={deleteChatRoom}/>
+				deleteChatRoom={deleteChatRoom}
+				leaveRoom = {leaveRoom}/>
 			);
 		} 
 		setChannelPanelLoaded(true);
