@@ -13,16 +13,6 @@ interface FormProps {
 }
 
 const GameForm: React.FC<FormProps> = (props) => {
-	/* const [gameSession, setGameSession] = useState<{
-		playerOne: string | null;
-		playerTwo: string | null;
-	}>(props.gameSession);
-
-	useEffect(() => {
-		// Update the gameSession state whenever props.gameSession changes
-		setGameSession(props.gameSession);
-	}, [props.gameSession]); */
-
 	const handleStartGameClick = (event: React.MouseEvent<HTMLButtonElement>) => {
 		event.preventDefault();
 		let { playerOne, playerTwo } = props.gameSession;
@@ -38,16 +28,6 @@ const GameForm: React.FC<FormProps> = (props) => {
 
 	const handleQuitGameClick = (event: React.MouseEvent<HTMLButtonElement>) => {
 		event.preventDefault();
-		/* let { playerOne, playerTwo } = props.gameSession;
-
-		if (playerOne || playerTwo) {
-			// Player 1 or Player 2 assigned and valid
-			props.quitGame();
-		} else {
-			// Player 2 has not joined yet
-			alert("You are in no session now.");
-		}  */
-
 		props.quitGame();
 	};
 

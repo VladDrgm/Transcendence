@@ -1,3 +1,4 @@
+import React from 'react';
 import { useConnectivity } from "../context/ConnectivityContext";
 import * as styles from './NoInternetPopupStyle';
 

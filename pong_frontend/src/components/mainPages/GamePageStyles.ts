@@ -11,24 +11,13 @@ export const exampleStyle: Properties = {
 }
 
 export const GameContainerStyle: Properties = {
-	// backgroundColor: 'gray',
-	// flex: '1',
 	position: 'relative',
 	height: '100%',
   	width: '50%',
-  	// display: 'flex',
 	fontFamily: 'Shlop',
 	fontSize: '12px',
 	alignSelf: 'center',
 	borderRadius: '6px',
-	// border: '2px solid',
 	color:'red',
-	// marginTop: '100px',
 	marginBottom: '0px',
 }
-
-/* Usage:
-import * as styles from './ProfilePageStyles';
-
-<p style={styles.formFieldStyle}>Welcome</p>
-*/

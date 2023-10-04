@@ -1,11 +1,11 @@
-import { FC, useEffect, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { FriendProfile } from '../../interfaces/FriendProfile';
 import { getFriendList } from '../../api/friend_list.api';
 import { useUserContext } from '../context/UserContext';
 import { Link } from 'react-router-dom';
-import { fetchAddress } from './ChannelDiv';
-import { profilePictureStyle } from './UserProfileSyles';
+import UserProfilePicture from './UserProfilePicture';  
 import { friendCardContainerStyle, friendCardStyle } from '../mainPages/MyFriendsStyles';
+import { profilePictureStyle } from './UserProfileSyles';
 
 interface FriendProps {
   userID: number | undefined;
@@ -14,7 +14,7 @@ interface FriendProps {
 
 const FriendList: FC<FriendProps> = ({ userID, friend_set }) => {
   const [friends, setFriends] = useState<FriendProfile[]>([]);
-  const [loading, setLoading] = useState(true); 
+  const [loading, setLoading] = useState(true);
 
   const { user } = useUserContext();
 
@@ -22,10 +22,10 @@ const FriendList: FC<FriendProps> = ({ userID, friend_set }) => {
     try {
       const users = await getFriendList(userID, user?.intraUsername, user?.passwordHash);
       setFriends(users);
-      setLoading(false); 
+      setLoading(false);
     } catch (error) {
       console.error(error);
-      setLoading(false); 
+      setLoading(false);
     }
   };
 
@@ -40,7 +40,7 @@ const FriendList: FC<FriendProps> = ({ userID, friend_set }) => {
   return (
     <div>
       <h3>Friends List</h3>
-      {loading ? ( // Show loading indicator while data is being fetched
+      {loading ? (
         <p>Loading...</p>
       ) : friends.length === 0 ? (
         <p>No friends added yet :)</p>
@@ -49,15 +49,11 @@ const FriendList: FC<FriendProps> = ({ userID, friend_set }) => {
           {friends?.map((friend) => (
             <div key={friend.username} style={friendCardStyle}>
               <Link onClick={() => openFriend(friend.userID)} to={`/app/public_profile/${friend.userID}`}>
-                <img
-                  className='friend-card__image'
-                  src={fetchAddress.slice(0, -1) + `${friend.avatarPath?.slice(1)}`}
-                  alt={friend.username}
-                  onError={({ currentTarget }) => {
-                    currentTarget.onerror = null;
-                    currentTarget.src = '/default_pfp.png';
-                  }}
-                  style={profilePictureStyle}
+                <UserProfilePicture
+                  imagePath={friend.avatarPath}
+                  defaultImageSrc='/default_pfp.png'
+                  altText={friend.username}
+                  imageStyle={profilePictureStyle}
                 />
                 <div>{friend.username}</div>
               </Link>
