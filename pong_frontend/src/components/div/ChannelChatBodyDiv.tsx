@@ -33,7 +33,7 @@ const ChatBodyDiv: React.FC<ChatBodyProps> = ({
       .catch((error) => {
         console.error('Error during extracting exludedSenders:', error);
       });
-  }, [props.user]);
+  }, [props.user, messages, ChannelUserRoles]);
 
   useEffect(() => {
     if (!currentChat.isChannel) {

@@ -477,8 +477,10 @@ const ChatMainDiv: FC<ChatProps> = (props) => {
 			}
 			postBlockedUser(Number(targetID), props.user!)
 			.then((response) => {
-				if (response)
+				if (response){
 					blockUserSocket(Number(targetID), props.user?.username);
+					handleBody();	
+				}
 				else
 					alert("Error while banning User");
 			})
@@ -502,8 +504,8 @@ const ChatMainDiv: FC<ChatProps> = (props) => {
 				}
 				deleteBlockedUser(Number(targetID), props.user!)
 				.then(() => {
-					console.log('User unblocked with UserId:', targetID);
 					unblockUserSocket(Number(targetID), props.user?.username);
+					handleBody();
 				})
 				.catch(error => {
 					console.error("Error unblocking user with Username:" , targetName);
@@ -619,8 +621,8 @@ const ChatMainDiv: FC<ChatProps> = (props) => {
 	}
 
 	function handleBlockedUserSocket(targetId: number, callerName: string) {
-		console.log("targetID", targetId);
-		console.log("userId", props.user?.userID);
+		// console.log("targetID", targetId);
+		// console.log("userId", props.user?.userID);
 		if (targetId === props.user?.userID)
 		{
 			setCurrentChat((prevChat) => {
