@@ -37,11 +37,9 @@ export const checkFriend = async (userID:number, friendID:number, intra:string |
 		})
 	  };
   var ret;
-  console.error("error");
   const response = await fetch(fetchAddress + 'friend/' + userID + '/friend/' + friendID + '/check', requestOptions)
   .then(response => response.text())
   .then(data => {
-    console.error(data);
     if (data === "Is a friend.") {
       ret = true;
     } else {
