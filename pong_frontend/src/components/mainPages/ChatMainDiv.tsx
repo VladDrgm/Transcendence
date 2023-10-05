@@ -464,11 +464,12 @@ const ChatMainDiv: FC<ChatProps> = (props) => {
 					handleBody();	
 				}
 				else
-					alert("Error while banning User");
+					console.error("Error blocking user with Username:" , targetName);
+				// alert("Error while banning User");
 			})
 			.catch(error => {
 				console.error("Error blocking user with Username:" , targetName);
-				alert("Error while blocking User" + error);
+				// alert("Error while blocking User" + error);
 			})
 		})
 		.catch(error => {

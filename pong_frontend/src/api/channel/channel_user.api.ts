@@ -591,7 +591,7 @@ export async function postBlockedUser(targetId: number, user: User): Promise<boo
       alert('User has been blocked.');
       return true; // Successful
     } else {
-      console.error('Error blocking User with UserId :' + targetId + ':', response.status);
+      // console.error('Error blocking User with UserId :' + targetId + ':', response.status);
       alert('Error blocking User: ' + response.status);
       return false; // Error
     }
@@ -623,7 +623,8 @@ export async function deleteBlockedUser(targetId: number, user: User): Promise<v
         console.log("ChannelUser with UserId :" + targetId +" unblocked");
         alert("User has been unblocked.");
       } else {
-        console.error("Error unblocking User with UserId :" + targetId +":", response.status);
+        // console.error("Error unblocking User with UserId :" + targetId +":", response.status);
+        alert("Error unblocking User.");
         // throw new Error ("Error unblocking User");
       }
     })

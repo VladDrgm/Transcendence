@@ -62,7 +62,7 @@ export async function extractExcludedSenders(user: User): Promise<string[]> {
       
       return excludedSenders.filter((username) => username !== null); 
     } else {
-      console.error('API response is not an array.');
+      // console.error('API response is not an array.');
       return [];
     }
   } catch (error) {
