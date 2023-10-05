@@ -33,12 +33,7 @@ export class BlockedService {
       }
     }
 
-    const result = await this.blockedRepository
-      .createQueryBuilder('blocked')
-      .leftJoinAndSelect('blocked.user', 'user')
-      .leftJoinAndSelect('blocked.blockedUser', 'blockedUser')
-      .where('blocked.user.userID = :callerId', { callerId })
-      .getMany();
+    const result = await this.blockedRepository.findBy({ userId: callerId });
 
     return result;
   }
@@ -69,21 +64,18 @@ export class BlockedService {
       }
     }
 
-    const existingBlocked = await this.blockedRepository
-      .createQueryBuilder('blocked')
-      .leftJoinAndSelect('blocked.user', 'user')
-      .leftJoinAndSelect('blocked.blockedUser', 'blockedUser')
-      .where('blocked.user.userID = :userId', { userId })
-      .andWhere('blocked.blockedUser.userID = :blockId', { blockId })
-      .getOne();
+    const existingBlocked = await this.blockedRepository.findOneBy({
+        userId: userId,
+        blockedUserId: blockId,
+        });
 
     if (existingBlocked) {
       throw new HttpException('User already blocked', 400);
     }
 
     const blocked = new Blocked();
-    blocked.user = await this.userService.findOne(userId);
-    blocked.blockedUser = await this.userService.findOne(blockId);
+    blocked.userId = (await this.userService.findOne(userId)).userID;
+    blocked.blockedUserId = (await this.userService.findOne(blockId)).userID;
 
     return this.blockedRepository.save(blocked);
   }
@@ -114,13 +106,10 @@ export class BlockedService {
       }
     }
 
-    const blocked = await this.blockedRepository
-      .createQueryBuilder('blocked')
-      .leftJoinAndSelect('blocked.user', 'user')
-      .leftJoinAndSelect('blocked.blockedUser', 'blockedUser')
-      .where('blocked.user.userID = :userId', { userId })
-      .andWhere('blocked.blockedUser.userID = :blockId', { blockId })
-      .getOne();
+    const blocked = await this.blockedRepository.findOneBy({
+      userId: userId,
+      blockedUserId: blockId,
+    });
 
     if (!blocked) {
       throw new HttpException('No such blocked user', 400);
@@ -130,7 +119,7 @@ export class BlockedService {
     return 'User unblocked';
   }
 
-  async getOneBlockedUser(loggedUser, callerId, targetId): Promise<Blocked> {
+  async getOneBlockedUser(loggedUser, callerId, targetId): Promise<string> {
     if (parseInt(process.env.FEATURE_FLAG) === 1) {
       const authPass = await this.authProtector.protectorCheck(
         loggedUser.passwordHash,
@@ -141,24 +130,15 @@ export class BlockedService {
       }
     }
 
-    const isBlocked = await this.blockedRepository
-      .createQueryBuilder('blocked')
-      .leftJoinAndSelect('blocked.user', 'user')
-      .leftJoinAndSelect('blocked.blockedUser', 'blockedUser')
-      .where('blocked.blockedUser.userID = :callerId', { callerId })
-    .andWhere('blocked.user.userID = :targetId', { targetId })
-    .getOne();
-
-    if (!isBlocked) {
-      throw new HttpException('No such blocked user', 200);
-    }
-    // if (!isBlocked || isBlocked.user.userID != callerId) {
-    //   throw new HttpException('No such blocked user', 200);
-    // }
     const result = await this.blockedRepository.findOneBy({
-      blockId: isBlocked.blockId,
-    });
+        userId: callerId,
+        blockedUserId: targetId
+        });
+    
+    if (!result) {
+            return "User not blocked";
+        }
 
-    return result;
+    return "User is blocked";
   }
 }

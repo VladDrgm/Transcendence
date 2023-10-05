@@ -95,7 +95,7 @@ export class BlockedController {
     @Param('callerId') callerId: number,
     @Param('blockedId') blockedId: number,
     @Body() loggedUser: UserAuthDTO,
-  ): Promise<Blocked> {
+  ): Promise<string> {
     return await this.blockedService.getOneBlockedUser(
       loggedUser,
       callerId,

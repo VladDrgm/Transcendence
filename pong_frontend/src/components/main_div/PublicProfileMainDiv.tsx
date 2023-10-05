@@ -50,6 +50,7 @@ const PublicProfileMainDiv: React.FC<ProfileProps> = () => {
     try {
       await addFriend(userID, Number(friend_ID), user?.intraUsername, user?.passwordHash);
       setReset(true);
+      set_type(ProfileType_t.FRIEND_PROFILE);
     } catch (error) {
       console.error(error);
     }
@@ -59,6 +60,7 @@ const PublicProfileMainDiv: React.FC<ProfileProps> = () => {
     try {
       await removeFriend(userID, Number(friend_ID), user?.intraUsername, user?.passwordHash);
       setReset(true);
+      set_type(ProfileType_t.PUBLIC_PROFILE);
     } catch (error) {
       console.error(error);
     }
@@ -68,6 +70,7 @@ const PublicProfileMainDiv: React.FC<ProfileProps> = () => {
     try {
       await postBlockedUser(Number(friend_ID), user!);
       setReset(true);
+      set_blocked(true);
     } catch (error) {
       console.error(error);
     }
@@ -77,10 +80,10 @@ const PublicProfileMainDiv: React.FC<ProfileProps> = () => {
     try {
       await deleteBlockedUser(Number(friend_ID), user!);
       setReset(true);
+      set_blocked(false);
     } catch (error) {
       console.error(error);
     }
-    isFriend();
   };
 
   useEffect(() => {

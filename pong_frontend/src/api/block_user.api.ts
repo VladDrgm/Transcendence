@@ -84,12 +84,10 @@ export async function postBlockedUser(targetId: number, user: User): Promise<boo
     return fetch(fetchAddress + 'blocked/'+ callerId + "/" + targetId, requestOptions)
       .then(response => response.json())
       .then(data => {
-        if (data.hasOwnProperty('blockId')) {
-          return true;
-        } else if (data.message === "No such blocked user") {
+        if (data.message === "No such blocked user") {
           return false;
         } else {
-            return false;
+          return true;
         }
       })
       .catch(error => {
@@ -113,13 +111,11 @@ export async function postBlockedUser(targetId: number, user: User): Promise<boo
       body: jsonData
     };
     return fetch(fetchAddress + 'blocked/'+ user.userID, requestOptions)
-      // .then(response => response.json())
       .then(response => {
         if (response.ok) {
             return response.json();
         } else {
           console.error("Error fetching blocked Users: ", response.status);
-          // alert('Error unblocking User: ' + response.status);
           return undefined;
         }
       })

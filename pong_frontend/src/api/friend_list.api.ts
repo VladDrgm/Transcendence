@@ -1,3 +1,4 @@
+import { boolean } from "yup";
 import { fetchAddress } from "../components/div/ChannelDiv";
 
 export const getFriendList = async (userID:number | undefined, intra:string | undefined, token:string | undefined) => {
@@ -35,15 +36,22 @@ export const checkFriend = async (userID:number, friendID:number, intra:string |
 			"passwordHash" : token
 		})
 	  };
-  const response = await fetch(fetchAddress + 'friend/' + userID + '/friend/' + friendID, requestOptions);
-  if (response.ok)
-  {
-    return true;
+  var ret;
+  const response = await fetch(fetchAddress + 'friend/' + userID + '/friend/' + friendID + '/check', requestOptions)
+  .then(response => response.text())
+  .then(data => {
+    if (data === "Is a friend.") {
+      ret = true;
+    } else {
+      ret = false;
+    }
+  })
+  .catch(error => {
+    console.error(error);
+    ret = false;
   }
-  else
-  {
-    return false;
-  }
+  );
+  return ret;
 };
 
 export const addFriend = async (userID:number, friendID:number, intra:string | undefined, token:string | undefined) => {
