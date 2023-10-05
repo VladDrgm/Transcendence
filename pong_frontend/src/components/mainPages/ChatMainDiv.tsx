@@ -820,6 +820,76 @@ const ChatMainDiv: FC<ChatProps> = (props) => {
 		props.socketRef.current?.emit('unblock user', {targetId, username});
 	}
 
+	// function addFriend(targetName: string | number){
+	// 	getUserIDByUserName(targetName.toString())
+	// 	.then((targetID) => {
+	// 		if(targetID === undefined){
+	// 			alert("User could not be found. Please try another Username.");
+	// 			return;
+	// 		}
+	// 		getIsFriend(props.user?.userID, Number(targetID), props.user!)
+	// 		.then((result) => {
+	// 			if (result){
+	// 				alert("User is already a Friend");
+	// 				return;
+	// 			}
+	// 			postFriend(Number(targetID), props.user?.userID, props.user!)
+	// 			.then(() => {
+	// 				console.log('Friend added with UserId:', targetID);
+	// 				alert("User "+ targetName + " added as Friend");
+	// 				// blockUserSocket(Number(targetID), user.username);
+	// 			})
+	// 			.catch(error => {
+	// 				console.error("Error adding user as Friend with Username:" , targetName);
+	// 				alert("Error while adding User as Friend:" + error);
+	// 			});
+	// 		})
+	// 		.catch(error => {
+	// 			console.error("Error adding user as Friend with Username:" , targetName);
+	// 			alert("Error while adding User as Friend:" + error);
+	// 		});
+	// 	})
+	// 	.catch(error => {
+	// 		console.error('Error getting UserID from User:' ,error);
+	// 		alert("Error adding User as Friend" + error);
+	// 	});
+	// }
+
+	// function removeFriend(targetName: string | number){
+	// 	getUserIDByUserName(targetName.toString())
+	// 	.then((targetID) => {
+	// 		if(targetID === undefined){
+	// 			alert("User could not be found. Please try another Username.");
+	// 			return;
+	// 		}
+	// 		getIsFriend(props.user?.userID, Number(targetID), props.user!)
+	// 		.then((result) => {
+	// 			if (!result){
+	// 				alert("User is not a Friend");
+	// 				return;
+	// 			}
+	// 			deleteFriend(Number(targetID), props.user?.userID, props.user!)
+	// 			.then(() => {
+	// 				console.log('Friend removed with UserId:', targetID);
+	// 				alert("User "+ targetName + " removed as Friend");
+	// 				// blockUserSocket(Number(targetID), user.username);
+	// 			})
+	// 			.catch(error => {
+	// 				console.error("Error removing user as Friend with Username:" , targetName);
+	// 				alert("Error while removing User as Friend:" + error);
+	// 			});
+	// 		})
+	// 		.catch(error => {
+	// 			console.error('Error getting Friendship Status from User:' ,error);
+	// 			alert("Error getting Friendship Status" + error);
+	// 		})
+	// 	})
+	// 	.catch(error => {
+	// 		console.error('Error getting UserID from User:' ,error);
+	// 		alert("Error removing User as Friend" + error);
+	// 	});
+	// }
+
 	function deleteChatRoom(roomName: string | number) {
 		props.socketRef.current?.emit('delete room', roomName);
 	}
