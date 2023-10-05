@@ -591,7 +591,7 @@ export async function postBlockedUser(targetId: number, user: User): Promise<boo
       alert('User has been blocked.');
       return true; // Successful
     } else {
-      console.error('Error blocking User with UserId :' + targetId + ':', response.status);
+      // console.error('Error blocking User with UserId :' + targetId + ':', response.status);
       alert('Error blocking User: ' + response.status);
       return false; // Error
     }
@@ -623,7 +623,8 @@ export async function deleteBlockedUser(targetId: number, user: User): Promise<v
         console.log("ChannelUser with UserId :" + targetId +" unblocked");
         alert("User has been unblocked.");
       } else {
-        console.error("Error unblocking User with UserId :" + targetId +":", response.status);
+        // console.error("Error unblocking User with UserId :" + targetId +":", response.status);
+        alert("Error unblocking User.");
         // throw new Error ("Error unblocking User");
       }
     })
@@ -647,24 +648,28 @@ export async function getBlockedUser(callerId: number  | undefined, targetId: nu
     },
     body: jsonData
   };
-  return fetch(fetchAddress + 'blocked/check/'+ callerId + "/" + targetId, requestOptions)
-    .then(response => response.json())
-    .then(data => {
-      if (data.message === "User is blocked") {
-        // console.log("ChannelUser with UserId :" + targetId +" blocked");
-        return true;
-      } else if (data.message === "User not blocked") {
-        return false;
-      } else {
-        console.error("Error blocking User with UserId :" + targetId +":", data.status);
-        throw new Error ("Error blocking User");
-      }
-    })
-    .catch(error => {
-      console.error("Error blocking User with UserId :" + targetId +":", error);
-      // alert("Error blocking User: " + error);
-      throw error;
-    });
+return fetch(fetchAddress + 'blocked/check/' + callerId + '/' + targetId, requestOptions)
+  .then(response => {
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    return response.text(); // Get the response as text
+  })
+  .then(data => {
+    // Now 'data' contains the response as a string
+    if (data.includes('User is blocked')) {
+      return true;
+    } else if (data.includes('User not blocked')) {
+      return false;
+    } else {
+      console.error('Error blocking User with UserId: ' + targetId);
+      throw new Error('Error blocking User');
+    }
+  })
+  .catch(error => {
+    console.error('Error blocking User with UserId: ' + targetId, error);
+    throw error;
+  });
 }
 
 

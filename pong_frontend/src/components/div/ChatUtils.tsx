@@ -4,6 +4,7 @@ import { ChatProps, ChatData, Channel, Message } from "../../interfaces/Channel"
 import { User } from "../../interfaces/User";
 import { Row } from "../mainPages/ChatPageStyles";
 import { getUserIDByUserName } from "./ChannelUtils";
+import { getUserList } from '../../api/user_list.api';
 
 
 export function renderUser(user: User, props: ChatProps, toggleChat: any) {
@@ -51,11 +52,17 @@ export function renderUser(user: User, props: ChatProps, toggleChat: any) {
 export async function extractExcludedSenders(user: User): Promise<string[]> {
   try {
     const response = await getBlockedUsers(user!);
-    if (Array.isArray(response)) {
-      const excludedSenders = response.map((entry) => entry.blockedUser.username);
-      return excludedSenders;
+    if (Array.isArray(response) && response.length > 0) {
+      const excludedSendersID = response.map((entry) => entry.blockedUserID);
+      const userList = await getUserList();
+      const excludedSenders = excludedSendersID.map((userID) => {
+        const user = userList.find((user: any) => user.id === userID);
+        return user ? user.username : null;
+      });
+      
+      return excludedSenders.filter((username) => username !== null); 
     } else {
-      console.error('API response is not an array.');
+      // console.error('API response is not an array.');
       return [];
     }
   } catch (error) {
