@@ -102,4 +102,32 @@ export class BlockedController {
       blockedId,
     );
   }
+
+  @Put('check/:callerId/:targetId')
+    @ApiOperation({ summary: 'Check if the caller is blocked by the target' })
+    @ApiParam({
+        name: 'callerId',
+        description: 'Caller ID',
+        required: true,
+        type: Number,
+        example: 9,
+    })
+    @ApiParam({
+        name: 'targetId',
+        description: 'User to check ID',
+        required: true,
+        type: Number,
+        example: 1,
+    })
+    async checkIfBlockedBy(
+        @Param('callerId') callerId: number,
+        @Param('targetId') targetId: number,
+        @Body() loggedUser: UserAuthDTO,
+    ): Promise<string> {
+        return await this.blockedService.checkifBlockedBy(
+            loggedUser,
+            callerId,
+            targetId,
+        );
+    }
 }

@@ -647,10 +647,10 @@ export async function getBlockedUser(callerId: number  | undefined, targetId: nu
     },
     body: jsonData
   };
-  return fetch(fetchAddress + 'blocked/'+ callerId + "/" + targetId, requestOptions)
+  return fetch(fetchAddress + 'blocked/check/'+ callerId + "/" + targetId, requestOptions)
     .then(response => response.json())
     .then(data => {
-      if (data.hasOwnProperty('blockId')) {
+      if (data.message === "User is blocked") {
         // console.log("ChannelUser with UserId :" + targetId +" blocked");
         return true;
       } else if (data.message === "User not blocked") {
