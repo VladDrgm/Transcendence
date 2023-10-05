@@ -119,7 +119,7 @@ export class BlockedService {
     return 'User unblocked';
   }
 
-  async getOneBlockedUser(loggedUser, callerId, targetId): Promise<Blocked> {
+  async getOneBlockedUser(loggedUser, callerId, targetId): Promise<string> {
     if (parseInt(process.env.FEATURE_FLAG) === 1) {
       const authPass = await this.authProtector.protectorCheck(
         loggedUser.passwordHash,
@@ -136,9 +136,9 @@ export class BlockedService {
         });
     
     if (!result) {
-        throw new HttpException('User not blocked', 400);
+            return "User not blocked";
         }
 
-    return result;
+    return "User is blocked";
   }
 }
