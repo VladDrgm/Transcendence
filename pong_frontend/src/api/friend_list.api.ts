@@ -1,4 +1,4 @@
-import { boolean } from "yup";
+// import { boolean } from "yup";
 import { fetchAddress } from "../components/div/ChannelDiv";
 
 export const getFriendList = async (userID:number | undefined, intra:string | undefined, token:string | undefined) => {

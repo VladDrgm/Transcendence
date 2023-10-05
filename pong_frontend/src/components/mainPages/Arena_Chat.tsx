@@ -4,7 +4,6 @@ import Game from './Game';
 import GameForm from "./GameForm";
 import { io, Socket } from "socket.io-client";
 import { Draft } from "immer";
-import "../../App.css";
 import {fetchChannelNames} from "../div/ChannelUtils"
 import { Channel } from '../../interfaces/Channel';
 import { useUserContext } from '../context/UserContext';

@@ -4,5 +4,5 @@ npm install
 cd ..
 cd ./pong_frontend
 echo "Installing frontend dependencies"
-npm install
+npm run build
 cd ..

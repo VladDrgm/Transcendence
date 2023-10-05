@@ -2,15 +2,17 @@ version: '3'
 
 services:
   backend:
-    build: ./pong_backend
+    build:
+      context: ./pong_backend
     ports:
       - "3000:3000"
     volumes:
       - ./pong_backend:/app
 
   frontend:
-    build: ./pong_frontend
+    build:
+      context: ./pong_frontend
     ports:
       - "3001:3001"
     volumes:
-      - ./frontend:/app
+      - ./pong_frontend:/app
