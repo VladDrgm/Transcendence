@@ -30,9 +30,22 @@ const ChannelDiv: React.FC<Channel_Div_props> = (props) => {
 			Join private Channel
 		    </button> */}
             <h3>Public Channels</h3>
-            {publicChannels.length > 0 ? publicChannels.map((room) => renderRooms(props.ChatProps, room, props.toggleChat)) : 'no public Channels'}
+            {publicChannels.length > 0 ? (
+                publicChannels.map((room) => (
+                    <div key={room.ChannelId}>
+                        {renderRooms(props.ChatProps, room, props.toggleChat)}
+                    </div>
+                ))
+            ) : ( 'no public Channels' )}
             <h3>Private Channels</h3>
-            {privateChannels.length > 0 ? privateChannels.map((room) => renderRooms(props.ChatProps, room, props.toggleChat)) : 'no privat Channels joined'}
+            {privateChannels.length > 0 ? (
+                privateChannels.map((room) => (
+                    <div key={room.ChannelId}>
+                        {renderRooms(props.ChatProps, room, props.toggleChat)}
+                    </div>
+                ))
+            ) : ( 'no public Channels' )}
+            {/* {privateChannels.length > 0 ? privateChannels.map((room) => renderRooms(props.ChatProps, room, props.toggleChat)) : 'no privat Channels joined'} */}
             </div>
     );
 

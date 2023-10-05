@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { ChannelUserRoles, ChatData, ChatName, ChatProps, Message } from '../../interfaces/Channel';
 import {renderMessages } from './ChatUtils';
 import { popUpJoinPrivateChannel } from './ChannelPopups';
@@ -25,15 +25,27 @@ const ChatBodyDiv: React.FC<ChatBodyProps> = ({
   const [excludedSenders, setExcludedSenders] = useState<string[]>([]);
   const [content, setContent] = useState<JSX.Element | null>(null);
 
-  useEffect(() => {
+  // useEffect(() => {
+  //   extractExcludedSenders(props.user!)
+  //     .then((excluded) => {
+  //       setExcludedSenders(excluded);
+  //     })
+  //     .catch((error) => {
+  //       console.error('Error during extracting exludedSenders:', error);
+  //     });
+  // }, [props.user, messages, ChannelUserRoles]);
+
+  const fetchExcludedSenders = useCallback(() => {
     extractExcludedSenders(props.user!)
       .then((excluded) => {
         setExcludedSenders(excluded);
       })
       .catch((error) => {
-        console.error('Error during extracting exludedSenders:', error);
+        console.error('Error during extracting excludedSenders:', error);
       });
   }, [props.user, messages, ChannelUserRoles]);
+
+  fetchExcludedSenders();
 
   useEffect(() => {
     if (!currentChat.isChannel) {
