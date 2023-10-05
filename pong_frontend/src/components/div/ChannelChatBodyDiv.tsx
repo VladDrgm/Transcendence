@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { ChannelUserRoles, ChatData, ChatName, ChatProps, Message } from '../../interfaces/Channel';
 import {renderMessages } from './ChatUtils';
 import { popUpJoinPrivateChannel } from './ChannelPopups';
@@ -12,7 +12,9 @@ interface ChatBodyProps {
   joinRoom: (chatName: ChatName) => void;
 	joinPrivateRoom: (chatName: ChatName, password: string) => void;
   currentChat: ChatData;
+  excludedSenders: string[];
 }
+
 
 const ChatBodyDiv: React.FC<ChatBodyProps> = ({
   props,
@@ -20,37 +22,12 @@ const ChatBodyDiv: React.FC<ChatBodyProps> = ({
   ChannelUserRoles,
   joinRoom,
   currentChat,
-  joinPrivateRoom
+  joinPrivateRoom,
+  excludedSenders,
 }) => {
-  const [excludedSenders, setExcludedSenders] = useState<string[]>([]);
-  // const [content, setContent] = useState<JSX.Element | null>(null);
-  let content: JSX.Element | null = null;
-
-  useEffect(() => {
-    extractExcludedSenders(props.user!)
-      .then((excluded) => {
-        setExcludedSenders(excluded);
-      })
-      .catch((error) => {
-        console.error('Error during extracting exludedSenders:', error);
-      });
-  }, [props.user, messages, ChannelUserRoles]);
-
-  // const fetchExcludedSenders = useCallback(() => {
-  //   extractExcludedSenders(props.user!)
-  //     .then((excluded) => {
-  //       setExcludedSenders(excluded);
-  //     })
-  //     .catch((error) => {
-  //       console.error('Error during extracting excludedSenders:', error);
-  //     });
-  // }, [props.user, messages, ChannelUserRoles]);
-
-  // fetchExcludedSenders();
-
-  useEffect(() => {
+  const content = useMemo(() => {
     if (!currentChat.isChannel) {
-      content = (
+      return (
         <Messages>
           {messages.map((message, index) => (
             <div key={index}>
@@ -58,7 +35,7 @@ const ChatBodyDiv: React.FC<ChatBodyProps> = ({
             </div>
           ))}
         </Messages>
-      );      
+      );
     } else if (
       !ChannelUserRoles.isAdminResolved ||
       !ChannelUserRoles.isBlockedResolved ||
@@ -66,9 +43,9 @@ const ChatBodyDiv: React.FC<ChatBodyProps> = ({
       !ChannelUserRoles.isOwnerResolved ||
       !ChannelUserRoles.isUserResolved
     ) {
-      content = (<div>Loading Chat...</div>);
+      return <div>Loading Chat...</div>;
     } else if (ChannelUserRoles.isBlocked && ChannelUserRoles.isBlockedResolved) {
-      content = (<div>You are blocked from using this Channel.</div>);
+      return <div>You are blocked from using this Channel.</div>;
     } else {
       switch (currentChat.Channel.Type) {
         case 'private':
@@ -78,7 +55,7 @@ const ChatBodyDiv: React.FC<ChatBodyProps> = ({
             ChannelUserRoles.isOwner ||
             !currentChat.isChannel
           ) {
-            content = (
+            return (
               <Messages>
                 {messages.map((message, index) => (
                   <div key={index}>
@@ -88,7 +65,7 @@ const ChatBodyDiv: React.FC<ChatBodyProps> = ({
               </Messages>
             );
           } else {
-            content = (
+            return (
               <button
                 style={chatButtonsStyle}
                 onClick={() =>
@@ -103,11 +80,11 @@ const ChatBodyDiv: React.FC<ChatBodyProps> = ({
         case 'public':
           if (
             ChannelUserRoles.isUser ||
-            (ChannelUserRoles.isAdmin && ChannelUserRoles.isUser)||
+            (ChannelUserRoles.isAdmin && ChannelUserRoles.isUser) ||
             ChannelUserRoles.isOwner ||
             !currentChat.isChannel
           ) {
-            content = (
+            return (
               <Messages>
                 {messages.map((message, index) => (
                   <div key={index}>
@@ -117,7 +94,7 @@ const ChatBodyDiv: React.FC<ChatBodyProps> = ({
               </Messages>
             );
           } else {
-            content = (
+            return (
               <button
                 style={chatButtonsStyle}
                 onClick={() => joinRoom(currentChat.chatName)}
@@ -128,7 +105,7 @@ const ChatBodyDiv: React.FC<ChatBodyProps> = ({
           }
           break;
         default:
-          content = (<div>Loading Chat 2...</div>);
+          return <div>Loading Chat 2...</div>;
       }
     }
   }, [
@@ -144,3 +121,124 @@ const ChatBodyDiv: React.FC<ChatBodyProps> = ({
   return <>{content}</>;
 };
 export default ChatBodyDiv;
+
+
+// const ChatBodyDiv: React.FC<ChatBodyProps> = ({
+//   props,
+//   messages = [],
+//   ChannelUserRoles,
+//   joinRoom,
+//   currentChat,
+//   joinPrivateRoom,
+//   excludedSenders,
+// }) => {
+//   // const [excludedSenders, setExcludedSenders] = useState<string[]>([]);
+//   const [content, setContent] = useState<JSX.Element | null>(null);
+//   // let content: JSX.Element | null = null;
+
+//   // useEffect(() => {
+//   //   extractExcludedSenders(props.user!)
+//   //     .then((excluded) => {
+//   //       setExcludedSenders(excluded);
+//   //     })
+//   //     .catch((error) => {
+//   //       console.error('Error during extracting exludedSenders:', error);
+//   //     });
+//   // }, [props.user, messages, ChannelUserRoles]);
+
+//   useEffect(() => {
+//     if (!currentChat.isChannel) {
+//       setContent(
+//         <Messages>
+//           {messages.map((message, index) => (
+//             <div key={index}>
+//               {renderMessages(message, index, excludedSenders)}
+//             </div>
+//           ))}
+//         </Messages>
+//       );      
+//     } else if (
+//       !ChannelUserRoles.isAdminResolved ||
+//       !ChannelUserRoles.isBlockedResolved ||
+//       !ChannelUserRoles.isMutedResolved ||
+//       !ChannelUserRoles.isOwnerResolved ||
+//       !ChannelUserRoles.isUserResolved
+//     ) {
+//       setContent(<div>Loading Chat...</div>);
+//     } else if (ChannelUserRoles.isBlocked && ChannelUserRoles.isBlockedResolved) {
+//       setContent(<div>You are blocked from using this Channel.</div>);
+//     } else {
+//       switch (currentChat.Channel.Type) {
+//         case 'private':
+//           if (
+//             ChannelUserRoles.isUser ||
+//             (ChannelUserRoles.isAdmin && ChannelUserRoles.isUser) ||
+//             ChannelUserRoles.isOwner ||
+//             !currentChat.isChannel
+//           ) {
+//             setContent(
+//               <Messages>
+//                 {messages.map((message, index) => (
+//                   <div key={index}>
+//                     {renderMessages(message, index, excludedSenders)}
+//                   </div>
+//                 ))}
+//               </Messages>
+//             );
+//           } else {
+//             setContent(
+//               <button
+//                 style={chatButtonsStyle}
+//                 onClick={() =>
+//                   popUpJoinPrivateChannel(props, currentChat, joinPrivateRoom)
+//                 }
+//               >
+//                 Join private Channel {currentChat.chatName}
+//               </button>
+//             );
+//           }
+//           break;
+//         case 'public':
+//           if (
+//             ChannelUserRoles.isUser ||
+//             (ChannelUserRoles.isAdmin && ChannelUserRoles.isUser)||
+//             ChannelUserRoles.isOwner ||
+//             !currentChat.isChannel
+//           ) {
+//             setContent(
+//               <Messages>
+//                 {messages.map((message, index) => (
+//                   <div key={index}>
+//                     {renderMessages(message, index, excludedSenders)}
+//                   </div>
+//                 ))}
+//               </Messages>
+//             );
+//           } else {
+//             setContent(
+//               <button
+//                 style={chatButtonsStyle}
+//                 onClick={() => joinRoom(currentChat.chatName)}
+//               >
+//                 Join {currentChat.chatName}
+//               </button>
+//             );
+//           }
+//           break;
+//         default:
+//           setContent(<div>Loading Chat 2...</div>);
+//       }
+//     }
+//   }, [
+//     messages,
+//     ChannelUserRoles,
+//     currentChat,
+//     props,
+//     joinRoom,
+//     joinPrivateRoom,
+//     excludedSenders,
+//   ]);
+
+//   return <>{content}</>;
+// };
+// export default ChatBodyDiv;
