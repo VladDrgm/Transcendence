@@ -106,14 +106,6 @@ export class BlockedService {
       }
     }
 
-    // const blocked = await this.blockedRepository
-    //   .createQueryBuilder('blocked')
-    //   .leftJoinAndSelect('blocked.user', 'user')
-    //   .leftJoinAndSelect('blocked.blockedUser', 'blockedUser')
-    //   .where('blocked.user.userID = :userId', { userId })
-    //   .andWhere('blocked.blockedUser.userID = :blockId', { blockId })
-    //   .getOne();
-
     const blocked = await this.blockedRepository.findOneBy({
       userId: userId,
       blockedUserId: blockId,
@@ -138,13 +130,6 @@ export class BlockedService {
       }
     }
 
-    // const isBlocked = await this.blockedRepository
-    //   .createQueryBuilder('blocked')
-    //   .leftJoinAndSelect('blocked.user', 'user')
-    //   .leftJoinAndSelect('blocked.blockedUser', 'blockedUser')
-    //   .where('blocked.blockedUser.userID = :callerId', { callerId })
-    //   .andWhere('blocked.user.userID = :targetId', { targetId })
-    //   .getOne();
     const result = await this.blockedRepository.findOneBy({
         userId: callerId,
         blockedUserId: targetId
