@@ -647,24 +647,28 @@ export async function getBlockedUser(callerId: number  | undefined, targetId: nu
     },
     body: jsonData
   };
-  return fetch(fetchAddress + 'blocked/check/'+ callerId + "/" + targetId, requestOptions)
-    .then(response => response.json())
-    .then(data => {
-      if (data.message === "User is blocked") {
-        // console.log("ChannelUser with UserId :" + targetId +" blocked");
-        return true;
-      } else if (data.message === "User not blocked") {
-        return false;
-      } else {
-        console.error("Error blocking User with UserId :" + targetId +":", data.status);
-        throw new Error ("Error blocking User");
-      }
-    })
-    .catch(error => {
-      console.error("Error blocking User with UserId :" + targetId +":", error);
-      // alert("Error blocking User: " + error);
-      throw error;
-    });
+return fetch(fetchAddress + 'blocked/check/' + callerId + '/' + targetId, requestOptions)
+  .then(response => {
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    return response.text(); // Get the response as text
+  })
+  .then(data => {
+    // Now 'data' contains the response as a string
+    if (data.includes('User is blocked')) {
+      return true;
+    } else if (data.includes('User not blocked')) {
+      return false;
+    } else {
+      console.error('Error blocking User with UserId: ' + targetId);
+      throw new Error('Error blocking User');
+    }
+  })
+  .catch(error => {
+    console.error('Error blocking User with UserId: ' + targetId, error);
+    throw error;
+  });
 }
 
 
