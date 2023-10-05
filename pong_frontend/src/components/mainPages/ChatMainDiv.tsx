@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useState, useCallback} from "react";
-import { renderUser} from "../div/ChatUtils"; 
+import { extractExcludedSenders, renderUser} from "../div/ChatUtils"; 
 import {ChatContainerStyle, BodyContainer, ChannelInfo, ChatPanel, SideBarStyle, chatButtonsStyle, linkTextStyle, userButtonStyle } from "./ChatPageStyles";
 import ChannelDiv from '../div/ChannelDiv';
 import { ChannelAdminButtonsDiv, ChatBodyDivChannelOwnerButtonsDiv } from "../div/ChannelButtonsDiv";
@@ -654,6 +654,14 @@ const ChatMainDiv: FC<ChatProps> = (props) => {
 	}
 
 	const handleBody = useCallback (() =>{
+		let excludedSenders: string[] = [];
+		extractExcludedSenders(props.user!)
+			.then((excluded) => {
+				excludedSenders = excluded;
+			  })
+			  .catch((error) => {
+				console.error('Error during extracting exludedSenders:', error);
+			  });
 		setBody(<ChatBodyDiv
 			props = {props}
 			messages={messages[currentChat.chatName]}
@@ -661,6 +669,7 @@ const ChatMainDiv: FC<ChatProps> = (props) => {
 			ChannelUserRoles={currentRoles}
 			currentChat={currentChat}
 			joinPrivateRoom={joinPrivateRoom}
+			excludedSenders={excludedSenders}
 		/>);
 		// console.log(currentChat.chatName);
 		// console.log(messages[currentChat.chatName]);
