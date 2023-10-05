@@ -24,6 +24,9 @@ const SettingsPage: React.FC<SettingsPageProps> = ({ onLogout }) => {
       ? fetchAddress.slice(0, -1) + user?.avatarPath?.slice(1)
       : '/default_pfp.png'
   );
+  const [tfa_enabled, set_tfa_enabled] = useState<boolean>(false);
+  const [reset, setReset] = useState(true);
+  const [loading, setLoading] = useState(true);
 
   const [border, setImageBorder] = useState<string>(
     user?.avatarPath
@@ -108,10 +111,48 @@ const SettingsPage: React.FC<SettingsPageProps> = ({ onLogout }) => {
     navigate(`/login`);
   };
 
+  const isTfaEnabled = async () => {
+    const ret = false; // = await === @Tim here add function that calls API and returns true if 2fa is enabled else false. ++++ 
+    set_tfa_enabled(ret);
+    setLoading(false);
+  };
+
+  const enableTfa = async () => {
+    try {
+      // await === @Time here call function that enables 2fa +++
+      setReset(true);
+      set_tfa_enabled(true);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const disableTfa = async () => {
+    try {
+      // await === @Time here call function that disables 2fa +++
+      setReset(true);
+      set_tfa_enabled(false);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      isTfaEnabled();
+      setReset(false);
+    }, 1000); // Delay in milliseconds (e.g., 1000ms = 1 second)
+    return () => clearTimeout(timer);
+  }, [reset]);
+
   useEffect(() => {
     postUserStatus('Online', user!);
+    isTfaEnabled();
   }, []);
 
+  if (loading) {
+    return <div>Loading...</div>;
+  }
   return (
     <div style={styles.pageStyle}>
       <p style={styles.settingsTitleStyle}>Settings</p>
@@ -147,6 +188,17 @@ const SettingsPage: React.FC<SettingsPageProps> = ({ onLogout }) => {
       <button style={styles.updateButtonStyle} onClick={handleUpdateUsername}>
         Update
       </button>
+      {tfa_enabled === false  ? (
+        <div>
+          <button style={styles.updateButtonStyle} onClick={enableTfa}>
+            Enable 2fa
+          </button>
+        </div>
+      ) : (
+        <button style={styles.updateButtonStyle} onClick={disableTfa}>
+          Disable 2fa
+        </button>
+      ) }
       <button style={styles.logoutButtonStyle} onClick={OnLogoutButtonClick}>
         Logout
       </button>
