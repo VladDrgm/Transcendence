@@ -141,4 +141,27 @@ export class BlockedService {
 
     return "User is blocked";
   }
+
+  async checkifBlockedBy(loggedUser, callerId, targetId): Promise<string> {
+    if (parseInt(process.env.FEATURE_FLAG) === 1) {
+      const authPass = await this.authProtector.protectorCheck(
+        loggedUser.passwordHash,
+        callerId,
+      );
+      if (!authPass) {
+        throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+      }
+    }
+
+    const result = await this.blockedRepository.findOneBy({
+        userId: targetId,
+        blockedUserId: callerId
+        });
+    
+    if (!result) {
+            return "User not blocked";
+        }
+
+    return "User is blocked";
+  }
 }
