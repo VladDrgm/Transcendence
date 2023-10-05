@@ -83,7 +83,9 @@ const ArenaChat: React.FC<ArenaDivProps> = ({userID, friend_set}) => {
 	  }, []);
 
 	useEffect(() => {
-		const baseUrl = process.env.REACT_APP_BASE_URL || "http://localhost:3000";
+		const baseUrl = process.env.REACT_APP_BASE_URL || '';
+		let isConnectionEstablished = false;
+
 		function connect() {
 			setConnected(true);
 			socketRef.current = io(baseUrl, {
@@ -94,6 +96,11 @@ const ArenaChat: React.FC<ArenaDivProps> = ({userID, friend_set}) => {
 				username: user?.username,
 				userId: user?.userID,
 				};
+			socketRef.current.on("connect", () => {
+				// Set flag to true when the connection is established
+				isConnectionEstablished = true;
+				});
+
 			socketRef.current.emit("join server", data);
 			if (chatMainDivRef.current?.roomJoinCallback){
 				socketRef.current.emit("join room", "general", (messages: any) => chatMainDivRef.current?.roomJoinCallback(messages, "general"));
@@ -173,6 +180,9 @@ const ArenaChat: React.FC<ArenaDivProps> = ({userID, friend_set}) => {
 
 		return () => {
 			if (socketRef.current){
+				if (isConnectionEstablished) {
+					socketRef.current.disconnect();
+				  }
 				socketRef.current.off("new message", ({ content, sender, chatName }: { content: string; sender: string; chatName: ChatName }) => {
 					console.log("sender", sender);
 					console.log("chatNAme", chatName);
@@ -241,8 +251,8 @@ const ArenaChat: React.FC<ArenaDivProps> = ({userID, friend_set}) => {
 					const userOneName = data.username;
 					handlePlayerTwoInvite(sessionId, playerOneSocket, playerTwoSocket, userOneName);
 				});
-				socketRef.current.disconnect();
-
+				// Reset the flag
+        		isConnectionEstablished = false;
 			}
 
 
@@ -304,7 +314,6 @@ const ArenaChat: React.FC<ArenaDivProps> = ({userID, friend_set}) => {
 			playerTwo: null,
 		});
 		
-		// eslint-disable-next-line
 		let [invitation, setInvitation] = useState<{
 			sessionId: any;
 			playerOneSocket: any;
