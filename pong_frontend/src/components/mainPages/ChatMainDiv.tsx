@@ -931,21 +931,23 @@ const ChatMainDiv: FC<ChatProps> = (props) => {
 				addChatRoom={addChatRoom}
 				currentChat={currentChat}
 				joinPrivateRoom={joinPrivateRoom}/>
-				<h3>All Users</h3>
-				{props.allUsers.map((user) => (
-					<div key={user.userID}>
-						{renderUser(user, props, toggleChat)}
-					</div>
-					))}
+				<div key="users">
+					<h3>All Users</h3>
+					{props.allUsers.map((user) => (
+						<div key={user.username}>
+							{renderUser(user, props, toggleChat)}
+						</div>
+						))}
+				</div>
 			</div>
-			<ChatPanel>
-				<ChannelInfo>
+			<ChatPanel key="channelpanel">
+				<ChannelInfo key="channelInfo">
 					{channelpanel}
 				</ChannelInfo>
-				<BodyContainer>
+				<BodyContainer key="bodycontainer">
 				{body}
 				</BodyContainer>
-				<ChannelInputDiv
+				<ChannelInputDiv key="channelinputdiv"
 					props={props}
 					value={message}
 					onChange={handleMessageChange}

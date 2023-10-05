@@ -10,7 +10,9 @@ export function renderUser(user: User, props: ChatProps, toggleChat: any) {
     if (user.username === props.user?.username) {
       return (
           <Row key={user.userID}>
-          You: {user.username}
+            <div>
+            You: {user.username}
+            </div>
           </Row>
       );
     }

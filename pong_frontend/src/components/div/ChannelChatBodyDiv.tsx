@@ -50,13 +50,15 @@ const ChatBodyDiv: React.FC<ChatBodyProps> = ({
 
   useEffect(() => {
     if (!currentChat.isChannel) {
-      content = 
+      content = (
         <Messages>
-          {messages.map((message, index) =>
-            renderMessages(message, index, excludedSenders)
-          )}
+          {messages.map((message, index) => (
+            <div key={index}>
+              {renderMessages(message, index, excludedSenders)}
+            </div>
+          ))}
         </Messages>
-      ;
+      );      
     } else if (
       !ChannelUserRoles.isAdminResolved ||
       !ChannelUserRoles.isBlockedResolved ||
@@ -78,9 +80,11 @@ const ChatBodyDiv: React.FC<ChatBodyProps> = ({
           ) {
             content = (
               <Messages>
-                {messages.map((message, index) =>
-                  renderMessages(message, index, excludedSenders)
-                )}
+                {messages.map((message, index) => (
+                  <div key={index}>
+                    {renderMessages(message, index, excludedSenders)}
+                  </div>
+                ))}
               </Messages>
             );
           } else {
@@ -105,9 +109,11 @@ const ChatBodyDiv: React.FC<ChatBodyProps> = ({
           ) {
             content = (
               <Messages>
-                {messages.map((message, index) =>
-                  renderMessages(message, index, excludedSenders)
-                )}
+                {messages.map((message, index) => (
+                  <div key={index}>
+                    {renderMessages(message, index, excludedSenders)}
+                  </div>
+                ))}
               </Messages>
             );
           } else {
