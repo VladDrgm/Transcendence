@@ -87,10 +87,13 @@ const PublicProfileMainDiv: React.FC<ProfileProps> = () => {
   };
 
   useEffect(() => {
-    isBlocked();
-    isFriend();
-    setReset(false);
-  }, );
+    const timer = setTimeout(() => {
+      isBlocked();
+      isFriend();
+      setReset(false);
+    }, 1000); // Delay in milliseconds (e.g., 1000ms = 1 second)
+    return () => clearTimeout(timer);
+  }, [reset]);
 
   useEffect(() => {
     postUserStatus("Online", user!);

@@ -82,9 +82,9 @@ export async function postBlockedUser(targetId: number, user: User): Promise<boo
       body: jsonData
     };
     return fetch(fetchAddress + 'blocked/'+ callerId + "/" + targetId, requestOptions)
-      .then(response => response.json())
+      .then(response => response.text())
       .then(data => {
-        if (data.message === "No such blocked user") {
+        if (data === "User not blocked") {
           return false;
         } else {
           return true;
