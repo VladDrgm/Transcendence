@@ -104,10 +104,10 @@ const ChatMainDiv: FC<ChatProps> = (props) => {
 		let receiverId = null;
 
 		if (!currentChat.isChannel) {
-		const receiverUser = props.allUsers.find(user => user.username === currentChat.chatName);
-		if (receiverUser) {
-			receiverId = receiverUser.socketId;
-		}
+			const receiverUser = props.allUsers.find(user => user.username === currentChat.chatName);
+			if (receiverUser) {
+				receiverId = receiverUser.socketId;
+			}
 		}
 		const payload = {
 		content: trimmedMessage,
@@ -118,9 +118,9 @@ const ChatMainDiv: FC<ChatProps> = (props) => {
 		receiver: receiverId
 		};
 
+		console.log("send Message: ", trimmedMessage);
 		props.socketRef.current?.emit("send message", payload);
 		const newMessages = immer(messages, (draft: WritableDraft<typeof messages>) => {
-		//if the element doesn't exist, an empty one will be added
 			if(!draft[currentChat.chatName]) {
 				draft[currentChat.chatName] = [];
 			}
@@ -135,12 +135,14 @@ const ChatMainDiv: FC<ChatProps> = (props) => {
 
 	function handleKeyPress(e: React.KeyboardEvent<HTMLTextAreaElement>) {
 		if (e.key === "Enter") {
+		console.log("Enter");
 		sendMessage();
 		// setLocalMessage('');
 		}
 	}
 
 	function newMessages(content: string, sender: string, chatName: ChatName ){
+		console.log("new MEssage recieved");
 		setMessages(messages => {
 			const newMessages = immer(messages, (draft: WritableDraft<typeof messages>) => {
 				if (draft[chatName]) {

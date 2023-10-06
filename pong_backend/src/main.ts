@@ -120,7 +120,7 @@ async function bootstrap() {
   function addChatRoom(roomName: string) {
     if (!messages.hasOwnProperty(roomName)) {
       messages[roomName] = [];
-      console.log('new mas array added');
+      console.log('new messages array added');
     }
   }
 
@@ -136,9 +136,9 @@ async function bootstrap() {
     userNr = 0;
 
   io.on('connection', (socket: Socket) => {
-    console.log('A user connected on the server');
+    // console.log('A user connected on the server');
     userCount++;
-    console.log('Users online: ' + userCount);
+    // console.log('Users online: ' + userCount);
     socket.emit('init', {
       data: 'hello!',
     });
@@ -259,13 +259,13 @@ async function bootstrap() {
     socket.on(
       'send message',
       ({ content, to, sender, chatName, isChannel, receiver }) => {
-        console.log('content:', content);
-        console.log('sender:', sender);
-        console.log('chatName:', chatName);
-        console.log('isChannel', isChannel);
-        console.log('to:', to);
-        console.log('receiver: ', receiver);
-        console.log('Messages:', messages);
+        // console.log('content:', content);
+        // console.log('sender:', sender);
+        // console.log('chatName:', chatName);
+        // console.log('isChannel', isChannel);
+        // console.log('to:', to);
+        // console.log('receiver: ', receiver);
+        // console.log('Messages:', messages);
 
         const payload = {
           content,

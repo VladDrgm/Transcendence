@@ -1,9 +1,8 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, {useMemo} from 'react';
 import { ChannelUserRoles, ChatData, ChatName, ChatProps, Message } from '../../interfaces/Channel';
 import {renderMessages } from './ChatUtils';
 import { popUpJoinPrivateChannel } from './ChannelPopups';
 import { Messages, chatButtonsStyle } from '../mainPages/ChatPageStyles';
-import {extractExcludedSenders} from './ChatUtils';
 
 interface ChatBodyProps {
   props: ChatProps;
@@ -105,7 +104,7 @@ const ChatBodyDiv: React.FC<ChatBodyProps> = ({
           }
           break;
         default:
-          return <div>Loading Chat 2...</div>;
+          return <div>Loading Chat...</div>;
       }
     }
   }, [
