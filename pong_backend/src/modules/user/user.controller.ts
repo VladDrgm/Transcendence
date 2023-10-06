@@ -154,12 +154,13 @@ export class UserController {
     return await this.userService.findOneByToken(token);
   }
 
-  @Put(':callerId/:targetId/:secret/enable/2fa')
+  @Put(':callerId/:targetId/:secret/:isEnabled/enable/2fa')
   @ApiOperation({ summary: 'Enable 2FA' })
   async enable2Fa(
     @Param('callerId', ParseIntPipe) callerId: number,
     @Param('targetId', ParseIntPipe) targetId: number,
     @Param('secret') secret: string,
+	@Param('isEnabled') isEnabled: boolean,
     @Body() loggedUser: UserAuthDTO,
   ): Promise<User> {
     return await this.userService.enable2Fa(
@@ -167,6 +168,7 @@ export class UserController {
       callerId,
       targetId,
       secret,
+	  isEnabled,
     );
   }
 

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUserContext } from '../context/UserContext';
 import { fetchAddress } from '../div/ChannelDiv';
-import { updateAvatarApi, updateUsernameApi } from '../../api/userApi';
+import { updateAvatarApi, updateUsernameApi, enableTFA } from '../../api/userApi';
 import { getPrivateProfile } from '../../api/profile.api';
 import * as styles from './SettingsPageStyles';
 import imageAssetUploadAvatar from '../assets/uploadAvatar.png'
@@ -112,7 +112,7 @@ const SettingsPage: React.FC<SettingsPageProps> = ({ onLogout }) => {
   };
 
   const isTfaEnabled = async () => {
-    const ret = false; // = await === @Tim here add function that calls API and returns true if 2fa is enabled else false. ++++ 
+    const ret = user?.is2FAEnabled ?? false;
     set_tfa_enabled(ret);
     setLoading(false);
   };
@@ -120,8 +120,9 @@ const SettingsPage: React.FC<SettingsPageProps> = ({ onLogout }) => {
   const enableTfa = async () => {
     try {
       // await === @Time here call function that enables 2fa +++
-      setReset(true);
-      set_tfa_enabled(true);
+      	setReset(true);
+      	set_tfa_enabled(true);
+		navigate(`/setup-2fa`);
     } catch (error) {
       console.error(error);
     }
@@ -130,6 +131,11 @@ const SettingsPage: React.FC<SettingsPageProps> = ({ onLogout }) => {
   const disableTfa = async () => {
     try {
       // await === @Time here call function that disables 2fa +++
+	  const updatedUser = await enableTFA(user?.userID, "0", user?.intraUsername, user?.passwordHash, false);
+	  user!.is2FAEnabled = updatedUser.is2FAEnabled;
+	  user!.tfa_secret = updatedUser.tfa_secret;
+	  setUser(user);
+
       setReset(true);
       set_tfa_enabled(false);
     } catch (error) {
