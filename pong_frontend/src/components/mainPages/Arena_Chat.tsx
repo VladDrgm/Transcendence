@@ -108,8 +108,10 @@ const ArenaChat: React.FC<ArenaDivProps> = ({userID, friend_set}) => {
 				setAllUsers(allUsers);
 			});
 			socketRef.current.on("new message", ({ content, sender, chatName}: { content: string; sender: string; chatName: ChatName ;}) => {
-				if (chatMainDivRef.current?.newMessages)
+				if (chatMainDivRef.current?.newMessages){
+					console.log("new message listener");
 					chatMainDivRef.current.newMessages(content, sender, chatName);
+				}
 			});
 			socketRef.current.on('room deleted', (roomName) => {
 				if(chatMainDivRef.current?.handleDeletingChatRoom)

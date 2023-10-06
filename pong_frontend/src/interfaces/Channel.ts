@@ -52,9 +52,6 @@ let initialMessagesState: {
 	[key: string]: { sender: string; content: string }[];
 } = {
 	general: [],
-	random: [],
-	jokes: [],
-	javascript: []
 };
 
 export interface ChannelUserRoles {

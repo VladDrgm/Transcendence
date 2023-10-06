@@ -120,7 +120,7 @@ async function bootstrap() {
   function addChatRoom(roomName: string) {
     if (!messages.hasOwnProperty(roomName)) {
       messages[roomName] = [];
-      console.log('new mas array added');
+      console.log('new messages array added');
     }
   }
 
