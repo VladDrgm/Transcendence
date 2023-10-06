@@ -39,7 +39,7 @@ const TwoFactorSetup: React.FC = () => {
 		setIsVerified(res.isValid);
 		if (res.isValid) {
 			try {
-				const updatedUser = await enableTFA(localParsedUser.userID, secret, localParsedUser.intraUsername, localParsedUser.passwordHash);
+				const updatedUser = await enableTFA(localParsedUser.userID, secret, localParsedUser.intraUsername, localParsedUser.passwordHash, true);
 				localParsedUser.is2FAEnabled = updatedUser.is2FAEnabled;
 				localParsedUser.tfa_secret = updatedUser.tfa_secret;
 				localStorage.setItem('user', JSON.stringify(localParsedUser));

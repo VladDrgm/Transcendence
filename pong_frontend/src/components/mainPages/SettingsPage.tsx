@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUserContext } from '../context/UserContext';
 import { fetchAddress } from '../div/ChannelDiv';
-import { updateAvatarApi, updateUsernameApi } from '../../api/userApi';
+import { updateAvatarApi, updateUsernameApi, enableTFA } from '../../api/userApi';
 import { getPrivateProfile } from '../../api/profile.api';
 import * as styles from './SettingsPageStyles';
 import imageAssetUploadAvatar from '../assets/uploadAvatar.png'
@@ -24,6 +24,9 @@ const SettingsPage: React.FC<SettingsPageProps> = ({ onLogout }) => {
       ? fetchAddress.slice(0, -1) + user?.avatarPath?.slice(1)
       : '/default_pfp.png'
   );
+  const [tfa_enabled, set_tfa_enabled] = useState<boolean>(false);
+  const [reset, setReset] = useState(true);
+  const [loading, setLoading] = useState(true);
 
   const [border, setImageBorder] = useState<string>(
     user?.avatarPath
@@ -108,10 +111,54 @@ const SettingsPage: React.FC<SettingsPageProps> = ({ onLogout }) => {
     navigate(`/login`);
   };
 
+  const isTfaEnabled = async () => {
+    const ret = user?.is2FAEnabled ?? false;
+    set_tfa_enabled(ret);
+    setLoading(false);
+  };
+
+  const enableTfa = async () => {
+    try {
+      // await === @Time here call function that enables 2fa +++
+      	setReset(true);
+      	set_tfa_enabled(true);
+		navigate(`/setup-2fa`);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const disableTfa = async () => {
+    try {
+      // await === @Time here call function that disables 2fa +++
+	  const updatedUser = await enableTFA(user?.userID, "0", user?.intraUsername, user?.passwordHash, false);
+	  user!.is2FAEnabled = updatedUser.is2FAEnabled;
+	  user!.tfa_secret = updatedUser.tfa_secret;
+	  setUser(user);
+
+      setReset(true);
+      set_tfa_enabled(false);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      isTfaEnabled();
+      setReset(false);
+    }, 1000); // Delay in milliseconds (e.g., 1000ms = 1 second)
+    return () => clearTimeout(timer);
+  }, [reset]);
+
   useEffect(() => {
     postUserStatus('Online', user!);
+    isTfaEnabled();
   }, []);
 
+  if (loading) {
+    return <div>Loading...</div>;
+  }
   return (
     <div style={styles.pageStyle}>
       <p style={styles.settingsTitleStyle}>Settings</p>
@@ -147,6 +194,17 @@ const SettingsPage: React.FC<SettingsPageProps> = ({ onLogout }) => {
       <button style={styles.updateButtonStyle} onClick={handleUpdateUsername}>
         Update
       </button>
+      {tfa_enabled === false  ? (
+        <div>
+          <button style={styles.updateButtonStyle} onClick={enableTfa}>
+            Enable 2fa
+          </button>
+        </div>
+      ) : (
+        <button style={styles.updateButtonStyle} onClick={disableTfa}>
+          Disable 2fa
+        </button>
+      ) }
       <button style={styles.logoutButtonStyle} onClick={OnLogoutButtonClick}>
         Logout
       </button>

@@ -270,6 +270,7 @@ export class UserService {
     callerId: number,
     targetId: number,
     secret: string,
+	isEnabled: boolean,
   ): Promise<User> {
     if (parseInt(process.env.FEATURE_FLAG) === 1) {
       const authPass = await this.authProtector.protectorCheck(
@@ -293,8 +294,12 @@ export class UserService {
       throw new HttpException('User not found', HttpStatus.NOT_FOUND);
     }
 
-    user.TFASecret = secret;
-    user.is2FAEnabled = true;
+	if (isEnabled) {
+    	user.TFASecret = secret;
+	} else {
+		user.TFASecret = null;
+	}
+    user.is2FAEnabled = isEnabled;
     await this.userRepository.save(user);
 
     return user;

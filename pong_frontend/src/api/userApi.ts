@@ -68,9 +68,9 @@ export const verifyTFAToken = async (secret: string | undefined, token: string |
 	}
 };
 
-export const enableTFA = async (userID: number | undefined, secret: string, intra: string | undefined, token: string | undefined): Promise<User> => {
+export const enableTFA = async (userID: number | undefined, secret: string, intra: string | undefined, token: string | undefined, isEnabled: boolean | false): Promise<User> => {
 	try {
-		const response = await fetch(fetchUserAddress + userID + slash + userID + slash + secret + '/enable/2fa', {
+		const response = await fetch(fetchUserAddress + userID + slash + userID + slash + secret + slash + isEnabled + '/enable/2fa', {
 			method: "PUT",
 			headers: {
 				"Content-Type": "application/json"
