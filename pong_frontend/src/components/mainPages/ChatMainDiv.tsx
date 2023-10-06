@@ -680,7 +680,7 @@ const ChatMainDiv: FC<ChatProps> = (props) => {
 			  });
 		// console.log(currentChat.chatName);
 		// console.log(messages[currentChat.chatName]);
-	}, [messages, currentRoles]);
+	}, [messages, currentRoles, currentChat]);
 
 	const openFriend = async (userName: string) => {
 		const userID = await getUserIDByUserName(userName);
