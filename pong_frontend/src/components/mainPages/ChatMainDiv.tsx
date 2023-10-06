@@ -761,11 +761,11 @@ const ChatMainDiv: FC<ChatProps> = (props) => {
 				) : (
 				  <ChannelInfo>
 					{currentChat.chatName}
-					<button
+					{/* <button
 						style={userButtonStyle}
 						onClick={() => leaveRoom(currentChat.chatName)}>
 								Leave {currentChat.chatName}
-					</button>
+					</button> */}
 				  </ChannelInfo>
 				)
 			);
