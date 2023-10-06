@@ -661,19 +661,21 @@ const ChatMainDiv: FC<ChatProps> = (props) => {
 		extractExcludedSenders(props.user!)
 			.then((excluded) => {
 				excludedSenders = excluded;
+				console.log("exclude: ", excluded);
+				console.log("excludedSenders outside: ", excludedSenders);
+				setBody(<ChatBodyDiv
+					props = {props}
+					messages={messages[currentChat.chatName]}
+					joinRoom={joinRoom}
+					ChannelUserRoles={currentRoles}
+					currentChat={currentChat}
+					joinPrivateRoom={joinPrivateRoom}
+					excludedSenders={excludedSenders}
+				/>);
 			  })
 			  .catch((error) => {
 				console.error('Error during extracting exludedSenders:', error);
 			  });
-		setBody(<ChatBodyDiv
-			props = {props}
-			messages={messages[currentChat.chatName]}
-			joinRoom={joinRoom}
-			ChannelUserRoles={currentRoles}
-			currentChat={currentChat}
-			joinPrivateRoom={joinPrivateRoom}
-			excludedSenders={excludedSenders}
-		/>);
 		// console.log(currentChat.chatName);
 		// console.log(messages[currentChat.chatName]);
 	}, [messages, currentRoles]);

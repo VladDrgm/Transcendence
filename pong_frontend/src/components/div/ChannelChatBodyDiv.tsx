@@ -24,6 +24,7 @@ const ChatBodyDiv: React.FC<ChatBodyProps> = ({
   joinPrivateRoom,
   excludedSenders,
 }) => {
+  console.log("excludedSenders", excludedSenders);
   const content = useMemo(() => {
     if (!currentChat.isChannel) {
       return (
