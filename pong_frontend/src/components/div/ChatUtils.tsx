@@ -53,13 +53,12 @@ export async function extractExcludedSenders(user: User): Promise<string[]> {
   try {
     const response = await getBlockedUsers(user!);
     if (Array.isArray(response) && response.length > 0) {
-      const excludedSendersID = response.map((entry) => entry.blockedUserID);
+      const excludedSendersID = response.map((entry) => entry.blockedUserId);
       const userList = await getUserList();
       const excludedSenders = excludedSendersID.map((userID) => {
         const user = userList.find((user: any) => user.id === userID);
         return user ? user.username : null;
       });
-      
       return excludedSenders.filter((username) => username !== null); 
     } else {
       // console.error('API response is not an array.');
