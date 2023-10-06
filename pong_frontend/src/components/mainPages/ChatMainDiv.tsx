@@ -489,8 +489,10 @@ const ChatMainDiv: FC<ChatProps> = (props) => {
 				}
 				deleteBlockedUser(Number(targetID), props.user!)
 				.then(() => {
-					unblockUserSocket(Number(targetID), props.user?.username);
-					handleBody();
+					unblockUserSocket(Number(targetID), props.user?.username)
+					setTimeout(() => {
+						handleBody();
+					  }, 1000);
 				})
 				.catch(error => {
 					console.error("Error unblocking user with Username:" , targetName);
