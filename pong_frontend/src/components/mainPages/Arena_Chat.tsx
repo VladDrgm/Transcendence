@@ -83,7 +83,6 @@ const ArenaChat: React.FC<ArenaDivProps> = ({userID, friend_set}) => {
 
 	useEffect(() => {
 		const baseUrl = process.env.REACT_APP_BASE_URL || '';
-		let isConnectionEstablished = false;
 
 		function connect() {
 			setConnected(true);
@@ -96,8 +95,6 @@ const ArenaChat: React.FC<ArenaDivProps> = ({userID, friend_set}) => {
 				userId: user?.userID,
 				};
 			socketRef.current.on("connect", () => {
-				// Set flag to true when the connection is established
-				isConnectionEstablished = true;
 				});
 
 			socketRef.current.emit("join server", data);
@@ -181,80 +178,11 @@ const ArenaChat: React.FC<ArenaDivProps> = ({userID, friend_set}) => {
 
 		return () => {
 			if (socketRef.current){
-				if (isConnectionEstablished) {
-					socketRef.current.disconnect();
-				  }
-				socketRef.current.off("new message", ({ content, sender, chatName }: { content: string; sender: string; chatName: ChatName }) => {
-					console.log("sender", sender);
-					console.log("chatNAme", chatName);
-					console.log("content:", content)
-					if (chatMainDivRef.current?.newMessages)
-						chatMainDivRef.current.newMessages(content, sender, chatName);
-				});
-				socketRef.current.off('room deleted', (roomName) => {
-					if(chatMainDivRef.current?.handleDeletingChatRoom)
-						chatMainDivRef.current.handleDeletingChatRoom(roomName);
-				});
-				socketRef.current.off('room added', (roomName) => {
-					if(chatMainDivRef.current?.updateChannellist)
-						chatMainDivRef.current.updateChannellist();
-				});
-				socketRef.current.off('room changed', (roomName) => {
-					if(chatMainDivRef.current?.updateChannellist)
-						chatMainDivRef.current.updateChannellist();
-				});
-				socketRef.current.off('admin added', (data) => {
-					const newAdminUserID =data.newAdminUserID;
-					const roomName = data.roomName;
-					if(chatMainDivRef.current?.handleAdminRights)
-						chatMainDivRef.current.handleAdminRights(newAdminUserID, roomName);
-				});
-				socketRef.current.off('user banned', (data) => {
-					const targetId = data.targetId;
-					const roomName = data.roomName;
-					if(chatMainDivRef.current?.handleBannedUserSocket)
-						chatMainDivRef.current.handleBannedUserSocket(targetId, roomName);
-				});
-				socketRef.current.off('user unbanned', (data) => {
-					const targetId = data.targetId;
-					const roomName = data.roomName;
-					if(chatMainDivRef.current?.handleUnbannedUserSocket)
-						chatMainDivRef.current.handleUnbannedUserSocket(targetId, roomName);
-				});
-				socketRef.current.off('user muted', (data) => {
-					const targetId = data.targetId;
-					const roomName = data.roomName;
-					if (chatMainDivRef.current?.handleMutedUserSocket)
-						chatMainDivRef.current.handleMutedUserSocket(targetId, roomName);
-				});
-				socketRef.current.off('user unmuted', (data) => {
-					const targetId = data.targetId;
-					const roomName = data.roomName;
-					if (chatMainDivRef.current?.handleUnmutedUserSocket)
-						chatMainDivRef.current.handleUnmutedUserSocket(targetId, roomName);
-				});
-				socketRef.current.off('user blocked', (data) => {
-					const targetId = data.targetId;
-					const username = data.username;
-					if(chatMainDivRef.current?.handleBlockedUserSocket)
-						chatMainDivRef.current.handleBlockedUserSocket(targetId, username);
-				});
-				socketRef.current.off('user unblocked', (data) => {
-					const targetId = data.targetId;
-					const username = data.username;
-					if(chatMainDivRef.current?.handleunblockedUserSocket)
-						chatMainDivRef.current.handleunblockedUserSocket(targetId, username);
-				});
-				socketRef.current.off('invitation alert playertwo', (data) => {
-					const sessionId = data.invitation.sessionId;
-					const playerOneSocket = data.invitation.playerOneSocket;
-					const playerTwoSocket = data.invitation.playerTwoSocket;
-					const userOneName = data.username;
-					handlePlayerTwoInvite(sessionId, playerOneSocket, playerTwoSocket, userOneName);
-				});
-				// Reset the flag
-        		isConnectionEstablished = false;
-			}
+		socketRef.current.removeAllListeners();
+		if (socketRef.current && socketRef.current.connected) {
+			socketRef.current.disconnect();
+		}
+}
 
 
 		}
