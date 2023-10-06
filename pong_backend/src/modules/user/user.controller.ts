@@ -185,4 +185,18 @@ export class UserController {
       status,
     );
   }
+
+    @Put(':callerId/:targetId/check2Fa')
+    @ApiOperation({ summary: 'Check if user has 2fa enabled' })
+    async check2Fa(
+      @Param('callerId', ParseIntPipe) callerId: number,
+      @Param('targetId', ParseIntPipe) targetId: number,
+      @Body() loggedUser: UserAuthDTO,
+    ): Promise<boolean> {
+      return await this.userService.check2Fa(
+        loggedUser,
+        callerId,
+        targetId,
+      );
+    }
 }

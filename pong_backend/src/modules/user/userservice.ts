@@ -334,4 +334,31 @@ export class UserService {
 
     return await this.userRepository.findOneBy({ userID: targetId });
   }
+
+  async check2Fa(loggedUser, callerId, targetId): Promise<boolean> {
+
+    if (parseInt(process.env.FEATURE_FLAG) === 1) {
+      const authPass = await this.authProtector.protectorCheck(
+        loggedUser.passwordHash,
+        callerId,
+      );
+      if (!authPass) {
+        throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+      }
+    }
+
+    if (callerId !== targetId) {
+      throw new HttpException(
+        'Caller must be target.',
+        HttpStatus.UNAUTHORIZED,
+      );
+    }
+
+    const user = await this.userRepository.findOneBy({ userID: callerId });
+    if (!user) {
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    }
+
+    return user.is2FAEnabled;
+  }
 }
