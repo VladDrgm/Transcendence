@@ -574,7 +574,7 @@ export class ChannelService {
     }
     channel.Type = channel.Type == 'public' ? 'private' : 'public';
 
-    if (channel.Password === null || channel.Password === '') {
+    if ((channel.Password === null || channel.Password === '') && channel.Type === 'private') {
       throw new HttpException('Channel password is empty', 400);
     }
 

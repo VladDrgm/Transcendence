@@ -457,7 +457,7 @@ export function deleteChannelPassword(userId: number| undefined, channelId: numb
       method: 'DELETE',
       headers: { 
         "Accept": "*/*",
-        "Container-Type": "application/json"
+        "Content-Type": "application/json"
       },
       body: jsonData
     };  
