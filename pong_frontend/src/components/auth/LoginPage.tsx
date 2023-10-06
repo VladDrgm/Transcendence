@@ -1,6 +1,6 @@
 import React from "react";
-import imageAssetBilly from '../assets/billy.png'
 import * as styles from './LoginPageStyles';
+import imageAssetBilly from '../assets/billy.png'
 
 const LoginPage: React.FC = () => {
 
@@ -18,15 +18,15 @@ const LoginPage: React.FC = () => {
 		});
 		const authorizationUrl = `${authEndpoint}?${queryParams.toString()}`;
 
-		// Open the 42 API authorization page in a new tab
-		window.open(authorizationUrl, '_blank');
+		// Redirect to the 42 API authorization page
+		window.location.replace(authorizationUrl);
 	}
 
 	return (
 		<div style={styles.pageStyle}>
-			<img src={imageAssetBilly} style={styles.gifStyle} alt="" ></img>
+			<img alt="" src={imageAssetBilly} style={styles.gifStyle} ></img>
             <p style={styles.welcomeTitleStyle}>Do you want to play a game?</p>
-            <button style={styles.signupButtonStyle} onClick={OnLoginWith42ButtonClick}>Sign up with 42</button>
+            <button onClick={OnLoginWith42ButtonClick} style={styles.signupButtonStyle}>Sign up with 42</button>
         </div>
 	);
 };
