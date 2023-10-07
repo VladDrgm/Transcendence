@@ -777,11 +777,11 @@ const ChatMainDiv: FC<ChatProps> = (props) => {
 						onClick={() => inviteButton(props.allUsers.find(user => user.username === currentChat.chatId))}>
 							Invite for/ Accept a Game
 						</button>
-					<button 
+					{/* <button 
 					style={chatButtonsStyle}
 					onClick={() => addBlockedUser(currentChat.chatId!)}>
 						Block User
-					</button>
+					</button> */}
 					{/* <button 
 					style={chatButtonsStyle}
 					onClick={() => unblockUser(currentChat.chatId!)}>
