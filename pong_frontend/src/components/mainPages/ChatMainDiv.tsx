@@ -171,18 +171,44 @@ const ChatMainDiv: FC<ChatProps> = (props) => {
 		isMutedResolved:	true
 	});
 
+	// useEffect(() => {
+	// 	if (currentChat.isChannel){
+	// 		handleUserInChannelCheck();
+	// 		handleUserInChannelBlockedCheck();
+	// 		handleUserInChannelMutedCheck();
+	// 		handleAdminCheck();
+	// 		handleOwnerCheck();
+	// 	}
+	// 	else if(!currentChat.isChannel){
+	// 		handleUserDirektMessageStatus();
+	// 	}
+	// }, [currentChat.chatName])
+
 	useEffect(() => {
-		if (currentChat.isChannel){
-			handleUserInChannelCheck();
-			handleUserInChannelBlockedCheck();
-			handleUserInChannelMutedCheck();
-			handleAdminCheck();
-			handleOwnerCheck();
-		}
-		else if(!currentChat.isChannel){
-			handleUserDirektMessageStatus();
-		}
-	}, [currentChat.chatName])
+  const asyncFunctions = [];
+
+  if (currentChat.isChannel) {
+    asyncFunctions.push(handleUserInChannelCheck());
+    asyncFunctions.push(handleUserInChannelBlockedCheck());
+    asyncFunctions.push(handleUserInChannelMutedCheck());
+    asyncFunctions.push(handleAdminCheck());
+    asyncFunctions.push(handleOwnerCheck());
+  } else if (!currentChat.isChannel) {
+    asyncFunctions.push(handleUserDirektMessageStatus());
+  }
+
+  // Wait for all the async functions to complete before calling handleBody
+  Promise.all(asyncFunctions)
+    .then(() => {
+      // All async functions have completed, now call handleBody
+      handleBody();
+    })
+    .catch((error) => {
+      // Handle any errors that occur in the async functions
+      console.error('Error occurred in useEffect:', error);
+    });
+}, [currentChat.chatName]);
+
 
 
 	const handleUserDirektMessageStatus = useCallback (async () => {
@@ -681,6 +707,18 @@ const ChatMainDiv: FC<ChatProps> = (props) => {
 		// console.log(currentChat.chatName);
 		// console.log(messages[currentChat.chatName]);
 	}, [messages, currentRoles, currentChat]);
+
+	// useEffect(() => {
+	// 	// Create an interval that calls handleBody every 5 seconds (5000 milliseconds)
+	// 	const intervalId = setInterval(() => {
+	// 	  handleBody();
+	// 	}, 5000);
+	  
+	// 	// Clear the interval when the component unmounts
+	// 	return () => {
+	// 	  clearInterval(intervalId);
+	// 	};
+	//   }, []); 
 
 	const openFriend = async (userName: string) => {
 		const userID = await getUserIDByUserName(userName);
