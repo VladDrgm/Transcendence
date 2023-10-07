@@ -744,11 +744,11 @@ const ChatMainDiv: FC<ChatProps> = (props) => {
 					onClick={() => addBlockedUser(currentChat.chatId!)}>
 						Block User
 					</button>
-					<button 
+					{/* <button 
 					style={chatButtonsStyle}
 					onClick={() => unblockUser(currentChat.chatId!)}>
 						Unblock User
-					</button>
+					</button> */}
 					</div>
 				  </ChannelInfo>
 				)
