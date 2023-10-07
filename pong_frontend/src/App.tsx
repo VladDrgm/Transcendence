@@ -29,10 +29,10 @@ const App = () => {
 		const handleBeforeUnload = (e: BeforeUnloadEvent) => {
 			const localUser = localStorage.getItem('user');
 			const localParsedUser = JSON.parse(localUser!);
-			e.preventDefault();
+			// e.preventDefault();
 			e.returnValue = ''; // Required for some browsers
 			postUserStatus("Offline", localParsedUser);
-		  };
+		};
 	  
 		  window.addEventListener('beforeunload', handleBeforeUnload);
 	  
