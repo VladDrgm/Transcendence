@@ -11,9 +11,10 @@ export const exampleStyle: Properties = {
 }
 
 export const pageStyle: Properties = {
-	backgroundColor: 'lightgray',
+	backgroundColor: '#0071BB',
 	height: '1000px',
 	display: 'flex',
 	flexDirection: 'column',
 	alignItems: 'center',
+	color: '#87CEEB'
 }
