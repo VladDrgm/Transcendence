@@ -31,7 +31,6 @@ export let initialMessagesState: {
 	[key: string]: { sender: string; content: string }[];
 } = {};
 
-//Using fetched Channel Names to add as keys to the initialMessageState object
 export async function initializeMessagesState() {
 	const channelNames = await fetchChannelNames();
 	channelNames.forEach((channelName) => {
@@ -39,7 +38,6 @@ export async function initializeMessagesState() {
 	});
 }
 
-//returning Channelofject from Channellist with same Name
 export function getChannelFromChannellist(channelList: Channel[], channelName: string | number): Channel | undefined {
 	return channelList.find((channel) => channel.Name === channelName);
 }
@@ -58,7 +56,6 @@ export type CurrentChat = {
 
 const ArenaChat: React.FC<ArenaDivProps> = ({userID, friend_set}) => {
 	const { user } = useUserContext()
-	/* chat utilities */
 	const [connected, setConnected] = useState(true);
 	const [allUsers, setAllUsers] = useState<any[]>([]);
 	let chatMainDivRef = useRef<{ 
@@ -106,7 +103,6 @@ const ArenaChat: React.FC<ArenaDivProps> = ({userID, friend_set}) => {
 			});
 			socketRef.current.on("new message", ({ content, sender, chatName}: { content: string; sender: string; chatName: ChatName ;}) => {
 				if (chatMainDivRef.current?.newMessages){
-					console.log("new message listener");
 					chatMainDivRef.current.newMessages(content, sender, chatName);
 				}
 			});
@@ -193,7 +189,6 @@ const ArenaChat: React.FC<ArenaDivProps> = ({userID, friend_set}) => {
 		invitation.sessionId = sessionId;
 		invitation.playerOneSocket = playerOneSocket;
 		invitation.playerTwoSocket = playerTwoSocket;
-		//allerting playerTwo to join the game
 		if (username) {
 			alert("You have been invited to a game by User: " + username
 			+ " ,please go to your private conversation to join the game via the invite/start button");
@@ -202,7 +197,6 @@ const ArenaChat: React.FC<ArenaDivProps> = ({userID, friend_set}) => {
 	}
 
 	function invitePlayer(invitationNew: Invitation) {
-		console.log("invitationNew", invitationNew);
 		if (invitation?.sessionId !== null) {
 			alert("Already invited");
 		}
@@ -211,7 +205,6 @@ const ArenaChat: React.FC<ArenaDivProps> = ({userID, friend_set}) => {
 			invitation.playerTwoSocket = invitationNew?.playerTwoSocket;
 		}
 		if (socketRef.current?.id && !gameSession.playerOne && !gameSession.playerTwo) {
-			console.log("Invite player " + invitation!.playerTwoSocket + " action triggered");
 			alert("Invite/Accept To Game Session");
 			postUserStatus("InGameQueue", user!);
 			socketRef.current.emit('invite player', invitation, user?.userID, user?.username);
@@ -225,10 +218,8 @@ const ArenaChat: React.FC<ArenaDivProps> = ({userID, friend_set}) => {
 	}
 
 
-
-		/* game utilities */
 		const canvasRef = useRef<HTMLCanvasElement | null>(null);
-		const [gameStatus, setGameStatus] = useState(0); // Initial game status is 0
+		const [gameStatus, setGameStatus] = useState(0);
 		const [isGameStarting, setIsGameStarting] = useState(false);
 	
 		let [gameSession, setGameSession] = useState<{
@@ -261,7 +252,6 @@ const ArenaChat: React.FC<ArenaDivProps> = ({userID, friend_set}) => {
 			event.preventDefault();
 	
 			if (socketRef.current?.id && !gameSession.playerOne && !gameSession.playerTwo) {
-				console.log("Joining que emitting from Arena Chat, socketRef is: " + socketRef.current.id);
 				alert("Joining Sessions Queue");
 				socketRef.current.emit('join queue', user?.userID);
 			}
@@ -276,7 +266,6 @@ const ArenaChat: React.FC<ArenaDivProps> = ({userID, friend_set}) => {
 
 		useEffect(() => {
 			socketRef.current?.on('session joined', ({ sessionIdInput, playerInput }) => {
-				console.log("reached Session Joined");
 				if (playerInput === 1) {
 					setGameSession((prevSession) => ({
 						...prevSession,
@@ -284,7 +273,6 @@ const ArenaChat: React.FC<ArenaDivProps> = ({userID, friend_set}) => {
 						player: playerInput,
 						playerOne: socketRef.current?.id || '',
 					}));
-					console.log("Player 1 set");
 					alert("Joined a Session as Player 1");
 					postUserStatus("InGameQueue", user!);
 				} else if (playerInput === 2) {
@@ -294,18 +282,12 @@ const ArenaChat: React.FC<ArenaDivProps> = ({userID, friend_set}) => {
 						player: playerInput,
 						playerTwo: socketRef.current?.id || '',
 					}));
-					console.log("Player 2 set");
 					alert("Joined a session as Player 2");
 					postUserStatus("InGameQueue", user!);
 				}
-				console.log("Set new gameSession in session joined: " + JSON.stringify(gameSession));
 			});
 			
 				socketRef.current?.on('opponent joined', (opponentSocketId: string) => {
-					console.log('Opponent joined with socketId:', opponentSocketId);
-					console.log("session is: " + JSON.stringify(gameSession));
-					
-					// If player 2, save its socket ID for player 1 and vice versa
 					if (gameSession.player === 2) {
 						setGameSession((prevSession) => ({
 							...prevSession,
@@ -352,23 +334,16 @@ const ArenaChat: React.FC<ArenaDivProps> = ({userID, friend_set}) => {
 		};
 	
 		function startGame(event: React.FormEvent) {
-			console.log("Reached startGame, data is - playerOne: " + gameSession.playerOne + " and playerTwo: " + gameSession.playerTwo);
-			// Check if both player 1 and player 2 are assigned
 			if (gameSession.playerOne && gameSession.playerTwo) {
-				// Check if the current browser is player 1
 				if (socketRef.current?.id === gameSession.playerOne) {
-					// Emit an event to the server to start the game
 					socketRef.current?.emit('start game', gameSession.sessionId);
 				} else {
-					// Display message for player 2 if they try to start the game
 					alert("Please wait for Player One to start the game.");
 				}
 			}
 		}
 
 		function quitGame(event: React.FormEvent) {
-			console.log("Reached quitGame, data is - playerOne: " + gameSession.playerOne + " and playerTwo: " + gameSession.playerTwo);
-			// Check if both player 1 and/or player 2 are assigned
 			if (gameSession.playerOne || gameSession.playerTwo || invitation?.sessionId) {
 				if ((socketRef.current?.id === gameSession.playerOne || socketRef.current?.id === gameSession.playerTwo) && gameStatus === 0) {
 					socketRef.current?.emit('quit queue', gameSession.sessionId);
@@ -393,20 +368,16 @@ const ArenaChat: React.FC<ArenaDivProps> = ({userID, friend_set}) => {
 				alert("Nothing to quit");
 			}
 		}
-	
-		// Game Starting Listener
 
 			useEffect(() => {
 				socketRef.current?.on('game starting', () => {
 				setGameStatus(1);
 				postUserStatus("inGame", user!);
-				setIsGameStarting(true); // Set isGameStarting to true immediately
-				console.log("Invitation before change is: " + JSON.stringify(invitation));
+				setIsGameStarting(true);
 				if (invitation != null) {
 					invitation.playerOneSocket = null;
 					invitation.playerTwoSocket = null;
 					invitation.sessionId = null;
-					console.log("Invitation after change is: " + JSON.stringify(invitation));
 				}
 				});
 
