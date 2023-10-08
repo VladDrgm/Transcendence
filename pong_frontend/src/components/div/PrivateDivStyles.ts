@@ -13,7 +13,7 @@ export const profilePictureStyle: Properties = {
 	height: '120px',
 	borderRadius: '50%',
 	objectFit: 'cover',
-	border: '3px solid ',
+	border: '3px solid rgba(135, 206, 235, 1)',
 }
 
 export const listContainerStyle: Properties = {
