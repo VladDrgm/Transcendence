@@ -2,12 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { userSignupAPI } from '../../api/authAPI';
 import { useUserContext } from '../context/UserContext';
-import { User } from '../../interfaces/User';
-import { updateAvatarApi, updateUsernameApi } from '../../api/userApi';
-import { postUserStatus } from '../../api/statusUpdateAPI.api';
-import ErrorPopup from '../Popups/ErrorPopup';
 import * as styles from './CompleteProfilePageStyles';
 import imageAssetUploadAvatar from '../assets/uploadAvatar.png';
+import { User } from '../../interfaces/User';
+import { updateAvatarApi, updateUsernameApi } from '../../api/userApi';
+import ErrorPopup from '../Popups/ErrorPopup';
+import { postUserStatus } from '../../api/statusUpdateAPI.api';
 
 
 const CompleteProfilePage: React.FC = () => {{
@@ -24,11 +24,13 @@ const CompleteProfilePage: React.FC = () => {{
 	const [selectedImage, setSelectedImage] = useState<string>('/default_pfp.png');
 
 	useEffect(() => {
+		// Check if the user is logged in when the component mounts
 		if (!user && !intraName) {
-		  navigate('/login');
+		  navigate('/login'); // Redirect to the login page if not logged in
 		}
 	  }, [user, intraName, navigate]);
 	  
+	// Extract the filename from the File object and update the state
 	const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const file = e.target.files ? e.target.files[0] : null;
 		if (file) {
@@ -38,10 +40,12 @@ const CompleteProfilePage: React.FC = () => {{
 	};
 
 	const handleCreatingUser = async () => {
-		if (user?.intraUsername !== intraName) {
+		if (user === null && intraName !== undefined) {
+			// Handle first-time login here, if needed
+		  } else if (user?.intraUsername !== intraName) {
 			setError('Unauthorized access');
 			return;
-		}
+		  }
 		  
 		if (newUsername.trim().length < 1 || newUsername.trim().length > 15) {
 			setError('Please put in a username(max 15 characters) to continue!');
