@@ -8,7 +8,6 @@ const LoginPage: React.FC = () => {
         const clientID=`${process.env.REACT_APP_AUTH_UID}` || '';
         const redirectURI=`${process.env.REACT_APP_BASE_URL}redirect` || '';
 
-		// Construct the URL for the 42 API authorization endpoint
 		const authEndpoint = 'https://api.intra.42.fr/oauth/authorize';
 		const queryParams = new URLSearchParams({
 		  client_id: clientID,
@@ -18,7 +17,6 @@ const LoginPage: React.FC = () => {
 		});
 		const authorizationUrl = `${authEndpoint}?${queryParams.toString()}`;
 
-		// Redirect to the 42 API authorization page
 		window.location.replace(authorizationUrl);
 	}
 

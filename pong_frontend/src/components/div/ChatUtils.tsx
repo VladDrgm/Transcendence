@@ -38,7 +38,6 @@ export function renderUser(user: User, props: ChatProps, toggleChat: any) {
         };
     })
     .catch((error) => {
-        console.error("Error fetching user ID:", error);
     });
     return (
     <Row onClick={() => {
@@ -61,11 +60,9 @@ export async function extractExcludedSenders(user: User): Promise<string[]> {
       });
       return excludedSenders.filter((username) => username !== null); 
     } else {
-      // console.error('API response is not an array.');
       return [];
     }
   } catch (error) {
-    console.error('Error fetching blocked users:', error);
     return [];
   }
 }
@@ -80,7 +77,7 @@ export function renderMessages(message: Message, index: number, excludedSenders:
             </div>
           );
         } else {
-          return null; // Skip rendering this message
+          return null;
         }
     }
   }

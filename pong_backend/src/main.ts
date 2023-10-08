@@ -144,10 +144,8 @@ async function bootstrap() {
     });
 
     socket.on('join server', (data) => {
-      // playerName: string, userId: number
       const playerName = data.username;
       const userId = data.userId;
-      console.log('Username in join server is: ' + playerName);
       const existingUser = users.find((user) => user.username === playerName);
       if (!existingUser) {
         const user = {
@@ -155,13 +153,11 @@ async function bootstrap() {
           socketId: socket.id,
           userId: userId,
         };
-        // console.log("Will this be triggered when the 2nd user joins?");
         users.push(user);
         io.emit('new user', users);
         io.sockets.emit('playerConnected', users[userNr]);
         userNr++;
       } else {
-        // console.log("Cannot join -> user variable is null")
         existingUser.userId = userId;
         io.emit('new user', users);
         io.sockets.emit('playerConnected', users[userNr]);
@@ -171,7 +167,6 @@ async function bootstrap() {
     socket.on(
       'join room',
       (roomName: string, cb: (messages: any[]) => void) => {
-        // addChatRoom(roomName);
         if (!messages.hasOwnProperty(roomName)) {
           messages[roomName] = [];
         }
@@ -204,7 +199,6 @@ async function bootstrap() {
     socket.on('add admin', (data) => {
       const newAdminUserID = data.newAdminUserID;
       const roomName = data.roomName;
-      // console.log("admin event recieved");
       io.emit('admin added', { newAdminUserID, roomName });
     });
 
@@ -379,7 +373,6 @@ async function bootstrap() {
           playerInput: 1,
         });
         playerQueue.push(socket.id);
-        //console.log('Game sessions after joining as Player 1:', gameSessions);
       } else {
         // If an available session exists, join as Player 2
         console.log('Joining as Player 2 has been triggered');
@@ -390,10 +383,6 @@ async function bootstrap() {
         gameSessions.forEach((session) => {
           if (session.sessionId === availableSession.sessionId) {
             // Notify Player 2
-            /* console.log(
-              'Notifying Player 2 that he is player 2, his socketId is ' +
-                socket.id,
-            ); */
             socket.emit('session joined', {
               sessionIdInput: session.sessionId,
               playerInput: 2,
@@ -401,18 +390,6 @@ async function bootstrap() {
 
             // Notify each player of opponents
             const playerOneSocketId = session.playerIds[0];
-            /* console.log("Notifying Player 1 of Player 2 joining, playerOneSocket being " + playerOneSocketId);
-					socket.to(playerOneSocketId).emit('session joined', {
-						sessionIdInput: session.sessionId,
-						player: 1
-					}); */
-
-            /* console.log(
-              'Notifying Player 2 - ' +
-                socket.id +
-                ' who is player 1 - ' +
-                playerOneSocketId,
-            ); */
             socket.emit('opponent joined', playerOneSocketId);
             /* console.log(
               'Notifying player 1 - ' +
@@ -423,7 +400,6 @@ async function bootstrap() {
             io.to(playerOneSocketId).emit('opponent joined', socket.id);
           }
         });
-        //console.log('Game sessions after joining as Player 2:', gameSessions);
       }
     });
 
@@ -480,10 +456,6 @@ async function bootstrap() {
           });
 
           // Notify the player that they are Player 1 and provide the new sessionId
-          /* console.log(
-            'Emitting joining answer back to Player 1, for socketID ' +
-              socket.id,
-          ); */
           socket.emit('session joined', {
             sessionIdInput: newSessionId,
             playerInput: 1,
@@ -496,10 +468,8 @@ async function bootstrap() {
             .emit('invitation alert playertwo', { invitation, username });
 
           playerQueue.push(socket.id);
-          //console.log('Game sessions after joining as Player 1:', gameSessions);
         } else {
           // If the existing session exists, join as Player 2
-          //console.log('Joining as Player 2 has been triggered');
           existingSession.playerIds.push(socket.id);
           existingSession.clientIdPT = userID;
 
@@ -507,10 +477,6 @@ async function bootstrap() {
           gameSessions.forEach((session) => {
             if (session.sessionId === existingSession.sessionId) {
               // Notify Player 2
-              /* console.log(
-                'Notifying Player 2 that he is player 2, his socketId is ' +
-                  socket.id,
-              ); */
               socket.emit('session joined', {
                 sessionIdInput: session.sessionId,
                 playerInput: 2,
@@ -518,32 +484,14 @@ async function bootstrap() {
 
               // Notify each player of opponents
               const playerOneSocketId = session.playerIds[0];
-              /* console.log(
-                'Notifying Player 1 of Player 2 joining, playerOneSocket being ' +
-                  playerOneSocketId,
-              ); */
               socket.to(playerOneSocketId).emit('session joined', {
                 sessionIdInput: session.sessionId,
                 player: 1,
               });
-
-              /* console.log(
-                'Notifying Player 2 - ' +
-                  socket.id +
-                  ' who is player 1 - ' +
-                  playerOneSocketId,
-              ); */
               socket.emit('opponent joined', playerOneSocketId);
-              /* console.log(
-                'Notifying player 1 - ' +
-                  playerOneSocketId +
-                  ' who is Player 2 - ' +
-                  socket.id,
-              ); */
               io.to(playerOneSocketId).emit('opponent joined', socket.id);
             }
           });
-          //console.log('Game sessions after joining as Player 2:', gameSessions);
         }
       },
     );
@@ -565,15 +513,7 @@ async function bootstrap() {
           io.to(session.playerIds[0]).emit('game starting', sessionId, 1);
           io.to(session.playerIds[1]).emit('game starting', sessionId, 2);
         }
-        /* else {
-				// There's only one player in the session, wait for the second player
-				socket.to(session.playerIds[0]).emit('waiting for opponent');
-			} */
       }
-      /* else {
-			// Invalid sessionId, notify the sender that the game session doesn't exist
-			socket.to(socket.id).emit('invalid session');
-		} */
     });
 
     socket.on('remove invite', (invitation: Invitation) => {
@@ -744,8 +684,6 @@ async function bootstrap() {
           session.gameState.ball.vel.y = -session.gameState.ball.vel.y;
         }
 
-        //console.log("Collision data: \n Player data (left):" + JSON.stringify(session.gameState.playerOne) + "\n Ball data: " + JSON.stringify(session.gameState.ball) + "\n Player data (right): " + JSON.stringify(session.gameState.playerTwo) + "\n");
-
         // Update left, right, top, bottom
         session.gameState.playerOne = getBoundaries(
           session.gameState.playerOne,
@@ -755,7 +693,6 @@ async function bootstrap() {
         );
         session.gameState.ball = getBoundaries(session.gameState.ball);
 
-        //console.log("Before potential collision, ballState is: " + JSON.stringify(session.gameState.ball));
         // Handle collisions with the players
         if (
           collide(session.gameState.playerOne, session.gameState.ball) ===
@@ -807,8 +744,6 @@ async function bootstrap() {
     function updateBallPositionInSession(session: any, gameState: GameState) {
       let ballState: any;
 
-      //console.log("\n gameState ball info:" + JSON.stringify(gameState.ball));
-
       if (gameState) {
         ballState = {
           position: { x: 400, y: 200 },
@@ -823,7 +758,6 @@ async function bootstrap() {
       gameState.ball.vel = ballState.vel;
       session.gameState = gameState;
 
-      //console.log("Before starting game loop, kick-off ballState is: " + JSON.stringify(session.gameState.ball));
       startGameInterval(session);
     }
 
@@ -833,7 +767,6 @@ async function bootstrap() {
         session.playerIds.includes(socket.id),
       );
 
-      //console.log("Reached Session Start, gameState is: " + JSON.stringify(gameState) + "\nand sessionData is: " + JSON.stringify(session));
       if (session && socket.id === session.playerIds[0]) {
         updateBallPositionInSession(session, gameState);
       }
@@ -884,10 +817,6 @@ async function bootstrap() {
         }
         matchResults.endTime = new Date();
         matchResults.startTime = session.gameState.timestamps.start;
-
-        //console.log('matchResults is: ' + JSON.stringify(matchResults) + '/n');
-
-        console.log('the URI is: ' + process.env.URI);
 
         fetch(process.env.URI + 'match', {
           method: 'POST',
@@ -1004,11 +933,8 @@ async function bootstrap() {
           io.to(otherUserId).emit('playerDisconnected');
         }
 
-        // Remove the gameSession that the disconnected user was a part of - this will be done in endGame
-        //gameSessions = gameSessions.filter(session => session !== sessionOfDisconnectedUser);
       }
 
-      //io.sockets.emit('playerDisconnected');
       userCount--;
       users = users.filter((u) => u.socketId !== socket.id);
       if (users.length !== 0) {
