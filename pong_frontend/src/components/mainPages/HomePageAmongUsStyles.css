@@ -1,0 +1,215 @@
+*, html {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --base-color: #8a071d;
+  --lighter-base-color: #d9041a;
+  --face-color: #73989e;
+  --lighter-face-color: #CAE8ED;
+  --border-color: #000000; 
+}
+
+.body {
+  position: relative;
+  margin: 100px 150px;
+  width: 155px;
+  height: 230px;
+  background-color: var(--base-color);
+  
+  border: 12px solid var(--border-color);
+  border-radius: 70px 85px 70px 70px;
+}
+
+.body-light-part {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 1;
+  
+  width: 95%;
+  height: 90%;
+  background-color: var(--lighter-base-color);
+  transform: rotate(-2deg);
+  border-radius: 40% 50% 36% 30%;
+}
+
+.face{ 
+  position: absolute;
+  right: -20px;
+  top: 25px;
+  z-index: 2;
+  
+  background-color: var(--face-color);
+  width: 130px;
+  height: 90px;
+  transform: rotate(-4deg);
+
+  border: 12px solid var(--border-color);
+  border-radius: 70px 90px 110px 110px;
+}
+
+.face-light-part {
+  position: relative;
+  width: 94px;
+  height: 50px;
+  margin: 0px 12px;
+  background-color: var(--lighter-face-color);
+  border-radius: 30% 40% 55% 50%;
+  display: inline-block;
+}
+
+.shimmer {
+  position: relative;
+  margin: 4px 25px;
+  width: 50px;
+  height: 20px;
+  background-color: white;
+  border-radius: 40% 50% 50% 40%;
+}
+
+.backpack{
+  position: absolute;
+  left: 0;
+  top: 65px;
+  width: 50px;
+  height: 150px;
+  transform: translate(-100%);
+  
+  background-color: var(--base-color);
+  border: 12px solid var(--border-color);
+  border-radius: 40% 0 0 50%;
+}
+
+.backpack-light-part {
+  margin-left: 2px;
+  height: 25px;
+  width: calc(100% - 2px);
+  
+  background-color: var(--lighter-base-color);
+  
+  border-radius: 50% 0 0 20%;
+}
+
+.leg-left-under {
+  position: absolute;
+  bottom: 0;
+  left: -12px;
+  
+  width: 70px;
+  height: 60px;
+  
+  background-color: var(--base-color);
+  border-left: 12px solid var(--border-color);
+}
+
+
+.leg-left {
+  position: absolute;
+  bottom: 0;
+  left: -12px;
+  
+  width: 65px;
+  height: 55px;
+  transform: translateY(55px);
+  
+  background-color: var(--base-color);
+  border: 12px solid var(--border-color);
+  border-top: none;
+  border-radius: 0 0 40% 60%;
+}
+
+.leg-right-under {
+  position: absolute;
+  bottom: -4px;
+  left: 70px;
+  
+  width: 65px;
+  height: 32px;
+  
+  background-color: var(--base-color);
+  border-right: 12px solid var(--border-color);
+}
+
+.leg-right {
+  position: absolute;
+  bottom: -50px;
+  left: 70px;
+  
+  width: 65px;
+  height: 50px;
+  
+  background-color: var(--base-color);
+  border: 12px solid var(--border-color);
+  border-top: none;
+  border-radius: 0 0 40% 60%;
+}
+
+
+.characters-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%; /* Adjust the width as needed */
+  margin: 0 auto;
+  padding: 20px;
+  position: relative; /* Add this for positioning the ball */
+}
+
+.character-left{
+  flex: 1; /* Allow characters to take equal space */
+  display: flex;
+  justify-content: center;
+  flex-direction: row-reverse;
+
+}
+
+
+.character-right {
+    flex: 1; /* Allow characters to take equal space */
+    display: flex;
+    justify-content: center;
+    flex-direction: row-reverse;
+    transform: scaleX(-1); /* Mirror over the y-axis */
+    right: 0;
+}
+
+
+
+.ball {
+  width: 40px;
+  height: 40px;
+  background-color: #ffff00; /* Yellow color for the ball */
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 18px; /* Adjust font size */
+  font-weight: bold;
+  color: #ffffff; /* White text color */
+  position: absolute; /* Position the ball absolutely within the container */
+  animation: moveBall 8s linear infinite; /* Infinite animation for ball movement */
+  left: 0; /* Start the ball on the left side initially */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.4); /* Add shadow for 3D effect */
+  background: radial-gradient(circle, #ffea00, #ffaa00); /* Gradient between bright and dark yellow */
+}
+
+@keyframes moveBall {
+  0% {
+    left: 34%;
+  }
+  25% {
+    left: 50%; /* Move the ball between characters */
+  }
+  50% {
+    left: 66%; /* Move the ball back between characters */
+  }
+  75% {
+    left: 50%; /* Move the ball between characters */
+  }
+  100% {
+    left:34%;
+  }
+}

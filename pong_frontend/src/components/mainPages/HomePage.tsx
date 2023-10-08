@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import './HomePageHorrorStyles.css';
+import Art from './HomePageArt'
 
 
 const HomePage: React.FC = () => {
@@ -13,21 +13,9 @@ const HomePage: React.FC = () => {
   return (
     <div className={`horror-pong-homepage ${isFogVisible ? 'fog-visible' : ''}`} onClick={toggleFog}>
       {/* Title */}
-      <h1 className="game-title">Horror Pong</h1>
-
+      <h1 className="game-title" style={{ color: '#87CEEB', display: 'inline-block', marginRight: '10px' }}>Among Pong</h1>
       {/* Fog Layers */}
-      <div id="foglayer_01" className="fog">
-        <div className="image01"></div>
-        <div className="image02"></div>
-      </div>
-      <div id="foglayer_02" className="fog">
-        <div className="image01"></div>
-        <div className="image02"></div>
-      </div>
-      <div id="foglayer_03" className="fog">
-        <div className="image01"></div>
-        <div className="image02"></div>
-      </div>
+      <Art />
 
       {/* Custom Cursor */}
       <div className="custom-cursor"></div>
