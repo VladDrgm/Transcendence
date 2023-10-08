@@ -20,7 +20,6 @@ const ChannelInputDiv: FC<chatInputProps> = ({
   currentChat
 }) => {
 
-  // //Checking if everything is resolved
   if (!currentRoles.isAdminResolved ||
       !currentRoles.isBlockedResolved ||
       !currentRoles.isMutedResolved ||
@@ -30,7 +29,6 @@ const ChannelInputDiv: FC<chatInputProps> = ({
         <TextBox
         placeholder="Loading..."
         />);
-  //Checking if USer is Blocked from USing/Joining Channel
   if(!currentChat.isChannel && !currentRoles.isBlocked){
     return (
       <TextBox
@@ -52,7 +50,6 @@ const ChannelInputDiv: FC<chatInputProps> = ({
         placeholder="You are muted here"
         />);
   }
-  // Switch for Private and Public Channels
   switch (currentChat.Channel.Type) {
     case "private":
       if (currentRoles.isUser ||
@@ -102,4 +99,3 @@ const ChannelInputDiv: FC<chatInputProps> = ({
 };
 
 export default ChannelInputDiv;
-
