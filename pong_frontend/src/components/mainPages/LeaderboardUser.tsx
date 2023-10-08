@@ -23,7 +23,7 @@ const LeaderboardUser: React.FC<LeaderboardUserProps> = ({ user, index, loggedIn
               style={styles.profilePicture}
             />
           </div>
-          <div style={styles.username}>
+          
           <Link
               to={loggedInUser === user.username ? "/app/profile" : `/app/public_profile/${user.userID}`}
               onClick={() => {
@@ -32,9 +32,9 @@ const LeaderboardUser: React.FC<LeaderboardUserProps> = ({ user, index, loggedIn
                 }
               }}
             >
-              {user.username}
+              <div style={styles.username}>{user.username}</div>
             </Link>
-          </div>
+          
         </div>
       ) : (
         <div style={styles.userContainer}>
@@ -45,7 +45,7 @@ const LeaderboardUser: React.FC<LeaderboardUserProps> = ({ user, index, loggedIn
               style={styles.profilePicture}
             />
           </div>
-          <div style={styles.username}>
+          
             <Link
               to={loggedInUser === user.username ? "/app/profile" : `/app/public_profile/${user.userID}`}
               onClick={() => {
@@ -54,9 +54,9 @@ const LeaderboardUser: React.FC<LeaderboardUserProps> = ({ user, index, loggedIn
                 }
               }}
             >
-              {user.username}
+              <div style={styles.username}>{user.username}</div>
             </Link>
-          </div>
+          
         </div>
       )}
     </td>
