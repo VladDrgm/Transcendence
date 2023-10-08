@@ -1,7 +1,7 @@
 import { Properties } from 'csstype';
 
 export const pageStyle: Properties = {
-	backgroundColor: 'lightgray',
+	backgroundColor: '#0071BB',
 	height: '1000px',
 	display: 'flex',
 	flexDirection: 'column',
@@ -36,6 +36,7 @@ export const userContainer: Properties = {
   
   export const username: Properties = {
 	fontSize: '15px',
+	color: '#FFD700',
   };
 
   export const tableCell: Properties = {
