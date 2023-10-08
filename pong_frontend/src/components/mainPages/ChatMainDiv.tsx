@@ -193,7 +193,6 @@ const ChatMainDiv: FC<ChatProps> = (props) => {
 		if (!currentChat.isResolved){
 			return;
 		}
-		console.log(currentChat);
 		getUserIDByUserName(currentChat.chatId!.toString())
 			.then((result) => {
 				if(result !== undefined){
@@ -498,13 +497,9 @@ const ChatMainDiv: FC<ChatProps> = (props) => {
 	}
 
 	function handleBannedUserSocket(targetId: number, roomName: string) {
-		console.log("targetID", targetId);
-		console.log("userId", props.user?.userID);
 		if (targetId === props.user?.userID)
 		{
 			setCurrentChat((prevChat) => {
-			console.log("currenchat", prevChat.chatName);
-
 				if( prevChat.chatName === roomName){
 					setCurrentRoles((prevRoles) => ({
 						...prevRoles,
@@ -513,13 +508,10 @@ const ChatMainDiv: FC<ChatProps> = (props) => {
 				}
 				return prevChat;
 			});
-			console.log("currenchat", currentChat.chatName);
 		}
 	}
 
 	function handleUnbannedUserSocket(targetId: number, roomName: string) {
-		console.log("targetID", targetId);
-		console.log("userId", props.user?.userID);
 		if (targetId === props.user?.userID)
 		{
 			setCurrentChat((prevChat) => {
@@ -539,8 +531,6 @@ const ChatMainDiv: FC<ChatProps> = (props) => {
 		if (targetId === props.user?.userID)
 		{
 			setCurrentChat((prevChat) => {
-			console.log("currenchat", prevChat.chatName);
-	
 				if( prevChat.chatName === roomName){
 					setCurrentRoles((prevRoles) => ({
 						...prevRoles,
@@ -556,8 +546,6 @@ const ChatMainDiv: FC<ChatProps> = (props) => {
 		if (targetId === props.user?.userID)
 		{
 			setCurrentChat((prevChat) => {
-			console.log("currenchat", prevChat.chatName);
-	
 				if( prevChat.chatName === roomName){
 					setCurrentRoles((prevRoles) => ({
 						...prevRoles,
@@ -588,8 +576,6 @@ const ChatMainDiv: FC<ChatProps> = (props) => {
 		if (targetId === props.user?.userID)
 		{
 			setCurrentChat((prevChat) => {
-			console.log("currenchat", prevChat.chatName);
-	
 				if( prevChat.chatId === callerName){
 					setCurrentRoles((prevRoles) => ({
 						...prevRoles,

@@ -232,7 +232,6 @@ export async function getChannelBlockedUser(userId: number | undefined, channelI
     };
     return fetch(fetchAddress + 'channel/' + userId + '/' + userId + '/' + channelId + '/blocked', requestOptions)
     .then(response => {
-      // console.log(response);
       if (!response.ok) {
         return false;
       }
@@ -266,15 +265,12 @@ export function postMuteUser(callerId: number | undefined, targetId: number, cha
         if (!response.ok) {
           resolve(false);
         }
-        return response.text();
-      })
-      .then(data => {
-        console.log("ChannelUser with UserId :" + targetId +" muted:");
-        alert("User is muted");
-        resolve(true);
+        else{
+          alert("User is muted");
+          resolve(true);
+        }
       })
       .catch(error => {
-        console.log("Error muting ChannelUser with UserId :" + targetId +":", error);
         resolve(false);
       });  
   });  
