@@ -1,13 +1,5 @@
 import { Properties } from 'csstype';
 
-export const pageStyle: Properties = {
-	backgroundColor: 'lightgray',
-	height: '2500px',
-	display: 'flex',
-	flexDirection: 'column',
-	alignItems: 'center',
-}
-
 export const profilePictureStyle: Properties = {
 	width: '120px',
 	height: '120px',
@@ -24,7 +16,7 @@ export const listContainerStyle: Properties = {
 	backgroundColor: '#87CEEB',
 	borderRadius: '12px',
 	width: '500px',
-	color: '#000000'
+	color: '#FFDD4A'
 }
 
 export const listStyle: Properties = {
@@ -33,7 +25,8 @@ export const listStyle: Properties = {
 
 export const statListItemStyle: Properties = {
 	display: 'block',
-	color: '#000000',
+	color: '#0071BB',
+	fontWeight: 550,
 	textAlign: 'center',
 	paddingLeft: '50px',
 	paddingTop: '5px',

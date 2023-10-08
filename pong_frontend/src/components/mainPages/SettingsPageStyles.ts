@@ -24,24 +24,24 @@ export const profilePictureStyle: Properties = {
     height: '120px',
     borderRadius: '50%',
     objectFit: 'cover',
-    marginBottom: '10px',
-    border: 'border: 3px solid rgba(255, 215, 0, 1)',
+    marginBottom: '15px',
+    border: '3px solid rgba(135, 206, 235, 1)',
 }
 
 export const customAvatarUploadButtonStyle: Properties = {
     display: 'inline-block',
-    padding: '12px 20px',
+    padding: '8px',
     fontSize: '16px',
     textAlign: 'center',
     textDecoration: 'none',
     border: 'none',
-    borderRadius: '5px',
+    borderRadius: '4px',
     cursor: 'pointer',
     transition: 'background-color 0.3s ease, color 0.3s ease',
 	backgroundColor: '#87CEEB',
-    color: '#000000',
-	height:'40px',
-	width:'150px',
+    color: '#094074',
+	height:'25px',
+	width:'250px',
 }
 
 export const imageUploadButtonIconStyle: Properties = {
@@ -62,27 +62,26 @@ export const formFieldStyle: Properties = {
     fontSize: '18px',
     borderRadius: '4px',
     border: '1px solid #fff',
-	marginBottom: '8px',
 	fontFamily: 'Shlop',
 	background: '#FFFFE0'
 }
 
 export const updateButtonStyle: Properties = {
     display: 'inline-block',
-    padding: '12px 20px',
+    padding: '8px',
     fontSize: '16px',
-    textAlign: 'center',
     textDecoration: 'none',
     border: 'none',
     borderRadius: '5px',
     cursor: 'pointer',
     transition: 'background-color 0.3s ease, color 0.3s ease',
 	backgroundColor: '#87CEEB',
-    color: '#000000',
-	margin: '10px 100px',
+    color: '#FFDD4A',
+    fontWeight: 550,
+	margin: '10px',
 	background: 'linear-gradient(45deg, #87CEEB, #0071BB)',
 	height:'40px',
-	width:'150px',
+	width:'180px',
 }
 
 export const logoutButtonStyle: Properties = {
@@ -95,10 +94,19 @@ export const logoutButtonStyle: Properties = {
     borderRadius: '5px',
     cursor: 'pointer',
     transition: 'background-color 0.3s ease, color 0.3s ease',
-	backgroundColor: '#87CEEB',
-    color: '#000000',
-	margin: '50px 200px',
-	background: 'linear-gradient(45deg, #BF94E4, #6F44D1)',
-	height:'40px',
-	width:'300px',
-}
+    backgroundColor: '#094074',
+    color: '#FFDD4A',
+    margin: '50px 200px',
+    height: '40px',
+    width: '300px',
+  };
+  
+  export const inputContainer: Properties = {
+    display: 'flex',
+    alignItems: 'center',
+  };
+
+  export const uploadContainer: Properties = {
+    display: 'flex',
+    alignItems: 'center',
+  };
