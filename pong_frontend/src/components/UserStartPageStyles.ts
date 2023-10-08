@@ -25,7 +25,8 @@ export const subPageDimensions: Properties = {
 	flexGrow: '1',
 	width: '100%',
 	// height: '100%',
-	backgroundColor: '#0071BB'
+	backgroundColor: '#0071BB',
+	color: '#87CEEB'
 }
 
 export const buttonStyle: Properties = {

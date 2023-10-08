@@ -103,7 +103,7 @@ const MatchHistoryMainDiv: React.FC<MatchHistoryProps> = ({ userID, friend_set }
                   {findUsername(item.Player1Id)}
                 </Link>
               )}{' '}
-              <span style={{ color: 'white' }}> vs </span>
+              <span style={{ color: 'black' }}> vs </span>
               {item.Player2Id === userID ? (
                 <Link to={'/app/profile'} style={{ ...MatchHistoryTitle, textDecoration: 'none' }}>
                   {findUsername(item.Player2Id)}

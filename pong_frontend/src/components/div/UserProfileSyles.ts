@@ -22,8 +22,28 @@ export const ButtonStyle: CSSProperties = {
 	width:'150px',
 }
 
+
+export const BackButtonStyle: CSSProperties = {
+  display: 'inline-block',
+  padding: '12px 20px',
+  fontSize: '16px',
+  textAlign: 'center',
+  textDecoration: 'none',
+  border: 'none',
+  borderRadius: '5px',
+  cursor: 'pointer',
+  transition: 'background-color 0.3s ease, color 0.3s ease',
+backgroundColor: '#87CEEB',
+  color: '#000000',
+margin: '50px 200px',
+background: 'linear-gradient(45deg, #BF94E4, #6F44D1)',
+height:'40px',
+width:'300px',
+}
+
 export const pageStyle: CSSProperties = {
-	backgroundColor: 'lightgray',
+	backgroundColor: '#0071BB',
+  color: '#87CEEB',
 	height: '2500px',
 	display: 'flex',
 	flexDirection: 'column',
@@ -44,7 +64,7 @@ export const listContainerStyle: CSSProperties = {
 	margin: '0px',
 	padding: '10px',
 	overflow: 'hidden',
-	backgroundColor: '#333333',
+	backgroundColor: '#87CEEB',
 	borderRadius: '12px',
 	width: '500px',
     display: 'flex', 
@@ -58,7 +78,7 @@ export const listStyle: CSSProperties = {
 
 export const statListItemStyle: CSSProperties = {
 	display: 'block',
-	color: 'white',
+	color: 'black',
 	textAlign: 'center',
 	paddingLeft: '50px',
 	paddingTop: '5px',
@@ -77,8 +97,8 @@ export const achievementListItemStyle: CSSProperties = {
 export const achievementTextStyle: CSSProperties = {
     fontSize: '16px',
     fontWeight: 'bold',
-    color: 'white',
-        display: 'flex',
+    color: 'black',
+    display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
   }

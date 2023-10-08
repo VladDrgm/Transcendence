@@ -6,6 +6,7 @@ export const pageStyle: Properties = {
   height: '100vh',
   margin: '0',
   padding: '0',
+  color: '#87CEEB',
 };
 
 export const fogWrapperStyle: Properties = {
