@@ -799,11 +799,16 @@ const ChatMainDiv: FC<ChatProps> = (props) => {
 				) : (
 				  <ChannelInfo>
 					{currentChat.chatName}
-					{/* <button
-						style={userButtonStyle}
-						onClick={() => leaveRoom(currentChat.chatName)}>
-								Leave {currentChat.chatName}
-					</button> */}
+					{currentRoles.isUser && (
+						<div>
+							<button
+							style={chatButtonsStyle}
+							onClick={() => leaveRoom(currentChat.chatName)}
+							>
+							Leave {currentChat.chatName}
+							</button>
+						</div>
+						)}
 				  </ChannelInfo>
 				)
 			);
