@@ -44,7 +44,6 @@ export async function fetchPublicChannels(setPublicChannels: Dispatch<SetStateAc
         setLoading(false);
         return channelListPublic;
     } catch (error){
-        console.error('Error fetching channels:', error);
         setLoading(false);
         return [];
     }
@@ -59,7 +58,6 @@ export async function fetchPrivateChannels(setPrivateChannels: Dispatch<SetState
         setLoading(false);
         return channelListPrivate;
     } catch (error){
-        console.error('Error fetching channels:', error);
         setLoading(false);
         return [];
     }
@@ -71,7 +69,6 @@ export async function fetchAllChannels(): Promise<Channel[]> {
         const channelList = Array.isArray(response) ? response.map(mapChannel) : [];
         return channelList;
     } catch (error){
-        console.error('Error fetching channels:', error);
         return [];
     }
 };
@@ -97,16 +94,11 @@ export async function getUserIDByUserName(UserName: string): Promise<number | un
 
 export async function getChannelIdByChannelName(ChannelName: string): Promise<number | undefined> {
     const ChannelList = await getChannels();
-    console.log('getChannelIdByChannelName Channnellist:', ChannelList);
     const TargetChannel = ChannelList.find((channel: Channel) => channel.Name === ChannelName)
-    console.log('getChannelIdByChannelName TargetChannel:', TargetChannel);
     if (TargetChannel) {
-        console.log('TargetChannel in if:', TargetChannel);
-        console.log('returned ChannelId from getChannelIdByChannelName:', TargetChannel?.ChannelId);
         return TargetChannel.ChannelId;
 
     }
-    console.log('returned undefined ChannelId from getChannelIdByChannelName:');
     return undefined;
 }
 
@@ -117,7 +109,6 @@ export async function fetchChannelNames(): Promise<string[]> {
         const channelNames = channelList.map(channel => channel.Name)
         return channelNames;
     } catch (error){
-        console.error('Error fetching channel names:', error);
         return [];
     }
 };
@@ -145,7 +136,6 @@ export async function modBannedUser(
 
                 })
                 .catch(error => {
-                    console.error("Error banning User:", error);
                     alert("Error banning User");
                 })
             else
@@ -154,11 +144,9 @@ export async function modBannedUser(
                     unbanUserSocket(targetID, currentChat.chatName);
                 })
                 .catch(error => {
-                    console.error("Error unbanning User:", error);
                     alert("Error unbanning User");
                 })
     } else {
-        console.error('Error banning/allowing User with Username:' , newBlockedUsername);
         alert("Error banning/unbanning User");
     }
 }
@@ -170,7 +158,6 @@ export async function addMuteUser(
     currentChat: ChatData,
     muteUserSocket: (targetId: number, chatName: ChatName, mutedDuration: number) => void
     ){
-    //finding right UserId to the Username input from banUserPopUp
     getUserIDByUserName(newBlockedUsername)
     .then((targetID) => {
         if (targetID !== undefined) {
@@ -185,7 +172,6 @@ export async function addMuteUser(
 
         }
         else {
-            console.error('Error muting User with Username:' , newBlockedUsername);
             alert("Error muting User");
         }
     }).catch(error => {
@@ -218,7 +204,6 @@ export async function CreateChannel(props: ChatProps, channelName: string, passw
         return true;
     })
     .catch(error => {
-        console.log("Error creating channel:", error);
         return false;
     })
 }
