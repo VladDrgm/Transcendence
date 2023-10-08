@@ -161,7 +161,6 @@ const ArenaChat: React.FC<ArenaDivProps> = ({userID, friend_set}) => {
 					chatMainDivRef.current.handleunblockedUserSocket(targetId, username);
 			});
 			socketRef.current.on('invitation alert playertwo', (data) => {
-				console.log("invite angekommen");
 				const sessionId = data.invitation.sessionId;
 				const playerOneSocket = data.invitation.playerOneSocket;
 				const playerTwoSocket = data.invitation.playerTwoSocket;
