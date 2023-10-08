@@ -4,7 +4,7 @@ import FriendDiv from '../div/FriendDiv';
 import { checkFriend, addFriend, removeFriend } from '../../api/friend_list.api';
 import { useUserContext } from '../context/UserContext';
 import { Link, useParams } from 'react-router-dom';
-import { ButtonStyle } from '../div/UserProfileSyles';
+import { ButtonStyle, BackButtonStyle } from '../div/UserProfileSyles';
 import { postBlockedUser, deleteBlockedUser, getBlockedUser } from '../../api/block_user.api'
 import { postUserStatus } from '../../api/statusUpdateAPI.api';
 
@@ -104,38 +104,37 @@ const PublicProfileMainDiv: React.FC<ProfileProps> = () => {
   }
   return (
     <div>
+    <div>
       {type === ProfileType_t.FRIEND_PROFILE ? (
-        <div>
+         <span>
           <FriendDiv userID={userID} friendID={Number(friend_ID)} />
           <button style={ButtonStyle} onClick={removeFriend_private}>
             Unfriend
           </button>
-          <Link to="/app/profile">
-            <button style={ButtonStyle}>Back to your profile</button>
-          </Link>
-        </div>
+          </span>
       ) : (
-        <div>
+        <span>
           <PublicDiv userID={userID} publicID={Number(friend_ID)} />
           <button style={ButtonStyle} onClick={addFriend_private}>
             Add Friend
           </button>
-          <Link to="/app/profile">
-            <button style={ButtonStyle}>Back to your profile</button>
-          </Link>
-        </div>
+         </span>
       )}
       { blocked === false  ? (
-        <div>
           <button style={ButtonStyle} onClick={blockUser}>
             Block
           </button>
-        </div>
       ) : (
         <button style={ButtonStyle} onClick={unblockUser}>
           Unblock
         </button>
       ) }
+      </div>
+       <div>
+          <Link to="/app/profile">
+            <button style={BackButtonStyle}>Back to your profile</button>
+          </Link>
+      </div>
     </div>
   );
 };

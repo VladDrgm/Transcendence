@@ -6,6 +6,7 @@ export const pageStyle: Properties = {
 	display: 'flex',
 	flexDirection: 'column',
 	alignItems: 'center',
+    color: '#87CEEB',
 }
 
 export const settingsTitleStyle: Properties = {
@@ -24,7 +25,7 @@ export const profilePictureStyle: Properties = {
     borderRadius: '50%',
     objectFit: 'cover',
     marginBottom: '10px',
-    border: '3px solid #0071BB',
+    border: 'border: 3px solid rgba(255, 215, 0, 1)',
 }
 
 export const customAvatarUploadButtonStyle: Properties = {
