@@ -83,9 +83,7 @@ const CompleteProfilePage: React.FC = () => {{
 					formData.append('file', newAvatar);
 					const userObjectWithAvatar = await updateAvatarApi(newCreatedUser.userID, formData, newCreatedUser.intraUsername, newCreatedUser.passwordHash);
 					newCreatedUser.avatarPath = userObjectWithAvatar.avatarPath;
-				} catch (error) {
-					setError('Error uploading avatar');
-				}
+				} catch (error) {;}
 			}
             if (newUsername) {
                 try {
