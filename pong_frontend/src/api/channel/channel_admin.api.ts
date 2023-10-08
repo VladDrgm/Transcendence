@@ -5,7 +5,6 @@ export async function getIsAdmin(channelId: number, userId: number | undefined):
     try {
       const response = await fetch(fetchAddress + 'channel/' + userId + '/' + channelId + '/admin', {credentials: "include", method: 'PUT'})
       if (!response.ok) {
-        console.error("Error retrieving ChannelUser");
         return false;
       }
       if (!response.headers.has("content-length")) {
@@ -21,7 +20,6 @@ export async function getIsAdmin(channelId: number, userId: number | undefined):
       }
       return true
     } catch (error) {
-        console.log("Error returning Admin of channelId " + channelId + ":", error);
         return false;
     }
   }
@@ -43,8 +41,8 @@ export async function getIsAdmin(channelId: number, userId: number | undefined):
     };
     return fetch(fetchAddress + 'channel/' + user.userID + '/' + targetId + '/' + channelId + '/admin', requestOptions)
       .then(response => response.json())
-      .then(data => {console.log("Admin UserId: " + targetId + " of channelId: " + channelId + "deleted:", data);})
-      .catch(error => {console.log("Error deleting Admin:", error);})
+      .then(data => {})
+      .catch(error => {})
   }
   
   export function postAdmin(channelId: number, targetId: number, user: User | null) {
@@ -69,9 +67,8 @@ export async function getIsAdmin(channelId: number, userId: number | undefined):
           throw new Error("Failed to add channel admin");
         }
       })
-      .then(data => {console.log("Channel Admin with UserId :" + user?.userID +" added:", data);})
+      .then(data => {})
       .catch(error => {
-        console.error("Error adding ChannelAdmin with UserId :" + user?.userID+":", error);
         throw error;
       });
   }
