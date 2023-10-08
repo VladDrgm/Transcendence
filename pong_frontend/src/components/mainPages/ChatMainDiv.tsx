@@ -13,6 +13,7 @@ import { CurrentChat, WritableDraft, getChannelFromChannellist, initialMessagesS
 import immer from "immer";
 import { getIsAdmin, postAdmin } from "../../api/channel/channel_admin.api";
 import { useNavigate } from "react-router-dom";
+import ErrorPopup from "../Popups/ErrorPopup";
 
 const ChatMainDiv: FC<ChatProps> = (props) => {
 	const navigate = useNavigate();
@@ -21,6 +22,8 @@ const ChatMainDiv: FC<ChatProps> = (props) => {
 	const [loadingChannelpanel, setLoadingChannelpanel] = useState(true);
 	const [channelPanelLoaded, setChannelPanelLoaded] = useState(false);
 	const [allChannels, setAllChannels] = useState<any[]>([]);
+
+	const [error, setError] = useState<string | null>(null);
 
 	const [currentChat, setCurrentChat] = useState<CurrentChat>({
 		isChannel: true,
@@ -202,7 +205,7 @@ const ChatMainDiv: FC<ChatProps> = (props) => {
 							isBlockedResolved: true
 						}));
 					}).catch(error => {
-						alert("Error while blocking User");
+						setError("Error while blocking User");
 					});
 				}
 			}).catch(error =>{
@@ -379,7 +382,7 @@ const ChatMainDiv: FC<ChatProps> = (props) => {
 				}));
 			})
 			.catch(error => {
-				alert("Wrong Password. Pleayse try again");
+				setError("Wrong Password. Pleayse try again");
 			});
 	}
 
@@ -387,7 +390,7 @@ const ChatMainDiv: FC<ChatProps> = (props) => {
 		updateChannellist();
 		setCurrentChat((prevChat) => {
 			if (prevChat.chatName === roomName) {
-				alert("The Chat has been deleted by the Owner.");
+				setError("The Chat has been deleted by the Owner.");
 			return generalChat;
 			} else {
 			return prevChat;
@@ -412,7 +415,7 @@ const ChatMainDiv: FC<ChatProps> = (props) => {
 		getUserIDByUserName(newAdminUsername)
 			.then((targetID) => {
 				if(targetID === undefined){
-					alert("User could not be found. Please try another Username.");
+					setError("User could not be found. Please try another Username.");
 					return;
 				}
 				postAdmin(currentChat.Channel.ChannelId, Number(targetID), props.user)
@@ -425,11 +428,11 @@ const ChatMainDiv: FC<ChatProps> = (props) => {
 					
 				})
 				.catch(error => {
-					alert("Error while adding User as Admin");
+					setError("Error while adding User as Admin");
 				})
 			})
 			.catch(error => {
-				alert("Error while adding User as Admin");
+				setError("Error while adding User as Admin");
 			});
 	}
 
@@ -437,7 +440,7 @@ const ChatMainDiv: FC<ChatProps> = (props) => {
 		getUserIDByUserName(targetName.toString())
 		.then((targetID) => {
 			if(targetID === undefined){
-				alert("User could not be found. Please try another Username.");
+				setError("User could not be found. Please try another Username.");
 				return;
 			}
 			postBlockedUser(Number(targetID), props.user!)
@@ -451,7 +454,7 @@ const ChatMainDiv: FC<ChatProps> = (props) => {
 			})
 		})
 		.catch(error => {
-			alert("Error while blocking User" + error);
+			setError("Error while blocking User" + error);
 		});
 	}
 
@@ -459,7 +462,7 @@ const ChatMainDiv: FC<ChatProps> = (props) => {
 		getUserIDByUserName(targetName.toString())
 			.then((targetID) => {
 				if(targetID === undefined){
-					alert("User could not be found. Please try another Username.");
+					setError("User could not be found. Please try another Username.");
 					return;
 				}
 				deleteBlockedUser(Number(targetID), props.user!)
@@ -470,11 +473,11 @@ const ChatMainDiv: FC<ChatProps> = (props) => {
 					  }, 1000);
 				})
 				.catch(error => {
-					alert("Error while unblocking User" + error);
+					setError("Error while unblocking User" + error);
 				})
 			})
 			.catch(error => {
-				alert("Error while unblocking User" + error);
+				setError("Error while unblocking User" + error);
 			});
 	}
 
@@ -611,7 +614,7 @@ const ChatMainDiv: FC<ChatProps> = (props) => {
 			props.invitePlayer(props.invitation);
 		}
 		else 
-			alert("Error while inviting Player. Please try again");
+			setError("Error while inviting Player. Please try again");
 	}
 
 	const handleBody = useCallback (() =>{
@@ -840,6 +843,7 @@ const ChatMainDiv: FC<ChatProps> = (props) => {
 					currentChat={currentChat}
 				/>
 			</ChatPanel>
+			<ErrorPopup message={error} onClose={() => setError(null)} />
 		</div>
 	);
 };
