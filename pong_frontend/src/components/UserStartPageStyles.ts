@@ -30,7 +30,7 @@ export const subPageDimensions: Properties = {
 }
 
 export const buttonStyle: Properties = {
-	backgroundColor: 'rgba(254, 8, 16, 1)',
+	backgroundColor: 'rgba(255, 215, 0, 0.8)',
 	position: 'relative',
 	height:'30px',
 	width:'160px',
@@ -39,7 +39,24 @@ export const buttonStyle: Properties = {
 	alignSelf: 'center',
 	borderRadius: '6px',
 	border: 'none',
-	color:'white',
+	color:'black',
+	top:'1px',
+	margin:'4px',
+	WebkitTapHighlightColor: 'black',
+	// display: 'flex'
+}
+
+export const buttonLastStyle: Properties = {
+	backgroundColor: '#FFD700',
+	position: 'relative',
+	height:'30px',
+	width:'160px',
+	fontFamily: 'Shlop',
+	fontSize: '24px',
+	alignSelf: 'center',
+	borderRadius: '6px',
+	border: 'none',
+	color:'black',
 	top:'1px',
 	margin:'4px',
 	WebkitTapHighlightColor: 'black',
