@@ -1,7 +1,7 @@
 import { Properties } from 'csstype';
 
 export const pageStyle: Properties = {
-	backgroundColor: 'rgba(3, 3, 3, 1)',
+	backgroundColor: '#87CEEB',
 	height: '100vh',
 	width: '100%',
 	position: 'absolute',
@@ -25,7 +25,7 @@ export const subPageDimensions: Properties = {
 	flexGrow: '1',
 	width: '100%',
 	// height: '100%',
-	backgroundColor: 'lightgray'
+	backgroundColor: '#0071BB'
 }
 
 export const buttonStyle: Properties = {

@@ -1,5 +1,9 @@
 import { CSSProperties } from "react";
 
+export const LinkStyle: CSSProperties = {
+  color: '#FFD700',
+}
+
 export const ButtonStyle: CSSProperties = {
     display: 'inline-block',
     padding: '12px 20px',
@@ -31,8 +35,8 @@ export const profilePictureStyle: CSSProperties = {
 	height: '120px',
 	borderRadius: '50%',
 	objectFit: 'cover',
-	border: '3px solid rgba(254, 8, 16, 1)',
-    marginBottom: '20px',
+	border: '3px solid rgba(255, 215, 0, 1)',
+  marginBottom: '20px',
 }
 
 export const listContainerStyle: CSSProperties = {
