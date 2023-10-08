@@ -73,15 +73,15 @@ export async function deleteChannelUser(userId: number | undefined, targetId: nu
   fetch(fetchAddress + 'channel/' + userId + '/' + targetId + '/' + channelId + '/user', requestOptions)
   .then(response => {
     if (response.ok) {
-      console.log("ChannelUser with UserId :" + userId +" removed");
+      // console.log("ChannelUser with UserId :" + userId +" removed");
     } else {
-      console.error("Error removing ChannelUser with UserId :" + userId +":", response.status);
+      // console.error("Error removing ChannelUser with UserId :" + userId +":", response.status);
       alert("Error while leaving Channel");
       // throw new Error ("Error removing ChannelUser");
     }
   })
   .catch(error => {
-    console.error("Error removing ChannelUser with UserId :" + userId +":", error);
+    // console.error("Error removing ChannelUser with UserId :" + userId +":", error);
     throw error;
   });
 }
@@ -105,9 +105,9 @@ export async function postChannelUser(userId: number | undefined, channelId: num
     fetch(fetchAddress + 'channel/' + userId +'/' + channelId, requestOptions)
       .then(response => {
         if (response.ok) {
-          console.log("ChannelUser with UserId :" + userId +" added");
+          // console.log("ChannelUser with UserId :" + userId +" added");
         } else {
-          console.error("Error adding ChannelUser with UserId :" + userId +":", response.status);
+          // console.error("Error adding ChannelUser with UserId :" + userId +":", response.status);
           throw new Error ("Error adding ChannelUser");
         }
       })
@@ -134,9 +134,9 @@ export function postPrivateChannelUser(userId: number | undefined, channelId: nu
   return fetch(fetchAddress + 'channel/' + userId +'/' + userId + '/' + channelId + '/' + password +  '/password', requestOptions)
   .then(response => {
     if (response.ok) {
-      console.log("ChannelUser with UserId :" + userId +" added to private Channel");
+      // console.log("ChannelUser with UserId :" + userId +" added to private Channel");
     } else {
-      console.error("Error adding ChannelUser with UserId :" + userId +":", response.status);
+      // console.error("Error adding ChannelUser with UserId :" + userId +":", response.status);
       throw new Error("Error adding ChannelUser");
     }
   })

@@ -11,7 +11,7 @@ import { User } from "../../interfaces/User";
 import { deleteBlockedUser, deleteChannelUser, deleteFriend, getBlockedUser, getChannelBlockedUser, getChannelUser, getIsFriend, getMutedStatus, postBlockedUser, postChannelUser, postFriend, postPrivateChannelUser } from "../../api/channel/channel_user.api";
 import { CurrentChat, WritableDraft, getChannelFromChannellist, initialMessagesState, initializeMessagesState } from "./Arena_Chat";
 import immer from "immer";
-import { getIsAdmin, postAdmin } from "../../api/channel/channel_admin.api";
+import { deleteAdmin, getIsAdmin, postAdmin } from "../../api/channel/channel_admin.api";
 
 const ChatMainDiv: FC<ChatProps> = (props) => {
 	const [body, setBody] = useState<JSX.Element | null>(null);
@@ -382,6 +382,9 @@ const ChatMainDiv: FC<ChatProps> = (props) => {
 			}).catch(error => {
 				console.error("Error in leaveRoom when removing User to Channel: ", error);
 			});
+		// if(currentRoles.isAdmin){
+		// 	deleteAdmin(number(currentChat.chatId), props.user!, props.user!.userID)
+		// }
 	}
 
 	function roomJoinCallback(incomingMessages: any, room: keyof typeof messages) {
@@ -666,8 +669,6 @@ const ChatMainDiv: FC<ChatProps> = (props) => {
 
 
 	function inviteButton(invitedPlayer: User | undefined){
-		console.log("user", props.user);
-		console.log("invitaion", props.invitation);
 		if( invitedPlayer) {
 			if (!props.invitation.playerOneSocket ||
 				 !props.invitation.playerTwoSocket ||
@@ -689,8 +690,6 @@ const ChatMainDiv: FC<ChatProps> = (props) => {
 		extractExcludedSenders(props.user!)
 			.then((excluded) => {
 				excludedSenders = excluded;
-				console.log("exclude: ", excluded);
-				console.log("excludedSenders outside: ", excludedSenders);
 				setBody(<ChatBodyDiv
 					props = {props}
 					messages={messages[currentChat.chatName]}

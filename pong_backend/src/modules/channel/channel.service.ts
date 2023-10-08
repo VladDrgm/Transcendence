@@ -691,16 +691,16 @@ export class ChannelService {
         HttpStatus.BAD_REQUEST,
       );
     }
-    const channelAdmin = await this.getChannelAdminByUserId(
-      targetId,
-      channelId,
-    );
-    if (channelAdmin) {
-      throw new HttpException(
-        'User is already an admin.',
-        HttpStatus.BAD_REQUEST,
-      );
-    }
+    // const channelAdmin = await this.getChannelAdminByUserId(
+    //   targetId,
+    //   channelId,
+    // );
+    // if (channelAdmin) {
+    //   throw new HttpException(
+    //     'User is already an admin.',
+    //     HttpStatus.BAD_REQUEST,
+    //   );
+    // }
 
     const channelUserCreate = new ChannelUser();
     channelUserCreate.UserId = targetId;
