@@ -8,12 +8,14 @@ import ChannelInputDiv from "../div/ChannelChatPanelDiv";
 import { Channel, ChannelUserRoles, ChatName, ChatProps } from "../../interfaces/Channel";
 import { fetchAllChannels, getUserIDByUserName } from "../div/ChannelUtils";
 import { User } from "../../interfaces/User";
-import { deleteBlockedUser, deleteChannelUser, deleteFriend, getBlockedUser, getChannelBlockedUser, getChannelUser, getIsFriend, getMutedStatus, postBlockedUser, postChannelUser, postFriend, postPrivateChannelUser } from "../../api/channel/channel_user.api";
+import { deleteBlockedUser, deleteChannelUser, getBlockedUser, getChannelBlockedUser, getChannelUser, getMutedStatus, postBlockedUser, postChannelUser, postPrivateChannelUser } from "../../api/channel/channel_user.api";
 import { CurrentChat, WritableDraft, getChannelFromChannellist, initialMessagesState, initializeMessagesState } from "./Arena_Chat";
 import immer from "immer";
-import { deleteAdmin, getIsAdmin, postAdmin } from "../../api/channel/channel_admin.api";
+import { getIsAdmin, postAdmin } from "../../api/channel/channel_admin.api";
+import { useNavigate } from "react-router-dom";
 
 const ChatMainDiv: FC<ChatProps> = (props) => {
+	const navigate = useNavigate();
 	const [body, setBody] = useState<JSX.Element | null>(null);
 	const [channelpanel, setChannelpanel] = useState<JSX.Element | null>(null);
 	const [loadingChannelpanel, setLoadingChannelpanel] = useState(true);
@@ -170,19 +172,6 @@ const ChatMainDiv: FC<ChatProps> = (props) => {
 		isMuted:			false,
 		isMutedResolved:	true
 	});
-
-	// useEffect(() => {
-	// 	if (currentChat.isChannel){
-	// 		handleUserInChannelCheck();
-	// 		handleUserInChannelBlockedCheck();
-	// 		handleUserInChannelMutedCheck();
-	// 		handleAdminCheck();
-	// 		handleOwnerCheck();
-	// 	}
-	// 	else if(!currentChat.isChannel){
-	// 		handleUserDirektMessageStatus();
-	// 	}
-	// }, [currentChat.chatName])
 
 	useEffect(() => {
   const asyncFunctions = [];
@@ -382,9 +371,6 @@ const ChatMainDiv: FC<ChatProps> = (props) => {
 			}).catch(error => {
 				console.error("Error in leaveRoom when removing User to Channel: ", error);
 			});
-		// if(currentRoles.isAdmin){
-		// 	deleteAdmin(number(currentChat.chatId), props.user!, props.user!.userID)
-		// }
 	}
 
 	function roomJoinCallback(incomingMessages: any, room: keyof typeof messages) {
@@ -703,28 +689,13 @@ const ChatMainDiv: FC<ChatProps> = (props) => {
 			  .catch((error) => {
 				console.error('Error during extracting exludedSenders:', error);
 			  });
-		// console.log(currentChat.chatName);
-		// console.log(messages[currentChat.chatName]);
 	}, [messages, currentRoles, currentChat]);
-
-	// useEffect(() => {
-	// 	// Create an interval that calls handleBody every 5 seconds (5000 milliseconds)
-	// 	const intervalId = setInterval(() => {
-	// 	  handleBody();
-	// 	}, 5000);
-	  
-	// 	// Clear the interval when the component unmounts
-	// 	return () => {
-	// 	  clearInterval(intervalId);
-	// 	};
-	//   }, []); 
 
 	const openFriend = async (userName: string) => {
 		const userID = await getUserIDByUserName(userName);
 	  
 		if (userID !== undefined) {
-		  window.location.href = `/app/public_profile/${userID}`;
-		}
+			navigate(`/app/public_profile/${userID}`);		}
 	  };
 	
 	const handleChannelPanel = useCallback(() =>{
@@ -877,76 +848,6 @@ const ChatMainDiv: FC<ChatProps> = (props) => {
 		console.log("username:", username);
 		props.socketRef.current?.emit('unblock user', {targetId, username});
 	}
-
-	// function addFriend(targetName: string | number){
-	// 	getUserIDByUserName(targetName.toString())
-	// 	.then((targetID) => {
-	// 		if(targetID === undefined){
-	// 			alert("User could not be found. Please try another Username.");
-	// 			return;
-	// 		}
-	// 		getIsFriend(props.user?.userID, Number(targetID), props.user!)
-	// 		.then((result) => {
-	// 			if (result){
-	// 				alert("User is already a Friend");
-	// 				return;
-	// 			}
-	// 			postFriend(Number(targetID), props.user?.userID, props.user!)
-	// 			.then(() => {
-	// 				console.log('Friend added with UserId:', targetID);
-	// 				alert("User "+ targetName + " added as Friend");
-	// 				// blockUserSocket(Number(targetID), user.username);
-	// 			})
-	// 			.catch(error => {
-	// 				console.error("Error adding user as Friend with Username:" , targetName);
-	// 				alert("Error while adding User as Friend:" + error);
-	// 			});
-	// 		})
-	// 		.catch(error => {
-	// 			console.error("Error adding user as Friend with Username:" , targetName);
-	// 			alert("Error while adding User as Friend:" + error);
-	// 		});
-	// 	})
-	// 	.catch(error => {
-	// 		console.error('Error getting UserID from User:' ,error);
-	// 		alert("Error adding User as Friend" + error);
-	// 	});
-	// }
-
-	// function removeFriend(targetName: string | number){
-	// 	getUserIDByUserName(targetName.toString())
-	// 	.then((targetID) => {
-	// 		if(targetID === undefined){
-	// 			alert("User could not be found. Please try another Username.");
-	// 			return;
-	// 		}
-	// 		getIsFriend(props.user?.userID, Number(targetID), props.user!)
-	// 		.then((result) => {
-	// 			if (!result){
-	// 				alert("User is not a Friend");
-	// 				return;
-	// 			}
-	// 			deleteFriend(Number(targetID), props.user?.userID, props.user!)
-	// 			.then(() => {
-	// 				console.log('Friend removed with UserId:', targetID);
-	// 				alert("User "+ targetName + " removed as Friend");
-	// 				// blockUserSocket(Number(targetID), user.username);
-	// 			})
-	// 			.catch(error => {
-	// 				console.error("Error removing user as Friend with Username:" , targetName);
-	// 				alert("Error while removing User as Friend:" + error);
-	// 			});
-	// 		})
-	// 		.catch(error => {
-	// 			console.error('Error getting Friendship Status from User:' ,error);
-	// 			alert("Error getting Friendship Status" + error);
-	// 		})
-	// 	})
-	// 	.catch(error => {
-	// 		console.error('Error getting UserID from User:' ,error);
-	// 		alert("Error removing User as Friend" + error);
-	// 	});
-	// }
 
 	function deleteChatRoom(roomName: string | number) {
 		props.socketRef.current?.emit('delete room', roomName);
