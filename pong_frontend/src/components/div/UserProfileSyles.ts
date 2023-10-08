@@ -1,19 +1,21 @@
 import { CSSProperties } from "react";
 
 export const ButtonStyle: CSSProperties = {
-	backgroundColor: 'rgba(254, 8, 16, 1)',
-	position: 'relative',
-	display: 'inline-block',
+    display: 'inline-block',
+    padding: '12px 20px',
+    fontSize: '16px',
+    textAlign: 'center',
+    textDecoration: 'none',
+    border: 'none',
+    borderRadius: '5px',
+    cursor: 'pointer',
+    transition: 'background-color 0.3s ease, color 0.3s ease',
+	backgroundColor: '#87CEEB',
+    color: '#000000',
+	margin: '10px 100px',
+	background: 'linear-gradient(45deg, #87CEEB, #0071BB)',
 	height:'40px',
 	width:'150px',
-	fontFamily: 'Shlop',
-	fontSize: '14px',
-	alignSelf: 'center',
-	borderRadius: '6px',
-	border: '1px solid white',
-	color:'white',
-	marginBottom: '30px',
-    marginTop: '30px',
 }
 
 export const pageStyle: CSSProperties = {

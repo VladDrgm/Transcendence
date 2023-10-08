@@ -13,7 +13,7 @@ export const profilePictureStyle: Properties = {
 	height: '120px',
 	borderRadius: '50%',
 	objectFit: 'cover',
-	border: '3px solid rgba(254, 8, 16, 1)',
+	border: '3px solid ',
 }
 
 export const listContainerStyle: Properties = {
@@ -21,9 +21,10 @@ export const listContainerStyle: Properties = {
 	margin: '0px',
 	padding: '0px',
 	overflow: 'hidden',
-	backgroundColor: '#333333',
+	backgroundColor: '#87CEEB',
 	borderRadius: '12px',
 	width: '500px',
+	color: '#000000'
 }
 
 export const listStyle: Properties = {
@@ -32,7 +33,7 @@ export const listStyle: Properties = {
 
 export const statListItemStyle: Properties = {
 	display: 'block',
-	color: 'white',
+	color: '#000000',
 	textAlign: 'center',
 	paddingLeft: '50px',
 	paddingTop: '5px',

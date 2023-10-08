@@ -1,7 +1,7 @@
 import { Properties } from 'csstype';
 
 export const pageStyle: Properties = {
-	backgroundColor: 'lightgray',
+	backgroundColor: '#0071BB',
 	height: '1000px',
 	display: 'flex',
 	flexDirection: 'column',
@@ -9,7 +9,7 @@ export const pageStyle: Properties = {
 }
 
 export const settingsTitleStyle: Properties = {
-	color: 'rgba(254, 8, 16, 1)',
+	color: '#87CEEB',
 	position: 'relative',
 	textAlign: 'center',
 	top: '8px',
@@ -24,23 +24,27 @@ export const profilePictureStyle: Properties = {
     borderRadius: '50%',
     objectFit: 'cover',
     marginBottom: '10px',
-    border: '3px solid rgba(254, 8, 16, 1)',
+    border: '3px solid #0071BB',
 }
 
 export const customAvatarUploadButtonStyle: Properties = {
-	backgroundColor: 'white',
-	color:'black',
-	display: 'inline-block',
-	padding: '4px',
-    width: '140px',
-    fontSize: '12px',
-    borderRadius: '4px',
-	marginBottom: '8px',
-	fontFamily: 'Shlop',
+    display: 'inline-block',
+    padding: '12px 20px',
+    fontSize: '16px',
+    textAlign: 'center',
+    textDecoration: 'none',
+    border: 'none',
+    borderRadius: '5px',
+    cursor: 'pointer',
+    transition: 'background-color 0.3s ease, color 0.3s ease',
+	backgroundColor: '#87CEEB',
+    color: '#000000',
+	height:'40px',
+	width:'150px',
 }
 
 export const imageUploadButtonIconStyle: Properties = {
-	display: 'inline-block',
+    display: 'inline-block',
 	paddingRight: '3px',
 	verticalAlign: 'middle',
 	height: '16px',
@@ -59,34 +63,41 @@ export const formFieldStyle: Properties = {
     border: '1px solid #fff',
 	marginBottom: '8px',
 	fontFamily: 'Shlop',
+	background: '#FFFFE0'
 }
 
 export const updateButtonStyle: Properties = {
-	backgroundColor: 'rgba(254, 8, 16, 1)',
-	position: 'relative',
-	display: 'inline-block',
+    display: 'inline-block',
+    padding: '12px 20px',
+    fontSize: '16px',
+    textAlign: 'center',
+    textDecoration: 'none',
+    border: 'none',
+    borderRadius: '5px',
+    cursor: 'pointer',
+    transition: 'background-color 0.3s ease, color 0.3s ease',
+	backgroundColor: '#87CEEB',
+    color: '#000000',
+	margin: '10px 100px',
+	background: 'linear-gradient(45deg, #87CEEB, #0071BB)',
 	height:'40px',
-	width:'80px',
-	fontFamily: 'Shlop',
-	fontSize: '14px',
-	alignSelf: 'center',
-	borderRadius: '6px',
-	border: 'none',
-	color:'white',
-	marginBottom: '30px',
+	width:'150px',
 }
 
 export const logoutButtonStyle: Properties = {
-	backgroundColor: 'rgba(254, 8, 16, 1)',
-	position: 'relative',
+    display: 'inline-block',
+    padding: '12px 20px',
+    fontSize: '16px',
+    textAlign: 'center',
+    textDecoration: 'none',
+    border: 'none',
+    borderRadius: '5px',
+    cursor: 'pointer',
+    transition: 'background-color 0.3s ease, color 0.3s ease',
+	backgroundColor: '#87CEEB',
+    color: '#000000',
+	margin: '50px 200px',
+	background: 'linear-gradient(45deg, #BF94E4, #6F44D1)',
 	height:'40px',
-	width:'160px',
-	fontFamily: 'Shlop',
-	fontSize: '24px',
-	alignSelf: 'center',
-	borderRadius: '6px',
-	border: 'none',
-	color:'white',
-	marginTop: '100px',
-	marginBottom: '0px',
+	width:'300px',
 }

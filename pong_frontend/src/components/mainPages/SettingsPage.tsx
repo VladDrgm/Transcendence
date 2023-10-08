@@ -28,11 +28,8 @@ const SettingsPage: React.FC<SettingsPageProps> = ({ onLogout }) => {
   const [reset, setReset] = useState(true);
   const [loading, setLoading] = useState(true);
 
-  const [border, setImageBorder] = useState<string>(
-    user?.avatarPath
-      ? '3px solid rgba(254, 8, 16, 1)'
-      : '3px dashed rgba(0, 102, 204, 1)'
-  );
+  const [border, setImageBorder] = useState<string>('3px dahed rgba(255, 0, 0, 1)');
+  
 
   const [error, setError] = useState<string | null>(null);
 
@@ -76,7 +73,7 @@ const SettingsPage: React.FC<SettingsPageProps> = ({ onLogout }) => {
         user?.intraUsername,
         user?.passwordHash
       );
-      setImageBorder('3px solid rgba(254, 8, 16, 1)');
+      setImageBorder('3px solid #0071BB');
       setNewAvatar(null);
     } catch (error) {
       setError('Error updating avatar. Try again!');
@@ -102,7 +99,7 @@ const SettingsPage: React.FC<SettingsPageProps> = ({ onLogout }) => {
     if (file) {
       setNewAvatar(file);
       setSelectedImage(URL.createObjectURL(file));
-      setImageBorder('3px solid rgba(254, 8, 16, 1)');
+      setImageBorder('3px dahed #FF0000');
     }
   };
 
@@ -206,7 +203,7 @@ const SettingsPage: React.FC<SettingsPageProps> = ({ onLogout }) => {
         </button>
       ) }
       <button style={styles.logoutButtonStyle} onClick={OnLogoutButtonClick}>
-        Logout
+        Log Out
       </button>
       <ErrorPopup message={error} onClose={() => setError(null)} />
     </div>
