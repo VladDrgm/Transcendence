@@ -24,11 +24,8 @@ export class RedirectController {
       const clientId = process.env.AUTH_UID;
       const clientSecret = process.env.AUTH_SECRET;
 
-      //Example: const redirectUri = 'http://localhost:3000/redirect';
-      // Must match the redirect URI registered with 42 API
-      const redirectUri = process.env.REDIRECT_URI; // Must match the redirect URI registered with 42 API
+      const redirectUri = process.env.REDIRECT_URI;
 
-      // Exchange the authorization code for an access token
       const tokenEndpoint = 'https://api.intra.42.fr/oauth/token';
       const response = await axios.post(
         tokenEndpoint,
@@ -52,7 +49,6 @@ export class RedirectController {
 
       const accessToken = response.data.access_token;
 
-      // Use the access token to fetch user information
       const userEndpoint = 'https://api.intra.42.fr/v2/me';
       const userResponse = await axios.get(userEndpoint, {
         headers: {
@@ -81,14 +77,6 @@ export class RedirectController {
         await this.userRepository.save(isUserInDb);
         completeProfileURL = `${process.env.FRONTEND_URL}/auth_redirect?token=${token}`;
       }
-
-      //TIM'S CODE
-      //   const completeProfileURL = `http://localhost:3001/complete_profile?intraName=${intraName}`;
-      // const completeProfileURL = `${process.env.REDIRECT_PROFILE_URI}?intraName=${intraName}`;
-      //   const completeProfileURL = `http://localhost:3000/complete_profile?intraName=$` + intraName;
-      // const completeProfileURL = `https://transcendence-one.vercel.app/complete_profile?intraName=$` + intraName;
-
-      // const completeProfileURL = `${process.env.REDIRECT_PROFILE_URI}?token=${token}`;
 
       res.redirect(completeProfileURL);
     } catch (error) {

@@ -7,15 +7,12 @@ export async function getChannels():  Promise<Channel[]> {
 	return json as any[];
 }
 
-
-//to be tested
 export async function getChannel(channelId: number): Promise<Channel> {
   const response = await fetch(fetchAddress + 'channel/' + channelId, {credentials: "include",method: 'PUT'});
   const json = await response.json();
   return json as Channel; 
 }
 
-//to be tested
 export function deleteChannel(
   props: ChatProps,
   currentChat: ChatData,
@@ -26,7 +23,6 @@ export function deleteChannel(
   ) {
   if (currentChat.Channel.ChannelId === 41)
   {
-    console.error("Error: Don't delete general Channel");
     return;
   }
   const ChannelData = {
@@ -43,15 +39,12 @@ export function deleteChannel(
   })
   .then(response => {
     if (response.ok) {
-      console.log("Channel deleted successfully.");
       deleteChatRoom(currentChat.chatName);
       updateChannellist();
       toggleChat(generalChat);
     } else {
-      console.error("Error deleting Channel:", response.status);
     }
   })
   .catch(error => {
-    console.error("Error deleting Channel:", error);
   });
 }

@@ -16,7 +16,6 @@ const TwoFactorSetup: React.FC = () => {
 	const { setUser } = useUserContext();
 
   useEffect(() => {
-	console.log("The secret from useEffect is", secret);
 	setSecret(secret);
   }, [secret]);
 

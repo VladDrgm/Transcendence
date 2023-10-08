@@ -171,26 +171,30 @@ const SettingsPage: React.FC<SettingsPageProps> = ({ onLogout }) => {
           style={{ ...styles.profilePictureStyle, border }}
         />
       )}
-      <label style={styles.customAvatarUploadButtonStyle}>
-        <input type='file' onChange={handleAvatarChange} style={styles.avatarInputFieldStyle} />
-        <img src={imageAssetUploadAvatar} style={styles.imageUploadButtonIconStyle} alt='' />
-        Upload file from computer
-      </label>
-      <button style={styles.updateButtonStyle} onClick={handleUpdateAvatar}>
-        Update avatar
-      </button>
+      <div style={styles.uploadContainer}>
+        <label style={styles.customAvatarUploadButtonStyle}>
+          <input type='file' onChange={handleAvatarChange} style={styles.avatarInputFieldStyle} />
+          <img src={imageAssetUploadAvatar} style={styles.imageUploadButtonIconStyle} alt='' />
+          Upload file from computer
+        </label>
+        <button style={styles.updateButtonStyle} onClick={handleUpdateAvatar}>
+          Update avatar
+        </button>
+      </div>
       <br />
-      <input
-        type='text'
-        maxLength={15}
-        placeholder={user?.username}
-        value={newUsername}
-        onChange={(e) => setNewUsername(e.target.value)}
-        style={styles.formFieldStyle}
-      />
-      <button style={styles.updateButtonStyle} onClick={handleUpdateUsername}>
-        Update
-      </button>
+      <div style={styles.inputContainer}>
+        <input
+          type='text'
+          maxLength={15}
+          placeholder={user?.username}
+          value={newUsername}
+          onChange={(e) => setNewUsername(e.target.value)}
+          style={styles.formFieldStyle}
+        />
+        <button style={styles.updateButtonStyle} onClick={handleUpdateUsername}>
+          Update username
+        </button>
+      </div>
       {tfa_enabled === false  ? (
         <div>
           <button style={styles.updateButtonStyle} onClick={enableTfa}>

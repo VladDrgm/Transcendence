@@ -23,14 +23,14 @@ export const popupStyle: Properties = {
 }
 
 export const popupMessageStyle: Properties = {
-	color: 'rgba(254, 8, 16, 1)',
+	color: '#87CEEB',
 	textAlign: 'center',
 	fontFamily: 'Shlop',
 	fontSize: '24px',
 }
 
 export const closeButtonStyle: Properties = {
-	backgroundColor: 'rgba(254, 8, 16, 1)',
+	backgroundColor: '#87CEEB',
 	position: 'relative',
 	height:'25px',
 	width:'50px',

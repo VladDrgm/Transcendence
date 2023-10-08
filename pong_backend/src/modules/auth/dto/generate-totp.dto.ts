@@ -1,5 +1,4 @@
 export class GenerateTotpDTO {
-  secret: string; // Temporary secret key for TOTP.
-  dataURL: string; // Data URL for QR code image.
+  secret: string; 
   otpauth_url: string;
 }

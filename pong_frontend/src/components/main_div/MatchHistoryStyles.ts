@@ -25,21 +25,22 @@ export const MatchHistoryCard = styled.div`
 `;
 
 export const MatchHistoryTitle: CSSProperties = {
+  color: '#FFDD4A',
   fontSize: '18px',
-  fontWeight: 400,
+  fontWeight: 550,
 };
 
 export const MatchHistoryScore: CSSProperties = {
-  color: 'black',
+  color: '#0071BB',
   fontSize: '16px',
-  fontWeight: 400,
+  fontWeight: 500,
 
 };
 
 export const MatchHistoryWinner: CSSProperties = {
-  color: 'black',
+  color: '#0071BB',
   fontSize: '16px',
-  fontWeight: 400,
+  fontWeight: 500,
 };
 
 export const ButtonStyle: CSSProperties = {
@@ -53,7 +54,8 @@ export const ButtonStyle: CSSProperties = {
   cursor: 'pointer',
   transition: 'background-color 0.3s ease, color 0.3s ease',
   backgroundColor: '#87CEEB',
-  color: '#000000',
+  color: '#FFDD4A',
+  fontWeight: '550',
   margin: '10px 100px',
   background: 'linear-gradient(45deg, #87CEEB, #0071BB)',
   height:'40px',

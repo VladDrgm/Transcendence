@@ -41,10 +41,8 @@ const CompleteProfilePage: React.FC = () => {{
 
 	const handleCreatingUser = async () => {
 		if (user === null && intraName !== undefined) {
-			console.log('First-time login:', intraName);
 			// Handle first-time login here, if needed
 		  } else if (user?.intraUsername !== intraName) {
-			console.log('User.intraname and intraName:', user?.intraUsername, intraName);
 			setError('Unauthorized access');
 			return;
 		  }
@@ -85,9 +83,7 @@ const CompleteProfilePage: React.FC = () => {{
 					formData.append('file', newAvatar);
 					const userObjectWithAvatar = await updateAvatarApi(newCreatedUser.userID, formData, newCreatedUser.intraUsername, newCreatedUser.passwordHash);
 					newCreatedUser.avatarPath = userObjectWithAvatar.avatarPath;
-				} catch (error) {
-					setError('Error uploading avatar');
-				}
+				} catch (error) {;}
 			}
             if (newUsername) {
                 try {

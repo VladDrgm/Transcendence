@@ -11,9 +11,9 @@ export interface Channel {
 }
 
 export interface ChatProps {
-	userID: number | undefined; //userID from login process
-	user: User | null; //USer from login process
-	yourId: string | number;  //socketId from joining the game
+	userID: number | undefined;
+	user: User | null;
+	yourId: string | number;
 	allUsers: User[];
 	invitePlayer:(invitation:Invitation) => void;
   	friend_set: React.Dispatch<React.SetStateAction<number>>;

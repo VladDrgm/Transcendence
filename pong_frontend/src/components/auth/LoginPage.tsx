@@ -1,6 +1,6 @@
 import React from "react";
 import * as styles from './LoginPageStyles';
-import imageAssetBilly from '../assets/billy.png'
+import imageAmong from '../assets/amongus.png'
 
 const LoginPage: React.FC = () => {
 
@@ -8,7 +8,6 @@ const LoginPage: React.FC = () => {
         const clientID=`${process.env.REACT_APP_AUTH_UID}` || '';
         const redirectURI=`${process.env.REACT_APP_BASE_URL}redirect` || '';
 
-		// Construct the URL for the 42 API authorization endpoint
 		const authEndpoint = 'https://api.intra.42.fr/oauth/authorize';
 		const queryParams = new URLSearchParams({
 		  client_id: clientID,
@@ -18,14 +17,13 @@ const LoginPage: React.FC = () => {
 		});
 		const authorizationUrl = `${authEndpoint}?${queryParams.toString()}`;
 
-		// Redirect to the 42 API authorization page
 		window.location.replace(authorizationUrl);
 	}
 
 	return (
 		<div style={styles.pageStyle}>
-			<img alt="" src={imageAssetBilly} style={styles.gifStyle} ></img>
-            <p style={styles.welcomeTitleStyle}>Do you want to play a game?</p>
+			<img alt="" src={imageAmong} style={styles.gifStyle} ></img>
+			<p style={styles.welcomeTitleStyle}>Let&apos;s play a game!</p>
             <button onClick={OnLoginWith42ButtonClick} style={styles.signupButtonStyle}>Sign up with 42</button>
         </div>
 	);
