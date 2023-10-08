@@ -468,16 +468,6 @@ export class ChannelService {
       }
     }
 
-    // const isChannelOwner = await this.GetChannelOwner(channelId) == callerId;
-    // const isChannelAdmin = await this.getChannelAdminByUserId(callerId, channelId) ? true : false;
-
-    // if (isChannelOwner == false && isChannelAdmin == false) {
-    //     throw new HttpException(
-    //         'You do not have the credentials to get a user.',
-    //         HttpStatus.BAD_REQUEST,
-    //     );
-    // }
-
     const result = await this.channelBlockedUserRepository.findOneBy({
       UserId: targetId,
       ChannelId: channelId,
@@ -536,16 +526,12 @@ export class ChannelService {
         );
       }
 
-      // Remove the user from the blocked list
       await this.channelBlockedUserRepository.remove(channelBlockedUser);
 
-      // Return true to indicate successful removal
       return true;
     } catch (error) {
-      // Handle any potential errors here
       console.error('Error removing channelBlockedUser:', error);
 
-      // Return false to indicate failure
       return false;
     }
   }
@@ -691,16 +677,6 @@ export class ChannelService {
         HttpStatus.BAD_REQUEST,
       );
     }
-    // const channelAdmin = await this.getChannelAdminByUserId(
-    //   targetId,
-    //   channelId,
-    // );
-    // if (channelAdmin) {
-    //   throw new HttpException(
-    //     'User is already an admin.',
-    //     HttpStatus.BAD_REQUEST,
-    //   );
-    // }
 
     const channelUserCreate = new ChannelUser();
     channelUserCreate.UserId = targetId;

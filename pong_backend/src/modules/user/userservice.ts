@@ -85,7 +85,6 @@ export class UserService {
         Date.now().toString(),
       );
     }
-    // user.avatarPath = 'default_pfp.png';
 
     return await this.userRepository.save(user);
   }
