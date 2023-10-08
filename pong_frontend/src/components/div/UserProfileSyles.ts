@@ -5,17 +5,18 @@ export const LinkStyle: CSSProperties = {
 }
 
 export const ButtonStyle: CSSProperties = {
-    display: 'inline-block',
-    padding: '12px 20px',
-    fontSize: '16px',
-    textAlign: 'center',
-    textDecoration: 'none',
-    border: 'none',
-    borderRadius: '5px',
-    cursor: 'pointer',
-    transition: 'background-color 0.3s ease, color 0.3s ease',
+  display: 'inline-block',
+  padding: '12px 20px',
+  fontSize: '16px',
+  textAlign: 'center',
+  textDecoration: 'none',
+  border: 'none',
+  borderRadius: '5px',
+  cursor: 'pointer',
+  transition: 'background-color 0.3s ease, color 0.3s ease',
 	backgroundColor: '#87CEEB',
-    color: '#000000',
+  color: '#FFDD4A',
+  fontWeight: 550,
 	margin: '10px 100px',
 	background: 'linear-gradient(45deg, #87CEEB, #0071BB)',
 	height:'40px',
@@ -33,12 +34,13 @@ export const BackButtonStyle: CSSProperties = {
   borderRadius: '5px',
   cursor: 'pointer',
   transition: 'background-color 0.3s ease, color 0.3s ease',
-backgroundColor: '#87CEEB',
-  color: '#000000',
-margin: '50px 200px',
-background: 'linear-gradient(45deg, #BF94E4, #6F44D1)',
-height:'40px',
-width:'300px',
+  backgroundColor: '#87CEEB',
+  color: '#0071BB',
+  fontWeight: 550,
+  margin: '50px 200px',
+  background: 'linear-gradient(45deg, #0071BB, #FFDD4A)',
+  height:'40px',
+  width:'300px',
 }
 
 export const pageStyle: CSSProperties = {
@@ -62,14 +64,12 @@ export const profilePictureStyle: CSSProperties = {
 export const listContainerStyle: CSSProperties = {
 	listStyleType: 'none',
 	margin: '0px',
-	padding: '10px',
+	padding: '0px',
 	overflow: 'hidden',
 	backgroundColor: '#87CEEB',
 	borderRadius: '12px',
 	width: '500px',
-    display: 'flex', 
-    justifyContent: 'center',
-    alignItems: 'center',
+	color: '#FFDD4A'
 }
 
 export const listStyle: CSSProperties = {
@@ -78,7 +78,8 @@ export const listStyle: CSSProperties = {
 
 export const statListItemStyle: CSSProperties = {
 	display: 'block',
-	color: 'black',
+	color: '#0071BB',
+	fontWeight: 550,
 	textAlign: 'center',
 	paddingLeft: '50px',
 	paddingTop: '5px',
@@ -112,7 +113,7 @@ export const achievementTextStyle: CSSProperties = {
   export const profileSectionStyle: CSSProperties = {
     display: 'flex',
     justifyContent: 'space-between',
-    marginBottom: '10px', // Adjust margin as needed
+    marginBottom: '10px',
   };
   
   export const buttonContainerStyle: CSSProperties = {

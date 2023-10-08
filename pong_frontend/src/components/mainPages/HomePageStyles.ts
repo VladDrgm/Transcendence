@@ -1,7 +1,7 @@
 import { Properties } from 'csstype';
 
 export const pageStyle: Properties = {
-  backgroundColor: '#0071BB', // Change to your desired background color
+  backgroundColor: '#0071BB',
   overflowX: 'hidden',
   height: '100vh',
   margin: '0',

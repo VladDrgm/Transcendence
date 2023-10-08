@@ -40,7 +40,7 @@ const FriendList: FC<FriendProps> = ({ userID, friend_set }) => {
 
   return (
     <div>
-      <h3>Friends List</h3>
+      <h1>Friends List</h1>
       {loading ? (
         <p>Loading...</p>
       ) : friends.length === 0 ? (
