@@ -340,23 +340,24 @@ export function changePasswordPopUp(
     changePwButton.addEventListener('click', function() {
         var newPw = newPwInput.value;
         if (newPw === ""){
-            deleteChannelPassword(props?.userID, currentChat.Channel.ChannelId, props.user!)
-            .then(() => {
-                changeChatRoom(currentChat.chatName);
-                if (currentChat.Channel.Type === "private"){
-                    putChannelType(props?.userID, currentChat.Channel.ChannelId, props.user!)
-                    .then(() => {
-                        changeChatRoom(currentChat.chatName);
-                        updateChannellist();
-                    })
-                    .catch(error => {
-                    });
-                }
-            })
-            .catch(error => {
-            });
+            // deleteChannelPassword(props?.userID, currentChat.Channel.ChannelId, props.user!)
+            // .then(() => {
+            //     changeChatRoom(currentChat.chatName);
+            //     if (currentChat.Channel.Type === "private"){
+            //         putChannelType(props?.userID, currentChat.Channel.ChannelId, props.user!)
+            //         .then(() => {
+            //             changeChatRoom(currentChat.chatName);
+            //             updateChannellist();
+            //         })
+            //         .catch(error => {
+            //         });
+            //     }
+            // })
+            // .catch(error => {
+            // });
+            window.alert('You can not update the password to an empty one. Please use the "Remove Password" button instead')
         }
-        if (newPw.length > 15){
+        else if (newPw.length > 15){
             window.alert('Passwort can not be longer than 15 characters');
         } else {
             putChannelPassword(props.userID, currentChat.Channel.ChannelId, newPw, props.user!)
@@ -381,8 +382,9 @@ export function changePasswordPopUp(
     var removePwButton = document.createElement('button');
     removePwButton.innerHTML = 'Remove Password';
     removePwButton.addEventListener('click', function() {
-        deleteChannelPassword(props.userID, currentChat.Channel.ChannelId, props.user!)
-        .then(() => {
+        if (currentChat.Channel.Type === "private"){
+            deleteChannelPassword(props.userID, currentChat.Channel.ChannelId, props.user!)
+            .then(() => {
             if (currentChat.Channel.Type === "private"){
                 putChannelType(props.userID, currentChat.Channel.ChannelId, props.user!)
                 .then(() => {
@@ -392,9 +394,12 @@ export function changePasswordPopUp(
                 .catch(error => {
                 });
             }
-        })
-        .catch(error => {
-        });
+            })
+            .catch(error => {
+            });
+        } else {
+            window.alert('The Channel is already public'); 
+        }
         popup?.close();
     });
     popup?.document.body.appendChild(removePwButton);
@@ -552,7 +557,11 @@ export async function popUpJoinPrivateChannel(props: ChatProps, currentChat: Cha
     createButton.innerHTML = 'Join';
     createButton.addEventListener('click', async function() {
         var password = channelPasswordInput.value;
-        joinPrivateRoom(currentChat.chatName, password);
+        if (password === '') {
+            window.alert('Please enter a password');
+        } else {
+            joinPrivateRoom(currentChat.chatName, password);
+        }
         popup?.close();
     });
     popup?.document.body.appendChild(createButton);
