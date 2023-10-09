@@ -29,7 +29,7 @@ const App = () => {
 		const handleBeforeUnload = async (e: BeforeUnloadEvent) => {
 			const localUser = localStorage.getItem('user');
 			const localParsedUser = JSON.parse(localUser!);
-			e.returnValue = ''; // Required for some browsers
+			e.returnValue = '';
 			if (localParsedUser != null) {
 				await postUserStatus("Offline", localParsedUser);
 			}

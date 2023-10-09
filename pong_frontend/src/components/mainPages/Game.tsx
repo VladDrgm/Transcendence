@@ -261,7 +261,6 @@ const Game: FC<GameProps> = (props) => {
 
 
 		useEffect(() => {
-			//const canvas = document.createElement('canvas');
 			const canvas = canvasRef.current;
 			if (!canvas) return;
 

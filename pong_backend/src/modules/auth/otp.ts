@@ -10,12 +10,10 @@ export function generateHOTP(secret, counter) {
     counter = counter >> 8;
   }
 
-  // Step 1: Generate an HMAC-SHA-1 value
   const hmac = crypto.createHmac('sha1', Buffer.from(decodedSecret));
   hmac.update(buffer);
   const hmacResult = hmac.digest();
 
-  // Step 2: Generate a 4-byte string (Dynamic Truncation)
   const offset = hmacResult[hmacResult.length - 1] & 0xf;
   const code =
     ((hmacResult[offset] & 0x7f) << 24) |
@@ -23,7 +21,6 @@ export function generateHOTP(secret, counter) {
     ((hmacResult[offset + 2] & 0xff) << 8) |
     (hmacResult[offset + 3] & 0xff);
 
-  // Step 3: Compute an HOTP value
   return `${code % 10 ** 6}`.padStart(6, '0');
 }
 

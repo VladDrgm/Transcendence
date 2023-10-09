@@ -21,7 +21,6 @@ const AuthRedirectPage: React.FC = () => {
       }
 
       try {
-        // Fetch the user with the token.
         const newUser = await getUserByToken(token);
 
 		if (!newUser) {
@@ -29,12 +28,9 @@ const AuthRedirectPage: React.FC = () => {
 			return;
 		}
 
-		// Store the user and update userContext
 		localStorage.setItem('user', JSON.stringify(newUser));
 		setUser(newUser);
 
-
-        // Check user fields and redirect accordingly.
 		if (newUser.is2FAEnabled) {
 			navigate('/verify-2fa', { replace: true });
 		} else {
@@ -54,7 +50,7 @@ const AuthRedirectPage: React.FC = () => {
     fetchUserAndRedirect();
   }, [navigate, location.search]);
 
-  return null; // This component does not render anything.
+  return null;
 };
 
 export default AuthRedirectPage;
