@@ -41,7 +41,7 @@ export function renderUser(user: User, props: ChatProps, toggleChat: any) {
     });
     return (
     <Row onClick={() => {
-        toggleChat(currentChat);
+       toggleChat(currentChat);
     }} key={user.userID}>
         {user.username}
     </Row>

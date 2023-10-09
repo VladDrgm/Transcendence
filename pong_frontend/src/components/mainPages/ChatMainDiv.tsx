@@ -395,17 +395,19 @@ const ChatMainDiv: FC<ChatProps> = (props) => {
 	}
 
 	async function toggleChat(newCurrentChat: CurrentChat) {
-		props.socketRef.current?.emit("join room", newCurrentChat.chatName, (messages: any) => roomJoinCallback(messages, newCurrentChat.chatName));
-		
-		if (!messages[newCurrentChat.chatName]) {
-		const newMessages = immer(messages, (draft: WritableDraft<typeof messages>) => {
-			draft[newCurrentChat.chatName] = [];
-		});
-		
-		setMessages(newMessages);
+		if (newCurrentChat) {
+			props.socketRef.current?.emit("join room", newCurrentChat.chatName, (messages: any) => roomJoinCallback(messages, newCurrentChat.chatName));
+			
+			if (!messages[newCurrentChat.chatName]) {
+			  const newMessages = immer(messages, (draft: WritableDraft<typeof messages>) => {
+				draft[newCurrentChat.chatName] = [];
+			  });
+			  
+			  setMessages(newMessages);
+			}
+			setCurrentChat(newCurrentChat);
+		  }
 		}
-		setCurrentChat(newCurrentChat);
-	}
 
 	function addAdminRights(newAdminUsername: string, roomName: string | number){
 		getUserIDByUserName(newAdminUsername)
