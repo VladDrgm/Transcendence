@@ -32,11 +32,11 @@ export const ArenaStyle: Properties = {
 }
 
 export const SideBarStyle: Properties = {
-	backgroundColor: 'black',
+	backgroundColor: '#87CEEB',
 	height: '100vh',
   	width: '15%',
   	borderRight: '1px solid white',
-	color: 'white'
+	color: 'black'
 }
 
 export const ChatPanel = styled.div`

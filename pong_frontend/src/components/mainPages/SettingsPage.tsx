@@ -97,9 +97,16 @@ const SettingsPage: React.FC<SettingsPageProps> = ({ onLogout }) => {
     const file = e.target.files ? e.target.files[0] : null;
     console.log('Selected file:', file);
     if (file) {
-      setNewAvatar(file);
-      setSelectedImage(URL.createObjectURL(file));
-      setImageBorder('3px dahed #FF0000');
+        // Check the file size (e.g., limit to 1 MB)
+        if (file.size > 1024 * 1024) {
+          setError('Image size is too big!');
+        }
+        else
+        {
+          setNewAvatar(file);
+          setSelectedImage(URL.createObjectURL(file));
+          setImageBorder('3px dahed #FF0000');
+        }
     }
   };
 
@@ -173,7 +180,7 @@ const SettingsPage: React.FC<SettingsPageProps> = ({ onLogout }) => {
       )}
       <div style={styles.uploadContainer}>
         <label style={styles.customAvatarUploadButtonStyle}>
-          <input type='file' onChange={handleAvatarChange} style={styles.avatarInputFieldStyle} />
+          <input type='file' accept=".jpg, .jpeg, .png" onChange={handleAvatarChange} style={styles.avatarInputFieldStyle} />
           <img src={imageAssetUploadAvatar} style={styles.imageUploadButtonIconStyle} alt='' />
           Upload file from computer
         </label>
