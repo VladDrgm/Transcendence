@@ -41,7 +41,7 @@ const ChannelDiv: React.FC<Channel_Div_props> = (props) => {
                         {renderRooms(props.ChatProps, room, props.toggleChat)}
                     </div>
                 ))
-            ) : ( 'no public Channels' )}
+            ) : ( 'no private Channels' )}
             </div>
     );
 
