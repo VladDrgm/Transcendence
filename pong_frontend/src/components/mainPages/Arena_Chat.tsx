@@ -11,6 +11,7 @@ import { GameContainerStyle } from './GamePageStyles';
 import { ArenaStyle } from './ChatPageStyles';
 import { postUserStatus } from '../../api/statusUpdateAPI.api';
 import ErrorPopup from '../Popups/ErrorPopup';
+import { useNavigate } from 'react-router-dom';
 
 interface ArenaDivProps
 {
@@ -76,10 +77,16 @@ const ArenaChat: React.FC<ArenaDivProps> = ({userID, friend_set}) => {
 	const [error, setError] = useState<string | null>(null);
 
 	const socketRef = useRef<Socket | null>(null!);
+
+	const navigate = useNavigate();
 	
 	useEffect(() => {
+		// Check if the user is logged in when the component mounts
+		if (!user) {
+	  		navigate('/login'); // Redirect to the login page if not logged in
+		}
 		postUserStatus("Online", user!);
-	  }, []);
+	}, [navigate]);
 
 	useEffect(() => {
 		const baseUrl = process.env.REACT_APP_BASE_URL || '';

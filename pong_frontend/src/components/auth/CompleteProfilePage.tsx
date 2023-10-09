@@ -34,8 +34,12 @@ const CompleteProfilePage: React.FC = () => {{
 	const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const file = e.target.files ? e.target.files[0] : null;
 		if (file) {
-			setNewAvatar(file);
-			setSelectedImage(URL.createObjectURL(file));
+			if (file.size > 1024 * 1024) {
+				setError('Image size is too big!');
+			} else {
+				setNewAvatar(file);
+				setSelectedImage(URL.createObjectURL(file));
+			}
 		}
 	};
 
@@ -44,6 +48,7 @@ const CompleteProfilePage: React.FC = () => {{
 			// Handle first-time login here, if needed
 		  } else if (user?.intraUsername !== intraName) {
 			setError('Unauthorized access');
+			navigate('/');
 			return;
 		  }
 		  
@@ -85,14 +90,6 @@ const CompleteProfilePage: React.FC = () => {{
 					newCreatedUser.avatarPath = userObjectWithAvatar.avatarPath;
 				} catch (error) {;}
 			}
-            if (newUsername) {
-                try {
-                    const updatedUser = await updateUsernameApi(newCreatedUser.userID, newUsername, newCreatedUser.intraUsername, newCreatedUser.passwordHash);
-					newCreatedUser.username = updatedUser.username;
-                } catch (error) {
-                    setError('Error uploading username');
-                }
-            }
 			localStorage.setItem('user', JSON.stringify(newCreatedUser));
 			setUser(newCreatedUser);
 
@@ -126,7 +123,7 @@ const CompleteProfilePage: React.FC = () => {{
 				/>
 			<form>
 				<label style={styles.customAvatarUploadButtonStyle}>
-					<input type="file" onChange={handleAvatarChange} style={styles.avatarInputFieldStyle}/>
+					<input type="file" accept=".jpg, .jpeg, .png" onChange={handleAvatarChange} style={styles.avatarInputFieldStyle}/>
 					<img src={imageAssetUploadAvatar} style={styles.imageUploadButtonIconStyle} alt=""></img>
 					Upload file from computer
 				</label>

@@ -25,6 +25,7 @@ const AuthRedirectPage: React.FC = () => {
 
 		if (!newUser) {
 			console.error('Error fetching user with token');
+			navigate('/');
 			return;
 		}
 
@@ -44,6 +45,7 @@ const AuthRedirectPage: React.FC = () => {
 
       } catch (error) {
         console.error('Error fetching user: ', error);
+		navigate('/');
       }
     };
 

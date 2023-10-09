@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Pagination from '../div/Pagination';
 import { MatchHistoryItem } from '../../interfaces/MatchHistory';
 import { UsernameItem } from '../../interfaces/UsernameList';
@@ -22,6 +22,7 @@ const MatchHistoryMainDiv: React.FC<MatchHistoryProps> = ({ userID, friend_set }
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [showPersonalMatches, setShowPersonalMatches] = useState(false);
   const { user } = useUserContext();
+  const navigate = useNavigate();
 
   const getData = async () => {
     const usenames = await getUserList();
@@ -45,8 +46,12 @@ const MatchHistoryMainDiv: React.FC<MatchHistoryProps> = ({ userID, friend_set }
   }, [showPersonalMatches]);
 
   useEffect(() => {
+	// Check if the user is logged in when the component mounts
+	if (!user) {
+		navigate('/login'); // Redirect to the login page if not logged in
+	}
     postUserStatus("Online", user!);
-  }, []);
+  }, [navigate]);
 
   const openFriend = (FID: number) => {
     friend_set(FID);

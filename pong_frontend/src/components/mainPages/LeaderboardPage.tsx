@@ -5,6 +5,7 @@ import LeaderboardUser from './LeaderboardUser';
 import { User } from '../../interfaces/User';
 import { postUserStatus } from '../../api/statusUpdateAPI.api';
 import { useUserContext } from '../context/UserContext';
+import { useNavigate } from 'react-router-dom';
 
 interface LeaderboardProps {
 	friend_set: React.Dispatch<React.SetStateAction<number>>;
@@ -15,6 +16,7 @@ const LeaderboardPage: React.FC<LeaderboardProps> = ({friend_set, loggedInUserna
 	const [leaderboard, setLeaderboard] = useState<User[]>([]);
 	const [scoreMap, setScoreMap] = useState<Map<number, number>>(new Map());
 	const { user } = useUserContext();
+	const navigate = useNavigate();
 
 	const getData = async () => {
 		const leaderboardData = await getLeaderboard();
@@ -22,9 +24,13 @@ const LeaderboardPage: React.FC<LeaderboardProps> = ({friend_set, loggedInUserna
   	};
 
   	useEffect(() => {
+		// Check if the user is logged in when the component mounts
+		if (!user) {
+			navigate('/login'); // Redirect to the login page if not logged in
+		}
     	getData();
 		postUserStatus("Online", user!);
-  	}, []);
+  	}, [navigate]);
 
   	const openFriend = (FID:number) => {
     	friend_set(FID);

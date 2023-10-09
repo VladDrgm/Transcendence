@@ -15,9 +15,15 @@ const TwoFactorSetup: React.FC = () => {
 	const [error, setError] = useState<string | null>(null);
 	const { setUser } = useUserContext();
 
-  useEffect(() => {
-	setSecret(secret);
-  }, [secret]);
+	useEffect(() => {
+		// Check if the user is logged in when the component mounts
+		const localUser = localStorage.getItem('user');
+		const localParsedUser = JSON.parse(localUser!);
+		if (!localParsedUser) {
+			navigate('/login'); // Redirect to the login page if not logged in
+		}
+		setSecret(secret);
+  	}, [secret, navigate]);
 
   const generateTOTP = async () => {
 	try {

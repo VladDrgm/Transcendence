@@ -1,8 +1,10 @@
-import React from 'react';
-import { Link, Outlet } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { Link, Outlet, useNavigate } from 'react-router-dom';
 import * as styles from './UserStartPageStyles';
 
 const UserStartPage: React.FC = () => {
+
+	const navigate = useNavigate();
 
 	const navigationLinks: { path: string; label: string}[] = [
 		{ path: '/app/home', label: 'Home'},

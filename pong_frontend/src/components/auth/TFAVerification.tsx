@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ErrorPopup from '../Popups/ErrorPopup';
 import { useUserContext } from '../context/UserContext';
@@ -10,6 +10,15 @@ const TwoFactorVerification: React.FC = () => {
 	const { setUser } = useUserContext();
 	const [token, setToken] = useState<string>('');
 	const [error, setError] = useState<string | null>(null);
+
+	useEffect(() => {
+		// Check if the user is logged in when the component mounts
+		const localUser = localStorage.getItem('user');
+		const localParsedUser = JSON.parse(localUser!);
+		if (!localParsedUser) {
+		  navigate('/login'); // Redirect to the login page if not logged in
+		}
+	}, [navigate]);
 
 	const verifyToken = async () => {
 		try {

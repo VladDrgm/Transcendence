@@ -98,11 +98,15 @@ const SettingsPage: React.FC<SettingsPageProps> = ({ onLogout }) => {
   // Extract the filename from the File object and update the state
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files ? e.target.files[0] : null;
-    console.log('Selected file:', file);
     if (file) {
-      setNewAvatar(file);
-      setSelectedImage(URL.createObjectURL(file));
-      setImageBorder('3px solid rgba(254, 8, 16, 1)');
+		// Check the file size (e.g., limit to 1 MB)
+		if (file.size > 1024 * 1024) {
+			setError('Image size is too big!');
+		} else {
+			setNewAvatar(file);
+			setSelectedImage(URL.createObjectURL(file));
+			setImageBorder('3px solid rgba(254, 8, 16, 1)');
+		}
     }
   };
 
@@ -152,9 +156,13 @@ const SettingsPage: React.FC<SettingsPageProps> = ({ onLogout }) => {
   }, [reset]);
 
   useEffect(() => {
+	// Check if the user is logged in when the component mounts
+	if (!user) {
+		navigate('/login'); // Redirect to the login page if not logged in
+	}
     postUserStatus('Online', user!);
     isTfaEnabled();
-  }, []);
+  }, [navigate]);
 
   if (loading) {
     return <div>Loading...</div>;
@@ -175,7 +183,7 @@ const SettingsPage: React.FC<SettingsPageProps> = ({ onLogout }) => {
         />
       )}
       <label style={styles.customAvatarUploadButtonStyle}>
-        <input type='file' onChange={handleAvatarChange} style={styles.avatarInputFieldStyle} />
+        <input type='file' accept=".jpg, .jpeg, .png" onChange={handleAvatarChange} style={styles.avatarInputFieldStyle} />
         <img src={imageAssetUploadAvatar} style={styles.imageUploadButtonIconStyle} alt='' />
         Upload file from computer
       </label>
