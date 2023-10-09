@@ -41,7 +41,6 @@ export const customAvatarUploadButtonStyle: Properties = {
     height: '40px',
     width: '250px',
     lineHeight: '40px',
-
 }
 
 export const imageUploadButtonIconStyle: Properties = {
