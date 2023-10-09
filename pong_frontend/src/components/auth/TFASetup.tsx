@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import ErrorPopup from '../Popups/ErrorPopup';
 import { useUserContext } from '../context/UserContext';
 import { postUserStatus } from '../../api/statusUpdateAPI.api';
+import * as styles from './TFASetupStyles';
 
 const TwoFactorSetup: React.FC = () => {
 	const navigate = useNavigate();
@@ -64,18 +65,20 @@ const TwoFactorSetup: React.FC = () => {
   };
 
   return (
-    <div>
-      <button onClick={generateTOTP}>Generate QR Code</button>
+    <div style={styles.pageStyle}>
+      <button style={styles.buttonStyle} onClick={generateTOTP}>Generate QR Code</button>
       {qrCode && (
         <div>
           <img src={qrCode} alt="QR Code" />
-          <input
-            type="text"
-            value={token}
-            onChange={(e) => setToken(e.target.value)}
-            placeholder="Enter the token"
-          />
-          <button onClick={verifyToken}>Verify Code</button>
+		  <div>
+			<input
+				type="text"
+				value={token}
+				onChange={(e) => setToken(e.target.value)}
+				placeholder="Enter the token"
+			/>
+		 	</div>
+          <button style={styles.buttonStyle} onClick={verifyToken}>Verify Code</button>
         </div>
       )}
 	  <ErrorPopup message={error} onClose={() => setError(null)} />

@@ -40,7 +40,7 @@ export const customAvatarUploadButtonStyle: Properties = {
     transition: 'background-color 0.3s ease, color 0.3s ease',
 	backgroundColor: '#87CEEB',
     color: '#094074',
-	height:'40px',
+	height:'25px',
 	width:'250px',
 }
 
@@ -66,7 +66,7 @@ export const formFieldStyle: Properties = {
 	background: '#FFFFE0'
 }
 
-export const updateButtonStyle: Properties = {
+export const buttonStyle: Properties = {
     display: 'inline-block',
     padding: '8px',
     fontSize: '16px',
