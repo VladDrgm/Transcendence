@@ -557,7 +557,11 @@ export async function popUpJoinPrivateChannel(props: ChatProps, currentChat: Cha
     createButton.innerHTML = 'Join';
     createButton.addEventListener('click', async function() {
         var password = channelPasswordInput.value;
-        joinPrivateRoom(currentChat.chatName, password);
+        if (password === '') {
+            window.alert('Please enter a password');
+        } else {
+            joinPrivateRoom(currentChat.chatName, password);
+        }
         popup?.close();
     });
     popup?.document.body.appendChild(createButton);
