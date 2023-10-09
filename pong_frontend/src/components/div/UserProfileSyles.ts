@@ -73,7 +73,7 @@ export const listContainerStyle: CSSProperties = {
 }
 
 export const listStyle: CSSProperties = {
-	float: 'left',
+	// float: 'left',
 }
 
 export const statListItemStyle: CSSProperties = {
@@ -98,7 +98,7 @@ export const achievementListItemStyle: CSSProperties = {
 export const achievementTextStyle: CSSProperties = {
     fontSize: '16px',
     fontWeight: 'bold',
-    color: 'black',
+    color: '#0071BB',
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
