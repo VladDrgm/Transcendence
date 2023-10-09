@@ -432,50 +432,50 @@ const ChatMainDiv: FC<ChatProps> = (props) => {
 			});
 	}
 
-	function addBlockedUser(targetName: string | number){
-		getUserIDByUserName(targetName.toString())
-		.then((targetID) => {
-			if(targetID === undefined){
-				alert("User could not be found. Please try another Username.");
-				return;
-			}
-			postBlockedUser(Number(targetID), props.user!)
-			.then((response) => {
-				if (response){
-					blockUserSocket(Number(targetID), props.user?.username);
-					handleBody();	
-				}
-			})
-			.catch(error => {
-			})
-		})
-		.catch(error => {
-			alert("Error while blocking User" + error);
-		});
-	}
+	// function addBlockedUser(targetName: string | number){
+	// 	getUserIDByUserName(targetName.toString())
+	// 	.then((targetID) => {
+	// 		if(targetID === undefined){
+	// 			alert("User could not be found. Please try another Username.");
+	// 			return;
+	// 		}
+	// 		postBlockedUser(Number(targetID), props.user!)
+	// 		.then((response) => {
+	// 			if (response){
+	// 				blockUserSocket(Number(targetID), props.user?.username);
+	// 				handleBody();	
+	// 			}
+	// 		})
+	// 		.catch(error => {
+	// 		})
+	// 	})
+	// 	.catch(error => {
+	// 		alert("Error while blocking User" + error);
+	// 	});
+	// }
 
-	function unblockUser(targetName: string | number){
-		getUserIDByUserName(targetName.toString())
-			.then((targetID) => {
-				if(targetID === undefined){
-					alert("User could not be found. Please try another Username.");
-					return;
-				}
-				deleteBlockedUser(Number(targetID), props.user!)
-				.then(() => {
-					unblockUserSocket(Number(targetID), props.user?.username)
-					setTimeout(() => {
-						handleBody();
-					  }, 1000);
-				})
-				.catch(error => {
-					alert("Error while unblocking User" + error);
-				})
-			})
-			.catch(error => {
-				alert("Error while unblocking User" + error);
-			});
-	}
+	// function unblockUser(targetName: string | number){
+	// 	getUserIDByUserName(targetName.toString())
+	// 		.then((targetID) => {
+	// 			if(targetID === undefined){
+	// 				alert("User could not be found. Please try another Username.");
+	// 				return;
+	// 			}
+	// 			deleteBlockedUser(Number(targetID), props.user!)
+	// 			.then(() => {
+	// 				unblockUserSocket(Number(targetID), props.user?.username)
+	// 				setTimeout(() => {
+	// 					handleBody();
+	// 				  }, 1000);
+	// 			})
+	// 			.catch(error => {
+	// 				alert("Error while unblocking User" + error);
+	// 			})
+	// 		})
+	// 		.catch(error => {
+	// 			alert("Error while unblocking User" + error);
+	// 		});
+	// }
 
 
 	function handleAdminRights(newAdminUserID: number, roomName: string) {
@@ -752,13 +752,13 @@ const ChatMainDiv: FC<ChatProps> = (props) => {
 		}
 	}, [channelPanelLoaded]);
 
-	function blockUserSocket(targetId: string | number, username: string | undefined) {
-		props.socketRef.current?.emit('block user', {targetId, username});
-	}
+	// function blockUserSocket(targetId: string | number, username: string | undefined) {
+	// 	props.socketRef.current?.emit('block user', {targetId, username});
+	// }
 
-	function unblockUserSocket(targetId: string | number, username: string | undefined) {
-		props.socketRef.current?.emit('unblock user', {targetId, username});
-	}
+	// function unblockUserSocket(targetId: string | number, username: string | undefined) {
+	// 	props.socketRef.current?.emit('unblock user', {targetId, username});
+	// }
 
 	function deleteChatRoom(roomName: string | number) {
 		props.socketRef.current?.emit('delete room', roomName);

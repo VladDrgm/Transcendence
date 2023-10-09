@@ -1,6 +1,14 @@
 import { fetchAddress } from "../components/div/ChannelDiv";
 import { User } from "../interfaces/User";
 
+// function blockUserSocket(targetId: string | number, username: string | undefined) {
+// 		props.socketRef.current?.emit('block user', {targetId, username});
+// 	}
+
+// 	function unblockUserSocket(targetId: string | number, username: string | undefined) {
+// 		props.socketRef.current?.emit('unblock user', {targetId, username});
+// 	}
+
 export async function postBlockedUser(targetId: number, user: User): Promise<boolean> {
     const ChannelData = {
       intraUsername: user?.intraUsername,
