@@ -14,7 +14,7 @@ interface PrivateDivProps
 const PrivateDiv: React.FC<PrivateDivProps> = ({userID}) => {
 	const { user, setUser } = useUserContext();	
 	const [profilePicture, setProfilePicture] = useState(false);
-
+	
   	const getData = async () => {
     	try {
       		const myProf = await getPrivateProfile(userID, user?.intraUsername, user?.passwordHash);
@@ -76,6 +76,10 @@ const PrivateDiv: React.FC<PrivateDivProps> = ({userID}) => {
 	  };
 
   	useEffect(() => {
+		if (!user) {
+			console.error('You are not logged in!');
+			return;
+		  }
    		getData();
   	}, []);
 

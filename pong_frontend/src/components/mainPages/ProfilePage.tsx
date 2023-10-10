@@ -27,8 +27,8 @@ const ProfilePage: React.FC<ProfilePageProps> = ({friend_set}) => {
 		if (!user) {
 			navigate('/login'); // Redirect to the login page if not logged in
 		}
-		postUserStatus("Online", user!);
   	}, []);
+
 	return (
 		<div style={styles.pageStyle}>
       <PrivateProfile userID={user?.userID}/>
