@@ -85,7 +85,6 @@ const ArenaChat: React.FC<ArenaDivProps> = ({userID, friend_set}) => {
 		if (!user) {
 	  		navigate('/login'); // Redirect to the login page if not logged in
 		}
-		postUserStatus("Online", user!);
 	}, [navigate]);
 
 	useEffect(() => {

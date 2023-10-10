@@ -214,7 +214,10 @@ export function postChannelUserBlocked(callerId: number | undefined, targetId: n
 }
 
 export async function getChannelBlockedUser(userId: number | undefined, channelId: number, user: User): Promise<any> {
-    if (userId === undefined || channelId === undefined) {
+  if (user === undefined) {
+    throw new Error("Invalid userId");
+  }  
+  if (channelId === undefined) {
       throw new Error("Invalid userId or channelId");
     }
     const ChannelData = {

@@ -112,6 +112,13 @@ export class ChannelController {
     @Param('userId') userId: number,
     @Param('channelId') channelId: number,
   ): Promise<ChannelAdmin> {
+    if (Number.isNaN(userId)) {
+      // Throw an exception indicating that the user is not logged in or unauthorized
+      throw new HttpException(
+        'User is not logged in or unauthorized',
+        HttpStatus.UNAUTHORIZED,
+      );
+    }
     return this.channelService.getChannelAdminByUserId(userId, channelId);
   }
 
@@ -189,7 +196,8 @@ export class ChannelController {
 
   @Delete(':callerId/:targetId/:channelId/user')
   @ApiOperation({
-    summary: 'Delete a User by his userId. Only Admins and the user itself can delete the User.',
+    summary:
+      'Delete a User by his userId. Only Admins and the user itself can delete the User.',
   })
   async removeChannelUser(
     @Param('callerId') callerId: number,

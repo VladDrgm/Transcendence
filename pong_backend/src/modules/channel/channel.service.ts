@@ -273,7 +273,7 @@ export class ChannelService {
       channelId,
     );
 
-    if (!isChannelOwner && !isChannelAdmin && (callerId != userId)) {
+    if (!isChannelOwner && !isChannelAdmin && callerId != userId) {
       throw new HttpException(
         'You do not have the credentials to get a user.',
         HttpStatus.BAD_REQUEST,
@@ -316,7 +316,7 @@ export class ChannelService {
 
     const isOwner = channel.OwnerId == callerId;
 
-    if (!isAdmin && !isOwner && (callerId != targetId)) {
+    if (!isAdmin && !isOwner && callerId != targetId) {
       throw new HttpException(
         'You do not have the credentials to remove a user.',
         HttpStatus.BAD_REQUEST,
@@ -560,7 +560,10 @@ export class ChannelService {
     }
     channel.Type = channel.Type == 'public' ? 'private' : 'public';
 
-    if ((channel.Password === null || channel.Password === '') && channel.Type === 'private') {
+    if (
+      (channel.Password === null || channel.Password === '') &&
+      channel.Type === 'private'
+    ) {
       throw new HttpException('Channel password is empty', 400);
     }
 
