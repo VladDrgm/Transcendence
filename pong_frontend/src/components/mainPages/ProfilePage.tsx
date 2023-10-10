@@ -4,7 +4,6 @@ import PrivateProfile from '../div/PrivateDiv';
 import { useUserContext } from '../context/UserContext';
 import { Link } from 'react-router-dom';
 import { ButtonStyle } from '../div/UserProfileSyles';
-import { postUserStatus } from '../../api/statusUpdateAPI.api';
 import { useNavigate } from 'react-router-dom';
 
 export enum ProfileType_t

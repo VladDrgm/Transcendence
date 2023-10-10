@@ -24,7 +24,7 @@ export const getFriendList = async (userID:number | undefined, intra:string | un
     }
   };
 
-export const checkFriend = async (userID:number, friendID:number, intra:string | undefined, token:string | undefined) => {
+export const checkFriend = async (userID:number | undefined, friendID:number, intra:string | undefined, token:string | undefined) => {
   
   const requestOptions = {
 		method: 'PUT',
@@ -54,7 +54,7 @@ export const checkFriend = async (userID:number, friendID:number, intra:string |
   return ret;
 };
 
-export const addFriend = async (userID:number, friendID:number, intra:string | undefined, token:string | undefined) => {
+export const addFriend = async (userID:number | undefined, friendID:number, intra:string | undefined, token:string | undefined) => {
   const requestOptions = {
 		method: 'POST',
     headers: {
@@ -68,7 +68,7 @@ export const addFriend = async (userID:number, friendID:number, intra:string | u
   const response = await fetch(fetchAddress + 'friend/' + userID + '/friend/' + friendID, requestOptions);
 };
 
-export const removeFriend = async (userID:number, friendID:number, intra:string | undefined, token:string | undefined) => {
+export const removeFriend = async (userID:number | undefined, friendID:number, intra:string | undefined, token:string | undefined) => {
   const requestOptions = {
 		method: 'DELETE',
     headers: {

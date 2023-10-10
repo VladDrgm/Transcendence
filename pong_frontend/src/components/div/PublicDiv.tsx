@@ -6,7 +6,7 @@ import imageAssetAchievement1 from '../assets/achievement1.png'
 import UserProfilePicture from './UserProfilePicture';
 
 interface PublicProps {
-  userID: number;
+  userID: number | undefined;
   publicID: number;
 }
 

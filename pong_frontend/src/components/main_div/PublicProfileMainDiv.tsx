@@ -3,7 +3,7 @@ import PublicDiv from '../div/PublicDiv';
 import FriendDiv from '../div/FriendDiv';
 import { checkFriend, addFriend, removeFriend } from '../../api/friend_list.api';
 import { useUserContext } from '../context/UserContext';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { ButtonStyle } from '../div/UserProfileSyles';
 import { postBlockedUser, deleteBlockedUser, getBlockedUser } from '../../api/block_user.api'
 import { postUserStatus } from '../../api/statusUpdateAPI.api';
@@ -18,14 +18,15 @@ interface ProfileProps {
 }
 
 const PublicProfileMainDiv: React.FC<ProfileProps> = () => {
+  const { user } = useUserContext();
+  const navigate = useNavigate();
   const [type, set_type] = useState<ProfileType_t | null>(null);
   const [blocked, set_blocked] = useState<boolean>(false);
   const [loading, setLoading] = useState(true);
   const [reset, setReset] = useState(true);
-  const { user } = useUserContext();
-  const userID = user!.userID;
+  const userID = user?.userID;
   const { friend_ID } = useParams<{ friend_ID: string }>();
-
+  
   const isFriend = async () => {
     try {
       const ret = await checkFriend(userID, Number(friend_ID), user?.intraUsername, user?.passwordHash);
@@ -86,7 +87,13 @@ const PublicProfileMainDiv: React.FC<ProfileProps> = () => {
     }
   };
 
+
   useEffect(() => {
+    if (!user) {
+      console.log('Not logged in!');
+      navigate('/login'); // Redirect to the login page if not logged in
+      return;
+    }
     const timer = setTimeout(() => {
       isBlocked();
       isFriend();

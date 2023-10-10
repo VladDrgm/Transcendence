@@ -7,7 +7,7 @@ import { achievementListItemStyle, achievementTextStyle, centeredContainerStyle,
 import UserProfilePicture from './UserProfilePicture';
 
 interface FriendProps {
-  userID: number;
+  userID: number | undefined;
   friendID: number;
 }
 
