@@ -2,7 +2,7 @@ import { Properties } from 'csstype';
 import styled from "styled-components";
 
 export const ChatContainerStyle: Properties = {
-	backgroundColor: 'lightgray',
+	backgroundColor: '#0071BB',
 	position: 'static',
 	flexGrow: '1',
   	width: '70vw',
@@ -18,7 +18,7 @@ export const ChatContainerStyle: Properties = {
 }
 
 export const ArenaStyle: Properties = {
-	backgroundColor: 'lightgray',
+	backgroundColor: '0071BB',
 	position: 'static',
 	flexGrow: '1',
 	width: '100vw',
@@ -32,11 +32,11 @@ export const ArenaStyle: Properties = {
 }
 
 export const SideBarStyle: Properties = {
-	backgroundColor: 'black',
+	backgroundColor: '#87CEEB',
 	height: '100vh',
   	width: '15%',
   	borderRight: '1px solid white',
-	color: 'white'
+	color: 'black'
 }
 
 export const ChatPanel = styled.div`
@@ -77,14 +77,15 @@ export const Messages = styled.div`
 `;
 
 export const chatButtonsStyle: Properties = {
-	backgroundColor: 'rgba(254, 8, 16, 1)',
+	backgroundColor: '#FFDD4A',
 	position: 'relative',
 	fontFamily: 'Shlop',
 	fontSize: '13px',
 	alignSelf: 'center',
 	borderRadius: '6px',
 	border: '2px solid',
-	color:'white',
+	color:'#0071BB',
+	fontWeight: 550,
 	marginTop: '15px',
 	marginBottom: '1px',
 	padding:'5px',
@@ -114,12 +115,16 @@ export const linkTextStyle = {
   };
 
   export const userButtonStyle: Properties = {
-	backgroundColor: 'lightgray',
+	backgroundColor: '#0071BB',
 	borderStyle: 'none',
 	cursor: 'pointer',
-	color: 'black',
+	color: '#FFDD4A',
 	fontSize: '16px',
 	fontWeight: 600,
 	marginTop: '2px',
 	textDecoration: 'underline',
+  };
+
+  export const controlsTextStyle: Properties = {
+	color: '#FFDD4A',
   };

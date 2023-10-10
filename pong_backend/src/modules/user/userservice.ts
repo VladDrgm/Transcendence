@@ -91,7 +91,7 @@ export class UserService {
 
   async generateTOTP() {
     const secret = authenticator.generateSecret();
-    const otpauth_url = authenticator.keyuri('user', 'HorrorPong', secret);
+    const otpauth_url = authenticator.keyuri('user', 'AmongUsPong', secret);
     const dataURL = await qrcode.toDataURL(otpauth_url);
     return {
       secret,

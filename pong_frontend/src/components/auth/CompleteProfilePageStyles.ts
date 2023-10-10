@@ -14,7 +14,7 @@ export const pageStyle: Properties = {
 }
 
 export const pageTitleStyle: Properties = {
-	color: 'rgba(254, 8, 16, 1)',
+	color: '#0071BB',
 	position: 'relative',
 	textAlign: 'center',
 	top: '8px',
@@ -29,7 +29,7 @@ export const profilePictureStyle: Properties = {
     borderRadius: '50%',
     objectFit: 'cover',
     marginBottom: '4px',
-    border: '3px solid rgba(254, 8, 16, 1)',
+    border: '3px solid #0071BB',
 }
 
 export const customAvatarUploadButtonStyle: Properties = {
@@ -67,7 +67,7 @@ export const formFieldStyle: Properties = {
 }
 
 export const completeProfileButtonContainerStyle: Properties = {
-	backgroundColor: 'rgba(254, 8, 16, 1)',
+	backgroundColor: '#0071BB',
 	position: 'relative',
 	display: 'block',
 	height:'40px',
@@ -83,7 +83,7 @@ export const completeProfileButtonContainerStyle: Properties = {
 }
 
 export const completeProfileButtonStyle: Properties = {
-	backgroundColor: 'rgba(254, 8, 16, 1)',
+	backgroundColor: '#0071BB',
 	position: 'relative',
 	display: 'block',
 	height:'40px',

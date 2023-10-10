@@ -108,7 +108,7 @@ const MatchHistoryMainDiv: React.FC<MatchHistoryProps> = ({ userID, friend_set }
                   {findUsername(item.Player1Id)}
                 </Link>
               )}{' '}
-              <span style={{ color: 'white' }}> vs </span>
+              <span style={{ color: '#0071BB' }}> vs </span>
               {item.Player2Id === userID ? (
                 <Link to={'/app/profile'} style={{ ...MatchHistoryTitle, textDecoration: 'none' }}>
                   {findUsername(item.Player2Id)}
@@ -129,11 +129,22 @@ const MatchHistoryMainDiv: React.FC<MatchHistoryProps> = ({ userID, friend_set }
             Score: {item.Player1Points} - {item.Player2Points}
           </p>
           <p style={MatchHistoryWinner}>
-          Winner: {findUsername(item.WinnerId)}{" "}
-          {item.WinningCondition === "disconnected" && (
-          <span>(game {item.WinningCondition})</span>
+          {item.WinnerId !== 0 ? (
+            <>
+              Winner: {findUsername(item.WinnerId)}{" "}
+              {item.WinningCondition === "disconnected" && (
+                <span>(game {item.WinningCondition})</span>
+              )}
+            </>
+          ) : (
+            <>
+              No winner. No losers{" "}
+              {item.WinningCondition === "disconnected" && (
+                <span>(game {item.WinningCondition})</span>
+              )}
+            </>
           )}
-          </p>
+        </p>
         </MatchHistoryCard>
       ))}
       {totalPages > 0 && (

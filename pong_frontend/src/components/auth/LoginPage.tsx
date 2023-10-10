@@ -1,6 +1,6 @@
 import React from "react";
 import * as styles from './LoginPageStyles';
-import imageAssetBilly from '../assets/billy.png'
+import imageAmong from '../assets/amongus.png'
 
 const LoginPage: React.FC = () => {
 
@@ -22,8 +22,8 @@ const LoginPage: React.FC = () => {
 
 	return (
 		<div style={styles.pageStyle}>
-			<img alt="" src={imageAssetBilly} style={styles.gifStyle} ></img>
-            <p style={styles.welcomeTitleStyle}>Do you want to play a game?</p>
+			<img alt="" src={imageAmong} style={styles.gifStyle} ></img>
+			<p style={styles.welcomeTitleStyle}>Let&apos;s play a game!</p>
             <button onClick={OnLoginWith42ButtonClick} style={styles.signupButtonStyle}>Sign up with 42</button>
         </div>
 	);

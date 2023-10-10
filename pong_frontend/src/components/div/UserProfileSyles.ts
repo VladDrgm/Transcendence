@@ -1,23 +1,51 @@
 import { CSSProperties } from "react";
 
+export const LinkStyle: CSSProperties = {
+  color: '#FFD700',
+}
+
 export const ButtonStyle: CSSProperties = {
-	backgroundColor: 'rgba(254, 8, 16, 1)',
-	position: 'relative',
-	display: 'inline-block',
+  display: 'inline-block',
+  padding: '12px 20px',
+  fontSize: '16px',
+  textAlign: 'center',
+  textDecoration: 'none',
+  border: 'none',
+  borderRadius: '5px',
+  cursor: 'pointer',
+  transition: 'background-color 0.3s ease, color 0.3s ease',
+	backgroundColor: '#87CEEB',
+  color: '#FFDD4A',
+  fontWeight: 550,
+	margin: '10px 100px',
+	background: 'linear-gradient(45deg, #87CEEB, #0071BB)',
 	height:'40px',
 	width:'150px',
-	fontFamily: 'Shlop',
-	fontSize: '14px',
-	alignSelf: 'center',
-	borderRadius: '6px',
-	border: '1px solid white',
-	color:'white',
-	marginBottom: '30px',
-    marginTop: '30px',
+}
+
+
+export const BackButtonStyle: CSSProperties = {
+  display: 'inline-block',
+  padding: '12px 20px',
+  fontSize: '16px',
+  textAlign: 'center',
+  textDecoration: 'none',
+  border: 'none',
+  borderRadius: '5px',
+  cursor: 'pointer',
+  transition: 'background-color 0.3s ease, color 0.3s ease',
+  backgroundColor: '#87CEEB',
+  color: '#0071BB',
+  fontWeight: 550,
+  margin: '50px 200px',
+  background: 'linear-gradient(45deg, #0071BB, #FFDD4A)',
+  height:'40px',
+  width:'300px',
 }
 
 export const pageStyle: CSSProperties = {
-	backgroundColor: 'lightgray',
+	backgroundColor: '#0071BB',
+  color: '#87CEEB',
 	height: '2500px',
 	display: 'flex',
 	flexDirection: 'column',
@@ -29,30 +57,29 @@ export const profilePictureStyle: CSSProperties = {
 	height: '120px',
 	borderRadius: '50%',
 	objectFit: 'cover',
-	border: '3px solid rgba(254, 8, 16, 1)',
-    marginBottom: '20px',
+	border: '3px solid rgba(255, 215, 0, 1)',
+  marginBottom: '20px',
 }
 
 export const listContainerStyle: CSSProperties = {
 	listStyleType: 'none',
 	margin: '0px',
-	padding: '10px',
+	padding: '0px',
 	overflow: 'hidden',
-	backgroundColor: '#333333',
+	backgroundColor: '#87CEEB',
 	borderRadius: '12px',
 	width: '500px',
-    display: 'flex', 
-    justifyContent: 'center',
-    alignItems: 'center',
+	color: '#FFDD4A'
 }
 
 export const listStyle: CSSProperties = {
-	float: 'left',
+	// float: 'left',
 }
 
 export const statListItemStyle: CSSProperties = {
 	display: 'block',
-	color: 'white',
+	color: '#0071BB',
+	fontWeight: 550,
 	textAlign: 'center',
 	paddingLeft: '50px',
 	paddingTop: '5px',
@@ -71,8 +98,8 @@ export const achievementListItemStyle: CSSProperties = {
 export const achievementTextStyle: CSSProperties = {
     fontSize: '16px',
     fontWeight: 'bold',
-    color: 'white',
-        display: 'flex',
+    color: '#0071BB',
+    display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
   }
@@ -86,7 +113,7 @@ export const achievementTextStyle: CSSProperties = {
   export const profileSectionStyle: CSSProperties = {
     display: 'flex',
     justifyContent: 'space-between',
-    marginBottom: '10px', // Adjust margin as needed
+    marginBottom: '10px',
   };
   
   export const buttonContainerStyle: CSSProperties = {

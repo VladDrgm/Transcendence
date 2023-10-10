@@ -1,7 +1,7 @@
 import { Properties } from 'csstype';
 
 export const pageStyle: Properties = {
-	backgroundColor: 'rgba(3, 3, 3, 1)',
+	backgroundColor: '#0071BB',
 	height: '100vh',
 	width: '100%',
 	position: 'absolute',
@@ -9,7 +9,6 @@ export const pageStyle: Properties = {
 	display: 'flex',
 	flexDirection: 'column',
 	textAlign: 'center',
-	borderColor: 'green',
 	borderWidth: '5px',
 }
 
@@ -24,23 +23,24 @@ export const headerStyle: Properties = {
 export const subPageDimensions: Properties = {
 	flexGrow: '1',
 	width: '100%',
-	// height: '100%',
-	backgroundColor: 'lightgray'
+	backgroundColor: '#0071BB',
+	color: '#87CEEB'
 }
 
 export const buttonStyle: Properties = {
-	backgroundColor: 'rgba(254, 8, 16, 1)',
+	backgroundColor: '#FFDD4A',
 	position: 'relative',
-	height:'30px',
+	height:'35px',
 	width:'160px',
-	fontFamily: 'Shlop',
-	fontSize: '24px',
+	fontFamily: 'Comic Sans Ms',
+	fontSize: '20px',
+	fontWeight: '600',
 	alignSelf: 'center',
 	borderRadius: '6px',
 	border: 'none',
-	color:'white',
-	top:'1px',
+	color:'#0071BB',
+	textDecoration: 'none',
+	top:'2px',
 	margin:'4px',
 	WebkitTapHighlightColor: 'black',
-	// display: 'flex'
 }

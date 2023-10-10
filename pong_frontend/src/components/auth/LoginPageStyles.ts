@@ -24,7 +24,7 @@ export const gifStyle: Properties = {
   };
 
 export const welcomeTitleStyle: Properties = {
-  color: 'rgba(254, 8, 16, 1)',
+  color: '#87CEEB',
   position: 'relative',
   textAlign: 'center',
   top: '8px',
@@ -34,7 +34,7 @@ export const welcomeTitleStyle: Properties = {
 };
 
 export const loginButtonStyle: Properties = {
-	backgroundColor: 'rgba(254, 8, 16, 1)',
+	backgroundColor: '#87CEEB',
 	position: 'relative',
 	height:'40px',
 	width:'160px',
@@ -48,7 +48,7 @@ export const loginButtonStyle: Properties = {
 }
 
 export const signupButtonStyle: Properties = {
-	backgroundColor: 'rgba(254, 8, 16, 1)',
+	backgroundColor: '#87CEEB',
 	position: 'relative',
 	height:'50px',
 	width:'180px',
@@ -92,7 +92,7 @@ export const signupPopupStyle: Properties = {
 }
 
 export const popUpTitleStyle: Properties = {
-	color: 'rgba(254, 8, 16, 1)',
+	color: '#87CEEB',
 	position: 'relative',
 	textAlign: 'center',
 	fontFamily: 'Shlop',
@@ -100,7 +100,7 @@ export const popUpTitleStyle: Properties = {
   };
 
 export const popUpLoginButtonStyle: Properties = {
-	backgroundColor: 'rgba(254, 8, 16, 1)',
+	backgroundColor: '#87CEEB',
 	position: 'relative',
 	height:'40px',
 	width:'160px',
@@ -114,7 +114,7 @@ export const popUpLoginButtonStyle: Properties = {
 }
 
 export const popUpSignupButtonStyle: Properties = {
-	backgroundColor: 'rgba(254, 8, 16, 1)',
+	backgroundColor: '#87CEEB',
 	position: 'relative',
 	height:'40px',
 	width:'160px',

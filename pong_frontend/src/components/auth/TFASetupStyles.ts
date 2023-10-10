@@ -29,6 +29,8 @@ export const profilePictureStyle: Properties = {
 }
 
 export const customAvatarUploadButtonStyle: Properties = {
+    display: 'inline-block',
+    padding: '8px',
     fontSize: '16px',
     textAlign: 'center',
     textDecoration: 'none',
@@ -36,11 +38,10 @@ export const customAvatarUploadButtonStyle: Properties = {
     borderRadius: '4px',
     cursor: 'pointer',
     transition: 'background-color 0.3s ease, color 0.3s ease',
-    backgroundColor: '#87CEEB',
+	backgroundColor: '#87CEEB',
     color: '#094074',
-    height: '40px',
-    width: '250px',
-    lineHeight: '40px',
+	height:'25px',
+	width:'250px',
 }
 
 export const imageUploadButtonIconStyle: Properties = {
@@ -65,7 +66,7 @@ export const formFieldStyle: Properties = {
 	background: '#FFFFE0'
 }
 
-export const updateButtonStyle: Properties = {
+export const buttonStyle: Properties = {
     display: 'inline-block',
     padding: '8px',
     fontSize: '16px',

@@ -27,10 +27,10 @@ export function banUserPopUp(props: &ChatProps, currentChat: ChatData, banUserSo
             margin-bottom: 10px;
         }
         button {
-            background-color: rgba(254, 8, 16, 1);
+            background-color: #FFDD4A;
             font-family: Shlop;
             font-size: 13px;
-            color: white;
+            color: black;
             border: 2px solid white;
             border-radius: 6px;
             padding: 5px 10px;
@@ -98,10 +98,10 @@ export function muteUserPopUp(props: &ChatProps, currentChat: ChatData, muteUser
             margin-bottom: 10px;
         }
         button {
-            background-color: rgba(254, 8, 16, 1);
+            background-color: #FFDD4A;
             font-family: Shlop;
             font-size: 13px;
-            color: white;
+            color: black;
             border: 2px solid white;
             border-radius: 6px;
             padding: 5px 10px;
@@ -169,10 +169,10 @@ export function kickUserPopUp(props: &ChatProps, currenchat: ChatData, banUserSo
             margin-bottom: 10px;
         }
         button {
-            background-color: rgba(254, 8, 16, 1);
+            background-color: #FFDD4A;
             font-family: Shlop;
             font-size: 13px;
-            color: white;
+            color: black;
             border: 2px solid white;
             border-radius: 6px;
             padding: 5px 10px;
@@ -244,10 +244,10 @@ export function addAdminPopUp(props:  &ChatProps, addAdminRights:(TargetName: st
             margin-bottom: 10px;
         }
         button {
-            background-color: rgba(254, 8, 16, 1);
+            background-color: #FFDD4A;
             font-family: Shlop;
             font-size: 13px;
-            color: white;
+            color: black;
             border: 2px solid white;
             border-radius: 6px;
             padding: 5px 10px;
@@ -310,10 +310,10 @@ export function changePasswordPopUp(
             margin-bottom: 10px;
         }
         button {
-            background-color: rgba(254, 8, 16, 1);
+            background-color: #FFDD4A;
             font-family: Shlop;
             font-size: 13px;
-            color: white;
+            color: black;
             border: 2px solid white;
             border-radius: 6px;
             padding: 5px 10px;
@@ -435,10 +435,10 @@ export function popUpCreateChannel(
             margin-bottom: 10px;
         }
         button {
-            background-color: rgba(254, 8, 16, 1);
+            background-color: #FFDD4A;
             font-family: Shlop;
             font-size: 13px;
-            color: white;
+            color: black;
             border: 2px solid white;
             border-radius: 6px;
             padding: 5px 10px;
@@ -528,10 +528,10 @@ export async function popUpJoinPrivateChannel(props: ChatProps, currentChat: Cha
             margin-bottom: 10px;
         }
         button {
-            background-color: rgba(254, 8, 16, 1);
+            background-color: #FFDD4A;
             font-family: Shlop;
             font-size: 13px;
-            color: white;
+            color: black;
             border: 2px solid white;
             border-radius: 6px;
             padding: 5px 10px;

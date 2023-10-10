@@ -22,9 +22,9 @@ const ChannelDiv: React.FC<Channel_Div_props> = (props) => {
         <div>
             <h3>Channels</h3>
             <button 
-            style={chatButtonsStyle}
-            onClick={() => popUpCreateChannel(props.ChatProps, props.updateChannellist, props.addChatRoom)}>
-			Create Channel
+                style={chatButtonsStyle}
+                onClick={() => popUpCreateChannel(props.ChatProps, props.updateChannellist, props.addChatRoom)}>
+                Create Channel
 		    </button>
             <h3>Public Channels</h3>
             {publicChannels.length > 0 ? (
@@ -41,7 +41,7 @@ const ChannelDiv: React.FC<Channel_Div_props> = (props) => {
                         {renderRooms(props.ChatProps, room, props.toggleChat)}
                     </div>
                 ))
-            ) : ( 'no public Channels' )}
+            ) : ( 'no private Channels' )}
             </div>
     );
 

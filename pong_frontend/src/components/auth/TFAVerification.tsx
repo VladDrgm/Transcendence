@@ -4,6 +4,7 @@ import ErrorPopup from '../Popups/ErrorPopup';
 import { useUserContext } from '../context/UserContext';
 import { verifyTFAToken } from '../../api/userApi';
 import { postUserStatus } from '../../api/statusUpdateAPI.api';
+import * as styles from './TFASetupStyles';
 
 const TwoFactorVerification: React.FC = () => {
 	const navigate = useNavigate();
@@ -44,7 +45,7 @@ const TwoFactorVerification: React.FC = () => {
   	};
 
   return (
-    <div>
+    <div style={styles.pageStyle}>
         <div>
           	<input
 				type="text"
@@ -52,7 +53,9 @@ const TwoFactorVerification: React.FC = () => {
 				onChange={(e) => setToken(e.target.value)}
 				placeholder="Enter the token"
           	/>
-          	<button onClick={verifyToken}>Verify Token</button>
+			<div>
+          		<button style={styles.buttonStyle} onClick={verifyToken}>Verify Token</button>
+			</div>
         </div>
 	  	<ErrorPopup message={error} onClose={() => setError(null)} />
     </div>
